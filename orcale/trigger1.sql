@@ -1,6 +1,3 @@
-thm_mtn.txt
-
-
 declare
    invalid_theme_no exception;
    delete_no_more_possible exception;

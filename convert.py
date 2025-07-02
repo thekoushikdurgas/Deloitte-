@@ -183,24 +183,124 @@ class OracleToPostgreSQLConverter:
         
         return sql
 
+    def format_postgresql_sql(self, sql: str) -> str:
+        """Format PostgreSQL SQL for better readability"""
+        # First normalize whitespace and remove existing \n characters
+        sql = re.sub(r'\\n', ' ', sql)  # Remove literal \n characters
+        sql = re.sub(r'\s+', ' ', sql)  # Normalize whitespace
+        sql = sql.strip()
+        
+        # Fix assignment operators before other formatting
+        sql = re.sub(r'\s*:\s*=\s*', ' := ', sql)
+        
+        # Fix specific formatting issues from parsing
+        sql = re.sub(r'\bTHEN\s+CASE\b', 'CASE', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bTHEN\s+SELECT\b', 'SELECT', sql, flags=re.IGNORECASE)  
+        sql = re.sub(r'\bTHEN\s+UPDATE\b', 'UPDATE', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bTHEN\s+INSERT\b', 'INSERT', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bTHEN\s+DELETE\b', 'DELETE', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bTHEN\s+IF\b', 'IF', sql, flags=re.IGNORECASE)
+        
+        # Fix split END IF statements
+        sql = re.sub(r'\bEND\s+IF\b', 'END IF', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bEND\s+CASE\b', 'END CASE', sql, flags=re.IGNORECASE)
+        
+        # Fix string escaping issues  
+        sql = re.sub(r"\\'\\''", "''", sql)
+        sql = re.sub(r"\\\\'", "'", sql)
+        sql = re.sub(r"\\'\\", "''", sql)  # Additional pattern
+        
+        # Remove redundant THEN keywords at start of blocks
+        sql = re.sub(r'^\s*THEN\s+', '', sql, flags=re.IGNORECASE | re.MULTILINE)
+        sql = re.sub(r'\bBEGIN\s+THEN\s+', 'BEGIN ', sql, flags=re.IGNORECASE)
+        
+        # Fix missing THEN keywords in IF statements
+        sql = re.sub(r'\bIF\s+([^;]+?)\s+SELECT\b', r'IF \1 THEN SELECT', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bIF\s+([^;]+?)\s+UPDATE\b', r'IF \1 THEN UPDATE', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bIF\s+([^;]+?)\s+INSERT\b', r'IF \1 THEN INSERT', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bIF\s+([^;]+?)\s+DELETE\b', r'IF \1 THEN DELETE', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bIF\s+([^;]+?)\s+CASE\b', r'IF \1 THEN CASE', sql, flags=re.IGNORECASE)
+        
+        # Fix missing THEN in WHEN clauses
+        sql = re.sub(r'\bWHEN\s+([^;]+?)\s+UPDATE\b', r'WHEN \1 THEN UPDATE', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bWHEN\s+([^;]+?)\s+INSERT\b', r'WHEN \1 THEN INSERT', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'\bWHEN\s+([^;]+?)\s+IF\b', r'WHEN \1 THEN IF', sql, flags=re.IGNORECASE)
+        
+        # Add proper line breaks for major SQL keywords
+        keywords_with_breaks = [
+            'BEGIN', 'END', 'IF', 'THEN', 'ELSE', 'ELSIF', 'END IF', 
+            'CASE', 'WHEN', 'END CASE', 'SELECT', 'INSERT', 'UPDATE', 
+            'DELETE', 'FROM', 'WHERE', 'AND', 'OR', 'EXCEPTION',
+            'RAISE EXCEPTION', 'CALL', 'PERFORM'
+        ]
+        
+        for keyword in keywords_with_breaks:
+            # Add line break before keyword (with word boundaries)
+            pattern = r'\b' + re.escape(keyword) + r'\b'
+            sql = re.sub(pattern, '\n' + keyword, sql, flags=re.IGNORECASE)
+        
+        # Special handling for specific patterns
+        sql = re.sub(r';\s*IF', ';\nIF', sql, flags=re.IGNORECASE)
+        sql = re.sub(r';\s*SELECT', ';\nSELECT', sql, flags=re.IGNORECASE)
+        sql = re.sub(r';\s*UPDATE', ';\nUPDATE', sql, flags=re.IGNORECASE)
+        sql = re.sub(r';\s*INSERT', ';\nINSERT', sql, flags=re.IGNORECASE)
+        sql = re.sub(r';\s*CALL', ';\nCALL', sql, flags=re.IGNORECASE)
+        
+        # Clean up multiple line breaks
+        sql = re.sub(r'\n\s*\n+', '\n', sql)
+        sql = re.sub(r'^\n+', '', sql)
+        
+        # Add proper spacing around operators and keywords
+        sql = re.sub(r'\s*=\s*', ' = ', sql)
+        sql = re.sub(r'\s*<>\s*', ' <> ', sql)
+        sql = re.sub(r'\s*,\s*', ', ', sql)
+        
+        return sql.strip()
+
+    def convert_nvl_to_coalesce(self, sql: str) -> str:
+        """Convert Oracle NVL to PostgreSQL COALESCE more accurately"""
+        # Convert NVL(field, value) to COALESCE(field, value)
+        pattern = r'\bNVL\s*\(\s*([^,]+),\s*([^)]+)\)'
+        replacement = r'COALESCE(\1, \2)'
+        sql = re.sub(pattern, replacement, sql, flags=re.IGNORECASE)
+        return sql
+
     def convert_cast_operations(self, sql: str) -> str:
-        """Convert Oracle CAST operations to PostgreSQL format"""
-        # Convert molecule_id casting
-        sql = re.sub(r'molecule_id\s*=\s*CAST\(NULLIF\(CAST\(:new_molecule_id\s+AS\s+TEXT\),\s*\'\'?\)\s+AS\s+NUMERIC\)', 
-                    'molecule_id = CAST(NULLIF(CAST(:new_molecule_id AS TEXT),\'\') AS NUMERIC)', sql, flags=re.IGNORECASE)
+        """Convert Oracle CAST operations to PostgreSQL format more accurately"""
+        # Convert molecule_id comparisons to proper CAST with NULLIF pattern
+        sql = re.sub(r'molecule_id\s*=\s*:new_molecule_id', 
+                    'molecule_id = CAST(NULLIF(CAST(:new_molecule_id AS TEXT),\'\') AS NUMERIC)', 
+                    sql, flags=re.IGNORECASE)
+        
+        # Convert variable references
+        sql = re.sub(r':new\.(\w+)', r':new_\1', sql)
+        sql = re.sub(r':old\.(\w+)', r':old_\1', sql)
+        
+        # Handle general CAST operations for numeric fields
+        sql = re.sub(r'CAST\(:new_molecule_id\s+AS\s+TEXT\)', 'CAST(:new_molecule_id AS TEXT)', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'CAST\(:old_molecule_id\s+AS\s+TEXT\)', 'CAST(:old_molecule_id AS TEXT)', sql, flags=re.IGNORECASE)
+        
+        # Add proper NULLIF patterns for other numeric fields
+        sql = re.sub(r':new_(\w*id)\b(?!\s*AS)', r'CAST(NULLIF(CAST(:new_\1 AS TEXT),\'\') AS NUMERIC)', sql)
         
         return sql
 
-    def format_postgresql_sql(self, sql: str) -> str:
-        """Format PostgreSQL SQL for better readability"""
-        # Add line breaks for major keywords
-        sql = re.sub(r'\s+(IF|THEN|ELSE|END IF|BEGIN|EXCEPTION|SELECT|INSERT|UPDATE|DELETE|FROM|WHERE|AND|OR)\s+', r'\n\1 ', sql, flags=re.IGNORECASE)
+    def convert_oracle_specifics(self, sql: str) -> str:
+        """Convert Oracle-specific constructs to PostgreSQL"""
+        # Convert SYSDATE to CURRENT_TIMESTAMP
+        sql = re.sub(r'\bSYSDATE\b', 'CURRENT_TIMESTAMP', sql, flags=re.IGNORECASE)
         
-        # Clean up extra whitespace
-        sql = re.sub(r'\n\s*\n', '\n', sql)
-        sql = re.sub(r'[ \t]+', ' ', sql)
+        # Convert Oracle package calls to PostgreSQL schema$function format
+        sql = re.sub(r'(\w+)\.(\w+)\s*\(', r'\1$\2(', sql)
         
-        return sql.strip()
+        # Convert exception handling
+        sql = re.sub(r'RAISE\s+(\w+);', r"RAISE EXCEPTION 'MDM_THEME_MOLECULE_MAP_IOF: \1';", sql, flags=re.IGNORECASE)
+        
+        # Convert BEGIN...EXCEPTION...END blocks to simpler format
+        sql = re.sub(r'BEGIN\s+(.*?)\s+EXCEPTION\s+WHEN\s+OTHERS\s+THEN\s+(.*?)\s+END;', 
+                    r'BEGIN \1 EXCEPTION WHEN OTHERS THEN \2 END;', sql, flags=re.DOTALL | re.IGNORECASE)
+        
+        return sql
 
     def wrap_in_postgresql_block(self, sql: str, variables: str) -> str:
         """Wrap the converted SQL in a PostgreSQL DO block with proper variable declarations"""
@@ -223,29 +323,160 @@ class OracleToPostgreSQLConverter:
         if declare_match:
             var_section = declare_match.group(1)
             
-            # Extract individual variable declarations
-            var_patterns = [
-                r'v_\w+\s+[^;]+;',
-                r'c_\w+\s+constant\s+[^;]+;',
-                r'i1\s+RECORD;'
-            ]
+            # Extract individual variable declarations - improved pattern matching
+            lines = var_section.split('\n')
+            current_var = ""
             
-            for pattern in var_patterns:
-                matches = re.findall(pattern, var_section, re.IGNORECASE)
-                variables.extend(matches)
+            for line in lines:
+                line = line.strip()
+                if not line or line.startswith('--'):
+                    continue
+                    
+                # Handle multi-line variable declarations
+                current_var += " " + line
+                
+                if line.endswith(';'):
+                    # Complete variable declaration
+                    var_decl = current_var.strip()
+                    if 'exception' not in var_decl.lower():
+                        # Convert Oracle types to PostgreSQL
+                        pg_var = self.convert_data_types(var_decl)
+                        # Fix specific type conversions
+                        pg_var = re.sub(r'PLS_INTEGER', 'INTEGER', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'SIMPLE_INTEGER', 'INTEGER', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'BOOLEAN\s*:=\s*FALSE', 'BOOLEAN := FALSE', pg_var, flags=re.IGNORECASE)
+                        
+                        # Fix assignment operators in variable declarations 
+                        pg_var = re.sub(r'\s*:\s*=\s*', ' := ', pg_var)
+                        
+                        # Handle %TYPE properly - convert to appropriate PostgreSQL types
+                        if '%type' in pg_var.lower():
+                            pg_var = self._convert_type_references(pg_var)
+                        
+                        # Handle RECORD types for cursor variables
+                        if 'i1 ' in pg_var and 'RECORD' not in pg_var:
+                            pg_var = re.sub(r'i1\s+[^;]+;', 'i1 RECORD;', pg_var)
+                        
+                        # Clean up any double conversions
+                        pg_var = re.sub(r'(\w+)\s+(\w+\.\w+)varchar\(30\)', r'\1 \2%type', pg_var, flags=re.IGNORECASE)
+                        
+                        variables.append(pg_var)
+                    current_var = ""
         
-        # Convert Oracle variable declarations to PostgreSQL
-        pg_variables = []
-        for var in variables:
-            if 'exception' not in var.lower():
-                # Convert data types
-                pg_var = self.convert_data_types(var)
-                pg_variables.append(pg_var)
+        return ' '.join(variables)
+
+    def _convert_type_references(self, var_declaration: str) -> str:
+        """Convert Oracle %TYPE references to PostgreSQL equivalents"""
         
-        # Add PostgreSQL-specific variables
-        pg_variables.append('v_userid varchar(30);')
+        # Common table.column%TYPE mappings to PostgreSQL types
+        type_mappings = {
+            'theme_no': 'VARCHAR(10)',
+            'molecule_id': 'VARCHAR(10)', 
+            'rg_no': 'VARCHAR(20)',
+            'trademark_no': 'NUMERIC',
+            'molecule_type_id': 'INTEGER',
+            'pharmacological_type_id': 'INTEGER',
+            'comparator_ind': 'VARCHAR(1)',
+            'theme_desc_proposal': 'VARCHAR(500)',
+            'manual_short_desc': 'VARCHAR(30)'
+        }
         
-        return ' '.join(pg_variables)
+        # Extract variable name and type reference
+        type_pattern = r'(\w+)\s+(?:(\w+)\.)?(\w+)\.(\w+)%type'
+        match = re.search(type_pattern, var_declaration, re.IGNORECASE)
+        
+        if match:
+            var_name = match.group(1)
+            schema = match.group(2) or 'gmd'
+            table = match.group(3)
+            column = match.group(4)
+            
+            # Try to map to a known PostgreSQL type
+            mapped_type = type_mappings.get(column.lower())
+            if mapped_type:
+                return f'{var_name} {mapped_type};'
+            else:
+                # Keep the %TYPE reference but ensure proper schema prefix
+                return f'{var_name} {schema}.{table}.{column}%type;'
+        
+        return var_declaration
+
+    def convert_postgresql_specific(self, sql: str) -> str:
+        """Convert to PostgreSQL-specific constructs"""
+        # Convert certain SELECT statements to PERFORM for existence checks
+        sql = re.sub(r'SELECT\s+COUNT\(\*\)\s+INTO\s+(\w+)\s+FROM\s+([^;]+);', 
+                    r'SELECT COUNT(*) INTO \1 FROM \2;', 
+                    sql, flags=re.IGNORECASE)
+        
+        # Convert Oracle dual table references
+        sql = re.sub(r'FROM\s+dual\b', '', sql, flags=re.IGNORECASE)
+        
+        # Convert Oracle date functions
+        sql = re.sub(r'TO_DATE\(([^,]+),\s*([^)]+)\)', r'TO_DATE(\1, \2)', sql, flags=re.IGNORECASE)
+        
+        # Improve schema references - add proper prefixes for common tables
+        # Be more careful to avoid duplication
+        schema_mappings = {
+            r'\b(?<!\.)(v_theme_molecules)(?!\w)': 'gmd.v_theme_molecules_mrhub',
+            r'\b(?<!\.)(theme_molecule_map)(?!\w)': 'gmd.theme_molecule_map', 
+            r'\b(?<!\.)(themes)(?!\w)(?!\s*\.)': 'gmd.themes',
+            r'\b(?<!\.)(v_themes)(?!\w)': 'gmd.v_themes',
+            r'\b(?<!\.)(mdm_v_theme_status)(?!\w)': 'mdmappl.mdm_v_theme_status',
+            r'\b(?<!\.)(mdm_v_disease_biology_areas)(?!\w)': 'mdmappl.mdm_v_disease_biology_areas',
+            r'\b(?<!\.)(mdm_v_theme_molecule_map_mtn)(?!\w)': 'mdmappl.mdm_v_theme_molecule_map_mtn',
+            r'\b(?<!\.)(mdm_v_new_medicine_proposals_mtn)(?!\w)': 'mdmappl.mdm_v_new_medicine_proposals_mtn',
+            r'\b(?<!\.)(new_medicine_proposals)(?!\w)': 'predmd.new_medicine_proposals'
+        }
+        
+        for pattern, replacement in schema_mappings.items():
+            sql = re.sub(pattern, replacement, sql, flags=re.IGNORECASE)
+        
+        # Convert count() to COUNT(*)
+        sql = re.sub(r'\bcount\(\)\b', 'COUNT(*)', sql, flags=re.IGNORECASE)
+        
+        # Add proper column defaults for INSERT statements
+        sql = self._add_audit_columns(sql)
+        
+        return sql
+
+    def _add_audit_columns(self, sql: str) -> str:
+        """Add audit columns (ins_user, ins_date, upd_user, upd_date) to INSERT/UPDATE statements"""
+        
+        # Add audit columns to INSERT statements if not present
+        insert_pattern = r'INSERT\s+INTO\s+(\w+\.\w+)\s*\(\s*([^)]+)\s*\)\s*VALUES\s*\(\s*([^)]+)\s*\)'
+        
+        def add_audit_to_insert(match):
+            table = match.group(1)
+            columns = match.group(2).strip()
+            values = match.group(3).strip()
+            
+            # Check if audit columns are already present
+            if 'ins_user' not in columns.lower():
+                columns += ', ins_user, ins_date'
+                values += ', :ins_user, :ins_date'
+            
+            return f'INSERT INTO {table} ( {columns} ) VALUES ( {values} )'
+        
+        sql = re.sub(insert_pattern, add_audit_to_insert, sql, flags=re.IGNORECASE | re.DOTALL)
+        
+        # Add audit columns to UPDATE statements if not present
+        update_pattern = r'UPDATE\s+(\w+\.\w+)\s+SET\s+([^W]+?)(?=\s+WHERE|\s*;|\s*$)'
+        
+        def add_audit_to_update(match):
+            table = match.group(1)
+            set_clause = match.group(2).strip()
+            
+            # Check if audit columns are already present
+            if 'upd_user' not in set_clause.lower():
+                if not set_clause.endswith(','):
+                    set_clause += ','
+                set_clause += ' upd_user = :upd_user, upd_date = :upd_date'
+            
+            return f'UPDATE {table} SET {set_clause}'
+        
+        sql = re.sub(update_pattern, add_audit_to_update, sql, flags=re.IGNORECASE | re.DOTALL)
+        
+        return sql
 
     def extract_sections(self, sql_content: str) -> Dict[str, str]:
         """Extract INSERT, UPDATE, DELETE sections from Oracle trigger"""
@@ -255,32 +486,224 @@ class OracleToPostgreSQLConverter:
             'on_delete': ''
         }
         
-        # Find the main logic sections
-        insert_pattern = r'if\s*\(inserting\)\s*then(.*?)(?=elsif\s*\(updating\)|elsif\s*\(deleting\)|$)'
-        update_pattern = r'elsif\s*\(updating\)\s*then(.*?)(?=elsif\s*\(deleting\)|$)'
-        delete_pattern = r'elsif\s*\(deleting\)\s*then(.*?)(?=end\s*if|$)'
+        # Clean up content for better parsing
+        content = self.clean_sql_content(sql_content)
         
-        insert_match = re.search(insert_pattern, sql_content, re.IGNORECASE | re.DOTALL)
-        if insert_match:
-            sections['on_insert'] = insert_match.group(1).strip()
-            
-        update_match = re.search(update_pattern, sql_content, re.IGNORECASE | re.DOTALL)
-        if update_match:
-            sections['on_update'] = update_match.group(1).strip()
-            
-        delete_match = re.search(delete_pattern, sql_content, re.IGNORECASE | re.DOTALL)
-        if delete_match:
-            sections['on_delete'] = delete_match.group(1).strip()
+        # Use a simpler but more robust parsing approach
+        self._parse_oracle_trigger(content, sections)
         
         return sections
+
+    def _parse_oracle_trigger(self, content: str, sections: Dict[str, str]):
+        """Parse Oracle trigger using a line-by-line approach to handle complex nested structures"""
+        
+        lines = content.split('\n')
+        current_section = None
+        current_content = []
+        if_stack = []
+        
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            line_upper = line.upper()
+            
+            # Skip empty lines and comments
+            if not line or line.startswith('--'):
+                i += 1
+                continue
+            
+            # Check for main conditional blocks
+            if self._is_delete_start(line_upper):
+                current_section = 'on_delete'
+                current_content = []
+                if_stack = ['DELETE']
+                
+            elif self._is_insert_start(line_upper):
+                current_section = 'on_insert'
+                current_content = []
+                if_stack = ['INSERT']
+                
+            elif self._is_update_start(line_upper):
+                current_section = 'on_update'
+                current_content = []
+                if_stack = ['UPDATE']
+                
+            elif self._is_insert_or_update_start(line_upper):
+                # Special handling for shared IF INSERTING OR UPDATING block
+                shared_content = self._extract_shared_block_manual(lines, i)
+                self._parse_shared_insert_update_block(shared_content, sections)
+                # Skip to after this block
+                i = self._find_block_end(lines, i, 'IF', 'END IF') + 1
+                continue
+                
+            elif current_section:
+                # Add content to current section
+                if line_upper.startswith('IF '):
+                    if_stack.append('IF')
+                elif line_upper.startswith('END IF') or line == 'END;':
+                    if if_stack:
+                        if_stack.pop()
+                        if not if_stack:  # End of main block
+                            sections[current_section] = '\n'.join(current_content)
+                            current_section = None
+                            current_content = []
+                            i += 1
+                            continue
+                
+                current_content.append(line)
+            
+            i += 1
+        
+        # Handle any remaining content
+        if current_section and current_content:
+            sections[current_section] = '\n'.join(current_content)
+
+    def _is_delete_start(self, line: str) -> bool:
+        """Check if line starts a DELETE block"""
+        return (line.startswith('IF DELETING') or 
+                line.startswith('IF (DELETING)') or
+                line.startswith('ELSIF (DELETING)') or
+                line.startswith('ELSIF DELETING'))
+
+    def _is_insert_start(self, line: str) -> bool:
+        """Check if line starts an INSERT block"""
+        return (line.startswith('IF (INSERTING)') or
+                line.startswith('IF INSERTING') or
+                line.startswith('ELSIF (INSERTING)') or
+                line.startswith('ELSIF INSERTING')) and 'OR' not in line
+
+    def _is_update_start(self, line: str) -> bool:
+        """Check if line starts an UPDATE block"""
+        return (line.startswith('IF (UPDATING)') or
+                line.startswith('IF UPDATING') or
+                line.startswith('ELSIF (UPDATING)') or
+                line.startswith('ELSIF UPDATING')) and 'OR' not in line
+
+    def _is_insert_or_update_start(self, line: str) -> bool:
+        """Check if line starts an INSERT OR UPDATE shared block"""
+        return ('INSERTING OR UPDATING' in line or 
+                'UPDATING OR INSERTING' in line) and line.startswith('IF')
+
+    def _extract_shared_block_manual(self, lines: List[str], start_idx: int) -> str:
+        """Manually extract the complete shared IF INSERTING OR UPDATING block"""
+        end_idx = self._find_block_end(lines, start_idx, 'IF', 'END IF')
+        block_lines = lines[start_idx+1:end_idx]  # Skip the IF line itself
+        return '\n'.join(line.strip() for line in block_lines if line.strip())
+
+    def _find_block_end(self, lines: List[str], start_idx: int, start_keyword: str, end_keyword: str) -> int:
+        """Find the matching end of a block by counting nested IF/END IF pairs"""
+        nesting_level = 1
+        i = start_idx + 1
+        
+        while i < len(lines) and nesting_level > 0:
+            line = lines[i].strip().upper()
+            
+            if line.startswith(start_keyword + ' '):
+                nesting_level += 1
+            elif line.startswith(end_keyword) or line == 'END;':
+                nesting_level -= 1
+                
+            i += 1
+        
+        return i - 1  # Return index of the END IF line
+
+    def _parse_shared_insert_update_block(self, shared_content: str, sections: Dict[str, str]):
+        """Parse the shared IF INSERTING OR UPDATING block to extract operation-specific logic"""
+        
+        lines = shared_content.split('\n')
+        shared_logic = []
+        insert_logic = []
+        update_logic = []
+        
+        current_section = 'shared'
+        nesting_level = 0
+        
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            line_upper = line.upper()
+            
+            if not line:
+                i += 1
+                continue
+                
+            # Check for nested IF INSERTING
+            if line_upper.startswith('IF INSERTING') and 'OR' not in line_upper:
+                current_section = 'insert'
+                # Find the end of this nested block
+                end_idx = self._find_nested_block_end(lines, i)
+                insert_logic.extend(lines[i+1:end_idx])
+                i = end_idx + 1
+                current_section = 'shared'
+                continue
+                
+            # Check for nested IF UPDATING  
+            elif line_upper.startswith('IF UPDATING') and 'OR' not in line_upper:
+                current_section = 'update'
+                # Find the end of this nested block
+                end_idx = self._find_nested_block_end(lines, i)
+                update_logic.extend(lines[i+1:end_idx])
+                i = end_idx + 1
+                current_section = 'shared'
+                continue
+            
+            # Add to shared logic if not in a nested block
+            if current_section == 'shared':
+                shared_logic.append(line)
+            
+            i += 1
+        
+        # Combine shared + specific logic
+        shared_text = '\n'.join(shared_logic)
+        insert_text = '\n'.join(insert_logic)
+        update_text = '\n'.join(update_logic)
+        
+        # Combine with any existing logic and add shared parts
+        if shared_text or insert_text:
+            combined_insert = []
+            if sections['on_insert']:
+                combined_insert.append(sections['on_insert'])
+            if shared_text:
+                combined_insert.append(shared_text)
+            if insert_text:
+                combined_insert.append(insert_text)
+            sections['on_insert'] = '\n'.join(combined_insert)
+        
+        if shared_text or update_text:
+            combined_update = []
+            if sections['on_update']:
+                combined_update.append(sections['on_update'])
+            if shared_text:
+                combined_update.append(shared_text)
+            if update_text:
+                combined_update.append(update_text)
+            sections['on_update'] = '\n'.join(combined_update)
+
+    def _find_nested_block_end(self, lines: List[str], start_idx: int) -> int:
+        """Find the end of a nested IF block within shared content"""
+        nesting_level = 1
+        i = start_idx + 1
+        
+        while i < len(lines) and nesting_level > 0:
+            line = lines[i].strip().upper()
+            
+            if line.startswith('IF '):
+                nesting_level += 1
+            elif line.startswith('END IF'):
+                nesting_level -= 1
+                
+            i += 1
+        
+        return i - 1
 
     def convert_oracle_to_postgresql(self, oracle_sql: str, variables: str) -> str:
         """Main conversion method"""
         sql = oracle_sql
         
-        # Apply all conversions
+        # Apply all conversions in the correct order
         sql = self.clean_sql_content(sql)
         sql = self.convert_data_types(sql)
+        sql = self.convert_nvl_to_coalesce(sql)
         sql = self.convert_functions(sql)
         sql = self.convert_substr_to_substring(sql)
         sql = self.convert_sequence_generation(sql)
@@ -291,6 +714,8 @@ class OracleToPostgreSQLConverter:
         sql = self.convert_numeric_validation(sql)
         sql = self.convert_date_functions(sql)
         sql = self.convert_cast_operations(sql)
+        sql = self.convert_oracle_specifics(sql)
+        sql = self.convert_postgresql_specific(sql)
         
         # Wrap in PostgreSQL DO block
         sql = self.wrap_in_postgresql_block(sql, variables)
@@ -311,23 +736,15 @@ class OracleToPostgreSQLConverter:
             # Extract variables and constants
             variables = self.extract_variables_and_constants(oracle_content)
             
-            # Extract sections
+            # Extract sections (now includes common code handling)
             sections = self.extract_sections(oracle_content)
-            
-            # Get common code (everything before the first if (inserting))
-            common_code_match = re.search(r'begin\s+(.*?)if\s*\(inserting\)', oracle_content, re.IGNORECASE | re.DOTALL)
-            common_code = ""
-            if common_code_match:
-                common_code = common_code_match.group(1).strip()
             
             # Convert each section
             json_structure = {}
             
             for operation, sql_content in sections.items():
                 if sql_content.strip():
-                    # Combine common code with section-specific code
-                    full_sql = common_code + " " + sql_content
-                    converted_sql = self.convert_oracle_to_postgresql(full_sql, variables)
+                    converted_sql = self.convert_oracle_to_postgresql(sql_content, variables)
                     
                     json_structure[operation] = [
                         {
