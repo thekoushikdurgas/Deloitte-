@@ -669,18 +669,36 @@ class OracleToPostgreSQLConverter:
 
     def wrap_in_postgresql_block(self, sql: str, variables: str) -> str:
         """Wrap the converted SQL in a PostgreSQL DO block with proper variable declarations"""
-        # Clean up the SQL
+        # Clean up the SQL content - remove Oracle-specific DECLARE/BEGIN/END keywords
         sql = re.sub(r'^declare\s+', '', sql, flags=re.IGNORECASE)
         sql = re.sub(r'^begin\s+', '', sql, flags=re.IGNORECASE)
         sql = re.sub(r'end;\s*$', '', sql, flags=re.IGNORECASE)
+        sql = sql.strip()
         
-        # Format the final PostgreSQL block
-        formatted_sql = f"DO $$ DECLARE {variables}BEGIN {sql} END $$;"
+        # Ensure variables section is properly formatted
+        if variables:
+            # Clean up any duplicate semicolons or spacing issues in variables
+            variables = re.sub(r';\s*;', ';', variables)
+            variables = re.sub(r'\s+', ' ', variables).strip()
+            
+            # Ensure variables section ends with a space if it contains content
+            if not variables.endswith(' '):
+                variables += ' '
+        else:
+            variables = ''
         
+        # Format the final PostgreSQL DO block with proper structure
+        # DO $$ DECLARE [variables] BEGIN [sql_content] END $$;
+        if variables:
+            formatted_sql = f"DO $$ DECLARE {variables}BEGIN {sql} END $$;"
+        else:
+            formatted_sql = f"DO $$ BEGIN {sql} END $$;"
+        
+        # Apply final formatting to ensure clean, readable PostgreSQL code
         return self.format_postgresql_sql(formatted_sql)
 
     def extract_variables_and_constants(self, sql_content: str) -> str:
-        """Extract variable declarations and constants from Oracle trigger"""
+        """Extract variable declarations and constants from Oracle trigger with enhanced default value handling"""
         variables = []
         
         # Look for variable declarations between DECLARE and BEGIN
@@ -706,13 +724,20 @@ class OracleToPostgreSQLConverter:
                     if 'exception' not in var_decl.lower():
                         # Convert Oracle types to PostgreSQL
                         pg_var = self.convert_data_types(var_decl)
-                        # Fix specific type conversions
+                        
+                        # Enhanced type conversions
                         pg_var = re.sub(r'PLS_INTEGER', 'integer', pg_var, flags=re.IGNORECASE)
                         pg_var = re.sub(r'SIMPLE_INTEGER', 'integer', pg_var, flags=re.IGNORECASE)
-                        pg_var = re.sub(r'BOOLEAN\s*:=\s*FALSE', 'BOOLEAN:=FALSE', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'BINARY_INTEGER', 'integer', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'BOOLEAN\s*:=\s*FALSE', 'BOOLEAN := FALSE', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'BOOLEAN\s*:=\s*TRUE', 'BOOLEAN := TRUE', pg_var, flags=re.IGNORECASE)
                         
-                        # Fix assignment operators in variable declarations 
-                        pg_var = re.sub(r'\s*:\s*=\s*', ':=', pg_var)
+                        # Fix assignment operators in variable declarations - ensure proper spacing
+                        pg_var = re.sub(r'\s*:\s*=\s*', ' := ', pg_var)
+                        
+                        # Handle default values for common types
+                        pg_var = re.sub(r'(\w+\s+(?:integer|numeric|number)\s*):=\s*0', r'\1 := 0', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'(\w+\s+(?:varchar|text)\s*(?:\(\d+\))?)\s*:=\s*([\'"][^\'"]*[\'"])', r'\1 := \2', pg_var, flags=re.IGNORECASE)
                         
                         # Handle %TYPE properly - convert to appropriate PostgreSQL types
                         if '%type' in pg_var.lower():
@@ -722,12 +747,27 @@ class OracleToPostgreSQLConverter:
                         if 'i1 ' in pg_var and 'RECORD' not in pg_var:
                             pg_var = re.sub(r'i1\s+[^;]+;', 'i1 RECORD;', pg_var)
                         
-                        # Clean up any double conversions
+                        # Handle cursor variables properly
+                        if 'cursor' in pg_var.lower() and 'for' in pg_var.lower():
+                            # Convert cursor declarations
+                            cursor_pattern = r'(\w+)\s+cursor\s+for\s+(.+);'
+                            cursor_match = re.search(cursor_pattern, pg_var, re.IGNORECASE)
+                            if cursor_match:
+                                cursor_name = cursor_match.group(1)
+                                pg_var = f'{cursor_name} REFCURSOR;'
+                        
+                        # Clean up any double conversions and formatting
                         pg_var = re.sub(r'(\w+)\s+(\w+\.\w+)varchar\(30\)', r'\1 \2%type', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'\s+', ' ', pg_var).strip()
+                        
+                        # Ensure proper semicolon ending
+                        if not pg_var.endswith(';'):
+                            pg_var += ';'
                         
                         variables.append(pg_var)
                     current_var = ""
         
+        # Join all variables with proper spacing for the DO block
         return ' '.join(variables)
 
     def _convert_type_references(self, var_declaration: str) -> str:
@@ -1062,7 +1102,22 @@ class OracleToPostgreSQLConverter:
         return i - 1
 
     def convert_oracle_to_postgresql(self, oracle_sql: str, variables: str) -> str:
-        """Main conversion method"""
+        """
+        Main conversion method - converts Oracle SQL to PostgreSQL and wraps in complete DO block
+        
+        This method:
+        1. Applies all Oracle to PostgreSQL conversions
+        2. Wraps the result in a complete PostgreSQL DO block 
+        3. Includes ALL variables with their datatypes and default values
+        4. Creates a standalone executable PostgreSQL block for each section
+        
+        Args:
+            oracle_sql: The Oracle SQL content for a specific section (INSERT/UPDATE/DELETE)
+            variables: All variable declarations with datatypes and default values
+            
+        Returns:
+            Complete PostgreSQL DO block ready for execution
+        """
         sql = oracle_sql
         
         # Apply all conversions in the correct order
@@ -1082,7 +1137,7 @@ class OracleToPostgreSQLConverter:
         sql = self.convert_oracle_specifics(sql)
         sql = self.convert_postgresql_specific(sql)
         
-        # Wrap in PostgreSQL DO block
+        # Wrap in PostgreSQL DO block with ALL variables for complete standalone execution
         sql = self.wrap_in_postgresql_block(sql, variables)
         
         return sql
@@ -1098,22 +1153,33 @@ class OracleToPostgreSQLConverter:
                 print(f"Warning: {input_file} is empty, skipping...")
                 return False
             
-            # Extract variables and constants
+            # Extract variables and constants with improved handling
             variables = self.extract_variables_and_constants(oracle_content)
+            
+            if verbose:
+                print(f"📊 Extracted variables: {variables}")
             
             # Extract sections (now includes common code handling)
             sections = self.extract_sections(oracle_content)
             
-            # Convert each section
+            # Convert each section - each will get a complete DO block with all variables
             json_structure = {}
             
             for operation, sql_content in sections.items():
                 if sql_content.strip():
+                    if verbose:
+                        print(f"🔄 Converting {operation} section...")
+                        print(f"📝 Section content: {sql_content[:100]}...")
+                    
+                    # Each section gets converted with ALL variables to create a standalone DO block
                     converted_sql = self.convert_oracle_to_postgresql(sql_content, variables)
+                    
+                    if verbose:
+                        print(f"✅ {operation} converted to complete PostgreSQL DO block")
                     
                     json_structure[operation] = [
                         {
-                            "type": "sql",
+                            "type": "sql", 
                             "sql": converted_sql
                         }
                     ]
@@ -1126,6 +1192,8 @@ class OracleToPostgreSQLConverter:
                 json.dump(json_structure, f, indent=4)
             
             print(f"✅ Successfully converted {input_file} → {output_file}")
+            if verbose:
+                print(f"📦 Created {len(json_structure)} sections: {list(json_structure.keys())}")
             return True
             
         except FileNotFoundError:
