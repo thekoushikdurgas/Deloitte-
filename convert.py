@@ -233,8 +233,9 @@ class OracleToPostgreSQLConverter:
             r'\bsqlerrm\b': 'SQLERRM',
         }
         
-        # Exception mappings with proper messages
+        # Exception mappings - Oracle to PostgreSQL with comprehensive coverage
         self.exception_mappings = {
+            # Trigger1.sql exceptions (Themes management)
             'invalid_theme_no': 'This is not a valid Theme No',
             'delete_no_more_possible': 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted',
             'theme_no_only_insert': 'Theme No cannot be updated', 
@@ -246,13 +247,53 @@ class OracleToPostgreSQLConverter:
             'insertsmustbeofficial': 'New Themes can only be inserted by Official Changes',
             'themedescriptionmandatory': 'If Pharma Rx Portfolio Project is set to "No", then the Theme Description must be filled',
             'theme_desc_not_unique': 'This Theme Description already exists',
-            'in_prep_not_portf_proj': 'In-prep theme must be portfolio project',
-            'in_prep_not_closed': 'In-prep status validation failed',
+            'in_prep_not_portf_proj': 'MDM_V_THEMES_IOF: In-prep theme must be portfolio project',
+            'in_prep_not_closed': 'MDM_V_THEMES_IOF: In-prep status validation failed',
             'invalid_molecule_id': 'This is not a valid Molecule ID',
-            'sec_mol_list_not_empty': 'Secondary molecule list not empty',
-            'admin_update_only': 'Admin access required for this operation',
-            'portf_proj_mol_cre_err': 'Portfolio project molecule creation error',
-            'debugging': 'Debug in Themes IOF standard'
+            'sec_mol_list_not_empty': 'MDM_V_THEMES_IOF: Secondary molecule list not empty',
+            'admin_update_only': 'MDM_V_THEMES_IOF: Admin access required for this operation',
+            'portf_proj_mol_cre_err': 'MDM_V_THEMES_IOF: Portfolio project molecule creation error',
+            'debugging': 'Debug in Themes IOF standard',
+            
+            # Trigger2.sql exceptions (Theme molecule mapping)
+            'err_map_exists': 'MDM_THEME_MOLECULE_MAP_IOF: Mapping already exists',
+            'err_molec_id_missing': 'MDM_THEME_MOLECULE_MAP_IOF: Molecule ID is missing',
+            'err_no_portf_molecule_left': 'MDM_THEME_MOLECULE_MAP_IOF: No portfolio molecule left',
+            'err_upd_inv_map': 'MDM_THEME_MOLECULE_MAP_IOF: Invalid mapping update',
+            'err_ins_inv_map': 'MDM_THEME_MOLECULE_MAP_IOF: Invalid mapping insert',
+            'err_inv_mol_sequence': 'MDM_THEME_MOLECULE_MAP_IOF: Invalid molecule sequence',
+            'update_upd': 'MDM_THEME_MOLECULE_MAP_IOF: Update error',
+            
+            # Trigger3.sql exceptions (Company addresses)
+            'err_upd': 'The address cannot be updated because the Address type is different',
+            'err_ins': 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button',
+            'err_ctry_chg': 'The company country modified but not the Valid From Date. Please update also the Valid From Date',
+            'err_not_allowed_to_invalidate': 'It is not allowed to invalidate/delete this type of address',
+            'test_err': 'Test error with debug information',
+            'err_ins_legal_addr': 'The legal address cannot be inserted for this type of company',
+            
+            # Standard Oracle exceptions that might appear
+            'no_data_found': 'No data found',
+            'too_many_rows': 'Too many rows returned',
+            'dup_val_on_index': 'Duplicate value on index',
+            'value_error': 'Numeric or value error',
+            'invalid_number': 'Invalid number',
+            'zero_divide': 'Division by zero',
+            'invalid_cursor': 'Invalid cursor',
+            'cursor_already_open': 'Cursor already open',
+            'not_logged_on': 'Not logged on',
+            'login_denied': 'Login denied',
+            'program_error': 'Program error',
+            'storage_error': 'Storage error',
+            'timeout_on_resource': 'Timeout on resource',
+            'invalid_rowid': 'Invalid ROWID',
+            'rowtype_mismatch': 'Row type mismatch',
+            'self_is_null': 'Self is null',
+            'subscript_outside_limit': 'Subscript outside limit',
+            'subscript_beyond_count': 'Subscript beyond count',
+            'access_into_null': 'Access into null',
+            'collection_is_null': 'Collection is null',
+            'others': 'Unknown error occurred'
         }
 
     def clean_sql_content(self, content: str) -> str:
