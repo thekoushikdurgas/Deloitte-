@@ -854,114 +854,212 @@ class OracleToPostgreSQLConverter:
         # Clean up content for better parsing
         content = self.clean_sql_content(sql_content)
         
-        # Use a more robust approach to handle complex nested structures
+        # Use a simpler but more robust parsing approach
         self._parse_oracle_trigger(content, sections)
         
         return sections
 
     def _parse_oracle_trigger(self, content: str, sections: Dict[str, str]):
-        """Parse Oracle trigger using a more robust approach to handle complex nested structures"""
+        """Parse Oracle trigger using a line-by-line approach to handle complex nested structures"""
         
-        # Find the main begin block and extract the body
-        begin_pattern = r'\bbegin\b(.*?)(?:\bexception\b|\bend\s*;?\s*$)'
-        begin_match = re.search(begin_pattern, content, re.IGNORECASE | re.DOTALL)
+        lines = content.split('\n')
+        current_section = None
+        current_content = []
+        if_stack = []
         
-        if not begin_match:
-            print("⚠️  Warning: Could not find main BEGIN block in trigger")
-            return
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            line_upper = line.upper()
             
-        trigger_body = begin_match.group(1).strip()
-        
-        # Split into logical sections by finding main conditional blocks
-        self._extract_main_conditional_blocks(trigger_body, sections)
-
-    def _extract_main_conditional_blocks(self, trigger_body: str, sections: Dict[str, str]):
-        """Extract the main IF (INSERTING), IF (UPDATING), IF (DELETING) blocks"""
-        
-        # Remove comments and normalize whitespace for better parsing
-        clean_body = re.sub(r'--.*$', '', trigger_body, flags=re.MULTILINE)
-        clean_body = re.sub(r'/\*.*?\*/', '', clean_body, flags=re.DOTALL)
-        
-        # Find shared code before main conditionals
-        shared_code_before = self._extract_shared_code_before_conditionals(clean_body)
-        
-        # Pattern to find main conditional blocks - more robust regex
-        insert_pattern = r'if\s*\(\s*inserting\s*\)\s*then(.*?)(?=(?:elsif|else|end\s+if))'
-        update_pattern = r'elsif\s*\(\s*updating\s*\)\s*then(.*?)(?=(?:elsif|else|end\s+if))'
-        delete_pattern = r'elsif\s*\(\s*deleting\s*\)\s*then(.*?)(?=(?:elsif|else|end\s+if))'
-        
-        # Extract main blocks
-        insert_match = re.search(insert_pattern, clean_body, re.IGNORECASE | re.DOTALL)
-        update_match = re.search(update_pattern, clean_body, re.IGNORECASE | re.DOTALL)
-        delete_match = re.search(delete_pattern, clean_body, re.IGNORECASE | re.DOTALL)
-        
-        # Find shared code after main conditionals (like IF INSERTING OR UPDATING)
-        shared_code_after = self._extract_shared_code_after_conditionals(clean_body)
-        
-        # Combine shared code with specific logic
-        if insert_match:
-            insert_content = []
-            if shared_code_before:
-                insert_content.append(shared_code_before)
-            insert_content.append(insert_match.group(1).strip())
-            if shared_code_after:
-                insert_content.append(shared_code_after)
-            sections['on_insert'] = '\n'.join(insert_content)
-        
-        if update_match:
-            update_content = []
-            if shared_code_before:
-                update_content.append(shared_code_before)
-            update_content.append(update_match.group(1).strip())
-            if shared_code_after:
-                update_content.append(shared_code_after)
-            sections['on_update'] = '\n'.join(update_content)
-        
-        if delete_match:
-            delete_content = []
-            if shared_code_before:
-                delete_content.append(shared_code_before)
-            delete_content.append(delete_match.group(1).strip())
-            sections['on_delete'] = '\n'.join(delete_content)
-
-    def _extract_shared_code_before_conditionals(self, trigger_body: str) -> str:
-        """Extract shared code that appears before the main IF (INSERTING) block"""
-        
-        # Find everything before the first main conditional
-        before_pattern = r'^(.*?)(?=if\s*\(\s*inserting\s*\))'
-        before_match = re.search(before_pattern, trigger_body, re.IGNORECASE | re.DOTALL)
-        
-        if before_match:
-            shared_code = before_match.group(1).strip()
-            # Filter out variable declarations and comments
-            lines = shared_code.split('\n')
-            filtered_lines = []
-            for line in lines:
-                line = line.strip()
-                if (line and 
-                    not line.startswith('--') and 
-                    not re.match(r'^\w+\s+\w+.*:=.*;\s*$', line) and  # variable declarations
-                    not re.match(r'^\w+\s+exception\s*;\s*$', line, re.IGNORECASE)):  # exception declarations
-                    filtered_lines.append(line)
+            # Skip empty lines and comments
+            if not line or line.startswith('--'):
+                i += 1
+                continue
             
-            return '\n'.join(filtered_lines) if filtered_lines else ''
+            # Check for main conditional blocks
+            if self._is_delete_start(line_upper):
+                current_section = 'on_delete'
+                current_content = []
+                if_stack = ['DELETE']
+                
+            elif self._is_insert_start(line_upper):
+                current_section = 'on_insert'
+                current_content = []
+                if_stack = ['INSERT']
+                
+            elif self._is_update_start(line_upper):
+                current_section = 'on_update'
+                current_content = []
+                if_stack = ['UPDATE']
+                
+            elif self._is_insert_or_update_start(line_upper):
+                # Special handling for shared IF INSERTING OR UPDATING block
+                shared_content = self._extract_shared_block_manual(lines, i)
+                self._parse_shared_insert_update_block(shared_content, sections)
+                # Skip to after this block
+                i = self._find_block_end(lines, i, 'IF', 'END IF') + 1
+                continue
+                
+            elif current_section:
+                # Add content to current section
+                if line_upper.startswith('IF '):
+                    if_stack.append('IF')
+                elif line_upper.startswith('END IF') or line == 'END;':
+                    if if_stack:
+                        if_stack.pop()
+                        if not if_stack:  # End of main block
+                            sections[current_section] = '\n'.join(current_content)
+                            current_section = None
+                            current_content = []
+                            i += 1
+                            continue
+                
+                current_content.append(line)
+            
+            i += 1
         
-        return ''
+        # Handle any remaining content
+        if current_section and current_content:
+            sections[current_section] = '\n'.join(current_content)
 
-    def _extract_shared_code_after_conditionals(self, trigger_body: str) -> str:
-        """Extract shared code that appears after the main conditional blocks"""
+    def _is_delete_start(self, line: str) -> bool:
+        """Check if line starts a DELETE block"""
+        return (line.startswith('IF DELETING') or 
+                line.startswith('IF (DELETING)') or
+                line.startswith('ELSIF (DELETING)') or
+                line.startswith('ELSIF DELETING'))
+
+    def _is_insert_start(self, line: str) -> bool:
+        """Check if line starts an INSERT block"""
+        return (line.startswith('IF (INSERTING)') or
+                line.startswith('IF INSERTING') or
+                line.startswith('ELSIF (INSERTING)') or
+                line.startswith('ELSIF INSERTING')) and 'OR' not in line
+
+    def _is_update_start(self, line: str) -> bool:
+        """Check if line starts an UPDATE block"""
+        return (line.startswith('IF (UPDATING)') or
+                line.startswith('IF UPDATING') or
+                line.startswith('ELSIF (UPDATING)') or
+                line.startswith('ELSIF UPDATING')) and 'OR' not in line
+
+    def _is_insert_or_update_start(self, line: str) -> bool:
+        """Check if line starts an INSERT OR UPDATE shared block"""
+        return ('INSERTING OR UPDATING' in line or 
+                'UPDATING OR INSERTING' in line) and line.startswith('IF')
+
+    def _extract_shared_block_manual(self, lines: List[str], start_idx: int) -> str:
+        """Manually extract the complete shared IF INSERTING OR UPDATING block"""
+        end_idx = self._find_block_end(lines, start_idx, 'IF', 'END IF')
+        block_lines = lines[start_idx+1:end_idx]  # Skip the IF line itself
+        return '\n'.join(line.strip() for line in block_lines if line.strip())
+
+    def _find_block_end(self, lines: List[str], start_idx: int, start_keyword: str, end_keyword: str) -> int:
+        """Find the matching end of a block by counting nested IF/END IF pairs"""
+        nesting_level = 1
+        i = start_idx + 1
         
-        # Find the end of the main conditional block and extract everything after
-        after_pattern = r'end\s+if\s*;?\s*(.*?)(?=\bbegin\b|\bexception\b|\bend\s*;?\s*$)'
-        after_match = re.search(after_pattern, trigger_body, re.IGNORECASE | re.DOTALL)
+        while i < len(lines) and nesting_level > 0:
+            line = lines[i].strip().upper()
+            
+            if line.startswith(start_keyword + ' '):
+                nesting_level += 1
+            elif line.startswith(end_keyword) or line == 'END;':
+                nesting_level -= 1
+                
+            i += 1
         
-        if after_match:
-            shared_code = after_match.group(1).strip()
-            # Remove the final cleanup loop as it should be handled separately
-            shared_code = re.sub(r'\bbegin\b.*?\bend\s*;\s*$', '', shared_code, flags=re.IGNORECASE | re.DOTALL)
-            return shared_code if shared_code.strip() else ''
+        return i - 1  # Return index of the END IF line
+
+    def _parse_shared_insert_update_block(self, shared_content: str, sections: Dict[str, str]):
+        """Parse the shared IF INSERTING OR UPDATING block to extract operation-specific logic"""
         
-        return ''
+        lines = shared_content.split('\n')
+        shared_logic = []
+        insert_logic = []
+        update_logic = []
+        
+        current_section = 'shared'
+        nesting_level = 0
+        
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            line_upper = line.upper()
+            
+            if not line:
+                i += 1
+                continue
+                
+            # Check for nested IF INSERTING
+            if line_upper.startswith('IF INSERTING') and 'OR' not in line_upper:
+                current_section = 'insert'
+                # Find the end of this nested block
+                end_idx = self._find_nested_block_end(lines, i)
+                insert_logic.extend(lines[i+1:end_idx])
+                i = end_idx + 1
+                current_section = 'shared'
+                continue
+                
+            # Check for nested IF UPDATING  
+            elif line_upper.startswith('IF UPDATING') and 'OR' not in line_upper:
+                current_section = 'update'
+                # Find the end of this nested block
+                end_idx = self._find_nested_block_end(lines, i)
+                update_logic.extend(lines[i+1:end_idx])
+                i = end_idx + 1
+                current_section = 'shared'
+                continue
+            
+            # Add to shared logic if not in a nested block
+            if current_section == 'shared':
+                shared_logic.append(line)
+            
+            i += 1
+        
+        # Combine shared + specific logic
+        shared_text = '\n'.join(shared_logic)
+        insert_text = '\n'.join(insert_logic)
+        update_text = '\n'.join(update_logic)
+        
+        # Combine with any existing logic and add shared parts
+        if shared_text or insert_text:
+            combined_insert = []
+            if sections['on_insert']:
+                combined_insert.append(sections['on_insert'])
+            if shared_text:
+                combined_insert.append(shared_text)
+            if insert_text:
+                combined_insert.append(insert_text)
+            sections['on_insert'] = '\n'.join(combined_insert)
+        
+        if shared_text or update_text:
+            combined_update = []
+            if sections['on_update']:
+                combined_update.append(sections['on_update'])
+            if shared_text:
+                combined_update.append(shared_text)
+            if update_text:
+                combined_update.append(update_text)
+            sections['on_update'] = '\n'.join(combined_update)
+
+    def _find_nested_block_end(self, lines: List[str], start_idx: int) -> int:
+        """Find the end of a nested IF block within shared content"""
+        nesting_level = 1
+        i = start_idx + 1
+        
+        while i < len(lines) and nesting_level > 0:
+            line = lines[i].strip().upper()
+            
+            if line.startswith('IF '):
+                nesting_level += 1
+            elif line.startswith('END IF'):
+                nesting_level -= 1
+                
+            i += 1
+        
+        return i - 1
 
     def convert_oracle_to_postgresql(self, oracle_sql: str, variables: str) -> str:
         """Main conversion method"""
