@@ -15,30 +15,222 @@ from pathlib import Path
 
 class OracleToPostgreSQLConverter:
     def __init__(self):
-        # Data type mappings
+        # Data type mappings - Oracle to PostgreSQL
         self.data_type_mappings = {
+            # Character data types
             r'\bvarchar2\b': 'varchar',
+            r'\bnvarchar2\b': 'varchar',
+            r'\bnchar\b': 'char',
+            r'\blong\b': 'text',
+            r'\brawid\b': 'varchar',
+            r'\burowid\b': 'varchar',
+            
+            # Numeric data types
+            r'\bnumber\b': 'numeric',
+            r'\bfloat\b': 'real',
+            r'\bbinary_float\b': 'real',
+            r'\bbinary_double\b': 'double precision',
             r'\bpls_integer\b': 'integer',
             r'\bsimple_integer\b': 'integer',
-            r'\bnumber\b': 'numeric',
-            r'\bdate\b': 'date',
+            r'\bbinary_integer\b': 'integer',
+            r'\bpositive\b': 'integer',
+            r'\bnatural\b': 'integer',
+            r'\bsigntype\b': 'smallint',
+            r'\bsmallint\b': 'smallint',
+            r'\binteger\b': 'integer', 
+            r'\bint\b': 'integer',
+            r'\bdecimal\b': 'decimal',
+            r'\bnumeric\b': 'numeric',
+            r'\breal\b': 'real',
+            
+            # Date and time data types
+            r'\bdate\b': 'timestamp',
+            r'\btimestamp\s+with\s+time\s+zone\b': 'timestamp with time zone',
+            r'\btimestamp\s+with\s+local\s+time\s+zone\b': 'timestamp',
+            r'\binterval\s+year\s+to\s+month\b': 'interval',
+            r'\binterval\s+day\s+to\s+second\b': 'interval',
+            
+            # Large object data types
             r'\bclob\b': 'text',
+            r'\bnclob\b': 'text',
             r'\bblob\b': 'bytea',
+            r'\bbfile\b': 'text',
+            
+            # Boolean and JSON (Oracle 12c+) - no conversion needed
+            
+            # XML data types  
+            r'\bxmltype\b': 'xml',
+            
+            # Spatial data types
+            r'\bsdo_geometry\b': 'geometry',
+            
+            # Collection data types (convert to arrays or JSON)
+            r'\bvarray\b': 'text[]',
+            r'\bnested\s+table\b': 'text[]',
+            
+            # Raw data types
+            r'\braw\b': 'bytea',
+            r'\blong\s+raw\b': 'bytea',
+            
+            # Rowid data types
+            r'\browid\b': 'varchar(18)',
+            
+            # Oracle-specific numeric subtypes
+            r'\bnaturaln\b': 'integer',
+            r'\bpositiven\b': 'integer',
+            r'\bsimple_double\b': 'double precision',
+            r'\bsimple_float\b': 'real',
         }
         
-        # Function mappings
+        # Function mappings - Oracle to PostgreSQL
         self.function_mappings = {
+            # String/Character functions
             r'\bsubstr\b': 'SUBSTRING',
-            r'\bnvl\b': 'COALESCE',
-            r'\bsysdate\b': 'CURRENT_DATE',
-            r'\btrunc\b': 'DATE_TRUNC',
+            r'\binstr\b': 'POSITION',
             r'\blength\b': 'LENGTH',
             r'\btrim\b': 'TRIM',
+            r'\bltrim\b': 'LTRIM',
+            r'\brtrim\b': 'RTRIM',
             r'\bupper\b': 'UPPER',
             r'\blower\b': 'LOWER',
-            r'\bto_date\b': 'TO_DATE',
+            r'\binitcap\b': 'INITCAP',
+            r'\breplace\b': 'REPLACE',
+            r'\btranslate\b': 'TRANSLATE',
+            r'\blpad\b': 'LPAD',
+            r'\brpad\b': 'RPAD',
+            r'\bchr\b': 'CHR',
+            r'\bascii\b': 'ASCII',
+            r'\bconcat\b': 'CONCAT',
+            r'\breverse\b': 'REVERSE',
+            r'\bsoundex\b': 'SOUNDEX',
+            
+            # Null handling functions
+            r'\bnvl\b': 'COALESCE',
+            r'\bnvl2\b': 'CASE WHEN',  # Needs special handling
+            r'\bnullif\b': 'NULLIF',
+            r'\bdecode\b': 'CASE',  # Needs special handling
+            
+            # Date/Time functions
+            r'\bsysdate\b': 'CURRENT_TIMESTAMP',
+            r'\bcurrent_date\b': 'CURRENT_DATE',
+            r'\bcurrent_timestamp\b': 'CURRENT_TIMESTAMP',
+            r'\btrunc\b': 'DATE_TRUNC',  # For dates - context dependent
+            r'\bround\b': 'DATE_TRUNC',  # For dates - context dependent
+            r'\bto_date\b': 'TO_TIMESTAMP',
+            r'\bto_char\b': 'TO_CHAR',
+            r'\bextract\b': 'EXTRACT',
+            r'\badd_months\b': 'ADD_MONTHS',  # Custom function needed
+            r'\bmonths_between\b': 'MONTHS_BETWEEN',  # Custom function needed
+            r'\bnext_day\b': 'NEXT_DAY',  # Custom function needed
+            r'\blast_day\b': 'LAST_DAY',  # Custom function needed
+            r'\bdateadd\b': 'DATE_ADD',
+            r'\bdatediff\b': 'DATE_DIFF',
+            
+            # Numeric functions
+            r'\babs\b': 'ABS',
+            r'\bceil\b': 'CEIL',
+            r'\bfloor\b': 'FLOOR',
+            r'\bmod\b': 'MOD',
+            r'\bpower\b': 'POWER',
+            r'\bsqrt\b': 'SQRT',
+            r'\bexp\b': 'EXP',
+            r'\bln\b': 'LN',
+            r'\blog\b': 'LOG',
+            r'\bsin\b': 'SIN',
+            r'\bcos\b': 'COS',
+            r'\btan\b': 'TAN',
+            r'\basin\b': 'ASIN',
+            r'\bacos\b': 'ACOS',
+            r'\batan\b': 'ATAN',
+            r'\batan2\b': 'ATAN2',
+            r'\bsinh\b': 'SINH',
+            r'\bcosh\b': 'COSH',
+            r'\btanh\b': 'TANH',
+            r'\bsign\b': 'SIGN',
             r'\bto_number\b': 'CAST',
+            
+            # Aggregate functions
+            r'\bcount\b': 'COUNT',
+            r'\bsum\b': 'SUM',
+            r'\bavg\b': 'AVG',
+            r'\bmin\b': 'MIN',
+            r'\bmax\b': 'MAX',
+            r'\bstddev\b': 'STDDEV',
+            r'\bvariance\b': 'VARIANCE',
+            r'\bmedian\b': 'PERCENTILE_CONT(0.5)',
+            r'\blistagg\b': 'STRING_AGG',
+            r'\bwm_concat\b': 'STRING_AGG',
+            
+            # Analytical functions
+            r'\brow_number\b': 'ROW_NUMBER',
+            r'\brank\b': 'RANK',
+            r'\bdense_rank\b': 'DENSE_RANK',
+            r'\bfirst_value\b': 'FIRST_VALUE',
+            r'\blast_value\b': 'LAST_VALUE',
+            r'\blead\b': 'LEAD',
+            r'\blag\b': 'LAG',
+            r'\bntile\b': 'NTILE',
+            r'\bpercent_rank\b': 'PERCENT_RANK',
+            r'\bcume_dist\b': 'CUME_DIST',
+            
+            # Conversion functions
+            r'\bcast\b': 'CAST',
+            r'\bconvert\b': 'CAST',
+            r'\bhextoraw\b': 'DECODE',
+            r'\brawtohex\b': 'ENCODE',
+            
+            # System functions
             r'\buser\b': 'current_user',
+            r'\buid\b': 'current_user',
+            r'\buserenv\b': 'current_setting',
+            r'\bsys_context\b': 'current_setting',
+            r'\bsys_guid\b': 'gen_random_uuid',
+            r'\bsessiontimezone\b': 'current_setting(\'timezone\')',
+            r'\bdbtimezone\b': 'current_setting(\'timezone\')',
+            
+            # Sequence functions (Oracle specific)
+            r'\bnextval\b': 'nextval',
+            r'\bcurrval\b': 'currval',
+            
+            # Large Object functions
+            r'\bempty_clob\b': 'NULL',
+            r'\bempty_blob\b': 'NULL',
+            r'\bdbms_lob\.getlength\b': 'LENGTH',
+            r'\bdbms_lob\.substr\b': 'SUBSTRING',
+            
+            # Utility functions
+            r'\bvsize\b': 'LENGTH',
+            r'\bdump\b': 'ENCODE',
+            r'\bgreatest\b': 'GREATEST',
+            r'\bleast\b': 'LEAST',
+            
+            # Regular expression functions (Oracle 10g+)
+            r'\bregexp_like\b': '~',  # Needs conversion
+            r'\bregexp_replace\b': 'REGEXP_REPLACE',
+            r'\bregexp_substr\b': 'SUBSTRING',
+            r'\bregexp_instr\b': 'POSITION',
+            r'\bregexp_count\b': 'REGEXP_COUNT',
+            
+            # Hierarchical functions
+            r'\bconnect_by_root\b': '',  # Requires CTE conversion
+            r'\bsys_connect_by_path\b': '',  # Requires CTE conversion
+            r'\blevel\b': '',  # Requires CTE conversion
+            
+            # XML functions
+            r'\bxmltype\b': 'XMLPARSE',
+            r'\bextractvalue\b': 'XPATH',
+            r'\bxmlserialize\b': 'XMLSERIALIZE',
+            r'\bxmlquery\b': 'XPATH',
+            
+            # JSON functions (Oracle 12c+)
+            r'\bjson_value\b': 'JSON_EXTRACT_PATH_TEXT',
+            r'\bjson_query\b': 'JSON_EXTRACT_PATH',
+            r'\bjson_table\b': 'JSON_TO_RECORDSET',
+            r'\bis_json\b': 'JSON_VALID',
+            
+            # Error handling
+            r'\bsqlcode\b': 'SQLSTATE',
+            r'\bsqlerrm\b': 'SQLERRM',
         }
         
         # Exception mappings with proper messages
@@ -162,7 +354,7 @@ class OracleToPostgreSQLConverter:
     def convert_user_context(self, sql: str) -> str:
         """Convert Oracle user context to PostgreSQL equivalent"""
         # Replace Oracle user context
-        sql = re.sub(r'select\s+nvl\(txo_security\.get_userid,\s*user\)\s+into\s+v_userid\s+from\s+dual', 'v_userid := :ins_user', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'select\s+nvl\(txo_security\.get_userid,\s*user\)\s+into\s+v_userid\s+from\s+dual', 'v_userid:=:ins_user', sql, flags=re.IGNORECASE)
         sql = re.sub(r'txo_util\.get_userid', ':ins_user', sql, flags=re.IGNORECASE)
         
         return sql
@@ -191,7 +383,7 @@ class OracleToPostgreSQLConverter:
         sql = sql.strip()
         
         # Fix assignment operators before other formatting
-        sql = re.sub(r'\s*:\s*=\s*', ' := ', sql)
+        sql = re.sub(r'\s*:\s*=\s*', ':=', sql)
         
         # Fix specific formatting issues from parsing
         sql = re.sub(r'\bTHEN\s+CASE\b', 'CASE', sql, flags=re.IGNORECASE)
@@ -251,7 +443,7 @@ class OracleToPostgreSQLConverter:
         sql = re.sub(r'^\n+', '', sql)
         
         # Add proper spacing around operators and keywords
-        sql = re.sub(r'\s*=\s*', ' = ', sql)
+        sql = re.sub(r'(?<!:)\s*=\s*', ' = ', sql)  # Don't match := assignment operators
         sql = re.sub(r'\s*<>\s*', ' <> ', sql)
         sql = re.sub(r'\s*,\s*', ', ', sql)
         
@@ -344,10 +536,10 @@ class OracleToPostgreSQLConverter:
                         # Fix specific type conversions
                         pg_var = re.sub(r'PLS_INTEGER', 'INTEGER', pg_var, flags=re.IGNORECASE)
                         pg_var = re.sub(r'SIMPLE_INTEGER', 'INTEGER', pg_var, flags=re.IGNORECASE)
-                        pg_var = re.sub(r'BOOLEAN\s*:=\s*FALSE', 'BOOLEAN := FALSE', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'BOOLEAN\s*:=\s*FALSE', 'BOOLEAN:=FALSE', pg_var, flags=re.IGNORECASE)
                         
                         # Fix assignment operators in variable declarations 
-                        pg_var = re.sub(r'\s*:\s*=\s*', ' := ', pg_var)
+                        pg_var = re.sub(r'\s*:\s*=\s*', ':=', pg_var)
                         
                         # Handle %TYPE properly - convert to appropriate PostgreSQL types
                         if '%type' in pg_var.lower():
