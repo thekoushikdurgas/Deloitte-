@@ -11,288 +11,104 @@ import glob
 from typing import Dict, List, Tuple
 import argparse
 from pathlib import Path
+import pandas as pd
 
 
 class OracleToPostgreSQLConverter:
-    def __init__(self):
-        # Data type mappings - Oracle to PostgreSQL
+    def __init__(self, excel_file: str = 'oracle_postgresql_mappings.xlsx'):
+        """Initialize converter with mappings from Excel file"""
+        try:
+            # Load mappings from Excel file
+            self.data_type_mappings, self.function_mappings, self.exception_mappings = self.load_mappings_from_excel(excel_file)
+            print(f"✅ Loaded mappings from {excel_file}")
+        except Exception as e:
+            print(f"⚠️  Warning: Could not load Excel file {excel_file}: {e}")
+            print("📦 Falling back to hardcoded mappings...")
+            self._load_fallback_mappings()
+
+    def load_mappings_from_excel(self, excel_file: str) -> Tuple[Dict[str, str], Dict[str, str], Dict[str, str]]:
+        """Load mappings from Excel file with three sheets"""
+        
+        # Read Excel sheets
+        df_data_types = pd.read_excel(excel_file, sheet_name='data_type_mappings')
+        df_functions = pd.read_excel(excel_file, sheet_name='function_mappings') 
+        df_exceptions = pd.read_excel(excel_file, sheet_name='exception_mappings')
+        
+        # Convert data types to regex patterns
+        data_type_mappings = {}
+        for _, row in df_data_types.iterrows():
+            # Handle NaN values and ensure they are strings
+            oracle_type = str(row['Oracle_Type']).strip() if pd.notna(row['Oracle_Type']) else ''
+            postgresql_type = str(row['PostgreSQL_Type']).strip() if pd.notna(row['PostgreSQL_Type']) else ''
+            
+            # Skip empty values
+            if not oracle_type or not postgresql_type:
+                continue
+                
+            # Create regex pattern with word boundaries for exact matches
+            if ' ' in oracle_type:
+                # Handle multi-word types like "timestamp with time zone"
+                pattern = r'\b' + re.escape(oracle_type).replace(r'\ ', r'\s+') + r'\b'
+            else:
+                # Single word types
+                pattern = r'\b' + oracle_type + r'\b'
+            
+            data_type_mappings[pattern] = postgresql_type
+        
+        # Convert functions to regex patterns  
+        function_mappings = {}
+        for _, row in df_functions.iterrows():
+            # Handle NaN values and ensure they are strings
+            oracle_func = str(row['Oracle_Function']).strip() if pd.notna(row['Oracle_Function']) else ''
+            postgresql_func = str(row['PostgreSQL_Function']).strip() if pd.notna(row['PostgreSQL_Function']) else ''
+            
+            # Skip empty values
+            if not oracle_func or not postgresql_func:
+                continue
+                
+            # Handle special cases for functions with dots
+            if '.' in oracle_func:
+                pattern = r'\b' + re.escape(oracle_func) + r'\b'
+            else:
+                pattern = r'\b' + oracle_func + r'\b'
+            
+            function_mappings[pattern] = postgresql_func
+        
+        # Exception mappings (no regex needed)
+        exception_mappings = {}
+        for _, row in df_exceptions.iterrows():
+            # Handle NaN values and ensure they are strings
+            oracle_exception = str(row['Oracle_Exception']).strip() if pd.notna(row['Oracle_Exception']) else ''
+            postgresql_message = str(row['PostgreSQL_Message']).strip() if pd.notna(row['PostgreSQL_Message']) else ''
+            
+            # Skip empty values
+            if not oracle_exception or not postgresql_message:
+                continue
+                
+            exception_mappings[oracle_exception] = postgresql_message
+        
+        return data_type_mappings, function_mappings, exception_mappings
+
+    def _load_fallback_mappings(self):
+        """Load hardcoded mappings as fallback if Excel file is not available"""
+        # Minimal fallback mappings - critical ones only
         self.data_type_mappings = {
-            # Character data types
             r'\bvarchar2\b': 'varchar',
-            r'\bnvarchar2\b': 'varchar',
-            r'\bnchar\b': 'char',
-            r'\blong\b': 'text',
-            r'\brawid\b': 'varchar',
-            r'\burowid\b': 'varchar',
-            
-            # Numeric data types
-            r'\bnumber\b': 'numeric',
-            r'\bfloat\b': 'real',
-            r'\bbinary_float\b': 'real',
-            r'\bbinary_double\b': 'double precision',
-            r'\bpls_integer\b': 'integer',
-            r'\bsimple_integer\b': 'integer',
-            r'\bbinary_integer\b': 'integer',
-            r'\bpositive\b': 'integer',
-            r'\bnatural\b': 'integer',
-            r'\bsigntype\b': 'smallint',
-            r'\bsmallint\b': 'smallint',
-            r'\binteger\b': 'integer', 
-            r'\bint\b': 'integer',
-            r'\bdecimal\b': 'decimal',
-            r'\bnumeric\b': 'numeric',
-            r'\breal\b': 'real',
-            
-            # Date and time data types
+            r'\bnumber\b': 'numeric', 
             r'\bdate\b': 'timestamp',
-            r'\btimestamp\s+with\s+time\s+zone\b': 'timestamp with time zone',
-            r'\btimestamp\s+with\s+local\s+time\s+zone\b': 'timestamp',
-            r'\binterval\s+year\s+to\s+month\b': 'interval',
-            r'\binterval\s+day\s+to\s+second\b': 'interval',
-            
-            # Large object data types
             r'\bclob\b': 'text',
-            r'\bnclob\b': 'text',
-            r'\bblob\b': 'bytea',
-            r'\bbfile\b': 'text',
-            
-            # Boolean and JSON (Oracle 12c+) - no conversion needed
-            
-            # XML data types  
-            r'\bxmltype\b': 'xml',
-            
-            # Spatial data types
-            r'\bsdo_geometry\b': 'geometry',
-            
-            # Collection data types (convert to arrays or JSON)
-            r'\bvarray\b': 'text[]',
-            r'\bnested\s+table\b': 'text[]',
-            
-            # Raw data types
-            r'\braw\b': 'bytea',
-            r'\blong\s+raw\b': 'bytea',
-            
-            # Rowid data types
-            r'\browid\b': 'varchar(18)',
-            
-            # Oracle-specific numeric subtypes
-            r'\bnaturaln\b': 'integer',
-            r'\bpositiven\b': 'integer',
-            r'\bsimple_double\b': 'double precision',
-            r'\bsimple_float\b': 'real',
+            r'\bblob\b': 'bytea'
         }
         
-        # Function mappings - Oracle to PostgreSQL
         self.function_mappings = {
-            # String/Character functions
             r'\bsubstr\b': 'SUBSTRING',
-            r'\binstr\b': 'POSITION',
-            r'\blength\b': 'LENGTH',
-            r'\btrim\b': 'TRIM',
-            r'\bltrim\b': 'LTRIM',
-            r'\brtrim\b': 'RTRIM',
-            r'\bupper\b': 'UPPER',
-            r'\blower\b': 'LOWER',
-            r'\binitcap\b': 'INITCAP',
-            r'\breplace\b': 'REPLACE',
-            r'\btranslate\b': 'TRANSLATE',
-            r'\blpad\b': 'LPAD',
-            r'\brpad\b': 'RPAD',
-            r'\bchr\b': 'CHR',
-            r'\bascii\b': 'ASCII',
-            r'\bconcat\b': 'CONCAT',
-            r'\breverse\b': 'REVERSE',
-            r'\bsoundex\b': 'SOUNDEX',
-            
-            # Null handling functions
             r'\bnvl\b': 'COALESCE',
-            r'\bnvl2\b': 'CASE WHEN',  # Needs special handling
-            r'\bnullif\b': 'NULLIF',
-            r'\bdecode\b': 'CASE',  # Needs special handling
-            
-            # Date/Time functions
             r'\bsysdate\b': 'CURRENT_TIMESTAMP',
-            r'\bcurrent_date\b': 'CURRENT_DATE',
-            r'\bcurrent_timestamp\b': 'CURRENT_TIMESTAMP',
-            r'\btrunc\b': 'DATE_TRUNC',  # For dates - context dependent
-            r'\bround\b': 'DATE_TRUNC',  # For dates - context dependent
-            r'\bto_date\b': 'TO_TIMESTAMP',
-            r'\bto_char\b': 'TO_CHAR',
-            r'\bextract\b': 'EXTRACT',
-            r'\badd_months\b': 'ADD_MONTHS',  # Custom function needed
-            r'\bmonths_between\b': 'MONTHS_BETWEEN',  # Custom function needed
-            r'\bnext_day\b': 'NEXT_DAY',  # Custom function needed
-            r'\blast_day\b': 'LAST_DAY',  # Custom function needed
-            r'\bdateadd\b': 'DATE_ADD',
-            r'\bdatediff\b': 'DATE_DIFF',
-            
-            # Numeric functions
-            r'\babs\b': 'ABS',
-            r'\bceil\b': 'CEIL',
-            r'\bfloor\b': 'FLOOR',
-            r'\bmod\b': 'MOD',
-            r'\bpower\b': 'POWER',
-            r'\bsqrt\b': 'SQRT',
-            r'\bexp\b': 'EXP',
-            r'\bln\b': 'LN',
-            r'\blog\b': 'LOG',
-            r'\bsin\b': 'SIN',
-            r'\bcos\b': 'COS',
-            r'\btan\b': 'TAN',
-            r'\basin\b': 'ASIN',
-            r'\bacos\b': 'ACOS',
-            r'\batan\b': 'ATAN',
-            r'\batan2\b': 'ATAN2',
-            r'\bsinh\b': 'SINH',
-            r'\bcosh\b': 'COSH',
-            r'\btanh\b': 'TANH',
-            r'\bsign\b': 'SIGN',
-            r'\bto_number\b': 'CAST',
-            
-            # Aggregate functions
-            r'\bcount\b': 'COUNT',
-            r'\bsum\b': 'SUM',
-            r'\bavg\b': 'AVG',
-            r'\bmin\b': 'MIN',
-            r'\bmax\b': 'MAX',
-            r'\bstddev\b': 'STDDEV',
-            r'\bvariance\b': 'VARIANCE',
-            r'\bmedian\b': 'PERCENTILE_CONT(0.5)',
-            r'\blistagg\b': 'STRING_AGG',
-            r'\bwm_concat\b': 'STRING_AGG',
-            
-            # Analytical functions
-            r'\brow_number\b': 'ROW_NUMBER',
-            r'\brank\b': 'RANK',
-            r'\bdense_rank\b': 'DENSE_RANK',
-            r'\bfirst_value\b': 'FIRST_VALUE',
-            r'\blast_value\b': 'LAST_VALUE',
-            r'\blead\b': 'LEAD',
-            r'\blag\b': 'LAG',
-            r'\bntile\b': 'NTILE',
-            r'\bpercent_rank\b': 'PERCENT_RANK',
-            r'\bcume_dist\b': 'CUME_DIST',
-            
-            # Conversion functions
-            r'\bcast\b': 'CAST',
-            r'\bconvert\b': 'CAST',
-            r'\bhextoraw\b': 'DECODE',
-            r'\brawtohex\b': 'ENCODE',
-            
-            # System functions
-            r'\buser\b': 'current_user',
-            r'\buid\b': 'current_user',
-            r'\buserenv\b': 'current_setting',
-            r'\bsys_context\b': 'current_setting',
-            r'\bsys_guid\b': 'gen_random_uuid',
-            r'\bsessiontimezone\b': 'current_setting(\'timezone\')',
-            r'\bdbtimezone\b': 'current_setting(\'timezone\')',
-            
-            # Sequence functions (Oracle specific)
-            r'\bnextval\b': 'nextval',
-            r'\bcurrval\b': 'currval',
-            
-            # Large Object functions
-            r'\bempty_clob\b': 'NULL',
-            r'\bempty_blob\b': 'NULL',
-            r'\bdbms_lob\.getlength\b': 'LENGTH',
-            r'\bdbms_lob\.substr\b': 'SUBSTRING',
-            
-            # Utility functions
-            r'\bvsize\b': 'LENGTH',
-            r'\bdump\b': 'ENCODE',
-            r'\bgreatest\b': 'GREATEST',
-            r'\bleast\b': 'LEAST',
-            
-            # Regular expression functions (Oracle 10g+)
-            r'\bregexp_like\b': '~',  # Needs conversion
-            r'\bregexp_replace\b': 'REGEXP_REPLACE',
-            r'\bregexp_substr\b': 'SUBSTRING',
-            r'\bregexp_instr\b': 'POSITION',
-            r'\bregexp_count\b': 'REGEXP_COUNT',
-            
-            # Hierarchical functions
-            r'\bconnect_by_root\b': '',  # Requires CTE conversion
-            r'\bsys_connect_by_path\b': '',  # Requires CTE conversion
-            r'\blevel\b': '',  # Requires CTE conversion
-            
-            # XML functions
-            r'\bxmltype\b': 'XMLPARSE',
-            r'\bextractvalue\b': 'XPATH',
-            r'\bxmlserialize\b': 'XMLSERIALIZE',
-            r'\bxmlquery\b': 'XPATH',
-            
-            # JSON functions (Oracle 12c+)
-            r'\bjson_value\b': 'JSON_EXTRACT_PATH_TEXT',
-            r'\bjson_query\b': 'JSON_EXTRACT_PATH',
-            r'\bjson_table\b': 'JSON_TO_RECORDSET',
-            r'\bis_json\b': 'JSON_VALID',
-            
-            # Error handling
-            r'\bsqlcode\b': 'SQLSTATE',
-            r'\bsqlerrm\b': 'SQLERRM',
+            r'\bto_date\b': 'TO_TIMESTAMP'
         }
         
-        # Exception mappings - Oracle to PostgreSQL with comprehensive coverage
         self.exception_mappings = {
-            # Trigger1.sql exceptions (Themes management)
-            'invalid_theme_no': 'This is not a valid Theme No',
-            'delete_no_more_possible': 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted',
-            'theme_no_only_insert': 'Theme No cannot be updated', 
-            'description_too_long': 'The automatically generated Theme Description is too long',
-            'theme_desc_proposal_too_long': 'The automatically generated Short Description Proposal is too long',
-            'theme_desc_alt_too_long': 'The automatically generated Downstream Theme Description is too long',
-            'theme_no_cannot_be_inserted': 'This Theme No already exists',
-            'onlyoneofficialchangeperday': 'Official Change for this Theme No and Day already exists',
-            'insertsmustbeofficial': 'New Themes can only be inserted by Official Changes',
-            'themedescriptionmandatory': 'If Pharma Rx Portfolio Project is set to "No", then the Theme Description must be filled',
-            'theme_desc_not_unique': 'This Theme Description already exists',
-            'in_prep_not_portf_proj': 'MDM_V_THEMES_IOF: In-prep theme must be portfolio project',
-            'in_prep_not_closed': 'MDM_V_THEMES_IOF: In-prep status validation failed',
-            'invalid_molecule_id': 'This is not a valid Molecule ID',
-            'sec_mol_list_not_empty': 'MDM_V_THEMES_IOF: Secondary molecule list not empty',
-            'admin_update_only': 'MDM_V_THEMES_IOF: Admin access required for this operation',
-            'portf_proj_mol_cre_err': 'MDM_V_THEMES_IOF: Portfolio project molecule creation error',
-            'debugging': 'Debug in Themes IOF standard',
-            
-            # Trigger2.sql exceptions (Theme molecule mapping)
-            'err_map_exists': 'MDM_THEME_MOLECULE_MAP_IOF: Mapping already exists',
-            'err_molec_id_missing': 'MDM_THEME_MOLECULE_MAP_IOF: Molecule ID is missing',
-            'err_no_portf_molecule_left': 'MDM_THEME_MOLECULE_MAP_IOF: No portfolio molecule left',
-            'err_upd_inv_map': 'MDM_THEME_MOLECULE_MAP_IOF: Invalid mapping update',
-            'err_ins_inv_map': 'MDM_THEME_MOLECULE_MAP_IOF: Invalid mapping insert',
-            'err_inv_mol_sequence': 'MDM_THEME_MOLECULE_MAP_IOF: Invalid molecule sequence',
-            'update_upd': 'MDM_THEME_MOLECULE_MAP_IOF: Update error',
-            
-            # Trigger3.sql exceptions (Company addresses)
-            'err_upd': 'The address cannot be updated because the Address type is different',
-            'err_ins': 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button',
-            'err_ctry_chg': 'The company country modified but not the Valid From Date. Please update also the Valid From Date',
-            'err_not_allowed_to_invalidate': 'It is not allowed to invalidate/delete this type of address',
-            'test_err': 'Test error with debug information',
-            'err_ins_legal_addr': 'The legal address cannot be inserted for this type of company',
-            
-            # Standard Oracle exceptions that might appear
             'no_data_found': 'No data found',
-            'too_many_rows': 'Too many rows returned',
-            'dup_val_on_index': 'Duplicate value on index',
-            'value_error': 'Numeric or value error',
-            'invalid_number': 'Invalid number',
-            'zero_divide': 'Division by zero',
-            'invalid_cursor': 'Invalid cursor',
-            'cursor_already_open': 'Cursor already open',
-            'not_logged_on': 'Not logged on',
-            'login_denied': 'Login denied',
-            'program_error': 'Program error',
-            'storage_error': 'Storage error',
-            'timeout_on_resource': 'Timeout on resource',
-            'invalid_rowid': 'Invalid ROWID',
-            'rowtype_mismatch': 'Row type mismatch',
-            'self_is_null': 'Self is null',
-            'subscript_outside_limit': 'Subscript outside limit',
-            'subscript_beyond_count': 'Subscript beyond count',
-            'access_into_null': 'Access into null',
-            'collection_is_null': 'Collection is null',
             'others': 'Unknown error occurred'
         }
 
