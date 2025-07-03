@@ -27,7 +27,7 @@ def create_mappings_excel():
             'numeric', 'real', 'real', 'double precision', 'integer',
             'integer', 'integer', 'integer', 'integer', 'smallint',
             'smallint', 'integer', 'integer', 'decimal', 'numeric', 'real',
-            'timestamp', 'timestamp with time zone', 'timestamp',
+            'date', 'timestamp with time zone', 'timestamp',
             'interval', 'interval',
             'text', 'text', 'bytea', 'text', 'xml', 'geometry',
             'text[]', 'text[]', 'bytea', 'bytea', 'varchar(18)',

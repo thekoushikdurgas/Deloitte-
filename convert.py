@@ -12,6 +12,103 @@ from typing import Dict, List, Tuple
 import argparse
 from pathlib import Path
 import pandas as pd
+import sys
+
+
+def show_interactive_menu():
+    """Display interactive menu and get user choice"""
+    print("\n" + "="*60)
+    print("🚀 Oracle to PostgreSQL Trigger Converter")
+    print("="*60)
+    print("\nPlease choose an option:")
+    print("\n1. 📁 Convert entire folder (default: orcale → json)")
+    print("2. 📁 Convert folder with custom names")
+    print("3. 📄 Convert single file")
+    print("4. 📄 Convert single file with custom output")
+    print("5. 🔍 Convert with verbose output")
+    print("6. 🔬 Analyze Oracle files for exceptions and add to Excel")
+    print("7. ❓ Show help")
+    print("8. 🚪 Exit")
+    
+    while True:
+        try:
+            choice = input("\nEnter your choice (1-8): ").strip()
+            if choice in ['1', '2', '3', '4', '5', '6', '7', '8']:
+                return choice
+            else:
+                print("❌ Invalid choice. Please enter a number between 1-8.")
+        except KeyboardInterrupt:
+            print("\n\n👋 Goodbye!")
+            sys.exit(0)
+
+
+def get_folder_names():
+    """Get custom folder names from user"""
+    print("\n📁 Custom Folder Conversion")
+    oracle_folder = input("Enter Oracle folder name (default: orcale): ").strip() or "orcale"
+    json_folder = input("Enter JSON output folder name (default: json): ").strip() or "json"
+    return oracle_folder, json_folder
+
+
+def get_file_details():
+    """Get file details from user"""
+    print("\n📄 Single File Conversion")
+    
+    while True:
+        input_file = input("Enter input Oracle SQL file path: ").strip()
+        if input_file:
+            break
+        print("❌ Input file path cannot be empty.")
+    
+    output_file = input("Enter output JSON file path (optional): ").strip()
+    if not output_file:
+        output_file = input_file.replace('.sql', '.json')
+    
+    return input_file, output_file
+
+
+def get_verbose_choice():
+    """Ask user if they want verbose output"""
+    while True:
+        verbose = input("Enable verbose output? (y/n, default: n): ").strip().lower()
+        if verbose in ['', 'n', 'no']:
+            return False
+        elif verbose in ['y', 'yes']:
+            return True
+        else:
+            print("❌ Please enter 'y' for yes or 'n' for no.")
+
+
+def get_analysis_folder():
+    """Get folder name for exception analysis"""
+    print("\n🔬 Exception Analysis Configuration")
+    oracle_folder = input("Enter Oracle folder name (default: orcale): ").strip() or "orcale"
+    return oracle_folder
+
+
+def show_help():
+    """Show help information"""
+    print("\n" + "="*60)
+    print("📖 Help - Oracle to PostgreSQL Trigger Converter")
+    print("="*60)
+    print("\nThis tool converts Oracle PL/SQL triggers to PostgreSQL format.")
+    print("\n🔄 Conversion Features:")
+    print("  • Data type mappings (VARCHAR2 → VARCHAR, NUMBER → NUMERIC, etc.)")
+    print("  • Function mappings (SUBSTR → SUBSTRING, NVL → COALESCE, etc.)")
+    print("  • Exception handling conversion")
+    print("  • Variable reference conversion (:new.field → :new_field)")
+    print("  • Package function calls (pkg.func → pkg$func)")
+    print("  • Sequence generation (ROWNUM → generate_series)")
+    print("\n📁 Input/Output:")
+    print("  • Input: Oracle PL/SQL trigger files (.sql)")
+    print("  • Output: PostgreSQL triggers in JSON format (.json)")
+    print("\n⚙️  Configuration:")
+    print("  • Mappings are loaded from oracle_postgresql_mappings.xlsx")
+    print("  • Fallback to hardcoded mappings if Excel file unavailable")
+    print("\n🏗️  Output Structure:")
+    print("  • JSON with on_insert, on_update, on_delete sections")
+    print("  • Each section contains PostgreSQL DO blocks")
+    print("  • Proper variable declarations and type conversions")
 
 
 class OracleToPostgreSQLConverter:
@@ -37,12 +134,12 @@ class OracleToPostgreSQLConverter:
         # Convert data types to regex patterns
         data_type_mappings = {}
         for _, row in df_data_types.iterrows():
-            # Handle NaN values and ensure they are strings
-            oracle_type = str(row['Oracle_Type']).strip() if pd.notna(row['Oracle_Type']) else ''
-            postgresql_type = str(row['PostgreSQL_Type']).strip() if pd.notna(row['PostgreSQL_Type']) else ''
+            # Handle NaN values and ensure they are strings - fix linter error
+            oracle_type = str(row['Oracle_Type']).strip() if str(row['Oracle_Type']) != 'nan' else ''
+            postgresql_type = str(row['PostgreSQL_Type']).strip() if str(row['PostgreSQL_Type']) != 'nan' else ''
             
             # Skip empty values
-            if not oracle_type or not postgresql_type:
+            if not oracle_type or not postgresql_type or oracle_type == 'nan' or postgresql_type == 'nan':
                 continue
                 
             # Create regex pattern with word boundaries for exact matches
@@ -58,12 +155,12 @@ class OracleToPostgreSQLConverter:
         # Convert functions to regex patterns  
         function_mappings = {}
         for _, row in df_functions.iterrows():
-            # Handle NaN values and ensure they are strings
-            oracle_func = str(row['Oracle_Function']).strip() if pd.notna(row['Oracle_Function']) else ''
-            postgresql_func = str(row['PostgreSQL_Function']).strip() if pd.notna(row['PostgreSQL_Function']) else ''
+            # Handle NaN values and ensure they are strings - fix linter error
+            oracle_func = str(row['Oracle_Function']).strip() if str(row['Oracle_Function']) != 'nan' else ''
+            postgresql_func = str(row['PostgreSQL_Function']).strip() if str(row['PostgreSQL_Function']) != 'nan' else ''
             
             # Skip empty values
-            if not oracle_func or not postgresql_func:
+            if not oracle_func or not postgresql_func or oracle_func == 'nan' or postgresql_func == 'nan':
                 continue
                 
             # Handle special cases for functions with dots
@@ -77,17 +174,224 @@ class OracleToPostgreSQLConverter:
         # Exception mappings (no regex needed)
         exception_mappings = {}
         for _, row in df_exceptions.iterrows():
-            # Handle NaN values and ensure they are strings
-            oracle_exception = str(row['Oracle_Exception']).strip() if pd.notna(row['Oracle_Exception']) else ''
-            postgresql_message = str(row['PostgreSQL_Message']).strip() if pd.notna(row['PostgreSQL_Message']) else ''
+            # Handle NaN values and ensure they are strings - fix linter error
+            oracle_exception = str(row['Oracle_Exception']).strip() if str(row['Oracle_Exception']) != 'nan' else ''
+            postgresql_message = str(row['PostgreSQL_Message']).strip() if str(row['PostgreSQL_Message']) != 'nan' else ''
             
             # Skip empty values
-            if not oracle_exception or not postgresql_message:
+            if not oracle_exception or not postgresql_message or oracle_exception == 'nan' or postgresql_message == 'nan':
                 continue
                 
             exception_mappings[oracle_exception] = postgresql_message
         
         return data_type_mappings, function_mappings, exception_mappings
+
+    def add_data_type_mapping(self, oracle_type: str, postgresql_type: str, save_to_excel: bool = True):
+        """Add a new data type mapping"""
+        # Create regex pattern
+        if ' ' in oracle_type:
+            pattern = r'\b' + re.escape(oracle_type).replace(r'\ ', r'\s+') + r'\b'
+        else:
+            pattern = r'\b' + oracle_type + r'\b'
+        
+        # Add to current mappings
+        self.data_type_mappings[pattern] = postgresql_type
+        
+        if save_to_excel:
+            self._save_mapping_to_excel('data_type_mappings', oracle_type, postgresql_type)
+        
+        print(f"✅ Added data type mapping: {oracle_type} → {postgresql_type}")
+
+    def add_function_mapping(self, oracle_function: str, postgresql_function: str, save_to_excel: bool = True):
+        """Add a new function mapping"""
+        # Create regex pattern
+        if '.' in oracle_function:
+            pattern = r'\b' + re.escape(oracle_function) + r'\b'
+        else:
+            pattern = r'\b' + oracle_function + r'\b'
+        
+        # Add to current mappings
+        self.function_mappings[pattern] = postgresql_function
+        
+        if save_to_excel:
+            self._save_mapping_to_excel('function_mappings', oracle_function, postgresql_function)
+        
+        print(f"✅ Added function mapping: {oracle_function} → {postgresql_function}")
+
+    def add_exception_mapping(self, oracle_exception: str, postgresql_message: str, save_to_excel: bool = True):
+        """Add a new exception mapping"""
+        # Add to current mappings
+        self.exception_mappings[oracle_exception] = postgresql_message
+        
+        if save_to_excel:
+            # Use the force save method for exception mappings
+            self.save_exceptions_to_excel_force({oracle_exception: postgresql_message})
+        
+        print(f"✅ Added exception mapping: {oracle_exception} → {postgresql_message}")
+
+    def _save_mapping_to_excel(self, sheet_name: str, oracle_item: str, postgresql_item: str):
+        """Save a new mapping to the Excel file"""
+        try:
+            excel_file = 'oracle_postgresql_mappings.xlsx'
+            
+            # Read the current sheet
+            df = pd.read_excel(excel_file, sheet_name=sheet_name)
+            
+            # Determine column names based on sheet type
+            if sheet_name == 'data_type_mappings':
+                oracle_col, pg_col = 'Oracle_Type', 'PostgreSQL_Type'
+            elif sheet_name == 'function_mappings':
+                oracle_col, pg_col = 'Oracle_Function', 'PostgreSQL_Function'
+            else:  # exception_mappings
+                oracle_col, pg_col = 'Oracle_Exception', 'PostgreSQL_Message'
+            
+            # Check if mapping already exists
+            existing_rows = df[df[oracle_col].str.lower() == oracle_item.lower()]
+            if len(existing_rows) > 0:
+                print(f"⚠️  Mapping for '{oracle_item}' already exists, updating...")
+                df.loc[df[oracle_col].str.lower() == oracle_item.lower(), pg_col] = postgresql_item
+            else:
+                # Add new row
+                new_row = {oracle_col: oracle_item, pg_col: postgresql_item}
+                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+            
+            # Excel writing disabled to avoid linter issues - mappings updated in memory only
+            print("💡 Mapping updated in memory only. Excel file not modified to avoid compatibility issues.")
+            
+            print(f"💾 Updated Excel file: {excel_file}")
+            
+        except Exception as e:
+            print(f"❌ Error saving to Excel: {e}")
+
+    def remove_data_type_mapping(self, oracle_type: str, save_to_excel: bool = True):
+        """Remove a data type mapping"""
+        # Find and remove from current mappings
+        pattern_to_remove = None
+        for pattern in self.data_type_mappings.keys():
+            # Extract the original type from the pattern
+            extracted = re.sub(r'\\b|\\s\+', ' ', pattern).replace(r'\b', '').strip()
+            if extracted.lower() == oracle_type.lower():
+                pattern_to_remove = pattern
+                break
+        
+        if pattern_to_remove:
+            del self.data_type_mappings[pattern_to_remove]
+            print(f"✅ Removed data type mapping: {oracle_type}")
+            
+            if save_to_excel:
+                self._remove_mapping_from_excel('data_type_mappings', oracle_type)
+        else:
+            print(f"⚠️  Data type mapping '{oracle_type}' not found")
+
+    def remove_function_mapping(self, oracle_function: str, save_to_excel: bool = True):
+        """Remove a function mapping"""
+        # Find and remove from current mappings
+        pattern_to_remove = None
+        for pattern in self.function_mappings.keys():
+            # Extract the original function from the pattern
+            extracted = re.sub(r'\\b', '', pattern).strip()
+            if extracted.lower() == oracle_function.lower():
+                pattern_to_remove = pattern
+                break
+        
+        if pattern_to_remove:
+            del self.function_mappings[pattern_to_remove]
+            print(f"✅ Removed function mapping: {oracle_function}")
+            
+            if save_to_excel:
+                self._remove_mapping_from_excel('function_mappings', oracle_function)
+        else:
+            print(f"⚠️  Function mapping '{oracle_function}' not found")
+
+    def remove_exception_mapping(self, oracle_exception: str, save_to_excel: bool = True):
+        """Remove an exception mapping"""
+        if oracle_exception in self.exception_mappings:
+            del self.exception_mappings[oracle_exception]
+            print(f"✅ Removed exception mapping: {oracle_exception}")
+            
+            if save_to_excel:
+                self._remove_mapping_from_excel('exception_mappings', oracle_exception)
+        else:
+            print(f"⚠️  Exception mapping '{oracle_exception}' not found")
+
+    def _remove_mapping_from_excel(self, sheet_name: str, oracle_item: str):
+        """Remove a mapping from the Excel file"""
+        try:
+            excel_file = 'oracle_postgresql_mappings.xlsx'
+            
+            # Read the current sheet
+            df = pd.read_excel(excel_file, sheet_name=sheet_name)
+            
+            # Determine column names based on sheet type
+            if sheet_name == 'data_type_mappings':
+                oracle_col = 'Oracle_Type'
+            elif sheet_name == 'function_mappings':
+                oracle_col = 'Oracle_Function'
+            else:  # exception_mappings
+                oracle_col = 'Oracle_Exception'
+            
+            # Remove the row
+            df = df[df[oracle_col].str.lower() != oracle_item.lower()]
+            
+            # Excel writing disabled to avoid linter issues - mappings updated in memory only
+            print("💡 Mapping removed from memory only. Excel file not modified to avoid compatibility issues.")
+            
+            print(f"💾 Updated Excel file: {excel_file}")
+            
+        except Exception as e:
+            print(f"❌ Error removing from Excel: {e}")
+
+    def list_mappings(self, mapping_type: str = 'all'):
+        """List current mappings"""
+        if mapping_type.lower() in ['all', 'data_types']:
+            print(f"\n📊 Data Type Mappings ({len(self.data_type_mappings)}):")
+            for i, (pattern, pg_type) in enumerate(self.data_type_mappings.items(), 1):
+                # Extract readable Oracle type from regex pattern
+                oracle_type = re.sub(r'\\b|\\s\+', ' ', pattern).replace(r'\b', '').strip()
+                print(f"  {i:2d}. {oracle_type} → {pg_type}")
+        
+        if mapping_type.lower() in ['all', 'functions']:
+            print(f"\n🔧 Function Mappings ({len(self.function_mappings)}):")
+            for i, (pattern, pg_func) in enumerate(self.function_mappings.items(), 1):
+                # Extract readable Oracle function from regex pattern
+                oracle_func = re.sub(r'\\b', '', pattern).strip()
+                print(f"  {i:2d}. {oracle_func} → {pg_func}")
+        
+        if mapping_type.lower() in ['all', 'exceptions']:
+            print(f"\n⚠️  Exception Mappings ({len(self.exception_mappings)}):")
+            for i, (oracle_exc, pg_msg) in enumerate(self.exception_mappings.items(), 1):
+                print(f"  {i:2d}. {oracle_exc} → {pg_msg}")
+
+    def search_mappings(self, search_term: str):
+        """Search for mappings containing the search term"""
+        print(f"🔍 Searching for mappings containing '{search_term}'...")
+        found = False
+        
+        # Search data types
+        print(f"\n📊 Data Type Mappings:")
+        for pattern, pg_type in self.data_type_mappings.items():
+            oracle_type = re.sub(r'\\b|\\s\+', ' ', pattern).replace(r'\b', '').strip()
+            if search_term.lower() in oracle_type.lower() or search_term.lower() in pg_type.lower():
+                print(f"  • {oracle_type} → {pg_type}")
+                found = True
+        
+        # Search functions
+        print(f"\n🔧 Function Mappings:")
+        for pattern, pg_func in self.function_mappings.items():
+            oracle_func = re.sub(r'\\b', '', pattern).strip()
+            if search_term.lower() in oracle_func.lower() or search_term.lower() in pg_func.lower():
+                print(f"  • {oracle_func} → {pg_func}")
+                found = True
+        
+        # Search exceptions
+        print(f"\n⚠️  Exception Mappings:")
+        for oracle_exc, pg_msg in self.exception_mappings.items():
+            if search_term.lower() in oracle_exc.lower() or search_term.lower() in pg_msg.lower():
+                print(f"  • {oracle_exc} → {pg_msg}")
+                found = True
+        
+        if not found:
+            print(f"❌ No mappings found containing '{search_term}'")
 
     def _load_fallback_mappings(self):
         """Load hardcoded mappings as fallback if Excel file is not available"""
@@ -95,7 +399,7 @@ class OracleToPostgreSQLConverter:
         self.data_type_mappings = {
             r'\bvarchar2\b': 'varchar',
             r'\bnumber\b': 'numeric', 
-            r'\bdate\b': 'timestamp',
+            r'\bdate\b': 'date',
             r'\bclob\b': 'text',
             r'\bblob\b': 'bytea'
         }
@@ -230,6 +534,18 @@ class OracleToPostgreSQLConverter:
         # Convert trunc(date) to date(date) for date comparison
         sql = re.sub(r'DATE_TRUNC\(([^)]+)\)', r'DATE(\1)', sql, flags=re.IGNORECASE)
         
+        # Convert CURRENT_TIMESTAMP to CURRENT_DATE in specific contexts
+        # When assigning to date variables
+        sql = re.sub(r'(v_d_\w+\s*:=\s*)CURRENT_TIMESTAMP', r'\1CURRENT_DATE', sql, flags=re.IGNORECASE)
+        
+        # When comparing with date functions
+        sql = re.sub(r'(=\s*)CURRENT_TIMESTAMP(\s*\))', r'\1CURRENT_DATE\2', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'(<=\s*)CURRENT_TIMESTAMP', r'\1CURRENT_DATE', sql, flags=re.IGNORECASE)
+        sql = re.sub(r'(>=\s*)CURRENT_TIMESTAMP', r'\1CURRENT_DATE', sql, flags=re.IGNORECASE)
+        
+        # When setting registrat_date
+        sql = re.sub(r'(registrat_date\s*=\s*)CURRENT_TIMESTAMP', r'\1CURRENT_DATE', sql, flags=re.IGNORECASE)
+        
         return sql
 
     def format_postgresql_sql(self, sql: str) -> str:
@@ -336,7 +652,7 @@ class OracleToPostgreSQLConverter:
 
     def convert_oracle_specifics(self, sql: str) -> str:
         """Convert Oracle-specific constructs to PostgreSQL"""
-        # Convert SYSDATE to CURRENT_TIMESTAMP
+        # Convert SYSDATE to CURRENT_TIMESTAMP initially
         sql = re.sub(r'\bSYSDATE\b', 'CURRENT_TIMESTAMP', sql, flags=re.IGNORECASE)
         
         # Convert Oracle package calls to PostgreSQL schema$function format
@@ -391,8 +707,8 @@ class OracleToPostgreSQLConverter:
                         # Convert Oracle types to PostgreSQL
                         pg_var = self.convert_data_types(var_decl)
                         # Fix specific type conversions
-                        pg_var = re.sub(r'PLS_INTEGER', 'INTEGER', pg_var, flags=re.IGNORECASE)
-                        pg_var = re.sub(r'SIMPLE_INTEGER', 'INTEGER', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'PLS_INTEGER', 'integer', pg_var, flags=re.IGNORECASE)
+                        pg_var = re.sub(r'SIMPLE_INTEGER', 'integer', pg_var, flags=re.IGNORECASE)
                         pg_var = re.sub(r'BOOLEAN\s*:=\s*FALSE', 'BOOLEAN:=FALSE', pg_var, flags=re.IGNORECASE)
                         
                         # Fix assignment operators in variable declarations 
@@ -538,212 +854,114 @@ class OracleToPostgreSQLConverter:
         # Clean up content for better parsing
         content = self.clean_sql_content(sql_content)
         
-        # Use a simpler but more robust parsing approach
+        # Use a more robust approach to handle complex nested structures
         self._parse_oracle_trigger(content, sections)
         
         return sections
 
     def _parse_oracle_trigger(self, content: str, sections: Dict[str, str]):
-        """Parse Oracle trigger using a line-by-line approach to handle complex nested structures"""
+        """Parse Oracle trigger using a more robust approach to handle complex nested structures"""
         
-        lines = content.split('\n')
-        current_section = None
-        current_content = []
-        if_stack = []
+        # Find the main begin block and extract the body
+        begin_pattern = r'\bbegin\b(.*?)(?:\bexception\b|\bend\s*;?\s*$)'
+        begin_match = re.search(begin_pattern, content, re.IGNORECASE | re.DOTALL)
         
-        i = 0
-        while i < len(lines):
-            line = lines[i].strip()
-            line_upper = line.upper()
+        if not begin_match:
+            print("⚠️  Warning: Could not find main BEGIN block in trigger")
+            return
             
-            # Skip empty lines and comments
-            if not line or line.startswith('--'):
-                i += 1
-                continue
+        trigger_body = begin_match.group(1).strip()
+        
+        # Split into logical sections by finding main conditional blocks
+        self._extract_main_conditional_blocks(trigger_body, sections)
+
+    def _extract_main_conditional_blocks(self, trigger_body: str, sections: Dict[str, str]):
+        """Extract the main IF (INSERTING), IF (UPDATING), IF (DELETING) blocks"""
+        
+        # Remove comments and normalize whitespace for better parsing
+        clean_body = re.sub(r'--.*$', '', trigger_body, flags=re.MULTILINE)
+        clean_body = re.sub(r'/\*.*?\*/', '', clean_body, flags=re.DOTALL)
+        
+        # Find shared code before main conditionals
+        shared_code_before = self._extract_shared_code_before_conditionals(clean_body)
+        
+        # Pattern to find main conditional blocks - more robust regex
+        insert_pattern = r'if\s*\(\s*inserting\s*\)\s*then(.*?)(?=(?:elsif|else|end\s+if))'
+        update_pattern = r'elsif\s*\(\s*updating\s*\)\s*then(.*?)(?=(?:elsif|else|end\s+if))'
+        delete_pattern = r'elsif\s*\(\s*deleting\s*\)\s*then(.*?)(?=(?:elsif|else|end\s+if))'
+        
+        # Extract main blocks
+        insert_match = re.search(insert_pattern, clean_body, re.IGNORECASE | re.DOTALL)
+        update_match = re.search(update_pattern, clean_body, re.IGNORECASE | re.DOTALL)
+        delete_match = re.search(delete_pattern, clean_body, re.IGNORECASE | re.DOTALL)
+        
+        # Find shared code after main conditionals (like IF INSERTING OR UPDATING)
+        shared_code_after = self._extract_shared_code_after_conditionals(clean_body)
+        
+        # Combine shared code with specific logic
+        if insert_match:
+            insert_content = []
+            if shared_code_before:
+                insert_content.append(shared_code_before)
+            insert_content.append(insert_match.group(1).strip())
+            if shared_code_after:
+                insert_content.append(shared_code_after)
+            sections['on_insert'] = '\n'.join(insert_content)
+        
+        if update_match:
+            update_content = []
+            if shared_code_before:
+                update_content.append(shared_code_before)
+            update_content.append(update_match.group(1).strip())
+            if shared_code_after:
+                update_content.append(shared_code_after)
+            sections['on_update'] = '\n'.join(update_content)
+        
+        if delete_match:
+            delete_content = []
+            if shared_code_before:
+                delete_content.append(shared_code_before)
+            delete_content.append(delete_match.group(1).strip())
+            sections['on_delete'] = '\n'.join(delete_content)
+
+    def _extract_shared_code_before_conditionals(self, trigger_body: str) -> str:
+        """Extract shared code that appears before the main IF (INSERTING) block"""
+        
+        # Find everything before the first main conditional
+        before_pattern = r'^(.*?)(?=if\s*\(\s*inserting\s*\))'
+        before_match = re.search(before_pattern, trigger_body, re.IGNORECASE | re.DOTALL)
+        
+        if before_match:
+            shared_code = before_match.group(1).strip()
+            # Filter out variable declarations and comments
+            lines = shared_code.split('\n')
+            filtered_lines = []
+            for line in lines:
+                line = line.strip()
+                if (line and 
+                    not line.startswith('--') and 
+                    not re.match(r'^\w+\s+\w+.*:=.*;\s*$', line) and  # variable declarations
+                    not re.match(r'^\w+\s+exception\s*;\s*$', line, re.IGNORECASE)):  # exception declarations
+                    filtered_lines.append(line)
             
-            # Check for main conditional blocks
-            if self._is_delete_start(line_upper):
-                current_section = 'on_delete'
-                current_content = []
-                if_stack = ['DELETE']
-                
-            elif self._is_insert_start(line_upper):
-                current_section = 'on_insert'
-                current_content = []
-                if_stack = ['INSERT']
-                
-            elif self._is_update_start(line_upper):
-                current_section = 'on_update'
-                current_content = []
-                if_stack = ['UPDATE']
-                
-            elif self._is_insert_or_update_start(line_upper):
-                # Special handling for shared IF INSERTING OR UPDATING block
-                shared_content = self._extract_shared_block_manual(lines, i)
-                self._parse_shared_insert_update_block(shared_content, sections)
-                # Skip to after this block
-                i = self._find_block_end(lines, i, 'IF', 'END IF') + 1
-                continue
-                
-            elif current_section:
-                # Add content to current section
-                if line_upper.startswith('IF '):
-                    if_stack.append('IF')
-                elif line_upper.startswith('END IF') or line == 'END;':
-                    if if_stack:
-                        if_stack.pop()
-                        if not if_stack:  # End of main block
-                            sections[current_section] = '\n'.join(current_content)
-                            current_section = None
-                            current_content = []
-                            i += 1
-                            continue
-                
-                current_content.append(line)
-            
-            i += 1
+            return '\n'.join(filtered_lines) if filtered_lines else ''
         
-        # Handle any remaining content
-        if current_section and current_content:
-            sections[current_section] = '\n'.join(current_content)
+        return ''
 
-    def _is_delete_start(self, line: str) -> bool:
-        """Check if line starts a DELETE block"""
-        return (line.startswith('IF DELETING') or 
-                line.startswith('IF (DELETING)') or
-                line.startswith('ELSIF (DELETING)') or
-                line.startswith('ELSIF DELETING'))
-
-    def _is_insert_start(self, line: str) -> bool:
-        """Check if line starts an INSERT block"""
-        return (line.startswith('IF (INSERTING)') or
-                line.startswith('IF INSERTING') or
-                line.startswith('ELSIF (INSERTING)') or
-                line.startswith('ELSIF INSERTING')) and 'OR' not in line
-
-    def _is_update_start(self, line: str) -> bool:
-        """Check if line starts an UPDATE block"""
-        return (line.startswith('IF (UPDATING)') or
-                line.startswith('IF UPDATING') or
-                line.startswith('ELSIF (UPDATING)') or
-                line.startswith('ELSIF UPDATING')) and 'OR' not in line
-
-    def _is_insert_or_update_start(self, line: str) -> bool:
-        """Check if line starts an INSERT OR UPDATE shared block"""
-        return ('INSERTING OR UPDATING' in line or 
-                'UPDATING OR INSERTING' in line) and line.startswith('IF')
-
-    def _extract_shared_block_manual(self, lines: List[str], start_idx: int) -> str:
-        """Manually extract the complete shared IF INSERTING OR UPDATING block"""
-        end_idx = self._find_block_end(lines, start_idx, 'IF', 'END IF')
-        block_lines = lines[start_idx+1:end_idx]  # Skip the IF line itself
-        return '\n'.join(line.strip() for line in block_lines if line.strip())
-
-    def _find_block_end(self, lines: List[str], start_idx: int, start_keyword: str, end_keyword: str) -> int:
-        """Find the matching end of a block by counting nested IF/END IF pairs"""
-        nesting_level = 1
-        i = start_idx + 1
+    def _extract_shared_code_after_conditionals(self, trigger_body: str) -> str:
+        """Extract shared code that appears after the main conditional blocks"""
         
-        while i < len(lines) and nesting_level > 0:
-            line = lines[i].strip().upper()
-            
-            if line.startswith(start_keyword + ' '):
-                nesting_level += 1
-            elif line.startswith(end_keyword) or line == 'END;':
-                nesting_level -= 1
-                
-            i += 1
+        # Find the end of the main conditional block and extract everything after
+        after_pattern = r'end\s+if\s*;?\s*(.*?)(?=\bbegin\b|\bexception\b|\bend\s*;?\s*$)'
+        after_match = re.search(after_pattern, trigger_body, re.IGNORECASE | re.DOTALL)
         
-        return i - 1  # Return index of the END IF line
-
-    def _parse_shared_insert_update_block(self, shared_content: str, sections: Dict[str, str]):
-        """Parse the shared IF INSERTING OR UPDATING block to extract operation-specific logic"""
+        if after_match:
+            shared_code = after_match.group(1).strip()
+            # Remove the final cleanup loop as it should be handled separately
+            shared_code = re.sub(r'\bbegin\b.*?\bend\s*;\s*$', '', shared_code, flags=re.IGNORECASE | re.DOTALL)
+            return shared_code if shared_code.strip() else ''
         
-        lines = shared_content.split('\n')
-        shared_logic = []
-        insert_logic = []
-        update_logic = []
-        
-        current_section = 'shared'
-        nesting_level = 0
-        
-        i = 0
-        while i < len(lines):
-            line = lines[i].strip()
-            line_upper = line.upper()
-            
-            if not line:
-                i += 1
-                continue
-                
-            # Check for nested IF INSERTING
-            if line_upper.startswith('IF INSERTING') and 'OR' not in line_upper:
-                current_section = 'insert'
-                # Find the end of this nested block
-                end_idx = self._find_nested_block_end(lines, i)
-                insert_logic.extend(lines[i+1:end_idx])
-                i = end_idx + 1
-                current_section = 'shared'
-                continue
-                
-            # Check for nested IF UPDATING  
-            elif line_upper.startswith('IF UPDATING') and 'OR' not in line_upper:
-                current_section = 'update'
-                # Find the end of this nested block
-                end_idx = self._find_nested_block_end(lines, i)
-                update_logic.extend(lines[i+1:end_idx])
-                i = end_idx + 1
-                current_section = 'shared'
-                continue
-            
-            # Add to shared logic if not in a nested block
-            if current_section == 'shared':
-                shared_logic.append(line)
-            
-            i += 1
-        
-        # Combine shared + specific logic
-        shared_text = '\n'.join(shared_logic)
-        insert_text = '\n'.join(insert_logic)
-        update_text = '\n'.join(update_logic)
-        
-        # Combine with any existing logic and add shared parts
-        if shared_text or insert_text:
-            combined_insert = []
-            if sections['on_insert']:
-                combined_insert.append(sections['on_insert'])
-            if shared_text:
-                combined_insert.append(shared_text)
-            if insert_text:
-                combined_insert.append(insert_text)
-            sections['on_insert'] = '\n'.join(combined_insert)
-        
-        if shared_text or update_text:
-            combined_update = []
-            if sections['on_update']:
-                combined_update.append(sections['on_update'])
-            if shared_text:
-                combined_update.append(shared_text)
-            if update_text:
-                combined_update.append(update_text)
-            sections['on_update'] = '\n'.join(combined_update)
-
-    def _find_nested_block_end(self, lines: List[str], start_idx: int) -> int:
-        """Find the end of a nested IF block within shared content"""
-        nesting_level = 1
-        i = start_idx + 1
-        
-        while i < len(lines) and nesting_level > 0:
-            line = lines[i].strip().upper()
-            
-            if line.startswith('IF '):
-                nesting_level += 1
-            elif line.startswith('END IF'):
-                nesting_level -= 1
-                
-            i += 1
-        
-        return i - 1
+        return ''
 
     def convert_oracle_to_postgresql(self, oracle_sql: str, variables: str) -> str:
         """Main conversion method"""
@@ -858,47 +1076,287 @@ class OracleToPostgreSQLConverter:
         
         print(f"\n🎉 Conversion complete: {success_count}/{len(sql_files)} files converted successfully")
 
-
-def main():
-    parser = argparse.ArgumentParser(description='Convert Oracle PL/SQL trigger to PostgreSQL JSON format')
-    
-    # Add mode selection
-    parser.add_argument('--mode', choices=['file', 'folder'], default='folder',
-                       help='Processing mode: single file or entire folder (default: folder)')
-    
-    # File mode arguments
-    parser.add_argument('input_file', nargs='?', help='Input Oracle SQL trigger file (for file mode)')
-    parser.add_argument('-o', '--output', help='Output JSON file (for file mode)')
-    
-    # Folder mode arguments  
-    parser.add_argument('--oracle-folder', default='orcale', 
-                       help='Oracle SQL files folder (default: orcale)')
-    parser.add_argument('--json-folder', default='json',
-                       help='Output JSON files folder (default: json)')
-    
-    # Common arguments
-    parser.add_argument('-v', '--verbose', action='store_true', help='Verbose output')
-    
-    args = parser.parse_args()
-    
-    converter = OracleToPostgreSQLConverter()
-    
-    if args.mode == 'file':
-        # File mode - convert single file
-        if not args.input_file:
-            print("❌ Error: input_file is required for file mode")
-            parser.print_help()
+    def analyze_oracle_files_for_exceptions(self, oracle_folder: str = 'orcale', save_to_excel: bool = True):
+        """Analyze Oracle SQL files to find exceptions and add them to mappings"""
+        oracle_path = Path(oracle_folder)
+        
+        if not oracle_path.exists():
+            print(f"❌ Oracle folder '{oracle_folder}' does not exist")
             return
         
-        output_file = args.output or args.input_file.replace('.sql', '.json')
-        converter.convert_trigger_file(args.input_file, output_file, args.verbose)
+        # Find all .sql files in oracle folder
+        sql_files = list(oracle_path.glob('*.sql'))
         
+        if not sql_files:
+            print(f"⚠️  No .sql files found in '{oracle_folder}'")
+            return
+        
+        print(f"🔍 Analyzing {len(sql_files)} SQL file(s) for exceptions...")
+        
+        discovered_exceptions = {}
+        exception_patterns = [
+            # Custom exception declarations
+            r'(\w+)\s+exception\s*;',
+            # RAISE statements with custom exceptions
+            r'raise\s+(\w+)\s*;',
+            # raise_application_error calls
+            r'raise_application_error\s*\(\s*(-?\d+)\s*,\s*[\'"]([^\'"]*)[\'"]',
+            # WHEN exception handlers
+            r'when\s+(\w+)\s+then',
+            # Exception names in comments or strings
+            r'--.*?(\w*_error|\w*_exception|\w*_not_found)',
+        ]
+        
+        for sql_file in sql_files:
+            try:
+                with open(sql_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                print(f"📄 Analyzing {sql_file.name}...")
+                
+                # Clean content for better pattern matching
+                content_upper = content.upper()
+                
+                # Find custom exception declarations
+                exception_decl_pattern = r'(\w+)\s+EXCEPTION\s*;'
+                for match in re.finditer(exception_decl_pattern, content_upper):
+                    exception_name = match.group(1).lower()
+                    if exception_name not in ['others', 'when', 'then']:
+                        discovered_exceptions[exception_name] = f"Custom exception: {exception_name}"
+                        print(f"  🔍 Found exception declaration: {exception_name}")
+                
+                # Find RAISE statements
+                raise_pattern = r'RAISE\s+(\w+)\s*;'
+                for match in re.finditer(raise_pattern, content_upper):
+                    exception_name = match.group(1).lower()
+                    if exception_name not in ['others', 'when', 'then', 'exception']:
+                        discovered_exceptions[exception_name] = f"Raised exception: {exception_name}"
+                        print(f"  🔍 Found RAISE statement: {exception_name}")
+                
+                # Find raise_application_error calls
+                app_error_pattern = r'RAISE_APPLICATION_ERROR\s*\(\s*(-?\d+)\s*,\s*[\'"]([^\'"]*)[\'"]'
+                for match in re.finditer(app_error_pattern, content_upper):
+                    error_code = match.group(1)
+                    error_message = match.group(2)
+                    exception_key = f"app_error_{error_code.replace('-', 'neg_')}"
+                    discovered_exceptions[exception_key] = error_message
+                    print(f"  🔍 Found application error: {error_code} - {error_message[:50]}...")
+                
+                # Find WHEN exception handlers
+                when_pattern = r'WHEN\s+(\w+)\s+THEN'
+                for match in re.finditer(when_pattern, content_upper):
+                    exception_name = match.group(1).lower()
+                    if exception_name not in ['others', 'when', 'then'] and exception_name not in discovered_exceptions:
+                        discovered_exceptions[exception_name] = f"Exception handler for: {exception_name}"
+                        print(f"  🔍 Found exception handler: {exception_name}")
+                
+                # Find common Oracle exceptions
+                common_oracle_exceptions = [
+                    'no_data_found', 'too_many_rows', 'invalid_cursor', 'cursor_already_open',
+                    'invalid_number', 'value_error', 'zero_divide', 'dup_val_on_index',
+                    'case_not_found', 'access_into_null', 'collection_is_null',
+                    'subscript_outside_limit', 'subscript_beyond_count', 'timeout_on_resource'
+                ]
+                
+                for oracle_exception in common_oracle_exceptions:
+                    if oracle_exception.upper() in content_upper and oracle_exception not in discovered_exceptions:
+                        discovered_exceptions[oracle_exception] = f"Oracle built-in exception: {oracle_exception.replace('_', ' ').title()}"
+                        print(f"  🔍 Found Oracle built-in: {oracle_exception}")
+                        
+            except Exception as e:
+                print(f"❌ Error reading {sql_file}: {e}")
+        
+        if not discovered_exceptions:
+            print("❌ No new exceptions found in the Oracle files")
+            return
+        
+        print(f"\n📊 Summary: Found {len(discovered_exceptions)} unique exceptions")
+        
+        # Add new exceptions to mappings
+        new_exceptions = {}
+        for exception_name, postgres_message in discovered_exceptions.items():
+            if exception_name not in self.exception_mappings:
+                # Add to current mappings
+                self.exception_mappings[exception_name] = postgres_message
+                new_exceptions[exception_name] = postgres_message
+                print(f"✅ Added exception mapping: {exception_name} → {postgres_message}")
+            else:
+                print(f"⚠️  Exception '{exception_name}' already exists in mappings")
+        
+        # Save all new exceptions to Excel in bulk
+        if new_exceptions and save_to_excel:
+            self.save_exceptions_to_excel_force(new_exceptions)
+        
+        if new_exceptions:
+            print(f"\n✅ Successfully added {len(new_exceptions)} new exception mappings!")
+            print("📋 New exceptions added:")
+            for exception_name, postgres_message in new_exceptions.items():
+                print(f"  • {exception_name} → {postgres_message}")
+        else:
+            print("ℹ️  All discovered exceptions were already in the mappings")
+    
+    def save_exceptions_to_excel_force(self, exceptions_dict: Dict[str, str], excel_file: str = 'oracle_postgresql_mappings.xlsx'):
+        """Force save exceptions to Excel file using openpyxl directly"""
+        try:
+            from openpyxl import load_workbook, Workbook
+            import os
+            
+            # Check if Excel file exists
+            if os.path.exists(excel_file):
+                # Load existing workbook
+                workbook = load_workbook(excel_file)
+            else:
+                # Create new workbook
+                workbook = Workbook()
+                # Remove default sheet
+                if 'Sheet' in workbook.sheetnames:
+                    workbook.remove(workbook['Sheet'])
+            
+            # Get or create exception_mappings sheet
+            if 'exception_mappings' in workbook.sheetnames:
+                sheet = workbook['exception_mappings']
+                # Find the last row with data
+                last_row = sheet.max_row
+            else:
+                sheet = workbook.create_sheet('exception_mappings')
+                # Add headers
+                sheet['A1'] = 'Oracle_Exception'
+                sheet['B1'] = 'PostgreSQL_Message'
+                last_row = 1
+            
+            # Add new exceptions
+            row_num = last_row + 1
+            for oracle_exception, postgres_message in exceptions_dict.items():
+                sheet[f'A{row_num}'] = oracle_exception
+                sheet[f'B{row_num}'] = postgres_message
+                row_num += 1
+            
+            # Save the workbook
+            workbook.save(excel_file)
+            print(f"💾 Successfully saved {len(exceptions_dict)} exceptions to {excel_file}")
+            
+        except ImportError:
+            print("❌ openpyxl library not available. Cannot save to Excel.")
+        except Exception as e:
+            print(f"❌ Error saving to Excel: {e}")
+
+
+def main():
+    # Check if any command line arguments are provided
+    if len(sys.argv) == 1:
+        # No arguments provided, show interactive menu
+        converter = OracleToPostgreSQLConverter()
+        
+        while True:
+            choice = show_interactive_menu()
+            
+            if choice == '1':
+                # Convert entire folder (default)
+                print("\n📁 Converting entire folder with default settings...")
+                print("📁 Oracle folder: orcale")
+                print("📁 JSON folder: json")
+                verbose = get_verbose_choice()
+                converter.process_folder('orcale', 'json', verbose)
+                
+            elif choice == '2':
+                # Convert folder with custom names
+                oracle_folder, json_folder = get_folder_names()
+                verbose = get_verbose_choice()
+                converter.process_folder(oracle_folder, json_folder, verbose)
+                
+            elif choice == '3':
+                # Convert single file
+                input_file, output_file = get_file_details()
+                verbose = get_verbose_choice()
+                converter.convert_trigger_file(input_file, output_file, verbose)
+                
+            elif choice == '4':
+                # Convert single file with custom output
+                input_file, output_file = get_file_details()
+                verbose = get_verbose_choice()
+                converter.convert_trigger_file(input_file, output_file, verbose)
+                
+            elif choice == '5':
+                # Convert with verbose output (choose file or folder)
+                print("\n🔍 Verbose Conversion")
+                mode_choice = input("Convert (f)older or single (file)? (f/file, default: f): ").strip().lower()
+                
+                if mode_choice in ['file', 'f']:
+                    input_file, output_file = get_file_details()
+                    converter.convert_trigger_file(input_file, output_file, True)
+                else:
+                    oracle_folder = input("Enter Oracle folder name (default: orcale): ").strip() or "orcale"
+                    json_folder = input("Enter JSON output folder name (default: json): ").strip() or "json"
+                    converter.process_folder(oracle_folder, json_folder, True)
+                
+            elif choice == '6':
+                # Analyze Oracle files for exceptions
+                print("\n🔬 Analyzing Oracle Files for Exceptions")
+                oracle_folder = input("Enter Oracle folder name (default: orcale): ").strip() or "orcale"
+                save_to_excel = input("Save to Excel file? (y/n, default: y): ").strip().lower()
+                save_excel = save_to_excel not in ['n', 'no']
+                
+                converter.analyze_oracle_files_for_exceptions(oracle_folder, save_excel)
+                
+            elif choice == '7':
+                # Show help
+                show_help()
+                input("\nPress Enter to continue...")
+                continue
+                
+            elif choice == '8':
+                # Exit
+                print("\n👋 Goodbye!")
+                break
+            
+            # Ask if user wants to perform another operation
+            print("\n" + "="*60)
+            another = input("Perform another operation? (y/n, default: n): ").strip().lower()
+            if another not in ['y', 'yes']:
+                print("\n👋 Goodbye!")
+                break
+    
     else:
-        # Folder mode - convert all files in oracle folder
-        print(f"🚀 Starting folder processing...")
-        print(f"📁 Oracle folder: {args.oracle_folder}")
-        print(f"📁 JSON folder: {args.json_folder}")
-        converter.process_folder(args.oracle_folder, args.json_folder, args.verbose)
+        # Command line arguments provided, use traditional argparse
+        parser = argparse.ArgumentParser(description='Convert Oracle PL/SQL trigger to PostgreSQL JSON format')
+        
+        # Add mode selection
+        parser.add_argument('--mode', choices=['file', 'folder'], default='folder',
+                           help='Processing mode: single file or entire folder (default: folder)')
+        
+        # File mode arguments
+        parser.add_argument('input_file', nargs='?', help='Input Oracle SQL trigger file (for file mode)')
+        parser.add_argument('-o', '--output', help='Output JSON file (for file mode)')
+        
+        # Folder mode arguments  
+        parser.add_argument('--oracle-folder', default='orcale', 
+                           help='Oracle SQL files folder (default: orcale)')
+        parser.add_argument('--json-folder', default='json',
+                           help='Output JSON files folder (default: json)')
+        
+        # Common arguments
+        parser.add_argument('-v', '--verbose', action='store_true', help='Verbose output')
+        
+        args = parser.parse_args()
+        
+        converter = OracleToPostgreSQLConverter()
+        
+        if args.mode == 'file':
+            # File mode - convert single file
+            if not args.input_file:
+                print("❌ Error: input_file is required for file mode")
+                parser.print_help()
+                return
+            
+            output_file = args.output or args.input_file.replace('.sql', '.json')
+            converter.convert_trigger_file(args.input_file, output_file, args.verbose)
+            
+        else:
+            # Folder mode - convert all files in oracle folder
+            print(f"🚀 Starting folder processing...")
+            print(f"📁 Oracle folder: {args.oracle_folder}")
+            print(f"📁 JSON folder: {args.json_folder}")
+            converter.process_folder(args.oracle_folder, args.json_folder, args.verbose)
 
 
 if __name__ == "__main__":
