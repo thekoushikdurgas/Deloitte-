@@ -828,5 +828,3 @@ exception
    then
       raise_application_error(-20900, 'Debug in Themes IOF standard');
 end;
-
-

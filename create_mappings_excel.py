@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """
 Script to create Excel file with Oracle to PostgreSQL mappings
