@@ -10,11 +10,12 @@ import os
 import json
 from pathlib import Path
 from typing import List, Optional
-from .config import Config, ConversionResult
+from .config import Config, ConversionResult, AnalysisResult
 from .mapping_manager import MappingManager
 from .regex_processor import RegexProcessor
 from .trigger_parser import TriggerParser
 from .postgresql_formatter import PostgreSQLFormatter
+from .sql_analyzer import SQLAnalyzer
 
 
 class OracleToPostgreSQLConverter:
@@ -50,25 +51,25 @@ class OracleToPostgreSQLConverter:
         
         # STEP 4: Initialize formatter (creates final PostgreSQL DO blocks)
         self.formatter = PostgreSQLFormatter()
-    
-    def convert_file(self, input_file: str, output_file: str, verbose: bool = False) -> ConversionResult:
-        """
-        Convert a single Oracle trigger file to PostgreSQL JSON format
         
-        This is the main conversion method that orchestrates the entire process:
-        1. Validates input file
-        2. Parses Oracle trigger sections and variables  
-        3. Applies all transformations
-        4. Formats as PostgreSQL DO blocks
-        5. Outputs structured JSON
+        # STEP 5: Initialize SQL analyzer (creates intermediate structured analysis)
+        self.sql_analyzer = SQLAnalyzer()
+    
+    def analyze_sql_file(self, input_file: str, sql_json_file: str, verbose: bool = False) -> AnalysisResult:
+        """
+        Analyze Oracle SQL file and create structured JSON representation
+        
+        This method performs the first step of the enhanced conversion process:
+        analyzing the Oracle SQL code and extracting its structure into a JSON format
+        that helps understand the code better before converting to PostgreSQL.
         
         Args:
             input_file: Path to Oracle SQL trigger file
-            output_file: Path where PostgreSQL JSON should be written
+            sql_json_file: Path where SQL analysis JSON should be written
             verbose: Whether to print detailed progress information
             
         Returns:
-            ConversionResult with success status and details
+            AnalysisResult with success status and analysis details
         """
         try:
             # =============================================================================
@@ -77,11 +78,169 @@ class OracleToPostgreSQLConverter:
             
             # Validate that input file exists
             if not os.path.exists(input_file):
+                return AnalysisResult(
+                    success=False,
+                    input_file=input_file,
+                    output_file=sql_json_file,
+                    error_message=f"Input file not found: {input_file}"
+                )
+            
+            # Check file size to prevent memory issues with very large files
+            if os.path.getsize(input_file) > Config.MAX_FILE_SIZE:
+                return AnalysisResult(
+                    success=False,
+                    input_file=input_file,
+                    output_file=sql_json_file,
+                    error_message=f"File too large: {input_file} (max: {Config.MAX_FILE_SIZE} bytes)"
+                )
+            
+            if verbose:
+                print(f"📊 Analyzing SQL structure: {os.path.basename(input_file)}")
+            
+            # =============================================================================
+            # PHASE 2: PERFORM SQL ANALYSIS
+            # =============================================================================
+            
+            # Read the Oracle trigger file content
+            with open(input_file, 'r', encoding='utf-8') as f:
+                oracle_content = f.read()
+            
+            # Ensure file has actual content
+            if not oracle_content.strip():
+                return AnalysisResult(
+                    success=False,
+                    input_file=input_file,
+                    output_file=sql_json_file,
+                    error_message="Input file is empty"
+                )
+            
+            # Extract trigger name from filename
+            trigger_name = Path(input_file).stem
+            
+            # Perform the analysis
+            analysis_data = self.sql_analyzer.analyze_trigger(oracle_content, trigger_name)
+            
+            if verbose:
+                stats = analysis_data.get('statistics', {})
+                print(f"   📋 Lines: {stats.get('total_lines', 0)}")
+                print(f"   🔢 Variables: {len(analysis_data.get('declarations', {}).get('variables', []))}")
+                print(f"   📊 Complexity: {stats.get('complexity_score', 0)}")
+            
+            # =============================================================================
+            # PHASE 3: SAVE ANALYSIS TO JSON FILE
+            # =============================================================================
+            
+            # Ensure output directory exists
+            output_dir = os.path.dirname(sql_json_file)
+            if output_dir:
+                os.makedirs(output_dir, exist_ok=True)
+            
+            # Save the analysis
+            self.sql_analyzer.save_analysis(analysis_data, sql_json_file)
+            
+            # =============================================================================
+            # PHASE 4: RETURN SUCCESS RESULT
+            # =============================================================================
+            
+            return AnalysisResult(
+                success=True,
+                input_file=input_file,
+                output_file=sql_json_file,
+                analysis_data=analysis_data,
+                complexity_score=analysis_data.get('statistics', {}).get('complexity_score', 0)
+            )
+            
+        except Exception as e:
+            # =============================================================================
+            # ERROR HANDLING - RETURN FAILURE RESULT
+            # =============================================================================
+            
+            return AnalysisResult(
+                success=False,
+                input_file=input_file,
+                output_file=sql_json_file,
+                error_message=str(e)
+            )
+    
+    def convert_file(self, input_file: str, output_file: str, verbose: bool = False) -> ConversionResult:
+        """
+        Convert a single Oracle trigger file to PostgreSQL JSON format (Enhanced 3-step process)
+        
+        This is the main conversion method that orchestrates the enhanced 3-step process:
+        1. SQL Analysis: Analyzes Oracle SQL and creates structured JSON representation
+        2. Conversion: Parses Oracle trigger sections, applies transformations
+        3. PostgreSQL Formatting: Formats as PostgreSQL DO blocks and outputs JSON
+        
+        Enhanced Process Flow: SQL -> SQL_JSON -> PostgreSQL_JSON
+        
+        Args:
+            input_file: Path to Oracle SQL trigger file
+            output_file: Path where PostgreSQL JSON should be written
+            verbose: Whether to print detailed progress information
+            
+        Returns:
+            ConversionResult with success status, paths, and conversion details
+        """
+        try:
+            # =============================================================================
+            # PHASE 0: ENHANCED 3-STEP PROCESS SETUP
+            # =============================================================================
+            
+            # Generate SQL JSON file path (intermediate analysis step)
+            # Create path in sql_json folder instead of json folder
+            output_path = Path(output_file)
+            sql_json_filename = output_path.stem + '_analysis.json'
+            
+            # Determine sql_json directory
+            if 'json' in str(output_path.parent):
+                # Replace 'json' with 'sql_json' in the path
+                sql_json_dir = str(output_path.parent).replace('json', 'sql_json')
+            else:
+                # Use default sql_json folder
+                sql_json_dir = Config.DEFAULT_SQL_JSON_FOLDER
+            
+            sql_json_file = os.path.join(sql_json_dir, sql_json_filename)
+            
+            if verbose:
+                print(f"🔄 Enhanced 3-step conversion process:")
+                print(f"   📄 SQL → 📊 SQL_JSON → 📝 PostgreSQL_JSON")
+                print(f"   📄 {os.path.basename(input_file)} → 📊 {os.path.basename(sql_json_file)} → 📝 {os.path.basename(output_file)}")
+            
+            # =============================================================================
+            # PHASE 1: SQL ANALYSIS - CREATE STRUCTURED REPRESENTATION
+            # =============================================================================
+            
+            if verbose:
+                print(f"📊 Step 1: Analyzing SQL structure...")
+            
+            # Perform SQL analysis (Step 1 of 3)
+            analysis_result = self.analyze_sql_file(input_file, sql_json_file, verbose)
+            if not analysis_result.success:
                 return ConversionResult(
                     success=False,
                     input_file=input_file,
                     output_file=output_file,
                     sections_converted=[],
+                    sql_json_file=sql_json_file,
+                    error_message=f"SQL analysis failed: {analysis_result.error_message}"
+                )
+            
+            if verbose:
+                print(f"✅ SQL analysis completed: {os.path.basename(sql_json_file)}")
+                print(f"🔄 Step 2: Converting to PostgreSQL...")
+            
+            # =============================================================================
+            # PHASE 2: INPUT VALIDATION AND READING (for conversion)
+            # =============================================================================
+            
+            # Validate that input file exists (redundant but kept for safety)
+            if not os.path.exists(input_file):
+                return ConversionResult(
+                    success=False,
+                    input_file=input_file,
+                    output_file=output_file,
+                    sections_converted=[],
+                    sql_json_file=sql_json_file,
                     error_message=f"Input file not found: {input_file}"
                 )
             
@@ -92,6 +251,7 @@ class OracleToPostgreSQLConverter:
                     input_file=input_file,
                     output_file=output_file,
                     sections_converted=[],
+                    sql_json_file=sql_json_file,
                     error_message=f"File too large: {input_file} (max: {Config.MAX_FILE_SIZE} bytes)"
                 )
             
@@ -106,6 +266,7 @@ class OracleToPostgreSQLConverter:
                     input_file=input_file,
                     output_file=output_file,
                     sections_converted=[],
+                    sql_json_file=sql_json_file,
                     error_message="Input file is empty"
                 )
             
@@ -125,7 +286,7 @@ class OracleToPostgreSQLConverter:
                 print(f"📋 Found sections: {[k for k, v in sections.items() if v.strip()]}")
             
             # =============================================================================
-            # PHASE 3: CONVERSION - TRANSFORM EACH SECTION
+            # PHASE 3: POSTGRESQL CONVERSION - TRANSFORM EACH SECTION
             # =============================================================================
             
             json_structure = {}      # Final JSON structure to output
@@ -151,7 +312,7 @@ class OracleToPostgreSQLConverter:
                     converted_sections.append(operation)
             
             # =============================================================================
-            # PHASE 4: OUTPUT - WRITE JSON FILE
+            # PHASE 4: POSTGRESQL OUTPUT - WRITE JSON FILE
             # =============================================================================
             
             # Ensure output directory exists (create if necessary)
@@ -164,14 +325,19 @@ class OracleToPostgreSQLConverter:
                 json.dump(json_structure, f, indent=4)
             
             # =============================================================================
-            # PHASE 5: RETURN SUCCESS RESULT
+            # PHASE 5: RETURN SUCCESS RESULT (Enhanced with SQL analysis info)
             # =============================================================================
+            
+            if verbose:
+                print(f"✅ Step 3: PostgreSQL conversion completed: {os.path.basename(output_file)}")
+                print(f"🎉 3-step conversion successful!")
             
             return ConversionResult(
                 success=True,
                 input_file=input_file,
                 output_file=output_file,
                 sections_converted=converted_sections,
+                sql_json_file=sql_json_file,
                 variables_count=len(variables.split(';')) - 1 if variables else 0
             )
             
@@ -180,19 +346,27 @@ class OracleToPostgreSQLConverter:
             # ERROR HANDLING - RETURN FAILURE RESULT
             # =============================================================================
             
+            # Try to get sql_json_file if it was defined
+            try:
+                sql_json_file_for_error = sql_json_file
+            except NameError:
+                sql_json_file_for_error = None
+            
             return ConversionResult(
                 success=False,
                 input_file=input_file,
                 output_file=output_file,
                 sections_converted=[],
+                sql_json_file=sql_json_file_for_error,
                 error_message=str(e)
             )
     
     def process_folder(self, oracle_folder: str, json_folder: str, verbose: bool = False) -> List[ConversionResult]:
         """
-        Process all SQL files in a folder (batch conversion)
+        Process all SQL files in a folder (Enhanced 3-step batch conversion)
         
-        This method handles batch processing of multiple Oracle trigger files.
+        This method handles batch processing of multiple Oracle trigger files using
+        the enhanced 3-step process: SQL -> SQL_JSON -> PostgreSQL_JSON.
         It's designed to be efficient and provide clear progress feedback.
         
         Args:
@@ -252,7 +426,8 @@ class OracleToPostgreSQLConverter:
             # Provide immediate feedback on each file
             if result.success:
                 sections_info = f"({len(result.sections_converted)} sections)" if result.sections_converted else ""
-                print(f"✅ {sql_file.name} → {output_file.name} {sections_info}")
+                sql_json_info = f"[📊 {Path(result.sql_json_file).name}]" if result.sql_json_file else ""
+                print(f"✅ {sql_file.name} → {output_file.name} {sections_info} {sql_json_info}")
             else:
                 print(f"❌ {sql_file.name}: {result.error_message}")
         
@@ -264,9 +439,11 @@ class OracleToPostgreSQLConverter:
         success_count = sum(1 for r in results if r.success)
         total_sections = sum(len(r.sections_converted) for r in results if r.success)
         total_variables = sum(r.variables_count for r in results if r.success)
+        sql_json_count = sum(1 for r in results if r.success and r.sql_json_file)
         
-        print(f"\n🎉 Batch conversion complete!")
+        print(f"\n🎉 Enhanced 3-step batch conversion complete!")
         print(f"   📊 Files: {success_count}/{len(results)} converted successfully")
+        print(f"   📋 SQL Analysis: {sql_json_count} analysis files created")
         print(f"   📋 Sections: {total_sections} trigger sections converted")
         print(f"   📝 Variables: {total_variables} variables processed")
         

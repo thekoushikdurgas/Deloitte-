@@ -24,7 +24,7 @@ BEGIN
         where theme_no = NVL(:new.theme_no, :old.theme_no);
 
 
-    IF DELETING
+    IF (DELETING)
     THEN
         /*
         DELETE FROM theme_molecule_map tmm
@@ -72,7 +72,7 @@ BEGIN
 
 
 
-    IF INSERTING OR UPDATING
+    IF (INSERTING OR UPDATING)
     THEN                 -- select number of valid mappings for given theme_no
         SELECT COUNT (*)
           INTO v_count_t_mappings
@@ -80,7 +80,7 @@ BEGIN
          WHERE tmm.theme_no = :new.theme_no AND tmm.valid_ind = 'Y';
 
 
-        IF :new.molecule_id IS NULL
+        IF (:new.molecule_id IS NULL)
         THEN
             RAISE err_molec_id_missing;
         /*
@@ -103,9 +103,9 @@ BEGIN
         END IF;
 
 
-        IF UPDATING
+        IF (UPDATING)
         THEN
-            IF :new.molecule_seq_no > v_count_t_mappings
+            IF (:new.molecule_seq_no > v_count_t_mappings)
             THEN
                 RAISE err_upd_inv_map;
             END IF;
@@ -120,7 +120,7 @@ BEGIN
 
 
 
-        IF :new.molecule_id <> NVL (:old.molecule_id, '-1')
+        IF (:new.molecule_id <> NVL (:old.molecule_id, '-1'))
         THEN
             SELECT COUNT (*)
               INTO v_count_t_mol_map
@@ -132,7 +132,7 @@ BEGIN
 
 
 
-            IF v_count_t_mol_map > 0
+            IF (v_count_t_mol_map > 0)
             THEN
                 RAISE err_map_exists;
             END IF;
@@ -146,7 +146,7 @@ BEGIN
                    AND tmm.valid_ind = 'N';
 
 
-            IF v_count_t_mol_map > 0
+            IF (v_count_t_mol_map > 0)
             THEN
                 invalid_mapping_exists := TRUE;
             END IF;
@@ -157,12 +157,12 @@ BEGIN
 
 
 
-        IF INSERTING
+        IF (INSERTING)
         THEN
             CASE
                 WHEN :new.molecule_seq_no = v_count_t_mappings + 1
                 THEN
-                    IF invalid_mapping_exists
+                    IF (invalid_mapping_exists)
                     THEN
                         -- update to valid, place mapping at the end
                         UPDATE theme_molecule_map tmm
@@ -202,7 +202,7 @@ BEGIN
 
 
                     -- place new mapping on new position
-                    IF invalid_mapping_exists
+                    IF (invalid_mapping_exists)
                     THEN
                         -- update to valid, place mapping at new position
                         UPDATE theme_molecule_map tmm
@@ -235,11 +235,11 @@ BEGIN
         END IF;       ---INSERTING -------------------------------------------
 
 
-        IF UPDATING
+        IF (UPDATING)
         THEN
-            IF :new.molecule_id IS NOT NULL
+            IF (:new.molecule_id IS NOT NULL)
             THEN
-                IF     :new.molecule_id = :old.molecule_id AND :new.molecule_seq_no = :old.molecule_seq_no
+                IF (:new.molecule_id = :old.molecule_id AND :new.molecule_seq_no = :old.molecule_seq_no)
                 AND :new.molecule_map_char <> :old.molecule_map_char
                 then
                 UPDATE theme_molecule_map tmm
@@ -249,7 +249,7 @@ BEGIN
                 end if;
 
 
-                IF     :new.molecule_id = :old.molecule_id AND :new.molecule_seq_no <> :old.molecule_seq_no
+                IF (:new.molecule_id = :old.molecule_id AND :new.molecule_seq_no <> :old.molecule_seq_no)
                 THEN -- BLOCK START  existing molecule is moved (update seq_no)
                     -- existing molecule is moved (update seq_no)
                     -- delete old mapping
@@ -264,7 +264,7 @@ BEGIN
                            AND tmm.molecule_id = :old.molecule_id;
 
 
-                    IF :old.molecule_seq_no < :new.molecule_seq_no
+                    IF (:old.molecule_seq_no < :new.molecule_seq_no)
                     THEN
                         -- move valid mappings left
                         UPDATE theme_molecule_map tmm
@@ -287,7 +287,7 @@ BEGIN
 
 
                     -- place valid mapping on new position
-                    IF invalid_mapping_exists
+                    IF (invalid_mapping_exists)
                     THEN
                         -- update to valid, place mapping at new position
                         UPDATE theme_molecule_map tmm
@@ -319,7 +319,7 @@ BEGIN
             END IF;
 
 
-            IF     :new.molecule_id <> :old.molecule_id AND :new.molecule_seq_no <> :old.molecule_seq_no
+            IF (:new.molecule_id <> :old.molecule_id AND :new.molecule_seq_no <> :old.molecule_seq_no)
             THEN            -- BLOCK START  new molecule in arbitrary position
                 -- we know that the new mapping doesn't exist yet
                 -- we know that the old mapping exists
@@ -348,7 +348,7 @@ BEGIN
 
 
                 -- place new mapping on new position
-                IF invalid_mapping_exists
+                IF (invalid_mapping_exists)
                 THEN
                     -- update to valid, update molecule_map_char, place mapping at new position
                     UPDATE theme_molecule_map tmm
@@ -375,7 +375,7 @@ BEGIN
             END IF;           -- BLOCK END  new molecule in arbitrary position
 
 
-            IF     :new.molecule_id <> :old.molecule_id
+            IF (:new.molecule_id <> :old.molecule_id)
                AND :new.molecule_seq_no = :old.molecule_seq_no
             THEN             -- BLOCK START  new molecule in existing position
                 -- old mapping  is removed
@@ -388,7 +388,7 @@ BEGIN
 
 
                 -- place new mapping on position
-                IF invalid_mapping_exists
+                IF (invalid_mapping_exists)
                 THEN
                     -- update to valid, place mapping at new position
                     UPDATE theme_molecule_map tmm
@@ -443,12 +443,12 @@ BEGIN
             HAVING COUNT (*) > 1);
 
 
-    IF v_seq_no_duplicate_cnt > 0
+    IF (v_seq_no_duplicate_cnt > 0)
     THEN
         RAISE err_inv_mol_sequence;
     END IF;
 /*
-    IF v_mappings_changed
+    IF (v_mappings_changed)
     THEN                  -- store the theme_no for theme with changed mapping
         -- as a description update may be necessary (for portfolio projects)
         gmd.gmd_util_themes.g_theme_no_upd_molec_map :=

@@ -153,23 +153,14 @@ begin
 
    v_molec_in_lic_prtnr := gmd_util_themes.get_molec_in_lic_prtnr(:new.molecule_id);
 
-    if (:new.official_ind = 'N')
-	THEN
-		v_trademark_no := :new.trademark_no;
-	ELSE
-		v_trademark_no := :old.trademark_no;
-	END IF;
+   if (:new.official_ind = 'N')
+      then
+         v_trademark_no := :new.trademark_no;
+   else
+      v_trademark_no := :old.trademark_no;
+   END IF;
 
-	v_theme_desc_proposal := gmd_util_themes.get_theme_short_name(p_theme_no_portf => :new.theme_no
-																	  ,p_molecule_id_portf => :new.molecule_id
-																	  ,p_prod_short_cd_portf => :new.prod_short_cd
-																	  ,p_odg_no_port => v_odg_no
-																	  ,p_resgrp_cd_port => v_resgrp_cd
-																	  ,p_reslin_cd_port => v_reslin_cd
-																	  ,p_line_ext_info_port => :new.line_ext_info
-																	  ,p_in_lic_prtnr_portf => null
-																	  ,p_trademark_no_portf => v_trademark_no
-																	  ,p_trunc_desc_length => 'N');
+	v_theme_desc_proposal := gmd_util_themes.get_theme_short_name(p_theme_no_portf => :new.theme_no,p_molecule_id_portf => :new.molecule_id,p_prod_short_cd_portf => :new.prod_short_cd,p_odg_no_port => v_odg_no,p_resgrp_cd_port => v_resgrp_cd,p_reslin_cd_port => v_reslin_cd,p_line_ext_info_port => :new.line_ext_info,p_in_lic_prtnr_portf => null,p_trademark_no_portf => v_trademark_no,p_trunc_desc_length => 'N');
 
 	 if (:new.manual_short_desc is null and length(v_theme_desc_proposal) > 30)
 	 then
@@ -687,7 +678,7 @@ begin
             AND nmp.proposal_status_cd = 'E' ;
 
 
-          IF v_evolved_nmp_cnt > 0
+          IF (v_evolved_nmp_cnt > 0)
           THEN
 
 		    -- short_name has changed so proposal_name must be updated accordingly
@@ -703,7 +694,7 @@ begin
 	-- handle New Medicine Proposals with theme_no starting with 71.. or 74
 	IF (INSERTING and :new.theme_no is not null and gmd_util_themes.get_themes_range_automatic_nmp(:new.theme_no) = 'Y')
     THEN
-	    IF :new.proposal_id is not null
+	    IF (:new.proposal_id is not null)
 		THEN
 			  SELECT count(*) INTO v_evolved_nmp_cnt
 			  FROM mdm_v_new_medicine_proposals_mtn
@@ -713,7 +704,7 @@ begin
 		END IF;
 
 		-- automatic create NMP only if no prposal_id is selected or the selected one is evolved
-		IF :new.proposal_id is null or (:new.proposal_id is not null and v_evolved_nmp_cnt = 0)
+		IF (:new.proposal_id is null or (:new.proposal_id is not null and v_evolved_nmp_cnt = 0))
 		THEN
 		   IF (:new.molecule_id is not null)
 		   THEN

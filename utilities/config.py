@@ -8,7 +8,7 @@ used throughout the converter application.
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Union, Callable
+from typing import Dict, List, Optional, Union, Callable, Any
 import re
 
 # =============================================================================
@@ -24,8 +24,9 @@ class Config:
     hunting through code.
     """
     # Default folder names for input and output
-    DEFAULT_ORACLE_FOLDER = 'orcale'      # Where Oracle SQL trigger files are stored
-    DEFAULT_JSON_FOLDER = 'json'          # Where PostgreSQL JSON output files go
+    DEFAULT_ORACLE_FOLDER = 'files/oracle'      # Where Oracle SQL trigger files are stored
+    DEFAULT_JSON_FOLDER = 'files/json'          # Where PostgreSQL JSON output files go
+    DEFAULT_SQL_JSON_FOLDER = 'files/sql_json'  # Where SQL analysis JSON files are stored
     DEFAULT_EXCEL_FILE = 'oracle_postgresql_mappings.xlsx'  # Mapping configuration file
     
     # Processing limits and batch sizes
@@ -65,6 +66,7 @@ class ConversionResult:
         success: Whether the conversion completed successfully
         input_file: Path to the source Oracle SQL file
         output_file: Path to the generated PostgreSQL JSON file
+        sql_json_file: Path to the intermediate SQL analysis JSON file
         sections_converted: List of trigger sections that were converted
         error_message: Error details if conversion failed
         variables_count: Number of variables extracted from the trigger
@@ -73,8 +75,33 @@ class ConversionResult:
     input_file: str                        # Source file path that was processed
     output_file: str                       # Destination file path for output
     sections_converted: List[str]          # Which trigger sections were found and converted
+    sql_json_file: Optional[str] = None    # Path to intermediate SQL analysis JSON file
     error_message: Optional[str] = None    # Error message if something went wrong
     variables_count: int = 0               # Count of variables extracted from DECLARE section
+
+
+@dataclass
+class AnalysisResult:
+    """
+    Result of SQL analysis operation
+    
+    This data class represents the result of analyzing Oracle SQL code
+    and extracting its structure into a JSON format.
+    
+    Attributes:
+        success: Whether the analysis completed successfully
+        input_file: Path to the source Oracle SQL file
+        output_file: Path to the generated analysis JSON file
+        analysis_data: The actual analysis dictionary
+        error_message: Error details if analysis failed
+        complexity_score: Calculated complexity score of the SQL
+    """
+    success: bool                          # True if analysis succeeded, False otherwise
+    input_file: str                        # Source file path that was analyzed
+    output_file: str                       # Destination file path for analysis output
+    analysis_data: Optional[Dict[str, Any]] = None   # The actual analysis dictionary
+    error_message: Optional[str] = None    # Error message if something went wrong
+    complexity_score: int = 0              # Complexity score of the analyzed SQL
 
 
 @dataclass

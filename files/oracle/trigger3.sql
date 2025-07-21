@@ -35,15 +35,15 @@ BEGIN
 
 
 
-    IF INSERTING
+    IF (INSERTING)
     THEN
-        IF cntr > 0
+        IF (cntr > 0)
         THEN
             RAISE err_ins;
         END IF;
     END IF;
    
-IF INSERTING or UPDATING
+IF (INSERTING or UPDATING)
 THEN
    
 
@@ -54,7 +54,7 @@ THEN
      WHERE company_cd = NVL ( :new.company_cd, :old.company_cd);
 
 
-    IF v_company_type_cd not in ('L','A') and nvl(:new.address_type_cd, :old.address_type_cd) IN ('L')
+    IF (v_company_type_cd not in ('L','A') and nvl(:new.address_type_cd, :old.address_type_cd) IN ('L'))
         THEN
             RAISE err_ins_legal_addr;
     END IF;
@@ -64,15 +64,15 @@ THEN
 
 
 
-    IF nvl(:new.address_type_cd, :old.address_type_cd) in ( 'P','L')
+    IF (nvl(:new.address_type_cd, :old.address_type_cd) in ( 'P','L'))
      THEN
      
-        IF nvl(:old.valid_from, trunc(sysdate)) = nvl(:new.valid_from, trunc(sysdate)) AND :old.country_id <>   :new.country_id
+        IF (nvl(:old.valid_from, trunc(sysdate)) = nvl(:new.valid_from, trunc(sysdate)) AND :old.country_id <>   :new.country_id)
             THEN
                 RAISE err_ctry_chg;
             END IF;
    
-        IF cntr = 0 THEN
+        IF (cntr = 0) THEN
        
         --insert address P/L + RES/INC with valid_from date
         MDM_UTIL_ADDRESSES.modify_company_address(p_company_cd          => :new.company_cd
@@ -97,7 +97,7 @@ THEN
                     ELSE
                    
                         --check if there are changes on the valid_from date and country => if YES, old records will be expired and new ones will be inserted    
-                        IF nvl(:old.valid_from, trunc(sysdate)) <> nvl(:new.valid_from, trunc(sysdate)) and :old.country_id <> :new.country_id
+                        IF (nvl(:old.valid_from, trunc(sysdate)) <> nvl(:new.valid_from, trunc(sysdate)) and :old.country_id <> :new.country_id)
                             THEN
                                     --update the P/L existing address with new valid_from -1
                                     --update the RES/INC address with valid_to = last day of the year of valid from date
@@ -127,7 +127,7 @@ THEN
                                 select count(*) into cntr from cfg_v_companies where company_cd = :new.company_cd and valid_ind = 'Y' and cbc_gbe_scope = 'Y' and company_type_cd in ('B','L');
                                
                                
-                                 IF :new.address_type_cd = 'P' and cntr > 0
+                                 IF (:new.address_type_cd = 'P' and cntr > 0)
                                  THEN  
                                     --update existing JU-mapping with last day of the year of valid from date
                                     --insert new JU mapping with first day of the next year of the valid from date
@@ -137,7 +137,7 @@ THEN
                                      WHERE country_id = :new.country_id;
                                    
                                     --check if the the day used is first day of the year
-                                    IF to_char(:new.valid_from, 'dd.mm') = '01.01'
+                                    IF (to_char(:new.valid_from, 'dd.mm') = '01.01')
                                         THEN
                                         --find the first day of the current year of valid from
                                         v_valid_from := to_date(ADD_MONTHS(trunc(:new.valid_from,'yyyy'),10),'dd.mm.yyyy');
@@ -158,7 +158,7 @@ THEN
                                                 i_action_type           => 'INSERT');
                                                
                                     --do the mapping changes also for all the other companies (Rep Office and Virtual) which uses this company as legal company
-                                    IF v_company_type_cd = 'L'
+                                    IF (v_company_type_cd = 'L')
                                         THEN
                                        
                                         FOR V_REC in (select company_cd from cfg_v_companies where legal_company_cd = :new.company_cd and valid_ind = 'Y' and cbc_gbe_scope = 'Y' and company_type_cd in ('O','V'))
@@ -207,9 +207,9 @@ THEN
        
 
 
-    IF nvl(:new.address_type_cd, :old.address_type_cd) not in ( 'P','L')
+    IF (nvl(:new.address_type_cd, :old.address_type_cd) not in ( 'P','L'))
         THEN
-            IF cntr = 0
+            IF (cntr = 0)
                 THEN
                     --insert address different than P, L address type with valid_from date
                     MDM_UTIL_ADDRESSES.modify_company_address(p_company_cd => :new.company_cd
@@ -256,10 +256,10 @@ THEN
 END IF;
 
 
-IF DELETING
+IF (DELETING)
     THEN
    
-    IF nvl(:new.address_type_cd, :old.address_type_cd) in ('L','P')
+    IF (nvl(:new.address_type_cd, :old.address_type_cd) in ('L','P'))
         THEN
             RAISE err_not_allowed_to_invalidate;
    
