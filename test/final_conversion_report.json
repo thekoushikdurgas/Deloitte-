@@ -1,0 +1,50 @@
+{
+  "conversion_summary": {
+    "start_time": "2025-07-30T06:01:06.967217",
+    "oracle_folder": "files/oracle",
+    "enhanced_folder": "files/expected_ana_json",
+    "sql_json_folder": "files/sql_json",
+    "end_time": "2025-07-30T06:01:07.208679",
+    "success_rate": 100.0
+  },
+  "successful_conversions": [
+    {
+      "oracle_file": "files\\oracle\\trigger1.sql",
+      "enhanced_file": "files\\expected_ana_json\\trigger1_enhanced_analysis.json",
+      "sql_json_file": "files\\sql_json\\trigger1_enhanced_analysis.json",
+      "statistics": {
+        "operations_count": 5,
+        "variables_count": 29,
+        "exceptions_count": 18,
+        "exception_handlers_count": 18
+      }
+    },
+    {
+      "oracle_file": "files\\oracle\\trigger2.sql",
+      "enhanced_file": "files\\expected_ana_json\\trigger2_enhanced_analysis.json",
+      "sql_json_file": "files\\sql_json\\trigger2_enhanced_analysis.json",
+      "statistics": {
+        "operations_count": 4,
+        "variables_count": 6,
+        "exceptions_count": 7,
+        "exception_handlers_count": 5
+      }
+    },
+    {
+      "oracle_file": "files\\oracle\\trigger3.sql",
+      "enhanced_file": "files\\expected_ana_json\\trigger3_enhanced_analysis.json",
+      "sql_json_file": "files\\sql_json\\trigger3_enhanced_analysis.json",
+      "statistics": {
+        "operations_count": 5,
+        "variables_count": 5,
+        "exceptions_count": 6,
+        "exception_handlers_count": 6
+      }
+    }
+  ],
+  "failed_conversions": [],
+  "total_processed": 3,
+  "total_operations": 14,
+  "total_variables": 40,
+  "total_exceptions": 31
+}
