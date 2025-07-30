@@ -9,8 +9,268 @@ parsing, and provides a user-friendly experience.
 
 import sys
 import argparse
+import os
+import glob
+from datetime import datetime
 from .config import Config
 from .converter import OracleToPostgreSQLConverter
+from .sql_formatter_agent import SQLCodeFormatterAgent
+
+
+def format_oracle_files(oracle_folder: str, format_folder: str, verbose: bool = False):
+    """
+    Format Oracle SQL files from oracle folder to format_oracle folder
+    
+    Args:
+        oracle_folder (str): Source folder containing Oracle SQL files
+        format_folder (str): Destination folder for formatted files
+        verbose (bool): Enable verbose output and save detailed report
+    """
+    try:
+        # Create output directories if they don't exist
+        os.makedirs(format_folder, exist_ok=True)
+        os.makedirs("output", exist_ok=True)
+        
+        # Find all SQL files in the oracle folder
+        sql_files = glob.glob(os.path.join(oracle_folder, "*.sql"))
+        
+        if not sql_files:
+            print(f"❌ No SQL files found in {oracle_folder}")
+            return
+            
+        print(f"📁 Found {len(sql_files)} SQL files to format:")
+        for file in sql_files:
+            print(f"   • {os.path.basename(file)}")
+        
+        # Initialize the SQL formatter agent
+        formatter = SQLCodeFormatterAgent(indent_width=4, keyword_case='upper')
+        
+        # Process each file and collect results
+        formatted_files = []
+        processing_results = []
+        start_time = datetime.now()
+        
+        for sql_file in sql_files:
+            try:
+                # Read the original file
+                with open(sql_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                # Format the content
+                filename = os.path.basename(sql_file)
+                result = formatter.process_file(content, filename)
+                
+                if result.get('success', False):
+                    # The formatter already saves the file, we need to move it to our target folder
+                    source_file = f"formatted_{filename}"
+                    output_file = os.path.join(format_folder, f"formatted_{filename}")
+                    
+                    # Move the file from current directory to target folder
+                    if os.path.exists(source_file):
+                        try:
+                            # Read the content and write to target location
+                            with open(source_file, 'r', encoding='utf-8') as f:
+                                formatted_content = f.read()
+                            with open(output_file, 'w', encoding='utf-8') as f:
+                                f.write(formatted_content)
+                            # Remove the temporary file
+                            os.remove(source_file)
+                            formatted_files.append(output_file)
+                            
+                            # Store result for report
+                            result['input_file'] = sql_file
+                            result['output_file'] = output_file
+                            processing_results.append(result)
+                            
+                        except Exception as e:
+                            print(f"❌ Error moving formatted file for {filename}: {str(e)}")
+                    else:
+                        print(f"❌ Formatted file not found for {filename}")
+                    
+                    if verbose:
+                        print(f"✅ Formatted: {filename} → formatted_{filename}")
+                        print(f"   Size: {result['original_length']:,} → {result['formatted_length']:,} characters")
+                        print(f"   Reduction: {result['reduction_percentage']:.1f}%")
+                        if result.get('errors'):
+                            print(f"   Issues found: {len(result['errors'])}")
+                else:
+                    print(f"❌ Failed to format {filename}: {result.get('error', 'Unknown error')}")
+                    # Store failed result
+                    failed_result = {'input_file': sql_file, 'filename': filename, 'success': False, 'error': result.get('error', 'Unknown error')}
+                    processing_results.append(failed_result)
+                    
+            except Exception as e:
+                print(f"❌ Error processing {sql_file}: {str(e)}")
+                # Store error result
+                error_result = {'input_file': sql_file, 'filename': os.path.basename(sql_file), 'success': False, 'error': str(e)}
+                processing_results.append(error_result)
+        
+        end_time = datetime.now()
+        processing_duration = end_time - start_time
+        
+        # Generate and save report if verbose mode is enabled
+        if verbose and processing_results:
+            report_path = generate_formatting_report(processing_results, oracle_folder, format_folder, start_time, end_time, processing_duration)
+            print(f"\n📄 Detailed report saved to: {report_path}")
+        
+        # Summary
+        print(f"\n🎨 Formatting completed!")
+        print(f"✅ Successfully formatted: {len(formatted_files)} files")
+        print(f"📁 Output directory: {format_folder}")
+        
+        if formatted_files:
+            print(f"\n📋 Formatted files:")
+            for file in formatted_files:
+                print(f"   • {os.path.basename(file)}")
+                
+    except Exception as e:
+        print(f"❌ Error during formatting: {str(e)}")
+
+
+def generate_formatting_report(results, oracle_folder, format_folder, start_time, end_time, duration):
+    """
+    Generate a detailed formatting report and save it to output directory
+    
+    Args:
+        results (list): List of processing results for each file
+        oracle_folder (str): Source folder path
+        format_folder (str): Destination folder path
+        start_time (datetime): Processing start time
+        end_time (datetime): Processing end time
+        duration (timedelta): Total processing duration
+    
+    Returns:
+        str: Path to the generated report file
+    """
+    # Generate report filename with timestamp
+    timestamp = start_time.strftime("%Y%m%d_%H%M%S")
+    report_filename = f"oracle_formatting_report_{timestamp}.txt"
+    report_path = os.path.join("output", report_filename)
+    
+    successful_results = [r for r in results if r.get('success', False)]
+    failed_results = [r for r in results if not r.get('success', False)]
+    
+    # Calculate statistics
+    total_files = len(results)
+    successful_files = len(successful_results)
+    failed_files = len(failed_results)
+    
+    if successful_results:
+        total_original_size = sum(r.get('original_length', 0) for r in successful_results)
+        total_formatted_size = sum(r.get('formatted_length', 0) for r in successful_results)
+        total_size_reduction = sum(r.get('size_reduction', 0) for r in successful_results)
+        total_comments_removed = sum(r.get('comments_removed', 0) for r in successful_results)
+        total_errors_found = sum(len(r.get('errors', [])) for r in successful_results)
+        avg_reduction_pct = (total_size_reduction / total_original_size * 100) if total_original_size > 0 else 0
+    else:
+        total_original_size = total_formatted_size = total_size_reduction = total_comments_removed = total_errors_found = avg_reduction_pct = 0
+    
+    # Generate report content
+    report_content = f"""
+============================================================
+📄 ORACLE SQL FORMATTING REPORT
+============================================================
+
+📅 Generated: {end_time.strftime('%Y-%m-%d %H:%M:%S')}
+⏱️  Processing Duration: {duration.total_seconds():.2f} seconds
+
+============================================================
+📂 DIRECTORIES
+============================================================
+📁 Source Folder: {oracle_folder}
+📁 Output Folder: {format_folder}
+📁 Report Location: output/
+
+============================================================
+📊 SUMMARY STATISTICS
+============================================================
+📄 Total Files Processed: {total_files}
+✅ Successfully Formatted: {successful_files}
+❌ Failed to Format: {failed_files}
+⏱️  Average Processing Time: {(duration.total_seconds() / total_files):.2f} seconds per file
+
+============================================================
+📏 SIZE ANALYSIS
+============================================================
+📏 Total Original Size: {total_original_size:,} characters
+📏 Total Formatted Size: {total_formatted_size:,} characters
+💾 Total Size Reduction: {total_size_reduction:,} characters
+📊 Average Size Reduction: {avg_reduction_pct:.1f}%
+🧹 Total Comments Removed: {total_comments_removed:,} characters
+
+============================================================
+🔍 VALIDATION SUMMARY
+============================================================
+⚠️  Total Issues Found: {total_errors_found}
+📊 Average Issues per File: {(total_errors_found / successful_files):.1f} (for successful files)
+
+============================================================
+📋 DETAILED FILE RESULTS
+============================================================
+"""
+
+    # Add detailed results for each file
+    for i, result in enumerate(results, 1):
+        filename = result.get('filename', 'Unknown')
+        report_content += f"\n{i}. FILE: {filename}\n"
+        report_content += f"   {'='*50}\n"
+        
+        if result.get('success', False):
+            report_content += f"   ✅ Status: Successfully formatted\n"
+            report_content += f"   📁 Input: {result.get('input_file', 'N/A')}\n"
+            report_content += f"   📁 Output: {result.get('output_file', 'N/A')}\n"
+            report_content += f"   📏 Original Size: {result.get('original_length', 0):,} characters\n"
+            report_content += f"   📏 Formatted Size: {result.get('formatted_length', 0):,} characters\n"
+            report_content += f"   💾 Size Reduction: {result.get('size_reduction', 0):,} characters ({result.get('reduction_percentage', 0):.1f}%)\n"
+            report_content += f"   🧹 Comments Removed: {result.get('comments_removed', 0):,} characters\n"
+            
+            errors = result.get('errors', [])
+            report_content += f"   ⚠️  Issues Found: {len(errors)}\n"
+            if errors:
+                report_content += f"   📝 Issue Details:\n"
+                for j, error in enumerate(errors, 1):
+                    report_content += f"      {j}. {error}\n"
+        else:
+            report_content += f"   ❌ Status: Failed to format\n"
+            report_content += f"   📁 Input: {result.get('input_file', 'N/A')}\n"
+            report_content += f"   🔴 Error: {result.get('error', 'Unknown error')}\n"
+
+    # Add recommendations section
+    report_content += f"""
+============================================================
+🎯 RECOMMENDATIONS
+============================================================
+1. Review IF-THEN-END IF block matching issues
+2. Check LOOP-END LOOP statement pairing
+3. Verify semicolon placement for SQL statements
+4. Consider manual review of complex nested structures
+5. Test formatted code before deployment
+6. Address any failed formatting attempts
+
+============================================================
+📊 FORMATTING FEATURES APPLIED
+============================================================
+✅ Comment removal and code cleaning
+✅ Keyword standardization (UPPERCASE)
+✅ Consistent indentation (4 spaces)
+✅ Syntax validation and error reporting
+✅ Comprehensive processing statistics
+
+============================================================
+🏁 REPORT END
+============================================================
+Generated by Oracle to PostgreSQL Trigger Converter (Optimized)
+Report saved at: {report_path}
+"""
+
+    # Write report to file
+    try:
+        with open(report_path, 'w', encoding='utf-8') as f:
+            f.write(report_content)
+        return report_path
+    except Exception as e:
+        print(f"❌ Error saving report: {str(e)}")
+        return None
 
 
 def show_interactive_menu():
@@ -33,16 +293,17 @@ def show_interactive_menu():
     print("\n1. 📁 Convert entire folder (default: orcale → json)")
     print("2. 📁 Convert folder with custom names")
     print("3. 📄 Convert single file")
-    print("4. ❓ Show help")
-    print("5. 🚪 Exit")
+    print("4. 🎨 Format Oracle SQL files (oracle → format_oracle)")
+    print("5. ❓ Show help")
+    print("6. 🚪 Exit")
     
     # Input validation loop - keep asking until valid choice
     while True:
         try:
-            choice = input("\nEnter your choice (1-5): ").strip()
-            if choice in ['1', '2', '3', '4', '5']:
+            choice = input("\nEnter your choice (1-6): ").strip()
+            if choice in ['1', '2', '3', '4', '5', '6']:
                 return choice  # Valid choice, return it
-            print("❌ Invalid choice. Please enter 1-5.")
+            print("❌ Invalid choice. Please enter 1-6.")
         except KeyboardInterrupt:
             # Handle Ctrl+C gracefully
             print("\n👋 Goodbye!")
@@ -63,9 +324,14 @@ def show_help():
     print("  • Variable reference conversion (:new.field → :new_field)")
     print("  • Package function calls (pkg.func → pkg$func)")
     print("  • Wraps output in PostgreSQL DO blocks")
+    print("\n🎨 Formatting Features:")
+    print("  • SQL code formatting with proper indentation")
+    print("  • Comment removal and code cleaning")
+    print("  • Syntax validation and error reporting")
+    print("  • Processing statistics and detailed reports")
     print("\n📁 Input/Output:")
-    print("  • Input: Oracle PL/SQL trigger files (.sql)")
-    print("  • Output: PostgreSQL triggers in JSON format (.json)")
+    print("  • Conversion: Oracle PL/SQL trigger files (.sql) → PostgreSQL JSON (.json)")
+    print("  • Formatting: Oracle SQL files (.sql) → Formatted SQL files (.sql)")
     print("\n⚙️  Configuration:")
     print(f"  • Mappings loaded from {Config.DEFAULT_EXCEL_FILE}")
     print("  • Falls back to built-in mappings if Excel unavailable")
@@ -139,9 +405,23 @@ def run_interactive_mode():
                 continue
                 
         # -------------------------------------------------------------------------
-        # OPTION 4: Show help information
+        # OPTION 4: Format Oracle SQL files
         # -------------------------------------------------------------------------
         elif choice == '4':
+            try:
+                oracle_folder = input(f"Oracle folder (files/oracle): ").strip() or "files/oracle"
+                format_folder = input(f"Format output folder (files/format_oracle): ").strip() or "files/format_oracle"
+                verbose = input("Verbose output? (y/n): ").strip().lower() == 'y'
+                print(f"\n🎨 Formatting Oracle SQL files: {oracle_folder} → {format_folder}")
+                format_oracle_files(oracle_folder, format_folder, verbose)
+            except (EOFError, KeyboardInterrupt):
+                print("\n⚠️  Operation cancelled by user")
+                continue
+        
+        # -------------------------------------------------------------------------
+        # OPTION 5: Show help information
+        # -------------------------------------------------------------------------
+        elif choice == '5':
             show_help()
             try:
                 input("\nPress Enter to continue...")
@@ -150,9 +430,9 @@ def run_interactive_mode():
             continue  # Return to menu
             
         # -------------------------------------------------------------------------
-        # OPTION 5: Exit application
+        # OPTION 6: Exit application
         # -------------------------------------------------------------------------
-        elif choice == '5':
+        elif choice == '6':
             print("\n👋 Goodbye!")
             break
         
