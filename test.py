@@ -147,7 +147,11 @@ class OracleTriggerProcessor:
 
 if __name__ == '__main__':
     # Example usage: replace with your actual file paths
-    files = ['trigger1.sql', 'trigger2.sql', 'trigger3.sql']
+    files = [
+        'files/oracle/trigger1.sql',
+        'files/oracle/trigger2.sql', 
+        'files/oracle/trigger3.sql'
+    ]
     agent = OracleTriggerProcessor(files)
     agent.process_all()
     agent.report()
