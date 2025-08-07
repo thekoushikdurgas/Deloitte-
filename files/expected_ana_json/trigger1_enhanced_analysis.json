@@ -1,13 +1,6 @@
 {
   "trigger_metadata": {
     "trigger_name": "trigger1",
-    "timing": "AFTER",
-    "events": [
-      "INSERT",
-      "UPDATE",
-      "DELETE"
-    ],
-    "table_name": "themes",
     "has_declare_section": true,
     "has_begin_section": true,
     "has_exception_section": true
@@ -244,6 +237,80 @@
       {
         "name": "debugging",
         "type": "user_defined"
+      }
+    ],
+    "exception_handlers": [
+      {
+        "exception_name": "admin_update_only",
+        "handler_code": "raise_application_error(-20115, 'MDM_V_THEMES_IOF');"
+      },
+      {
+        "exception_name": "in_prep_not_portf_proj",
+        "handler_code": "raise_application_error(-20116, 'MDM_V_THEMES_IOF');"
+      },
+      {
+        "exception_name": "in_prep_not_closed",
+        "handler_code": "raise_application_error(-20117, 'MDM_V_THEMES_IOF');"
+      },
+      {
+        "exception_name": "invalid_molecule_id",
+        "handler_code": "raise_application_error(-20118, 'This is not a valid Molecule ID');"
+      },
+      {
+        "exception_name": "sec_mol_list_not_empty",
+        "handler_code": "raise_application_error(-20119, 'MDM_V_THEMES_IOF');"
+      },
+      {
+        "exception_name": "invalid_theme_no",
+        "handler_code": "raise_application_error(-20101, 'This is not a valid Theme No');"
+      },
+      {
+        "exception_name": "delete_no_more_possible",
+        "handler_code": "raise_application_error(-20400, 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted');"
+      },
+      {
+        "exception_name": "theme_no_only_insert",
+        "handler_code": "raise_application_error(-20400, 'Theme No cannot be updated');"
+      },
+      {
+        "exception_name": "description_too_long",
+        "handler_code": "raise_application_error(-20400, 'The automatically generated Theme Description \"' || v_description || '\" is too long');"
+      },
+      {
+        "exception_name": "theme_desc_proposal_too_long",
+        "handler_code": "raise_application_error(-20400, 'The automatically generated Short Description Proposal \"' || :old.theme_desc_proposal || '\" is too long');"
+      },
+      {
+        "exception_name": "theme_desc_alt_too_long",
+        "handler_code": "raise_application_error(-20400, 'The automatically generated Downstream Theme Description \"' || :old.theme_desc_alt || '\" is too long');"
+      },
+      {
+        "exception_name": "theme_no_cannot_be_inserted",
+        "handler_code": "raise_application_error(-20400, 'This Theme No already exists');"
+      },
+      {
+        "exception_name": "onlyoneofficialchangeperday",
+        "handler_code": "raise_application_error(-20400, 'Official Change for this Theme No and Day already exists');"
+      },
+      {
+        "exception_name": "insertsmustbeofficial",
+        "handler_code": "raise_application_error(-20400, 'New Themes can only be inserted by Official Changes');"
+      },
+      {
+        "exception_name": "themedescriptionmandatory",
+        "handler_code": "raise_application_error(-20400, 'If Pharma Rx Portfolio Project is set to \"No\", then the Theme Description must be filled');"
+      },
+      {
+        "exception_name": "theme_desc_not_unique",
+        "handler_code": "raise_application_error(-20400, 'This Theme Description already exists');"
+      },
+      {
+        "exception_name": "portf_proj_mol_cre_err",
+        "handler_code": "raise_application_error(-20120, 'MDM_V_THEMES_IOF');"
+      },
+      {
+        "exception_name": "debugging",
+        "handler_code": "raise_application_error(-20900, 'Debug in Themes IOF standard');"
       }
     ]
   },
@@ -1229,80 +1296,6 @@
           ]
         }
       ]
-    }
-  ],
-  "exception_handlers": [
-    {
-      "exception_name": "admin_update_only",
-      "handler_code": "raise_application_error(-20115, 'MDM_V_THEMES_IOF');"
-    },
-    {
-      "exception_name": "in_prep_not_portf_proj",
-      "handler_code": "raise_application_error(-20116, 'MDM_V_THEMES_IOF');"
-    },
-    {
-      "exception_name": "in_prep_not_closed",
-      "handler_code": "raise_application_error(-20117, 'MDM_V_THEMES_IOF');"
-    },
-    {
-      "exception_name": "invalid_molecule_id",
-      "handler_code": "raise_application_error(-20118, 'This is not a valid Molecule ID');"
-    },
-    {
-      "exception_name": "sec_mol_list_not_empty",
-      "handler_code": "raise_application_error(-20119, 'MDM_V_THEMES_IOF');"
-    },
-    {
-      "exception_name": "invalid_theme_no",
-      "handler_code": "raise_application_error(-20101, 'This is not a valid Theme No');"
-    },
-    {
-      "exception_name": "delete_no_more_possible",
-      "handler_code": "raise_application_error(-20400, 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted');"
-    },
-    {
-      "exception_name": "theme_no_only_insert",
-      "handler_code": "raise_application_error(-20400, 'Theme No cannot be updated');"
-    },
-    {
-      "exception_name": "description_too_long",
-      "handler_code": "raise_application_error(-20400, 'The automatically generated Theme Description \"' || v_description || '\" is too long');"
-    },
-    {
-      "exception_name": "theme_desc_proposal_too_long",
-      "handler_code": "raise_application_error(-20400, 'The automatically generated Short Description Proposal \"' || :old.theme_desc_proposal || '\" is too long');"
-    },
-    {
-      "exception_name": "theme_desc_alt_too_long",
-      "handler_code": "raise_application_error(-20400, 'The automatically generated Downstream Theme Description \"' || :old.theme_desc_alt || '\" is too long');"
-    },
-    {
-      "exception_name": "theme_no_cannot_be_inserted",
-      "handler_code": "raise_application_error(-20400, 'This Theme No already exists');"
-    },
-    {
-      "exception_name": "onlyoneofficialchangeperday",
-      "handler_code": "raise_application_error(-20400, 'Official Change for this Theme No and Day already exists');"
-    },
-    {
-      "exception_name": "insertsmustbeofficial",
-      "handler_code": "raise_application_error(-20400, 'New Themes can only be inserted by Official Changes');"
-    },
-    {
-      "exception_name": "themedescriptionmandatory",
-      "handler_code": "raise_application_error(-20400, 'If Pharma Rx Portfolio Project is set to \"No\", then the Theme Description must be filled');"
-    },
-    {
-      "exception_name": "theme_desc_not_unique",
-      "handler_code": "raise_application_error(-20400, 'This Theme Description already exists');"
-    },
-    {
-      "exception_name": "portf_proj_mol_cre_err",
-      "handler_code": "raise_application_error(-20120, 'MDM_V_THEMES_IOF');"
-    },
-    {
-      "exception_name": "debugging",
-      "handler_code": "raise_application_error(-20900, 'Debug in Themes IOF standard');"
     }
   ]
 } 

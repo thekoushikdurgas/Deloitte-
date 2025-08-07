@@ -31,3 +31,5 @@ git push -u origin main -f
 fc /B json\trigger1.json expected_json\ex-trigger1.json
 
 tree /f files\ > tree.dart.txt
+
+dir /s /b | sort > tree.dart.txt

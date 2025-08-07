@@ -1,13 +1,6 @@
 {
   "trigger_metadata": {
     "trigger_name": "trigger2",
-    "timing": "BEFORE",
-    "events": [
-      "INSERT",
-      "UPDATE",
-      "DELETE"
-    ],
-    "table_name": "theme_molecule_map",
     "has_declare_section": true,
     "has_begin_section": true,
     "has_exception_section": true
@@ -74,6 +67,28 @@
       {
         "name": "update_upd",
         "type": "user_defined"
+      }
+    ],
+    "exception_handlers": [
+      {
+        "exception_name": "err_map_exists",
+        "handler_code": "raise_application_error (-20110, 'MDM_THEME_MOLECULE_MAP_IOF');"
+      },
+      {
+        "exception_name": "err_molec_id_missing",
+        "handler_code": "raise_application_error (-20111, 'MDM_THEME_MOLECULE_MAP_IOF');"
+      },
+      {
+        "exception_name": "err_upd_inv_map",
+        "handler_code": "raise_application_error (-20112, 'MDM_THEME_MOLECULE_MAP_IOF');"
+      },
+      {
+        "exception_name": "err_ins_inv_map",
+        "handler_code": "raise_application_error (-20113, 'MDM_THEME_MOLECULE_MAP_IOF');"
+      },
+      {
+        "exception_name": "err_inv_mol_sequence",
+        "handler_code": "raise_application_error (-20120, 'MDM_THEME_MOLECULE_MAP_IOF');"
       }
     ]
   },
@@ -459,28 +474,6 @@
         }
       ],
       "else_statement": null
-    }
-  ],
-  "exception_handlers": [
-    {
-      "exception_name": "err_map_exists",
-      "handler_code": "raise_application_error (-20110, 'MDM_THEME_MOLECULE_MAP_IOF');"
-    },
-    {
-      "exception_name": "err_molec_id_missing",
-      "handler_code": "raise_application_error (-20111, 'MDM_THEME_MOLECULE_MAP_IOF');"
-    },
-    {
-      "exception_name": "err_upd_inv_map",
-      "handler_code": "raise_application_error (-20112, 'MDM_THEME_MOLECULE_MAP_IOF');"
-    },
-    {
-      "exception_name": "err_ins_inv_map",
-      "handler_code": "raise_application_error (-20113, 'MDM_THEME_MOLECULE_MAP_IOF');"
-    },
-    {
-      "exception_name": "err_inv_mol_sequence",
-      "handler_code": "raise_application_error (-20120, 'MDM_THEME_MOLECULE_MAP_IOF');"
     }
   ]
 }

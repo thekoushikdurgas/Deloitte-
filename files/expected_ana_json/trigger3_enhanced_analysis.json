@@ -1,13 +1,6 @@
 {
   "trigger_metadata": {
     "trigger_name": "trigger3",
-    "timing": "BEFORE",
-    "events": [
-      "INSERT",
-      "UPDATE",
-      "DELETE"
-    ],
-    "table_name": "company_addresses",
     "has_declare_section": true,
     "has_begin_section": true,
     "has_exception_section": true
@@ -70,6 +63,32 @@
       {
         "name": "err_ins_legal_addr",
         "type": "user_defined"
+      }
+    ],
+    "exception_handlers": [
+      {
+        "exception_name": "err_upd",
+        "handler_code": "raise_application_error (-20111, 'The address cannot be updated because the Address type is different. Old address type: '||:old.address_type_cd||' New address type: '||:new.address_type_cd);"
+      },
+      {
+        "exception_name": "err_ins",
+        "handler_code": "raise_application_error (-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');"
+      },
+      {
+        "exception_name": "err_ctry_chg",
+        "handler_code": "raise_application_error (-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');"
+      },
+      {
+        "exception_name": "test_err",
+        "handler_code": "raise_application_error (-20113, 'New: '||:new.company_cd||' Old:'||:old.company_cd||'Count: '||cntr);"
+      },
+      {
+        "exception_name": "err_ins_legal_addr",
+        "handler_code": "raise_application_error (-20113, 'The legal address cannot be inserted for this type of company');"
+      },
+      {
+        "exception_name": "err_not_allowed_to_invalidate",
+        "handler_code": "raise_application_error (-20113, 'It is not allowed to invalidate/delete this type of address');"
       }
     ]
   },
@@ -417,32 +436,6 @@
         }
       ],
       "else_statement": null
-    }
-  ],
-  "exception_handlers": [
-    {
-      "exception_name": "err_upd",
-      "handler_code": "raise_application_error (-20111, 'The address cannot be updated because the Address type is different. Old address type: '||:old.address_type_cd||' New address type: '||:new.address_type_cd);"
-    },
-    {
-      "exception_name": "err_ins",
-      "handler_code": "raise_application_error (-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');"
-    },
-    {
-      "exception_name": "err_ctry_chg",
-      "handler_code": "raise_application_error (-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');"
-    },
-    {
-      "exception_name": "test_err",
-      "handler_code": "raise_application_error (-20113, 'New: '||:new.company_cd||' Old:'||:old.company_cd||'Count: '||cntr);"
-    },
-    {
-      "exception_name": "err_ins_legal_addr",
-      "handler_code": "raise_application_error (-20113, 'The legal address cannot be inserted for this type of company');"
-    },
-    {
-      "exception_name": "err_not_allowed_to_invalidate",
-      "handler_code": "raise_application_error (-20113, 'It is not allowed to invalidate/delete this type of address');"
     }
   ]
 }
