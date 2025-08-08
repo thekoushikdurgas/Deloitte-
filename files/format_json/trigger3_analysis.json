@@ -1,0 +1,444 @@
+{
+  "declarations": {
+    "variables": [
+      {
+        "name": "VARCHAR2",
+        "data_type": "(100)",
+        "default_value": "'COMPANY_ADDRESSES_IOF'"
+      },
+      {
+        "name": "CNTR",
+        "data_type": "PLS_INTEGER",
+        "default_value": null
+      },
+      {
+        "name": "VARCHAR2",
+        "data_type": "(100)",
+        "default_value": null
+      },
+      {
+        "name": "V_COUNTRY_CD",
+        "data_type": "CORE.COUNTRIES.COUNTRY_CD%TYPE",
+        "default_value": null
+      },
+      {
+        "name": "V_COMPANY_TYPE_CD",
+        "data_type": "CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE",
+        "default_value": null
+      },
+      {
+        "name": "V_VALID_FROM",
+        "data_type": "CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE",
+        "default_value": null
+      }
+    ],
+    "constants": [],
+    "exceptions": [
+      {
+        "name": "ERR_UPD",
+        "type": "exception"
+      },
+      {
+        "name": "ERR_INS",
+        "type": "exception"
+      },
+      {
+        "name": "ERR_CTRY_CHG",
+        "type": "exception"
+      },
+      {
+        "name": "ERR_NOT_ALLOWED_TO_INVALIDATE",
+        "type": "exception"
+      },
+      {
+        "name": "TEST_ERR",
+        "type": "exception"
+      },
+      {
+        "name": "ERR_INS_LEGAL_ADDR",
+        "type": "exception"
+      }
+    ]
+  },
+  "main": [
+    {
+      "sqls": [
+        {
+          "sqls": [
+            {
+              "variable": "V_USERID",
+              "value": "TXO_UTIL.GET_USERID",
+              "type": "assignment_statements"
+            }
+          ],
+          "type": "begin_block",
+          "exception_handlers": [
+            {
+              "exception_name": "OTHERS",
+              "sqls": []
+            }
+          ]
+        },
+        {
+          "variable": "CNTR",
+          "value": "0",
+          "type": "assignment_statements"
+        },
+        {
+          "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD) AND ADDRESS_TYPE_CD = NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD)",
+          "type": "select_statements"
+        },
+        {
+          "type": "if_else",
+          "condition": "(INSERTING)",
+          "then_sql": [
+            {
+              "type": "if_else",
+              "condition": "(CNTR > 0)",
+              "then_sql": [
+                {
+                  "exception_name": "ERR_INS",
+                  "sqls": [
+                    {
+                      "sql": "RAISE ERR_INS",
+                      "type": "RAISE_statements"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "if_else",
+          "condition": "(INSERTING OR UPDATING)",
+          "then_sql": [
+            {
+              "sql": "SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD)",
+              "type": "select_statements"
+            },
+            {
+              "type": "if_else",
+              "condition": "(V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L'))",
+              "then_sql": [
+                {
+                  "exception_name": "ERR_INS_LEGAL_ADDR",
+                  "sqls": [
+                    {
+                      "sql": "RAISE ERR_INS_LEGAL_ADDR",
+                      "type": "RAISE_statements"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "if_else",
+              "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L'))",
+              "then_sql": [
+                {
+                  "type": "if_else",
+                  "condition": "(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)",
+                  "then_sql": [
+                    {
+                      "exception_name": "ERR_CTRY_CHG",
+                      "sqls": [
+                        {
+                          "sql": "RAISE ERR_CTRY_CHG",
+                          "type": "RAISE_statements"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "if_else",
+                  "condition": "(CNTR = 0)",
+                  "then_sql": [
+                    "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+                    "P_COMPANY_CD => :NEW.COMPANY_CD,",
+                    "P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+                    "P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+                    "P_STREET => :NEW.STREET,",
+                    "P_HOUSE_NO => :NEW.HOUSE_NO,",
+                    "P_BUILDING => :NEW.BUILDING,",
+                    "P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+                    "P_ZIP_CODE => :NEW.ZIP_CODE,",
+                    "P_CITY=> :NEW.CITY,",
+                    "P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+                    "P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+                    "P_LATITUDE => :NEW.LATITUDE,",
+                    "P_LONGITUDE => :NEW.LONGITUDE,",
+                    "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+                    "P_VALID_FROM => :NEW.VALID_FROM,",
+                    "P_ACTION_TYPE => 'INSERT'",
+                    ")"
+                  ],
+                  "else_statement": [
+                    {
+                      "type": "if_else",
+                      "condition": "(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)",
+                      "then_sql": [
+                        "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+                        "P_COMPANY_CD => :NEW.COMPANY_CD,",
+                        "P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+                        "P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+                        "P_STREET => :NEW.STREET,",
+                        "P_HOUSE_NO => :NEW.HOUSE_NO,",
+                        "P_BUILDING => :NEW.BUILDING,",
+                        "P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+                        "P_ZIP_CODE => :NEW.ZIP_CODE,",
+                        "P_CITY=> :NEW.CITY,",
+                        "P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+                        "P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+                        "P_LATITUDE => :NEW.LATITUDE,",
+                        "P_LONGITUDE => :NEW.LONGITUDE,",
+                        "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+                        "P_VALID_FROM => :NEW.VALID_FROM,",
+                        "P_ACTION_TYPE => 'CTRY_CHANGE'",
+                        ")",
+                        {
+                          "variable": "CNTR",
+                          "value": "0",
+                          "type": "assignment_statements"
+                        },
+                        {
+                          "sql": "SELECT COUNT(*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('B', 'L')",
+                          "type": "select_statements"
+                        },
+                        {
+                          "type": "if_else",
+                          "condition": "(:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0)",
+                          "then_sql": [
+                            {
+                              "sql": "SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID",
+                              "type": "select_statements"
+                            },
+                            {
+                              "type": "if_else",
+                              "condition": "(TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01')",
+                              "then_sql": [
+                                {
+                                  "variable": "V_VALID_FROM",
+                                  "value": "TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy')",
+                                  "type": "assignment_statements"
+                                }
+                              ],
+                              "else_statement": [
+                                {
+                                  "variable": "V_VALID_FROM",
+                                  "value": "TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy')",
+                                  "type": "assignment_statements"
+                                }
+                              ]
+                            },
+                            "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
+                            "I_COMPANY_CD => :NEW.COMPANY_CD,",
+                            "I_REPORTING_ENTITY_CD => 'J-'",
+                            "|| V_COUNTRY_CD,",
+                            "I_VALID_FROM_DATE => V_VALID_FROM,",
+                            "I_VALID_TO_DATE => NULL,",
+                            "I_CHANGE_USER => V_USERID,",
+                            "I_MAPPING_TYPE => 'JU',",
+                            "I_ACTION_TYPE => 'INSERT'",
+                            ")",
+                            {
+                              "type": "if_else",
+                              "condition": "(V_COMPANY_TYPE_CD = 'L')",
+                              "then_sql": [
+                                {
+                                  "type": "for_loop",
+                                  "loop_variable": null,
+                                  "loop_body": [],
+                                  "cursor_query": null
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "else_statement": [
+                        "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+                        "P_COMPANY_CD => :NEW.COMPANY_CD,",
+                        "P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+                        "P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+                        "P_STREET => :NEW.STREET,",
+                        "P_HOUSE_NO => :NEW.HOUSE_NO,",
+                        "P_BUILDING => :NEW.BUILDING,",
+                        "P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+                        "P_ZIP_CODE => :NEW.ZIP_CODE,",
+                        "P_CITY=> :NEW.CITY,",
+                        "P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+                        "P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+                        "P_LATITUDE => :NEW.LATITUDE,",
+                        "P_LONGITUDE => :NEW.LONGITUDE,",
+                        "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+                        "P_VALID_FROM => :NEW.VALID_FROM,",
+                        "P_ACTION_TYPE => 'UPDATE'",
+                        ")"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "if_else",
+              "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L'))",
+              "then_sql": [
+                {
+                  "type": "if_else",
+                  "condition": "(CNTR = 0)",
+                  "then_sql": [
+                    "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+                    "P_COMPANY_CD => :NEW.COMPANY_CD,",
+                    "P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+                    "P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+                    "P_STREET => :NEW.STREET,",
+                    "P_HOUSE_NO => :NEW.HOUSE_NO,",
+                    "P_BUILDING => :NEW.BUILDING,",
+                    "P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+                    "P_ZIP_CODE => :NEW.ZIP_CODE,",
+                    "P_CITY=> :NEW.CITY,",
+                    "P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+                    "P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+                    "P_LATITUDE => :NEW.LATITUDE,",
+                    "P_LONGITUDE => :NEW.LONGITUDE,",
+                    "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+                    "P_VALID_FROM => :NEW.VALID_FROM,",
+                    "P_ACTION_TYPE => 'INSERT'",
+                    ")"
+                  ],
+                  "else_statement": [
+                    "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+                    "P_COMPANY_CD => :NEW.COMPANY_CD,",
+                    "P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+                    "P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+                    "P_STREET => :NEW.STREET,",
+                    "P_HOUSE_NO => :NEW.HOUSE_NO,",
+                    "P_BUILDING => :NEW.BUILDING,",
+                    "P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+                    "P_ZIP_CODE => :NEW.ZIP_CODE,",
+                    "P_CITY=> :NEW.CITY,",
+                    "P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+                    "P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+                    "P_LATITUDE => :NEW.LATITUDE,",
+                    "P_LONGITUDE => :NEW.LONGITUDE,",
+                    "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+                    "P_VALID_FROM => :NEW.VALID_FROM,",
+                    "P_ACTION_TYPE => 'UPDATE'",
+                    ")"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "if_else",
+          "condition": "(DELETING)",
+          "then_sql": [
+            {
+              "type": "if_else",
+              "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P'))",
+              "then_sql": [
+                {
+                  "exception_name": "ERR_NOT_ALLOWED_TO_INVALIDATE",
+                  "sqls": [
+                    {
+                      "sql": "RAISE ERR_NOT_ALLOWED_TO_INVALIDATE",
+                      "type": "RAISE_statements"
+                    }
+                  ]
+                }
+              ]
+            },
+            "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE')"
+          ]
+        }
+      ],
+      "type": "begin_block",
+      "exception_handlers": [
+        {
+          "exception_name": "ERR_UPD",
+          "sqls": [
+            {
+              "type": "function calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20111",
+                "handler_string": "The address cannot be updated because the Address type is different. Old address type: "
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_INS",
+          "sqls": [
+            {
+              "type": "function calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20112",
+                "handler_string": "An address already exists for this Company and Address type. To modify the existing address, please use the Update button."
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_CTRY_CHG",
+          "sqls": [
+            {
+              "type": "function calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20113",
+                "handler_string": "The company country modified but not the Valid From Date. Please update also the Valid From Date."
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "TEST_ERR",
+          "sqls": [
+            {
+              "type": "function calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20113",
+                "handler_string": "New: "
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_INS_LEGAL_ADDR",
+          "sqls": [
+            {
+              "type": "function calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20113",
+                "handler_string": "The legal address cannot be inserted for this type of company"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_NOT_ALLOWED_TO_INVALIDATE",
+          "sqls": [
+            {
+              "type": "function calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20113",
+                "handler_string": "It is not allowed to invalidate/delete this type of address"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sql_comments": []
+}

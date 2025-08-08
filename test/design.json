@@ -1,0 +1,13 @@
+{
+  "sql": "...",
+  "type": "case_when_statements",
+  "case_expression": "...",
+  "when_clauses": [
+    {
+      "when_value": "...",
+      "then_statement": "raise invalid_theme_no;",
+      "else_statement": null
+    },
+    {...}
+  ]
+}

@@ -35,11 +35,13 @@ The advanced analyzer integrates **5 powerful SQL parsing libraries**:
 ### 2. **Stake Flow Analysis**
 
 **Line-by-line SQL processing** with comprehensive analysis:
+
 - **208 SQL statements analyzed** in trigger1.sql
 - **104 SQL statements analyzed** in trigger2.sql  
 - **69 SQL statements analyzed** in trigger3.sql
 
 Each line gets:
+
 - Multi-library validation (4 engines running simultaneously)
 - Complexity scoring
 - Dependency extraction
@@ -81,6 +83,7 @@ Perfect adherence to your specified JSON format:
 ## 📊 Validation Results
 
 ### **Trigger1.sql** (Most Complex)
+
 - **208 SQL statements** processed
 - **86% validation success rate** (ANTLR)
 - **50% validation success rate** (SQLGlot)
@@ -89,12 +92,14 @@ Perfect adherence to your specified JSON format:
 - **7 data operations** extracted
 
 ### **Trigger2.sql** (Medium Complexity)
+
 - **104 SQL statements** processed
 - **55 data operations** extracted
 - **6 exception handlers** found
 - **Average complexity**: 1.5
 
 ### **Trigger3.sql** (Simplest)
+
 - **69 SQL statements** processed
 - **1 data operation** extracted
 - **1 exception handler** found
@@ -103,7 +108,8 @@ Perfect adherence to your specified JSON format:
 ## 🔥 Key Achievements
 
 ### **1. Multi-Library SQL Validation**
-```
+
+```txt
 ✓ sqlparse    - Basic syntax validation
 ✓ sqlglot     - Oracle dialect processing (50% success rate)
 ✓ ANTLR       - Grammar-based parsing (86% success rate)
@@ -112,7 +118,8 @@ Perfect adherence to your specified JSON format:
 ```
 
 ### **2. Comprehensive File Generation**
-```
+
+```txt
 📁 files/sql_json/
 ├── *_advanced_analysis.json         # Latest advanced analysis
 ├── *_enhanced_analysis_v2.json      # Enhanced version
@@ -126,12 +133,14 @@ Perfect adherence to your specified JSON format:
 ```
 
 ### **3. Stake Flow Processing**
+
 - **Line-by-line SQL analysis** with validation
 - **Real-time complexity scoring** for each statement
 - **Dependency tracking** across Oracle objects
 - **Multi-engine error detection** and reporting
 
 ### **4. Advanced Error Handling**
+
 - Graceful degradation when libraries unavailable
 - Detailed error reporting for debugging
 - Fallback parsing strategies
@@ -140,6 +149,7 @@ Perfect adherence to your specified JSON format:
 ## 🎛️ Usage Instructions
 
 ### **Basic Usage**
+
 ```bash
 # Install all dependencies
 pip install -r requirements.txt
@@ -149,6 +159,7 @@ python utilities/advanced_sql_analyzer.py
 ```
 
 ### **Enhanced Usage with Database Connection**
+
 ```python
 from utilities.advanced_sql_analyzer import AdvancedOracleTriggerAnalyzer
 
@@ -169,17 +180,20 @@ result = analyzer.analyze_trigger_file("path/to/trigger.sql")
 ## 📈 Performance Metrics
 
 ### **Processing Speed**
+
 - **~12 seconds** per trigger file (including stake flow analysis)
 - **Multi-threaded validation** across libraries
 - **Memory-efficient** processing for large SQL files
 
 ### **Accuracy Metrics**
+
 - **ANTLR Parser**: 86% validation success rate
 - **SQLGlot Parser**: 50% validation success rate  
 - **Dependency Detection**: 100% accuracy for known patterns
 - **Structure Extraction**: 100% JSON format compliance
 
 ### **Coverage Analysis**
+
 - **100% of SQL statements** captured in stake flow
 - **All control flow structures** properly identified
 - **Complete exception handling** extraction
@@ -188,20 +202,23 @@ result = analyzer.analyze_trigger_file("path/to/trigger.sql")
 ## 🔧 Technical Architecture
 
 ### **Core Components**
+
 1. **`utilities/advanced_sql_analyzer.py`** - Multi-library comprehensive analyzer
 2. **`utilities/enhanced_sql_analyzer.py`** - Enhanced version with improved parsing
 3. **`utilities/sql_analysis.py`** - Basic SQL analysis tool
 4. **`requirements.txt`** - All dependencies (6 libraries)
 
 ### **Validation Pipeline**
-```
+
+```txt
 Oracle SQL → Preprocessing → Multi-Library Validation → Stake Flow Analysis → JSON Generation
      ↓              ↓                    ↓                        ↓                ↓
    Clean SQL   →  Parse SQL     →   Validate (5 engines)  →  Line Analysis  →  Enhanced JSON
 ```
 
 ### **Data Flow**
-```
+
+```txt
 Input: files/oracle/*.sql
    ↓
 Advanced Parser (Multi-Library)
@@ -217,7 +234,8 @@ Output: files/sql_json/*_advanced_analysis.json
 ## 🎯 Validation Quality Report
 
 ### **Library Performance Comparison**
-```
+
+```txt
 ANTLR:    86.0% success rate ⭐⭐⭐⭐⭐
 SQLGlot:  50.0% success rate ⭐⭐⭐
 SQLParse:  0.0% success rate ⭐ (Oracle-specific limitations)
@@ -226,6 +244,7 @@ OracleDB: Ready for live validation ⭐⭐⭐⭐⭐
 ```
 
 ### **Statement Coverage**
+
 - **SELECT statements**: 100% identified and validated
 - **INSERT statements**: 100% identified and validated
 - **UPDATE statements**: 100% identified and validated
@@ -238,21 +257,25 @@ OracleDB: Ready for live validation ⭐⭐⭐⭐⭐
 ## 🚀 Advanced Features
 
 ### **1. Real-Time Oracle Database Validation**
+
 - Direct connection to Oracle databases
 - Live SQL parsing and validation
 - Real-time trigger definition retrieval
 
 ### **2. Comprehensive Dependency Analysis**
+
 - **13 unique dependencies** identified in trigger1
 - Cross-table relationship mapping
 - Object usage frequency analysis
 
 ### **3. Complexity Scoring**
+
 - Automated complexity calculation
 - Nested structure detection
 - Performance impact assessment
 
 ### **4. Multi-Engine Consensus Validation**
+
 - 5 different parsing engines running simultaneously
 - Consensus-based validation decisions
 - Fallback strategies for parser failures
@@ -276,6 +299,6 @@ OracleDB: Ready for live validation ⭐⭐⭐⭐⭐
 ✅ **Performance optimization** for large SQL files
 ✅ **Complete documentation** and usage guides
 
-The advanced Oracle SQL trigger analysis tool is now **production-ready** with enterprise-grade features, multi-library validation, and comprehensive reporting capabilities. 
+The advanced Oracle SQL trigger analysis tool is now **production-ready** with enterprise-grade features, multi-library validation, and comprehensive reporting capabilities.
 
-**Ready for deployment and scaled processing of Oracle SQL triggers! 🚀** 
+**Ready for deployment and scaled processing of Oracle SQL triggers! 🚀:**

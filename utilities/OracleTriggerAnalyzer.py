@@ -1,0 +1,1452 @@
+# import os
+# import json
+import re
+
+
+
+class OracleTriggerAnalyzer:
+    def __init__(self, sql_content):
+        self.sql_content = sql_content
+        self.declare_section = ""
+        self.main_section = ""
+        self.variables = []
+        self.constants = []
+        self.exceptions = []
+        self.sql_comments = []
+        self.rule_errors = []
+        self._parse_sql()
+        # Run rule validation as soon as the analyzer is created
+        self.rule_errors = self._validate_rules()
+
+    def _strip_inline_sql_comment(self, text: str) -> str:
+        # Remove inline -- comments occurring outside of single-quoted strings
+        in_str = False
+        i = 0
+        result_chars = []
+        while i < len(text):
+            ch = text[i]
+            # Toggle on quote; handle doubled single quotes inside strings
+            if ch == "'":
+                result_chars.append(ch)
+                i += 1
+                if in_str:
+                    # If next is also a quote, it's an escaped quote within string
+                    if i < len(text) and text[i] == "'":
+                        result_chars.append("'")
+                        i += 1
+                        continue
+                    in_str = False
+                else:
+                    in_str = True
+                continue
+            # Detect comment start when not inside string
+            if not in_str and ch == '-' and i + 1 < len(text) and text[i + 1] == '-':
+                break
+            result_chars.append(ch)
+            i += 1
+        return "".join(result_chars).rstrip()
+
+    def _parse_sql(self):
+        # Find the "declare" section (everything between "declare" and "begin")
+        pattern = re.compile(r"declare(.*?)begin", re.DOTALL | re.IGNORECASE)
+        match = pattern.search(self.sql_content)
+
+        if match:
+            # Store declare section without the "declare" keyword
+            self.declare_section = match.group(1).strip()
+            # Main section is everything from "begin" to the end
+            begin_pos = match.end() - 5  # subtract 5 to keep the "begin" keyword
+            self.main_section = self.sql_content[begin_pos:].strip()
+
+            # Parse the declarations into categories
+            self._parse_declarations()
+        else:
+            # If no declare section found, assume everything is main section
+            self.declare_section = ""
+            self.main_section = self.sql_content.strip()
+
+    # --- Rule validation ---
+    def _validate_rules(self):
+        """
+        Validate formatting rules directly on the raw SQL text and return a list
+        of violations in the form required by the caller.
+
+        Rules enforced:
+        - IF and THEN must be on the same line
+        - ELSIF and THEN must be on the same line
+        - WHEN and THEN must be on the same line (for CASE statements)
+        """
+        errors = []
+
+        def append_error(line_no: int, rule_text: str, solution_text: str):
+            errors.append({
+                "line_no": line_no,
+                "rule": rule_text,
+                "solution": solution_text,
+            })
+
+        in_block_comment = False
+        lines = self.sql_content.splitlines()
+        for idx, original_line in enumerate(lines, start=1):
+            line = original_line
+            # Remove all code segments that are within /* ... */ comments while
+            # preserving anything outside so we keep accurate line numbers
+            processed_segments = []
+            cursor = 0
+            s = line
+            while s is not None:
+                if not in_block_comment:
+                    start = s.find("/*")
+                    if start == -1:
+                        processed_segments.append(s)
+                        s = None
+                    else:
+                        # add code before comment start
+                        if start > 0:
+                            processed_segments.append(s[:start])
+                        s = s[start + 2 :]
+                        in_block_comment = True
+                else:
+                    end = s.find("*/")
+                    if end == -1:
+                        # entire remainder is inside a block comment
+                        s = None
+                    else:
+                        s = s[end + 2 :]
+                        in_block_comment = False
+                        # continue scanning remainder in same line
+                        if s == "":
+                            s = None
+            # Join remaining code outside block comments
+            code_outside_blocks = "".join(processed_segments)
+
+            # Strip inline -- comments outside of strings
+            code_no_inline_comment = self._strip_inline_sql_comment(code_outside_blocks)
+            code = code_no_inline_comment.strip()
+
+            # Skip empty or pure comment lines
+            if not code or code.lstrip().startswith("--"):
+                continue
+
+            # Enforce: IF ... THEN must be on the same line
+            if re.match(r"^\s*IF\b", code, re.IGNORECASE):
+                if not re.search(r"\bTHEN\b", code, re.IGNORECASE):
+                    append_error(
+                        idx,
+                        "IF and THEN must be on the same line",
+                        "Place THEN on the same line as the IF condition, e.g., IF <condition> THEN",
+                    )
+
+            # Enforce: ELSIF ... THEN must be on the same line
+            if re.match(r"^\s*ELSIF\b", code, re.IGNORECASE):
+                if not re.search(r"\bTHEN\b", code, re.IGNORECASE):
+                    append_error(
+                        idx,
+                        "ELSIF and THEN must be on the same line",
+                        "Place THEN on the same line as the ELSIF condition, e.g., ELSIF <condition> THEN",
+                    )
+
+            # Enforce: WHEN ... THEN must be on the same line (CASE)
+            if re.match(r"^\s*WHEN\b", code, re.IGNORECASE):
+                if not re.search(r"\bTHEN\b", code, re.IGNORECASE):
+                    append_error(
+                        idx,
+                        "WHEN and THEN must be on the same line",
+                        "Place THEN on the same line as the WHEN condition, e.g., WHEN <condition> THEN",
+                    )
+
+        return errors
+
+    def _parse_declarations(self):
+        # Split the declare section into lines
+        lines = self.declare_section.split(";")
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            # Add semicolon back for consistent formatting
+            line = line + ";"
+
+            # Parse exceptions
+            if re.search(r"\s*exception\s*;", line, re.IGNORECASE):
+                parsed_exception = self._parse_exception(line)
+                if parsed_exception:
+                    self.exceptions.append(parsed_exception)
+            # Parse constants
+            elif "constant" in line.lower():
+                parsed_const = self._parse_constant(line)
+                if parsed_const:
+                    self.constants.append(parsed_const)
+            # Parse variables (anything else)
+            else:
+                parsed_var = self._parse_variable(line)
+                if parsed_var:
+                    self.variables.append(parsed_var)
+
+    def _parse_exception(self, line):
+        # Clean up the line
+        line = line.strip()
+
+        # Basic pattern: exception_name exception;
+        exception_pattern = re.compile(
+            r"([a-zA-Z0-9_]+)\s+exception\s*;", re.IGNORECASE
+        )
+        match = exception_pattern.search(line)
+
+        if match:
+            name = match.group(1).strip()
+            return {"name": name, "type": "exception"}
+        else:
+            # For more complex exceptions or ones we can't parse cleanly
+            return {
+                "name": line.replace("exception", "").replace(";", "").strip(),
+                "type": "exception",
+            }
+
+    def _parse_variable(self, line):
+        # Clean up common comment patterns at the start of the line
+        line = re.sub(r"^--.*\n", "", line)
+        line = line.strip()
+
+        # Skip empty lines
+        if not line:
+            return None
+
+        # Handle multi-line comments within variable declarations
+        line = re.sub(r"/\*.*?\*/", "", line)
+
+        # Basic pattern: variable_name data_type [DEFAULT value];
+        var_pattern = re.compile(
+            r"([a-zA-Z0-9_]+)\s+([\w\(\)\%\.]+)(?:\s*:=\s*(.+?))?\s*;", re.IGNORECASE
+        )
+        match = var_pattern.search(line)
+
+        if match:
+            name = match.group(1).strip()
+            data_type = match.group(2).strip()
+            default_value = match.group(3).strip() if match.group(3) else None
+
+            return {
+                "name": name,
+                "data_type": data_type,
+                "default_value": default_value,
+            }
+        else:
+            # Handle more complex declarations with special patterns
+            # For example: "v_counter simple_integer := 0;"
+            complex_pattern = re.compile(
+                r"([a-zA-Z0-9_]+)\s+([\w\(\)\%\.]+(?:\s+[\w\(\)\%\.]+)*)(?:\s*:=\s*(.+?))?\s*;",
+                re.IGNORECASE,
+            )
+            match = complex_pattern.search(line)
+
+            if match:
+                name = match.group(1).strip()
+                data_type = match.group(2).strip()
+                default_value = match.group(3).strip() if match.group(3) else None
+
+                return {
+                    "name": name,
+                    "data_type": data_type,
+                    "default_value": default_value,
+                }
+
+        # If we couldn't parse it properly, return the raw line
+        return {
+            "name": "UNPARSED",
+            "data_type": "UNKNOWN",
+            "default_value": line.rstrip(";"),
+        }
+
+    def _parse_constant(self, line):
+        # Clean up common comment patterns
+        line = re.sub(r"--.*$", "", line)
+        line = line.strip()
+
+        # Pattern: const_name CONSTANT data_type := value;
+        const_pattern = re.compile(
+            r"([a-zA-Z0-9_]+)\s+constant\s+([\w\(\)\%\.]+)(?:\s*:=\s*(.+?))?\s*;",
+            re.IGNORECASE,
+        )
+        match = const_pattern.search(line)
+
+        if match:
+            name = match.group(1).strip()
+            data_type = match.group(2).strip()
+            value = match.group(3).strip() if match.group(3) else None
+
+            return {"name": name, "data_type": data_type, "value": value}
+        else:
+            # If we couldn't parse it properly, return the raw line
+            return {
+                "name": "UNPARSED",
+                "data_type": "UNKNOWN",
+                "value": line.rstrip(";"),
+            }
+
+    # --- Helpers for handling block comments in SQL body ---
+    def _strip_block_comments(self, lines):
+        clean_lines = []
+        comments = []
+        in_block = False
+        current = []
+        for line in lines:
+            s = line
+            while True:
+                if not in_block:
+                    start = s.find("/*")
+                    if start == -1:
+                        if s.strip():
+                            clean_lines.append(s.strip())
+                        break
+                    else:
+                        # add code before comment start
+                        before = s[:start].strip()
+                        if before:
+                            clean_lines.append(before)
+                        s = s[start + 2 :]
+                        in_block = True
+                        current = []
+                else:
+                    end = s.find("*/")
+                    if end == -1:
+                        current.append(s)
+                        s = ""
+                        break
+                    else:
+                        current.append(s[:end])
+                        comments.append("\n".join(current).strip())
+                        s = s[end + 2 :]
+                        in_block = False
+                        # continue scanning remainder of this line for more blocks
+                        if not s:
+                            break
+        # if an unterminated block comment remains, capture it
+        if in_block and current:
+            comments.append("\n".join(current).strip())
+        return clean_lines, comments
+
+    # --- New helpers for parsing main begin...exception...end blocks ---
+    def _get_main_lines(self):
+        raw_lines = [line.rstrip() for line in self.main_section.split("\n")]
+        clean, comments = self._strip_block_comments(raw_lines)
+        if comments:
+            self.sql_comments.extend(comments)
+        return [line.strip() for line in clean if line.strip()]
+
+    def _parse_exception_handlers(self, exception_lines):
+        text = "\n".join(exception_lines)
+        handlers = []
+        # Match: when <name> then <body> ... (until next when or end)
+        pattern = re.compile(
+            r"when\s+([a-zA-Z0-9_]+)\s+then\s+(.*?)(?=(?:\n\s*when\s+[a-zA-Z0-9_]+\s+then)|\Z)",
+            re.IGNORECASE | re.DOTALL,
+        )
+        for m in pattern.finditer(text):
+            handler_exception_name = m.group(1).strip()
+            body = m.group(2).strip()
+
+            # Collect SQL actions under this handler
+            sqls = []
+
+            # Extract all raise_application_error calls within handler
+            for rae in re.finditer(
+                r"raise_application_error\s*\(\s*([\-\d]+)\s*,\s*(.*?)\)\s*;",
+                body,
+                re.IGNORECASE | re.DOTALL,
+            ):
+                code = rae.group(1).strip()
+                param2 = rae.group(2).strip()
+                msg_match = re.search(r"'([^']*)'", param2, re.DOTALL)
+                message = msg_match.group(1) if msg_match else param2
+                sqls.append(
+                    {
+                        "type": "function calling",
+                        "function_name": "raise_application_error",
+                        "parameter": {
+                            "handler_code": code,
+                            "handler_string": message,
+                        },
+                    }
+                )
+
+            # Extract simple RAISE <EXC_NAME>; usages and record under current handler
+            for rm in re.finditer(r"\braise\s+([A-Za-z0-9_]+)\s*;", body, re.IGNORECASE):
+                raised_exc = rm.group(1).strip()
+                sqls.append(
+                    {
+                        "sql": f"RAISE {raised_exc}",
+                        "type": "RAISE_statements",
+                    }
+                )
+
+            # Finally, append the handler object itself (even if it had no RA E)
+            handlers.append(
+                {
+                    "exception_name": handler_exception_name,
+                    "sqls": sqls,
+                }
+            )
+        return handlers
+
+    def _extract_nested_blocks(self, lines):
+        # First remove block comments and collect them
+        lines, comments = self._strip_block_comments(lines)
+        if comments:
+            self.sql_comments.extend(comments)
+        begin_re = re.compile(r"^\s*begin\b", re.IGNORECASE)
+        exception_re = re.compile(r"^\s*exception\s*$", re.IGNORECASE)
+        end_re = re.compile(r"^\s*end\s*;\s*$", re.IGNORECASE)
+        result = []
+        i = 0
+        while i < len(lines):
+            if begin_re.match(lines[i]):
+                # Consume nested block
+                depth = 1
+                i += 1
+                body_lines = []
+                exception_lines = []
+                in_exception = False
+                while i < len(lines) and depth > 0:
+                    cur = lines[i]
+                    if begin_re.match(cur):
+                        depth += 1
+                    if exception_re.match(cur) and depth == 1:
+                        in_exception = True
+                        i += 1
+                        continue
+                    if end_re.match(cur):
+                        depth -= 1
+                        if depth == 0:
+                            i += 1
+                            break
+                    if in_exception:
+                        exception_lines.append(cur)
+                    else:
+                        body_lines.append(cur)
+                    i += 1
+                # Recursively process body_lines for further nested blocks
+                nested_sqls = self._group_raise_statements(
+                    self._group_select_statements(
+                        self._group_assignment_statements(
+                            self._group_for_loops(
+                                self._group_case_statements(
+                                    self._group_if_else_statements(
+                                        self._extract_nested_blocks(body_lines)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+                # Convert single-line comments to objects; handled in recursion / base case below
+                result.append(
+                    {
+                        "sqls": nested_sqls if nested_sqls else body_lines,
+                        "type": "begin_block",
+                        "exception_handlers": self._parse_exception_handlers(
+                            exception_lines
+                        ),
+                    }
+                )
+            else:
+                line = lines[i]
+                if line.strip().startswith("--"):
+                    result.append({"sql": line.strip(), "type": "comment"})
+                else:
+                    result.append(line)
+                i += 1
+        return result
+
+    def _parse_begin_blocks(self):
+        lines = self._get_main_lines()
+        begin_re = re.compile(r"^\s*begin\b", re.IGNORECASE)
+        exception_re = re.compile(r"^\s*exception\s*$", re.IGNORECASE)
+        end_re = re.compile(r"^\s*end\s*;\s*$", re.IGNORECASE)
+        blocks = []
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            if begin_re.match(line):
+                depth = 1
+                i += 1
+                body_lines = []
+                exception_lines = []
+                in_exception = False
+                while i < len(lines) and depth > 0:
+                    cur = lines[i]
+                    if begin_re.match(cur):
+                        depth += 1
+                    if exception_re.match(cur) and depth == 1:
+                        in_exception = True
+                        i += 1
+                        continue
+                    if end_re.match(cur):
+                        depth -= 1
+                        if depth == 0:
+                            i += 1
+                            break
+                    if in_exception:
+                        exception_lines.append(cur)
+                    else:
+                        body_lines.append(cur)
+                    i += 1
+                blocks.append(
+                    {
+                        "sqls": self._group_raise_statements(
+                            self._group_select_statements(
+                                self._group_assignment_statements(
+                                    self._group_for_loops(
+                                        self._group_case_statements(
+                                            self._group_if_else_statements(
+                                                self._extract_nested_blocks(body_lines)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        "type": "begin_block",
+                        "exception_handlers": self._parse_exception_handlers(
+                            exception_lines
+                        ),
+                    }
+                )
+            else:
+                # Non-begin top-level lines are ignored for now
+                i += 1
+        # Cleanup any stray END IF tokens in sql fields
+        return self._cleanup_end_if_in_elements(blocks)
+
+    def _strip_trailing_semicolon(self, sql_text: str) -> str:
+        text = sql_text.rstrip()
+        # Remove a semicolon immediately before an end-of-line inline comment
+        # Example: "...; -- comment" => "... -- comment"
+        text = re.sub(r";\s*(--\s*.*)$", r" \1", text)
+        # Then remove trailing semicolon if it is the very last character
+        if text.endswith(";"):
+            return text[:-1].rstrip()
+        return text
+
+    def _group_select_statements(self, elements):
+        grouped = []
+        i = 0
+        while i < len(elements):
+            el = elements[i]
+            # Recurse into nested begin blocks
+            if isinstance(el, dict) and el.get("type") == "begin_block":
+                el_sqls = el.get("sqls", [])
+                el["sqls"] = self._group_select_statements(el_sqls)
+                grouped.append(el)
+                i += 1
+                continue
+            # Preserve comment objects as-is
+            if isinstance(el, dict) and el.get("type") == "comment":
+                grouped.append(el)
+                i += 1
+                continue
+            # Only strings are eligible for grouping
+            if isinstance(el, str):
+                upper = el.strip().upper()
+                stmt_type = None
+                if upper.startswith("SELECT"):
+                    stmt_type = "select_statements"
+                elif upper.startswith("INSERT"):
+                    stmt_type = "insert_statements"
+                elif upper.startswith("UPDATE"):
+                    stmt_type = "update_statements"
+                elif upper.startswith("DELETE"):
+                    stmt_type = "delete_statements"
+
+                if stmt_type is not None:
+                    buffer_lines = [el]
+                    i += 1
+                    # Accumulate subsequent string lines until a line ends with ';'
+                    while i < len(elements):
+                        nxt = elements[i]
+                        if isinstance(nxt, str):
+                            buffer_lines.append(nxt)
+                            i += 1
+                            if nxt.strip().endswith(";"):
+                                break
+                        else:
+                            # Stop grouping on non-string; let outer loop handle it
+                            break
+                    # Strip inline comments per line, then join lines with a single space
+                    cleaned_lines = [self._strip_inline_sql_comment(line.strip()) for line in buffer_lines]
+                    sql_flat = " ".join(line for line in cleaned_lines if line)
+                    sql_flat = self._strip_trailing_semicolon(sql_flat)
+                    grouped.append({"sql": sql_flat, "type": stmt_type})
+                    continue
+            # Default passthrough
+            grouped.append(el)
+            i += 1
+        return grouped
+
+    def _group_assignment_statements(self, elements):
+        grouped = []
+        i = 0
+        while i < len(elements):
+            el = elements[i]
+            # Recurse into nested begin blocks
+            if isinstance(el, dict) and el.get("type") == "begin_block":
+                el_sqls = el.get("sqls", [])
+                el["sqls"] = self._group_assignment_statements(el_sqls)
+                grouped.append(el)
+                i += 1
+                continue
+            # Recurse into if_else branches
+            if isinstance(el, dict) and el.get("type") == "if_else":
+                el["then_sql"] = self._group_assignment_statements(el.get("then_sql", []))
+                if "else_statement" in el and isinstance(el["else_statement"], list):
+                    el["else_statement"] = self._group_assignment_statements(el["else_statement"])
+                if "else_if_statement" in el and isinstance(el["else_if_statement"], dict):
+                    chain = el["else_if_statement"]
+                    while isinstance(chain, dict):
+                        if "then_sql" in chain:
+                            chain["then_sql"] = self._group_assignment_statements(chain["then_sql"])
+                        chain = chain.get("else_if_statement")
+                grouped.append(el)
+                i += 1
+                continue
+            # Recurse into for_loop bodies
+            if isinstance(el, dict) and el.get("type") == "for_loop":
+                el["loop_body"] = self._group_assignment_statements(el.get("loop_body", []))
+                grouped.append(el)
+                i += 1
+                continue
+            # Recurse into case_when_statements
+            if isinstance(el, dict) and el.get("type") == "case_when_statements":
+                when_clauses = el.get("when_clauses", [])
+                for w in when_clauses:
+                    if isinstance(w, dict):
+                        if "then_statement" in w and isinstance(w["then_statement"], list):
+                            w["then_statement"] = self._group_assignment_statements(w["then_statement"])
+                        if "else_statement" in w and isinstance(w["else_statement"], list):
+                            w["else_statement"] = self._group_assignment_statements(w["else_statement"])
+                grouped.append(el)
+                i += 1
+                continue
+            # Preserve comments as-is
+            if isinstance(el, dict) and el.get("type") == "comment":
+                grouped.append(el)
+                i += 1
+                continue
+            # Handle strings potentially containing assignment
+            if isinstance(el, str):
+                buffer_lines = [el]
+                i += 1
+                if not el.strip().endswith(";"):
+                    while i < len(elements):
+                        nxt = elements[i]
+                        if isinstance(nxt, str):
+                            buffer_lines.append(nxt)
+                            i += 1
+                            if nxt.strip().endswith(";"):
+                                break
+                        else:
+                            break
+                flat = " ".join(line.strip() for line in buffer_lines)
+                if ":=" in flat:
+                    var_part, val_part = flat.split(":=", 1)
+                    var_part = var_part.strip()
+                    val_part = self._strip_trailing_semicolon(val_part.strip())
+                    grouped.append({
+                        "variable": var_part,
+                        "value": val_part,
+                        "type": "assignment_statements",
+                    })
+                    continue
+                # Not an assignment, append original buffered strings
+                for s in buffer_lines:
+                    grouped.append(s)
+                continue
+            # Default passthrough
+            grouped.append(el)
+            i += 1
+        return grouped
+
+    def _group_if_else_statements(self, elements):
+        def build_elif_chain(elif_items):
+            if not elif_items:
+                return None
+            head = {
+                "condition": elif_items[0]["condition"],
+                "then_sql": self._group_select_statements(
+                    self._group_assignment_statements(
+                        self._group_if_else_statements(elif_items[0]["then_lines"])
+                    )
+                ),
+            }
+            next_chain = build_elif_chain(elif_items[1:])
+            if next_chain:
+                head["else_if_statement"] = next_chain
+            return head
+
+        result = []
+        i = 0
+        while i < len(elements):
+            el = elements[i]
+            # Recurse into nested begin blocks
+            if isinstance(el, dict) and el.get("type") == "begin_block":
+                el["sqls"] = self._group_select_statements(
+                    self._group_if_else_statements(el.get("sqls", []))
+                )
+                result.append(el)
+                i += 1
+                continue
+
+            if isinstance(el, str) and el.strip().upper().startswith("IF"):
+                # Parse IF condition up to THEN (can span lines)
+                condition_parts = []
+                # consume the IF line
+                line = el
+                upper_line = line.upper()
+                # Extract after IF up to THEN if present
+                if "THEN" in upper_line:
+                    before_then = line[: upper_line.find("THEN")]
+                    # remove leading IF
+                    idx_if = upper_line.find("IF")
+                    condition_parts.append(before_then[idx_if + 2 :].strip())
+                    i += 1
+                else:
+                    # consume lines until THEN is found
+                    idx_if = upper_line.find("IF")
+                    condition_parts.append(line[idx_if + 2 :].strip())
+                    i += 1
+                    while i < len(elements):
+                        nxt = elements[i]
+                        if isinstance(nxt, str):
+                            up = nxt.upper()
+                            if "THEN" in up:
+                                condition_parts.append(nxt[: up.find("THEN")].strip())
+                                i += 1
+                                break
+                            else:
+                                condition_parts.append(nxt.strip())
+                                i += 1
+                                continue
+                        else:
+                            # Unexpected non-string before THEN; stop
+                            break
+                condition = " ".join(part for part in condition_parts if part)
+
+                # Now collect bodies until matching END IF; with nesting support
+                depth = 1
+                mode = "then"
+                then_lines = []
+                elif_items = []  # list of {condition, then_lines}
+                current_elif = None
+                else_lines = []
+
+                while i < len(elements) and depth > 0:
+                    cur = elements[i]
+                    if isinstance(cur, str):
+                        up = cur.strip().upper()
+                        # Detect nested IF
+                        if up.startswith("IF"):
+                            depth += 1
+                            # add to current body
+                            target = (
+                                then_lines
+                                if mode == "then"
+                                else (
+                                    current_elif["then_lines"]
+                                    if mode == "elsif" and current_elif
+                                    else else_lines
+                                )
+                            )
+                            target.append(cur)
+                            i += 1
+                            continue
+                        # Top-level ELSIF
+                        if up.startswith("ELSIF") and depth == 1:
+                            # finalize previous elif if any
+                            if current_elif is not None:
+                                elif_items.append(current_elif)
+                            # parse elsif condition up to THEN (can span lines)
+                            cond_parts = []
+                            line2 = cur
+                            up2 = up
+                            if "THEN" in up2:
+                                cond_parts.append(
+                                    line2[: up2.find("THEN")].strip()[5:].strip()
+                                )  # remove 'ELSIF'
+                                i += 1
+                            else:
+                                # remove ELSIF prefix
+                                cond_parts.append(line2.strip()[5:].strip())
+                                i += 1
+                                while i < len(elements):
+                                    nxt2 = elements[i]
+                                    if isinstance(nxt2, str):
+                                        upn = nxt2.upper()
+                                        if "THEN" in upn:
+                                            cond_parts.append(
+                                                nxt2[: upn.find("THEN")].strip()
+                                            )
+                                            i += 1
+                                            break
+                                        else:
+                                            cond_parts.append(nxt2.strip())
+                                            i += 1
+                                            continue
+                                    else:
+                                        break
+                            current_elif = {
+                                "condition": " ".join(p for p in cond_parts if p),
+                                "then_lines": [],
+                            }
+                            mode = "elsif"
+                            continue
+                        # Top-level ELSE
+                        if up.startswith("ELSE") and depth == 1:
+                            if current_elif is not None:
+                                elif_items.append(current_elif)
+                                current_elif = None
+                            mode = "else"
+                            i += 1
+                            continue
+                        # Top-level END IF;
+                        if depth == 1 and (
+                            "END IF;" in up
+                            or up.startswith("END IF")
+                            and cur.strip().endswith(";")
+                        ):
+                            if current_elif is not None:
+                                elif_items.append(current_elif)
+                                current_elif = None
+                            i += 1
+                            depth -= 1
+                            break
+                        # Nested END IF;
+                        if "END IF;" in up or (
+                            up.startswith("END IF") and cur.strip().endswith(";")
+                        ):
+                            depth -= 1
+                            # include this line as content if nested
+                            target = (
+                                then_lines
+                                if mode == "then"
+                                else (
+                                    current_elif["then_lines"]
+                                    if mode == "elsif" and current_elif
+                                    else else_lines
+                                )
+                            )
+                            target.append(cur)
+                            i += 1
+                            continue
+                        # Regular content line
+                        target = (
+                            then_lines
+                            if mode == "then"
+                            else (
+                                current_elif["then_lines"]
+                                if mode == "elsif" and current_elif
+                                else else_lines
+                            )
+                        )
+                        target.append(cur)
+                        i += 1
+                    else:
+                        # Non-string element (e.g., begin_block or comment or grouped statements)
+                        target = (
+                            then_lines
+                            if mode == "then"
+                            else (
+                                current_elif["then_lines"]
+                                if mode == "elsif" and current_elif
+                                else else_lines
+                            )
+                        )
+                        target.append(cur)
+                        i += 1
+
+                # Build the if_else object with recursively grouped bodies
+                if_else_obj = {
+                    "type": "if_else",
+                    "condition": condition,
+                    "then_sql": self._group_select_statements(
+                        self._group_assignment_statements(
+                            self._group_if_else_statements(then_lines)
+                        )
+                    ),
+                }
+                elif_chain = build_elif_chain(elif_items)
+                if elif_chain:
+                    if_else_obj["else_if_statement"] = elif_chain
+                if else_lines:
+                    if_else_obj["else_statement"] = self._group_select_statements(
+                        self._group_assignment_statements(
+                            self._group_if_else_statements(else_lines)
+                        )
+                    )
+                result.append(if_else_obj)
+                continue
+
+            # default passthrough
+            result.append(el)
+            i += 1
+        return result
+
+    def _group_raise_statements(self, elements):
+        def process_elif_chain(chain):
+            if not isinstance(chain, dict):
+                return chain
+            if "then_sql" in chain:
+                chain["then_sql"] = self._group_raise_statements(chain["then_sql"])
+            if "else_if_statement" in chain and isinstance(
+                chain["else_if_statement"], dict
+            ):
+                chain["else_if_statement"] = process_elif_chain(
+                    chain["else_if_statement"]
+                )
+            return chain
+
+        grouped = []
+        i = 0
+        while i < len(elements):
+            el = elements[i]
+            # Recurse for begin blocks
+            if isinstance(el, dict) and el.get("type") == "begin_block":
+                el["sqls"] = self._group_raise_statements(el.get("sqls", []))
+                grouped.append(el)
+                i += 1
+                continue
+            # Recurse for if_else
+            if isinstance(el, dict) and el.get("type") == "if_else":
+                el["then_sql"] = self._group_raise_statements(el.get("then_sql", []))
+                if "else_statement" in el and isinstance(el["else_statement"], list):
+                    el["else_statement"] = self._group_raise_statements(
+                        el["else_statement"]
+                    )
+                if "else_if_statement" in el and isinstance(
+                    el["else_if_statement"], dict
+                ):
+                    el["else_if_statement"] = process_elif_chain(
+                        el["else_if_statement"]
+                    )
+                grouped.append(el)
+                i += 1
+                continue
+            # Preserve other pre-grouped dicts
+            if isinstance(el, dict):
+                grouped.append(el)
+                i += 1
+                continue
+            # Handle strings
+            if isinstance(el, str) and el.strip().upper().startswith("RAISE "):
+                buffer_lines = [el]
+                i += 1
+                while i < len(elements):
+                    nxt = elements[i]
+                    if isinstance(nxt, str):
+                        buffer_lines.append(nxt)
+                        i += 1
+                        if nxt.strip().endswith(";"):
+                            break
+                    else:
+                        break
+                # Strip inline comments before joining
+                cleaned_lines = [self._strip_inline_sql_comment(line.strip()) for line in buffer_lines]
+                sql_flat = " ".join(line for line in cleaned_lines if line)
+                sql_flat = self._strip_trailing_semicolon(sql_flat)
+                # Extract exception name after RAISE
+                m = re.search(r"\bRAISE\s+([A-Za-z0-9_]+)", sql_flat, re.IGNORECASE)
+                if m:
+                    exc_name = m.group(1).strip()
+                    grouped.append(
+                        {
+                            "exception_name": exc_name,
+                            "sqls": [
+                                {
+                                    "sql": sql_flat,
+                                    "type": "RAISE_statements",
+                                }
+                            ],
+                        }
+                    )
+                else:
+                    # Fallback: keep as a flat RAISE statement
+                    grouped.append({"sql": sql_flat, "type": "RAISE_statements"})
+            else:
+                grouped.append(el)
+                i += 1
+        return grouped
+
+    def _group_for_loops(self, elements):
+        grouped = []
+        i = 0
+        while i < len(elements):
+            el = elements[i]
+            # Recurse into nested begin blocks first
+            if isinstance(el, dict) and el.get("type") == "begin_block":
+                el_sqls = el.get("sqls", [])
+                el["sqls"] = self._group_for_loops(el_sqls)
+                grouped.append(el)
+                i += 1
+                continue
+            # Recurse into if_else branches
+            if isinstance(el, dict) and el.get("type") == "if_else":
+                el["then_sql"] = self._group_for_loops(el.get("then_sql", []))
+                if "else_statement" in el and isinstance(el["else_statement"], list):
+                    el["else_statement"] = self._group_for_loops(el["else_statement"])
+                if "else_if_statement" in el and isinstance(
+                    el["else_if_statement"], dict
+                ):
+                    # process chained elif recursively
+                    chain = el["else_if_statement"]
+                    while isinstance(chain, dict):
+                        if "then_sql" in chain:
+                            chain["then_sql"] = self._group_for_loops(chain["then_sql"])
+                        chain = chain.get("else_if_statement")
+                grouped.append(el)
+                i += 1
+                continue
+            # Preserve comment objects
+            if isinstance(el, dict) and el.get("type") == "comment":
+                grouped.append(el)
+                i += 1
+                continue
+            # Handle strings
+            if isinstance(el, str) and el.strip().upper().startswith("FOR "):
+                buffer_lines = [el]
+                i += 1
+                depth = 1
+                # Accumulate until matching END LOOP;
+                while i < len(elements) and depth > 0:
+                    nxt = elements[i]
+                    if isinstance(nxt, str):
+                        up = nxt.strip().upper()
+                        if up.startswith("FOR "):
+                            depth += 1
+                        if "END LOOP;" in up:
+                            depth -= 1
+                            buffer_lines.append(nxt)
+                            i += 1
+                            if depth == 0:
+                                break
+                            continue
+                        buffer_lines.append(nxt)
+                        i += 1
+                    else:
+                        # Include nested objects as part of loop body verbatim
+                        buffer_lines.append(nxt)
+                        i += 1
+                # Build header text to extract loop signature
+                # Extract header to parse loop variable and cursor query
+                header_text = ""
+                for part in buffer_lines:
+                    if isinstance(part, str):
+                        header_text += part + "\n"
+                        if re.search(r"\bLOOP\b", part, re.IGNORECASE):
+                            break
+                var_name = None
+                cursor_query = None
+                m = re.search(
+                    r"FOR\s+([A-Za-z0-9_]+)\s+IN\s*\((.*?)\)\s*LOOP",
+                    header_text,
+                    re.IGNORECASE | re.DOTALL,
+                )
+                if m:
+                    var_name = m.group(1).strip()
+                    cursor_query = " ".join(
+                        line.strip() for line in m.group(2).splitlines()
+                    )
+                # Extract loop body elements (strings and dicts) between first LOOP and matching END LOOP;
+                body_elems = []
+                in_body = False
+                depth2 = 0
+                for part in buffer_lines:
+                    if isinstance(part, str):
+                        up = part.upper()
+                        if not in_body and "LOOP" in up:
+                            in_body = True
+                            depth2 = 1
+                            continue
+                        if in_body:
+                            if up.strip().startswith("FOR "):
+                                depth2 += 1
+                            if "END LOOP;" in up:
+                                depth2 -= 1
+                                if depth2 == 0:
+                                    break
+                                else:
+                                    body_elems.append(part)
+                            else:
+                                body_elems.append(part)
+                    else:
+                        if in_body:
+                            body_elems.append(part)
+                # Run grouping pipeline on loop body to get a list
+                grouped_body = self._group_raise_statements(
+                    self._group_select_statements(
+                        self._group_assignment_statements(
+                            self._group_for_loops(
+                                self._group_case_statements(
+                                    self._group_if_else_statements(body_elems)
+                                )
+                            )
+                        )
+                    )
+                )
+                grouped.append(
+                    {
+                        "type": "for_loop",
+                        "loop_variable": var_name,
+                        "loop_body": grouped_body,
+                        "cursor_query": cursor_query,
+                    }
+                )
+            else:
+                grouped.append(el)
+                i += 1
+        return grouped
+
+    def _group_case_statements(self, elements):
+        # Group CASE ... END CASE; into structured objects with when_clauses
+        def recurse(elems):
+            return self._group_raise_statements(
+                self._group_select_statements(
+                    self._group_assignment_statements(
+                        self._group_for_loops(
+                            self._group_case_statements(
+                                self._group_if_else_statements(elems)
+                            )
+                        )
+                    )
+                )
+            )
+
+        grouped = []
+        i = 0
+        while i < len(elements):
+            el = elements[i]
+            # Recurse into containers
+            if isinstance(el, dict) and el.get("type") == "begin_block":
+                el["sqls"] = self._group_case_statements(el.get("sqls", []))
+                grouped.append(el)
+                i += 1
+                continue
+            if isinstance(el, dict) and el.get("type") == "if_else":
+                el["then_sql"] = self._group_case_statements(el.get("then_sql", []))
+                if "else_statement" in el and isinstance(el["else_statement"], list):
+                    el["else_statement"] = self._group_case_statements(
+                        el["else_statement"]
+                    )
+                chain = el.get("else_if_statement")
+                while isinstance(chain, dict):
+                    if "then_sql" in chain:
+                        chain["then_sql"] = self._group_case_statements(
+                            chain["then_sql"]
+                        )
+                    chain = chain.get("else_if_statement")
+                grouped.append(el)
+                i += 1
+                continue
+            if isinstance(el, dict):
+                grouped.append(el)
+                i += 1
+                continue
+            # Handle strings
+            if isinstance(el, str) and el.strip().upper().startswith("CASE"):
+                buffer = [el]
+                i += 1
+                depth = 1
+                while i < len(elements) and depth > 0:
+                    part = elements[i]
+                    if isinstance(part, str):
+                        up = part.strip().upper()
+                        if up.startswith("CASE"):
+                            depth += 1
+                        if "END CASE;" in up:
+                            depth -= 1
+                            buffer.append(part)
+                            i += 1
+                            if depth == 0:
+                                break
+                            continue
+                        buffer.append(part)
+                        i += 1
+                    else:
+                        buffer.append(part)
+                        i += 1
+                # Build flat sql
+                flat_pieces = []
+                for p in buffer:
+                    if isinstance(p, str):
+                        flat_pieces.append(p.strip())
+                    elif isinstance(p, dict) and p.get("type") == "comment":
+                        flat_pieces.append(p.get("sql", ""))
+                sql_flat = " ".join(piece for piece in flat_pieces if piece)
+                # Extract case_expression up to first WHEN
+                header_text = ""
+                case_expression = ""
+                for p in buffer:
+                    if isinstance(p, str):
+                        header_text += p + "\n"
+                        if re.search(r"\bWHEN\b", p, re.IGNORECASE):
+                            break
+                header_upper = header_text.upper()
+                if header_upper.startswith("CASE"):
+                    after_case = header_text[4:]
+                    m_when = re.search(r"\bWHEN\b", after_case, re.IGNORECASE)
+                    case_expression = (
+                        after_case[: m_when.start()].strip()
+                        if m_when
+                        else after_case.strip()
+                    )
+                # Parse WHEN clauses into arrays
+                # Work on a linearized sequence marking strings for depth detection
+                inner_elems = []
+                # skip first header until first WHEN
+                seen_first_when = False
+                for p in buffer:
+                    if isinstance(p, str):
+                        if not seen_first_when:
+                            if re.search(r"\bWHEN\b", p, re.IGNORECASE):
+                                seen_first_when = True
+                                inner_elems.append(p)
+                            continue
+                        inner_elems.append(p)
+                    else:
+                        if seen_first_when:
+                            inner_elems.append(p)
+                when_clauses = []
+                idx = 0
+                nested_case_depth = 0
+                else_array = None
+                while idx < len(inner_elems):
+                    item = inner_elems[idx]
+                    if isinstance(item, str):
+                        up = item.strip().upper()
+                        if up.startswith("CASE"):
+                            nested_case_depth += 1
+                            idx += 1
+                            continue
+                        if "END CASE;" in up and nested_case_depth > 0:
+                            nested_case_depth -= 1
+                            idx += 1
+                            continue
+                        if up.startswith("WHEN ") and nested_case_depth == 0:
+                            # parse condition up to THEN
+                            cond_parts = []
+                            line = item
+                            upline = up
+                            if "THEN" in upline:
+                                cond_parts.append(
+                                    line[: upline.find("THEN")].strip()[4:].strip()
+                                )
+                                idx += 1
+                            else:
+                                cond_parts.append(line.strip()[4:].strip())
+                                idx += 1
+                                while idx < len(inner_elems):
+                                    nxt = inner_elems[idx]
+                                    if isinstance(nxt, str):
+                                        upn = nxt.upper()
+                                        if "THEN" in upn:
+                                            cond_parts.append(
+                                                nxt[: upn.find("THEN")].strip()
+                                            )
+                                            idx += 1
+                                            break
+                                        else:
+                                            cond_parts.append(nxt.strip())
+                                            idx += 1
+                                            continue
+                                    else:
+                                        # stop if non-string encountered before THEN
+                                        break
+                            # collect then body until next WHEN/ELSE/END CASE at depth 0
+                            then_body = []
+                            while idx < len(inner_elems):
+                                nxt = inner_elems[idx]
+                                if isinstance(nxt, str):
+                                    upn = nxt.strip().upper()
+                                    if upn.startswith("CASE"):
+                                        nested_case_depth += 1
+                                    if "END CASE;" in upn and nested_case_depth > 0:
+                                        nested_case_depth -= 1
+                                        then_body.append(nxt)
+                                        idx += 1
+                                        continue
+                                    if (
+                                        upn.startswith("WHEN ")
+                                        or upn.startswith("ELSE")
+                                        or "END CASE;" in upn
+                                    ) and nested_case_depth == 0:
+                                        break
+                                    then_body.append(nxt)
+                                    idx += 1
+                                else:
+                                    then_body.append(nxt)
+                                    idx += 1
+                            when_clauses.append(
+                                {
+                                    "when_value": " ".join(p for p in cond_parts if p),
+                                    "then_statement": recurse(then_body),
+                                    "else_statement": None,
+                                }
+                            )
+                            continue
+                        if up.startswith("ELSE") and nested_case_depth == 0:
+                            # collect else body until END CASE;
+                            idx += 1
+                            body = []
+                            while idx < len(inner_elems):
+                                nxt = inner_elems[idx]
+                                if isinstance(nxt, str):
+                                    upn = nxt.strip().upper()
+                                    if upn.startswith("CASE"):
+                                        nested_case_depth += 1
+                                    if "END CASE;" in upn and nested_case_depth == 0:
+                                        break
+                                    if "END CASE;" in upn and nested_case_depth > 0:
+                                        nested_case_depth -= 1
+                                        body.append(nxt)
+                                        idx += 1
+                                        continue
+                                    body.append(nxt)
+                                    idx += 1
+                                else:
+                                    body.append(nxt)
+                                    idx += 1
+                            else_array = recurse(body)
+                            # move past potential END CASE; if next is string containing it
+                            if (
+                                idx < len(inner_elems)
+                                and isinstance(inner_elems[idx], str)
+                                and "END CASE;" in inner_elems[idx].upper()
+                            ):
+                                idx += 1
+                            break
+                    idx += 1
+                if else_array and when_clauses:
+                    when_clauses[-1]["else_statement"] = else_array
+                grouped.append(
+                    {
+                        "type": "case_when_statements",
+                        "case_expression": " ".join(case_expression.split()),
+                        "when_clauses": when_clauses,
+                    }
+                )
+            else:
+                grouped.append(el)
+                i += 1
+        return grouped
+
+    def _cleanup_end_if_in_elements(self, elements):
+        cleaned = []
+        end_if_line_re = re.compile(r"^\s*END\s+IF\s*;?\s*$", re.IGNORECASE)
+        end_case_line_re = re.compile(r"^\s*END\s+CASE\s*;?\s*$", re.IGNORECASE)
+        end_if_trailing_re = re.compile(r"\s*END\s+IF\s*;?\s*$", re.IGNORECASE)
+        end_case_trailing_re = re.compile(r"\s*END\s+CASE\s*;?\s*$", re.IGNORECASE)
+
+        def strip_end_tokens(text: str) -> str:
+            # First remove inline comments
+            text = self._strip_inline_sql_comment(text)
+            # Remove standalone trailing END IF/END CASE tokens
+            text = end_if_trailing_re.sub("", text)
+            text = end_case_trailing_re.sub("", text)
+            # Normalize any trailing semicolon after removal
+            return self._strip_trailing_semicolon(text)
+
+        for el in elements:
+            if isinstance(el, str):
+                # Drop pure END IF/END CASE lines (and pure comments are already removed earlier)
+                if end_if_line_re.match(el) or end_case_line_re.match(el):
+                    continue
+                # Strip trailing END tokens if present at end of string
+                new_text = strip_end_tokens(el)
+                if new_text == "":
+                    continue
+                cleaned.append(new_text)
+            elif isinstance(el, dict):
+                # Drop comment objects from output entirely
+                if el.get("type") == "comment":
+                    continue
+                # Clean sql-bearing dicts
+                if "sql" in el and isinstance(el["sql"], str):
+                    el["sql"] = strip_end_tokens(el["sql"])
+                el_type = el.get("type")
+                if el_type == "begin_block":
+                    el["sqls"] = self._cleanup_end_if_in_elements(el.get("sqls", []))
+                    cleaned.append(el)
+                elif el_type == "if_else":
+                    el["then_sql"] = self._cleanup_end_if_in_elements(
+                        el.get("then_sql", [])
+                    )
+                    if "else_statement" in el and isinstance(
+                        el["else_statement"], list
+                    ):
+                        el["else_statement"] = self._cleanup_end_if_in_elements(
+                            el["else_statement"]
+                        )
+
+                    # Clean elif chain recursively
+                    def clean_chain(chain):
+                        if not isinstance(chain, dict):
+                            return chain
+                        if "then_sql" in chain and isinstance(chain["then_sql"], list):
+                            chain["then_sql"] = self._cleanup_end_if_in_elements(
+                                chain["then_sql"]
+                            )
+                        if "else_if_statement" in chain and isinstance(
+                            chain["else_if_statement"], dict
+                        ):
+                            chain["else_if_statement"] = clean_chain(
+                                chain["else_if_statement"]
+                            )
+                        return chain
+
+                    if "else_if_statement" in el and isinstance(
+                        el["else_if_statement"], dict
+                    ):
+                        el["else_if_statement"] = clean_chain(el["else_if_statement"])
+                    cleaned.append(el)
+                elif el_type == "for_loop":
+                    el["loop_body"] = self._cleanup_end_if_in_elements(
+                        el.get("loop_body", [])
+                    )
+                    cleaned.append(el)
+                elif el_type == "case_when_statements":
+                    whens = el.get("when_clauses", [])
+                    for w in whens:
+                        if isinstance(w, dict):
+                            if "then_statement" in w and isinstance(
+                                w["then_statement"], list
+                            ):
+                                w["then_statement"] = self._cleanup_end_if_in_elements(
+                                    w["then_statement"]
+                                )
+                            if "else_statement" in w and isinstance(
+                                w["else_statement"], list
+                            ):
+                                w["else_statement"] = self._cleanup_end_if_in_elements(
+                                    w["else_statement"]
+                                )
+                    cleaned.append(el)
+                else:
+                    cleaned.append(el)
+            else:
+                cleaned.append(el)
+        return cleaned
+
+    def to_json(self):
+        # If rule violations exist, return them instead of attempting conversion
+        if self.rule_errors:
+            return {"error": self.rule_errors}
+
+        return {
+            "declarations": {
+                "variables": self.variables,
+                "constants": self.constants,
+                "exceptions": self.exceptions,
+            },
+            "main": self._parse_begin_blocks(),
+            "sql_comments": self.sql_comments,
+        }
