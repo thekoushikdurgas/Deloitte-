@@ -67,7 +67,7 @@
           "sqls": [
             {
               "variable": "V_USERID",
-              "value": "TXO_UTIL.GET_USERID",
+              "value": "TXO_UTIL.GET_USERID;",
               "type": "assignment_statements"
             }
           ],
@@ -81,11 +81,11 @@
         },
         {
           "variable": "CNTR",
-          "value": "0",
+          "value": "0;",
           "type": "assignment_statements"
         },
         {
-          "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD) AND ADDRESS_TYPE_CD = NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD)",
+          "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD) AND ADDRESS_TYPE_CD = NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD);",
           "type": "select_statements"
         },
         {
@@ -100,7 +100,7 @@
                   "exception_name": "ERR_INS",
                   "sqls": [
                     {
-                      "sql": "RAISE ERR_INS",
+                      "sql": "RAISE ERR_INS;",
                       "type": "RAISE_statements"
                     }
                   ]
@@ -114,7 +114,7 @@
           "condition": "(INSERTING OR UPDATING)",
           "then_sql": [
             {
-              "sql": "SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD)",
+              "sql": "SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);",
               "type": "select_statements"
             },
             {
@@ -125,7 +125,7 @@
                   "exception_name": "ERR_INS_LEGAL_ADDR",
                   "sqls": [
                     {
-                      "sql": "RAISE ERR_INS_LEGAL_ADDR",
+                      "sql": "RAISE ERR_INS_LEGAL_ADDR;",
                       "type": "RAISE_statements"
                     }
                   ]
@@ -144,7 +144,7 @@
                       "exception_name": "ERR_CTRY_CHG",
                       "sqls": [
                         {
-                          "sql": "RAISE ERR_CTRY_CHG",
+                          "sql": "RAISE ERR_CTRY_CHG;",
                           "type": "RAISE_statements"
                         }
                       ]
@@ -172,7 +172,7 @@
                     "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
                     "P_VALID_FROM => :NEW.VALID_FROM,",
                     "P_ACTION_TYPE => 'INSERT'",
-                    ")"
+                    ");"
                   ],
                   "else_statement": [
                     {
@@ -196,14 +196,14 @@
                         "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
                         "P_VALID_FROM => :NEW.VALID_FROM,",
                         "P_ACTION_TYPE => 'CTRY_CHANGE'",
-                        ")",
+                        ");",
                         {
                           "variable": "CNTR",
-                          "value": "0",
+                          "value": "0;",
                           "type": "assignment_statements"
                         },
                         {
-                          "sql": "SELECT COUNT(*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('B', 'L')",
+                          "sql": "SELECT COUNT(*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('B', 'L');",
                           "type": "select_statements"
                         },
                         {
@@ -211,7 +211,7 @@
                           "condition": "(:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0)",
                           "then_sql": [
                             {
-                              "sql": "SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID",
+                              "sql": "SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID;",
                               "type": "select_statements"
                             },
                             {
@@ -220,14 +220,14 @@
                               "then_sql": [
                                 {
                                   "variable": "V_VALID_FROM",
-                                  "value": "TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy')",
+                                  "value": "TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy');",
                                   "type": "assignment_statements"
                                 }
                               ],
                               "else_statement": [
                                 {
                                   "variable": "V_VALID_FROM",
-                                  "value": "TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy')",
+                                  "value": "TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy');",
                                   "type": "assignment_statements"
                                 }
                               ]
@@ -241,7 +241,7 @@
                             "I_CHANGE_USER => V_USERID,",
                             "I_MAPPING_TYPE => 'JU',",
                             "I_ACTION_TYPE => 'INSERT'",
-                            ")",
+                            ");",
                             {
                               "type": "if_else",
                               "condition": "(V_COMPANY_TYPE_CD = 'L')",
@@ -275,7 +275,7 @@
                         "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
                         "P_VALID_FROM => :NEW.VALID_FROM,",
                         "P_ACTION_TYPE => 'UPDATE'",
-                        ")"
+                        ");"
                       ]
                     }
                   ]
@@ -307,7 +307,7 @@
                     "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
                     "P_VALID_FROM => :NEW.VALID_FROM,",
                     "P_ACTION_TYPE => 'INSERT'",
-                    ")"
+                    ");"
                   ],
                   "else_statement": [
                     "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
@@ -327,7 +327,7 @@
                     "P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
                     "P_VALID_FROM => :NEW.VALID_FROM,",
                     "P_ACTION_TYPE => 'UPDATE'",
-                    ")"
+                    ");"
                   ]
                 }
               ]
@@ -346,14 +346,14 @@
                   "exception_name": "ERR_NOT_ALLOWED_TO_INVALIDATE",
                   "sqls": [
                     {
-                      "sql": "RAISE ERR_NOT_ALLOWED_TO_INVALIDATE",
+                      "sql": "RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;",
                       "type": "RAISE_statements"
                     }
                   ]
                 }
               ]
             },
-            "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE')"
+            "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');"
           ]
         }
       ],

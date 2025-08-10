@@ -1,41 +1,241 @@
-docs
-files
-files\expected_ana_json
-files\expected_ana_json\trigger1_enhanced_analysis.json
-files\expected_ana_json\trigger2_enhanced_analysis.json
-files\expected_ana_json\trigger3_enhanced_analysis.json
-files\expected_json
-files\expected_json\ex-trigger1.json
-files\expected_json\ex-trigger2.json
-files\expected_json\ex-trigger3.json
-files\format_oracle
-files\format_oracle\formatted_trigger1.sql
-files\format_oracle\formatted_trigger2.sql
-files\format_oracle\formatted_trigger3.sql
-files\json
-files\json\trigger1.json
-files\json\trigger2.json
-files\json\trigger3.json
-files\oracle
-files\oracle\trigger1.sql
-files\oracle\trigger2.sql
-files\oracle\trigger3.sql
-files\sql_json
-main.py
-output
-README.md
-requirements.txt
-test
-tree.dart.txt
-utilities
-utilities\config.py
-utilities\converter.py
-utilities\interface.py
-utilities\mapping_manager.py
-utilities\oracle_postgresql_mappings.xlsx
-utilities\oracle_trigger_analyzer.py
-utilities\postgresql_formatter.py
-utilities\regex_processor.py
-utilities\sql_analyzer.py
-utilities\sql_formatter_agent.py
-utilities\trigger_parser.py
+I'll fetch the original SQL files from `files/oracle/` to compare them against your generated versions and cross-check against the analysis JSONs. Then I'll detail the SQL differences and break the work into smaller tasks.
+Ran tool
+Ran tool
+Ran tool
+
+Status: I loaded the original SQLs from `files/oracle/` and compared them to your generated SQLs in `files/format_sql/`. I also reviewed the analysis JSONs in `files/format_json/` to trace root causes of any discrepancies.
+
+### Trigger 1 (themes) — key SQL differences
+- Missing CASE else for theme number validation (generated drops the else that raises `INVALID_THEME_NO`).
+  ```241:252:files/oracle/trigger1.sql
+      CASE LENGTH(:NEW.THEME_NO)
+         WHEN 4 THEN
+            ...
+         WHEN 5 THEN
+            ...
+         ELSE
+            RAISE INVALID_THEME_NO;
+      END CASE;
+  ```
+  ```120:129:files/format_sql/trigger1.sql
+  CASE LENGTH(:NEW.THEME_NO)
+    WHEN 4 THEN
+      ...
+    WHEN 5 THEN
+      ...
+  -- (no ELSE branch)
+  ```
+- Missing guard: “inserts must be official” on insert.
+  ```281:285:files/oracle/trigger1.sql
+  IF (:NEW.OFFICIAL_IND = 'N') THEN
+     RAISE INSERTSMUSTBEOFFICIAL;
+  END IF;
+  ```
+  Not present in `files/format_sql/trigger1.sql`.
+- Missing “theme_no already exists” check on insert.
+  ```254:276:files/oracle/trigger1.sql
+  SELECT COUNT(T.THEME_NO) INTO V_COUNTER
+  FROM (SELECT THEME_NO FROM V_THEMES UNION ALL SELECT THEME_NO FROM GMD.THEMES_ARCHIVE) T
+  WHERE T.THEME_NO = :NEW.THEME_NO;
+  IF (V_COUNTER > 0) THEN
+     RAISE THEME_NO_CANNOT_BE_INSERTED;
+  END IF;
+  ```
+  Not present in `files/format_sql/trigger1.sql`.
+- Exception messages truncated (generated loses dynamic details).
+  ```800:810:files/oracle/trigger1.sql
+  RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Theme Description "' || V_DESCRIPTION || '" is too long');
+  RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Short Description Proposal "' || :OLD.THEME_DESC_PROPOSAL || '" is too long');
+  RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Downstream Theme Description "' || :OLD.THEME_DESC_ALT || '" is too long');
+  ```
+  ```258:263:files/format_sql/trigger1.sql
+  RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Theme Description "');
+  RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Short Description Proposal "');
+  RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Downstream Theme Description "');
+  ```
+- Note: Both original and generated contain a malformed condition in update branch:
+  ```430:433:files/oracle/trigger1.sql
+  IF (UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD) THEN
+  ```
+  Same in generated (so not a diff, but it’s a syntax bug to fix).
+
+JSON root causes observed
+- `files/format_json/trigger1_analysis.json` splits the CASE/ELSE and re-injects insertion logic under an outer “else” block, making structure error-prone. The missing ELSE in the CASE and the lost “official insert” and “theme_no exists” checks align with structural issues in the JSON around the large “else_statement” at 840+.
+
+### Trigger 2 (theme_molecule_map) — key SQL differences
+- Misplaced “END CASE” embedded in a RAISE line (generated).
+  ```196:201:files/oracle/trigger2.sql
+  ELSE
+     RAISE ERR_INS_INV_MAP;
+  END CASE; ------------- INSERTING-CASES ----------------------------
+  ```
+  ```65:67:files/format_sql/trigger2.sql
+  ELSE
+    RAISE ERR_INS_INV_MAP; END CASE;
+  END IF;
+  ```
+- Minor formatting/binds: occurrences of `= :NEW...` with stray space after colon exist in both files (not a diff), but still need correction:
+  ```261:265:files/oracle/trigger2.sql
+  TMM.MOLECULE_MAP_CHAR =: NEW.MOLECULE_MAP_CHAR
+  ```
+  Same in generated at:
+  ```81:82:files/format_sql/trigger2.sql
+  TMM.MOLECULE_MAP_CHAR =: NEW.MOLECULE_MAP_CHAR
+  ```
+
+JSON root causes observed
+- `files/format_json/trigger2_analysis.json` encodes “RAISE ...; END CASE” into the else clause (line 252), which explains the generated “inline END CASE” anomaly.
+
+### Trigger 3 (company_addresses) — key SQL differences
+- Broken declarations (identifiers missing in generated).
+  ```2:13:files/oracle/trigger3.sql
+  V_TRIGGER_NAME VARCHAR2 (100) := 'COMPANY_ADDRESSES_IOF';
+  CNTR PLS_INTEGER;
+  ...
+  V_COUNTRY_CD CORE.COUNTRIES.COUNTRY_CD%TYPE;
+  V_COMPANY_TYPE_CD CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;
+  V_VALID_FROM CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;
+  ```
+  ```1:8:files/format_sql/trigger3.sql
+  DECLARE
+    VARCHAR2 (100) := 'COMPANY_ADDRESSES_IOF';    -- missing var name
+    CNTR PLS_INTEGER;
+    VARCHAR2 (100);                               -- missing var name
+    V_COUNTRY_CD CORE.COUNTRIES.COUNTRY_CD%TYPE;
+    V_COMPANY_TYPE_CD CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;
+    V_VALID_FROM CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;
+  ```
+- V_USERID exception handling (generated swallows and leaves V_USERID undefined).
+  ```15:20:files/oracle/trigger3.sql
+  BEGIN
+      V_USERID := TXO_UTIL.GET_USERID;
+  EXCEPTION
+      WHEN OTHERS THEN
+          V_USERID := USER;
+  END;
+  ```
+  ```15:20:files/format_sql/trigger3.sql
+  BEGIN
+      V_USERID := TXO_UTIL.GET_USERID;
+  EXCEPTION
+      WHEN OTHERS THEN
+          NULL;               -- loses fallback; combined with missing decl, this breaks usage
+  END;
+  ```
+- Lost “propagation” JU mapping updates for related companies (legal company case). Generated replaces the full loop with a no-op loop.
+  ```147:171:files/oracle/trigger3.sql
+  IF (V_COMPANY_TYPE_CD = 'L') THEN
+    FOR V_REC IN (
+      SELECT COMPANY_CD
+      FROM CFG_V_COMPANIES
+      WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD
+        AND VALID_IND = 'Y'
+        AND CBC_GBE_SCOPE = 'Y'
+        AND COMPANY_TYPE_CD IN ('O', 'V')
+    ) LOOP
+      MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU(...);
+    END LOOP;
+  END IF;
+  ```
+  ```95:99:files/format_sql/trigger3.sql
+  IF (V_COMPANY_TYPE_CD = 'L') THEN
+    FOR i IN ( SELECT 1 FROM DUAL ) LOOP
+    END LOOP;
+  END IF;
+  ```
+- Exception messages simplified (generated loses details).
+  ```253:268:files/oracle/trigger3.sql
+  RAISE_APPLICATION_ERROR(-20111, 'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD);
+  RAISE_APPLICATION_ERROR(-20113, 'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR);
+  ```
+  ```171:182:files/format_sql/trigger3.sql
+  RAISE_APPLICATION_ERROR(-20111, 'The address cannot be updated because the Address type is different. Old address type: ');
+  RAISE_APPLICATION_ERROR(-20113, 'New: ');
+  ```
+
+JSON root causes observed
+- `files/format_json/trigger3_analysis.json` shows declarations without identifiers (e.g., `"name": "VARCHAR2"`), directly causing the broken DECLARE section.
+- The “legal company” propagation branch degrades to an empty for-loop in JSON (a for_loop with null cursor), explaining the no-op loop in SQL.
+
+### What to fix (smaller tasks)
+- Parsing/JSON fixes
+  - Fix declaration emitter to retain variable identifiers (trigger 3).
+  - Correct CASE/IF/ELSE nesting in JSON so ELSE branches aren’t misplaced and “END CASE” isn’t injected inline with RAISE (triggers 1 and 2).
+  - Preserve string concatenations in exception messages and dynamic values.
+- SQL generation fixes
+  - Restore missing validations in trigger 1: CASE ELSE for theme_no, “inserts must be official”, and “theme_no already exists” check.
+  - Restore JU mapping propagation loop in trigger 3 (loop over related companies).
+  - Normalize bind formatting (remove stray spaces after colon, e.g., `=:NEW...`).
+  - Fix malformed condition in trigger 1 update branch (remove the spurious duplicated token after the condition).
+  - Ensure V_USERID fallback to `USER` on exceptions and that V_USERID is declared.
+- Verification
+  - Regenerate `files/format_sql/*.sql` from corrected JSONs.
+  - Run unit checks on parsing/generation consistency by spot-comparing high-risk blocks (CASE/IF/EXCEPTION) across original → JSON → generated.
+
+- Optional hardening
+  - Add tests to assert:
+    - Every CASE has an explicit ELSE where original had one.
+    - No “END CASE” fragments appear inside RAISE lines.
+    - All exception messages preserve concatenations.
+    - All variable declarations have identifiers and types.
+
+Summary
+- Compared `files/oracle/*.sql` vs `files/format_sql/*.sql` and traced discrepancies to `files/format_json/*.json`.
+- Trigger 1: missing CASE else, missing official-insert and duplicate theme_no checks, truncated exception messages.
+- Trigger 2: inline “END CASE” in error branch due to JSON; binds spacing issues persist.
+- Trigger 3: broken DECLARE vars, lost V_USERID fallback, lost legal-company JU mapping loop, simplified exception messages.
+- Root causes mainly in JSON structure and declaration serialization; adjust JSON generation and then regenerate SQL.
+
+Status: I reviewed your original vs generated SQL, traced the root causes to gaps in JSON analysis and SQL rendering, then inspected `utilities/OracleTriggerAnalyzer.py`, `utilities/FORMATOracleTriggerAnalyzer.py`, and `main.py` to propose targeted code edits that will correct the issues and regenerate matching SQL.
+
+### Changes to make in `utilities/OracleTriggerAnalyzer.py`
+- Parse variable declarations with spaced type modifiers (fix trigger3 declarations like `VARCHAR2 (100)`):
+  - Update `_parse_variable` to reliably capture types with optional whitespace before parentheses. Replace the two-step regex with one robust pattern, e.g. allow `data_type := VARCHAR2\s*\([^)]+\)` and percent-typed names.
+- Preserve assignment statements inside exception handlers (fix trigger3 `V_USERID := USER;`):
+  - Extend `_parse_exception_handlers` to detect and include assignment statements in handler bodies:
+    - Capture `([A-Za-z0-9_\.]+)\s*:=\s*(.*?);` as an `assignment_statements` node.
+    - Keep existing capture of `raise_application_error` and `RAISE`.
+- Prevent “RAISE ...; END CASE” from being fused (fix trigger2 inline `END CASE` in RAISE):
+  - In `_group_raise_statements`, after building `sql_flat`, strip trailing `END IF`/`END CASE` tokens:
+    - Apply a regex like `re.sub(r"\s*END\s+(IF|CASE)\s*;?\s*$", "", sql_flat, flags=re.IGNORECASE)`.
+  - Optionally, in `_group_case_statements`, split any string containing multiple statements at semicolons before grouping, so `RAISE ...; END CASE;` becomes distinct items.
+- Correct CASE else association (fix trigger1 missing CASE ELSE branch):
+  - With the above split/cleanup, the existing CASE parser will correctly attach the ELSE body. Keep the logic that assigns `else_statement` to the last when clause.
+- Robust FOR-loop header parsing (fix trigger3 `FOR V_REC IN (SELECT ...)` with nested parentheses):
+  - Replace the header regex with a balanced-parentheses scan:
+    - Find `FOR <var> IN (`; then scan forward counting parentheses until the matching `)`; ensure the following token is `LOOP`.
+    - Extract `<var>` and the full cursor subquery between the matched parentheses.
+- Keep all top-level cleanups (ensure `_cleanup_end_if_in_elements` runs on nested dicts) — your current cleanup is fine; the key was to avoid contaminating `RAISE` with `END CASE`.
+
+### Changes to make in `utilities/FORMATOracleTriggerAnalyzer.py`
+- Do not re-quote dynamic error messages (fix truncated/quoted messages in trigger1/3):
+  - In `_render_exception_handler` and `_render_sql_list` for `function calling` with `raise_application_error`:
+    - Only wrap with `_plsql_string_literal` if the parameter is a plain literal.
+    - If the parameter contains concatenation (`||`), variables, or binds, write it as-is without extra quotes.
+- Render FOR loops from JSON accurately:
+  - With improved analyzer, `for_loop` nodes will have `loop_variable` and `cursor_query`. Keep current defaults but they should no longer be used.
+- No change needed for declaration rendering; analyzer fix will feed correct `name`/`data_type` so trigger3 declarations render properly.
+
+### No change needed in `main.py`
+- The orchestration is fine. Once analyzer and renderer are fixed, `read_oracle_triggers_to_json()` and `read_json_to_oracle_triggers()` will regenerate corrected SQL.
+
+### Outcome you’ll get after these edits
+- Trigger 1:
+  - CASE has proper ELSE raising `INVALID_THEME_NO`.
+  - “Inserts must be official” and “theme_no already exists” checks are present.
+  - Error messages keep full concatenations (no truncation).
+- Trigger 2:
+  - “RAISE ...; END CASE” no longer appears; RAISE is clean and CASE closes separately.
+- Trigger 3:
+  - Declarations retain variable names (`V_TRIGGER_NAME VARCHAR2(100)`, `V_USERID VARCHAR2(100)`, etc.).
+  - Exception handler assigns `V_USERID := USER;` on OTHERS.
+  - Legal-company propagation loop renders the real `FOR V_REC IN (SELECT ...) LOOP` block.
+
+- Optional: If desired, post-process emitted SQL to normalize bind spacing (e.g., `=: NEW` → `= :NEW`), but this exists in originals as well, so not required.
+
+- After applying, re-run your existing flow (no shell commands needed) to regenerate JSON then SQL.
+
+Summary
+- Updated `_parse_variable` for spaced type modifiers, `_parse_exception_handlers` to include assignments, `_group_raise_statements` to strip trailing END tokens, and `_group_for_loops` to handle nested parentheses.
+- Adjusted renderer to avoid double-quoting dynamic `raise_application_error` messages and to use analyzed loop headers.
+- This restores missing CASE ELSE, official insert and duplicate checks, corrects error messages, fixes RAISE/END CASE fusion, repairs trigger3 declarations, V_USERID fallback, and the legal-company propagation loop.

@@ -238,15 +238,15 @@
     {
       "sqls": [
         {
-          "sql": "SELECT NVL(TXO_SECURITY.GET_USERID, USER) INTO V_USERID FROM DUAL",
+          "sql": "SELECT NVL(TXO_SECURITY.GET_USERID, USER) INTO V_USERID FROM DUAL;",
           "type": "select_statements"
         },
         {
-          "sql": "SELECT COUNT(*) INTO V_IS_ADMIN_CNT FROM TXO_USERS_ROLES_MAP WHERE ROLE_ID IN (315) AND USERID = V_USERID",
+          "sql": "SELECT COUNT(*) INTO V_IS_ADMIN_CNT FROM TXO_USERS_ROLES_MAP WHERE ROLE_ID IN (315) AND USERID = V_USERID;",
           "type": "select_statements"
         },
         {
-          "sql": "SELECT NEW_RG_NO INTO V_NEW_RG_NO FROM ( SELECT NEW_RG_NO FROM ( SELECT ROWNUM AS NEW_RG_NO FROM DUAL CONNECT BY 1 = 1 AND ROWNUM <= 6999 ) WHERE NEW_RG_NO > 5999 MINUS SELECT TO_NUMBER(RG_NO) FROM V_THEME_MOLECULES ) WHERE ROWNUM = 1",
+          "sql": "SELECT NEW_RG_NO INTO V_NEW_RG_NO FROM ( SELECT NEW_RG_NO FROM ( SELECT ROWNUM AS NEW_RG_NO FROM DUAL CONNECT BY 1 = 1 AND ROWNUM <= 6999 ) WHERE NEW_RG_NO > 5999 MINUS SELECT TO_NUMBER(RG_NO) FROM V_THEME_MOLECULES ) WHERE ROWNUM = 1;",
           "type": "select_statements"
         },
         {
@@ -261,7 +261,7 @@
                   "exception_name": "IN_PREP_NOT_PORTF_PROJ",
                   "sqls": [
                     {
-                      "sql": "RAISE IN_PREP_NOT_PORTF_PROJ",
+                      "sql": "RAISE IN_PREP_NOT_PORTF_PROJ;",
                       "type": "RAISE_statements"
                     }
                   ]
@@ -276,7 +276,7 @@
                   "exception_name": "IN_PREP_NOT_CLOSED",
                   "sqls": [
                     {
-                      "sql": "RAISE IN_PREP_NOT_CLOSED",
+                      "sql": "RAISE IN_PREP_NOT_CLOSED;",
                       "type": "RAISE_statements"
                     }
                   ]
@@ -287,7 +287,7 @@
               "type": "if_else",
               "condition": "(:NEW.MOLECULE_ID IS NULL)",
               "then_sql": [
-                "TXO_UTIL.SET_WARNING('No Molecule assigned to In-Prep Theme ' || :NEW.THEME_NO || '!')"
+                "TXO_UTIL.SET_WARNING('No Molecule assigned to In-Prep Theme ' || :NEW.THEME_NO || '!');"
               ]
             }
           ]
@@ -299,7 +299,7 @@
             {
               "sqls": [
                 {
-                  "sql": "SELECT RG_NO, M.COMPARATOR_IND INTO V_MOLECULE_RG_NO, V_COMPARATOR_IND FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y'",
+                  "sql": "SELECT RG_NO, M.COMPARATOR_IND INTO V_MOLECULE_RG_NO, V_COMPARATOR_IND FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y';",
                   "type": "select_statements"
                 }
               ],
@@ -324,11 +324,11 @@
                   "type": "if_else",
                   "condition": "(V_COMPARATOR_IND = 'Y')",
                   "then_sql": [
-                    "NULL"
+                    "NULL;"
                   ],
                   "else_statement": [
                     {
-                      "sql": "UPDATE V_THEME_MOLECULES SET RG_NO = V_NEW_RG_NO WHERE MOLECULE_ID = :NEW.MOLECULE_ID",
+                      "sql": "UPDATE V_THEME_MOLECULES SET RG_NO = V_NEW_RG_NO WHERE MOLECULE_ID = :NEW.MOLECULE_ID;",
                       "type": "update_statements"
                     }
                   ]
@@ -339,22 +339,22 @@
         },
         {
           "variable": "V_ODG_NO",
-          "value": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 1, 2)",
+          "value": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 1, 2);",
           "type": "assignment_statements"
         },
         {
           "variable": "V_RESGRP_CD",
-          "value": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 4, 2)",
+          "value": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 4, 2);",
           "type": "assignment_statements"
         },
         {
           "variable": "V_RESLIN_CD",
-          "value": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 7, 2)",
+          "value": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 7, 2);",
           "type": "assignment_statements"
         },
         {
           "variable": "V_RESLIN_DESC",
-          "value": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 12, LENGTH(:NEW.RESLIN_DESC_CONCAT))",
+          "value": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 12, LENGTH(:NEW.RESLIN_DESC_CONCAT));",
           "type": "assignment_statements"
         },
         {
@@ -362,14 +362,14 @@
           "condition": "(:NEW.STATUS_DESC IS NOT NULL)",
           "then_sql": [
             {
-              "sql": "SELECT STATUS_CD INTO V_STATUS_CD FROM MDM_V_THEME_STATUS WHERE STATE_DESC = :NEW.STATUS_DESC",
+              "sql": "SELECT STATUS_CD INTO V_STATUS_CD FROM MDM_V_THEME_STATUS WHERE STATE_DESC = :NEW.STATUS_DESC;",
               "type": "select_statements"
             }
           ],
           "else_statement": [
             {
               "variable": "V_STATUS_CD",
-              "value": "NULL",
+              "value": "NULL;",
               "type": "assignment_statements"
             }
           ]
@@ -379,21 +379,21 @@
           "condition": "(:NEW.DBA_DESC_CONCAT IS NOT NULL)",
           "then_sql": [
             {
-              "sql": "SELECT DBA_CD INTO V_DBA_CD FROM MDM_V_DISEASE_BIOLOGY_AREAS WHERE DBA_SHORT_DESC || ' - ' || DBA_DESC = :NEW.DBA_DESC_CONCAT",
+              "sql": "SELECT DBA_CD INTO V_DBA_CD FROM MDM_V_DISEASE_BIOLOGY_AREAS WHERE DBA_SHORT_DESC || ' - ' || DBA_DESC = :NEW.DBA_DESC_CONCAT;",
               "type": "select_statements"
             }
           ],
           "else_statement": [
             {
               "variable": "V_DBA_CD",
-              "value": "NULL",
+              "value": "NULL;",
               "type": "assignment_statements"
             }
           ]
         },
         {
           "variable": "V_MOLEC_IN_LIC_PRTNR",
-          "value": "GMD_UTIL_THEMES.GET_MOLEC_IN_LIC_PRTNR(:NEW.MOLECULE_ID)",
+          "value": "GMD_UTIL_THEMES.GET_MOLEC_IN_LIC_PRTNR(:NEW.MOLECULE_ID);",
           "type": "assignment_statements"
         },
         {
@@ -402,21 +402,21 @@
           "then_sql": [
             {
               "variable": "V_TRADEMARK_NO",
-              "value": ":NEW.TRADEMARK_NO",
+              "value": ":NEW.TRADEMARK_NO;",
               "type": "assignment_statements"
             }
           ],
           "else_statement": [
             {
               "variable": "V_TRADEMARK_NO",
-              "value": ":OLD.TRADEMARK_NO",
+              "value": ":OLD.TRADEMARK_NO;",
               "type": "assignment_statements"
             }
           ]
         },
         {
           "variable": "V_THEME_DESC_PROPOSAL",
-          "value": "GMD_UTIL_THEMES.GET_THEME_SHORT_NAME(P_THEME_NO_PORTF => :NEW.THEME_NO, P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => NULL, P_TRADEMARK_NO_PORTF => V_TRADEMARK_NO, P_TRUNC_DESC_LENGTH => 'N')",
+          "value": "GMD_UTIL_THEMES.GET_THEME_SHORT_NAME(P_THEME_NO_PORTF => :NEW.THEME_NO, P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => NULL, P_TRADEMARK_NO_PORTF => V_TRADEMARK_NO, P_TRUNC_DESC_LENGTH => 'N');",
           "type": "assignment_statements"
         },
         {
@@ -427,7 +427,7 @@
               "exception_name": "THEME_DESC_PROPOSAL_TOO_LONG",
               "sqls": [
                 {
-                  "sql": "RAISE THEME_DESC_PROPOSAL_TOO_LONG",
+                  "sql": "RAISE THEME_DESC_PROPOSAL_TOO_LONG;",
                   "type": "RAISE_statements"
                 }
               ]
@@ -436,7 +436,7 @@
         },
         {
           "variable": "V_SHORT_NAME",
-          "value": "COALESCE(:NEW.MANUAL_SHORT_DESC, V_THEME_DESC_PROPOSAL)",
+          "value": "COALESCE(:NEW.MANUAL_SHORT_DESC, V_THEME_DESC_PROPOSAL);",
           "type": "assignment_statements"
         },
         {
@@ -451,7 +451,7 @@
                   "exception_name": "ADMIN_UPDATE_ONLY",
                   "sqls": [
                     {
-                      "sql": "RAISE ADMIN_UPDATE_ONLY",
+                      "sql": "RAISE ADMIN_UPDATE_ONLY;",
                       "type": "RAISE_statements"
                     }
                   ]
@@ -460,7 +460,7 @@
             },
             {
               "variable": "V_MOLECULE_ID",
-              "value": ":NEW.MOLECULE_ID",
+              "value": ":NEW.MOLECULE_ID;",
               "type": "assignment_statements"
             },
             {
@@ -475,7 +475,7 @@
                       "exception_name": "PORTF_PROJ_MOL_CRE_ERR",
                       "sqls": [
                         {
-                          "sql": "RAISE PORTF_PROJ_MOL_CRE_ERR",
+                          "sql": "RAISE PORTF_PROJ_MOL_CRE_ERR;",
                           "type": "RAISE_statements"
                         }
                       ]
@@ -483,15 +483,15 @@
                   ],
                   "else_statement": [
                     {
-                      "sql": "INSERT INTO MDM_V_THEME_MOLECULES_MTN( MOLECULE_DESC, VALID_IND, RG_NO, CANCER_IMMUNOTHERAPY_IND, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID ) VALUES ( NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL), 'Y', V_NEW_RG_NO, 'N', C_MOLECULE_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID )",
+                      "sql": "INSERT INTO MDM_V_THEME_MOLECULES_MTN( MOLECULE_DESC, VALID_IND, RG_NO, CANCER_IMMUNOTHERAPY_IND, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID ) VALUES ( NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL), 'Y', V_NEW_RG_NO, 'N', C_MOLECULE_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID );",
                       "type": "insert_statements"
                     },
                     {
-                      "sql": "SELECT MOLECULE_ID INTO V_MOLECULE_ID FROM V_THEME_MOLECULES WHERE MOLECULE_DESC = NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) AND VALID_IND = 'Y' AND RG_NO = V_NEW_RG_NO AND CANCER_IMMUNOTHERAPY_IND = 'N' AND MOLECULE_TYPE_ID = C_MOLECULE_TYPE_ID AND PHARMACOLOGICAL_TYPE_ID = C_PHARMACOLOGICAL_TYPE_ID",
+                      "sql": "SELECT MOLECULE_ID INTO V_MOLECULE_ID FROM V_THEME_MOLECULES WHERE MOLECULE_DESC = NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) AND VALID_IND = 'Y' AND RG_NO = V_NEW_RG_NO AND CANCER_IMMUNOTHERAPY_IND = 'N' AND MOLECULE_TYPE_ID = C_MOLECULE_TYPE_ID AND PHARMACOLOGICAL_TYPE_ID = C_PHARMACOLOGICAL_TYPE_ID;",
                       "type": "select_statements"
                     },
                     {
-                      "sql": "INSERT INTO THEME_MOLECULE_MAP TMMAP( TMMAP.THEME_NO, TMMAP.MOLECULE_ID, TMMAP.MOLECULE_SEQ_NO, TMMAP.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' )",
+                      "sql": "INSERT INTO THEME_MOLECULE_MAP TMMAP( TMMAP.THEME_NO, TMMAP.MOLECULE_ID, TMMAP.MOLECULE_SEQ_NO, TMMAP.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' );",
                       "type": "insert_statements"
                     }
                   ]
@@ -513,7 +513,7 @@
                           "exception_name": "INVALID_THEME_NO",
                           "sqls": [
                             {
-                              "sql": "RAISE INVALID_THEME_NO",
+                              "sql": "RAISE INVALID_THEME_NO;",
                               "type": "RAISE_statements"
                             }
                           ]
@@ -534,7 +534,7 @@
                           "exception_name": "INVALID_THEME_NO",
                           "sqls": [
                             {
-                              "sql": "RAISE INVALID_THEME_NO",
+                              "sql": "RAISE INVALID_THEME_NO;",
                               "type": "RAISE_statements"
                             }
                           ]
@@ -558,7 +558,7 @@
                     "exception_name": "ADMIN_UPDATE_ONLY",
                     "sqls": [
                       {
-                        "sql": "RAISE ADMIN_UPDATE_ONLY",
+                        "sql": "RAISE ADMIN_UPDATE_ONLY;",
                         "type": "RAISE_statements"
                       }
                     ]
@@ -573,7 +573,7 @@
                     "exception_name": "THEME_NO_ONLY_INSERT",
                     "sqls": [
                       {
-                        "sql": "RAISE THEME_NO_ONLY_INSERT",
+                        "sql": "RAISE THEME_NO_ONLY_INSERT;",
                         "type": "RAISE_statements"
                       }
                     ]
@@ -586,14 +586,14 @@
                 "then_sql": [
                   {
                     "variable": "V_D_REGISTRAT_DATE",
-                    "value": "TO_DATE(:OLD.REGISTRAT_DATE, 'dd-mm-yyyy')",
+                    "value": "TO_DATE(:OLD.REGISTRAT_DATE, 'dd-mm-yyyy');",
                     "type": "assignment_statements"
                   }
                 ],
                 "else_statement": [
                   {
                     "variable": "V_D_REGISTRAT_DATE",
-                    "value": "SYSDATE",
+                    "value": "SYSDATE;",
                     "type": "assignment_statements"
                   }
                 ]
@@ -604,17 +604,17 @@
                 "then_sql": [
                   {
                     "variable": "V_DESCRIPTION",
-                    "value": "GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO( P_THEME_NO_PORTF => :NEW.THEME_NO, P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR, P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO, P_SHORT_NAME_PORTF => :NEW.SHORT_NAME, P_TRUNC_DESC_LENGTH => 'N' )",
+                    "value": "GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO( P_THEME_NO_PORTF => :NEW.THEME_NO, P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR, P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO, P_SHORT_NAME_PORTF => :NEW.SHORT_NAME, P_TRUNC_DESC_LENGTH => 'N' );",
                     "type": "assignment_statements"
                   },
                   {
                     "variable": "V_DESCRIPTION",
-                    "value": "TRIM(V_DESCRIPTION)",
+                    "value": "TRIM(V_DESCRIPTION);",
                     "type": "assignment_statements"
                   },
                   {
                     "variable": "V_PORTF_PROJ_CD",
-                    "value": "'Y'",
+                    "value": "'Y';",
                     "type": "assignment_statements"
                   }
                 ],
@@ -627,7 +627,7 @@
                         "exception_name": "THEMEDESCRIPTIONMANDATORY",
                         "sqls": [
                           {
-                            "sql": "RAISE THEMEDESCRIPTIONMANDATORY",
+                            "sql": "RAISE THEMEDESCRIPTIONMANDATORY;",
                             "type": "RAISE_statements"
                           }
                         ]
@@ -636,12 +636,12 @@
                     "else_statement": [
                       {
                         "variable": "V_DESCRIPTION",
-                        "value": ":NEW.THEME_DESC",
+                        "value": ":NEW.THEME_DESC;",
                         "type": "assignment_statements"
                       },
                       {
                         "variable": "V_PORTF_PROJ_CD",
-                        "value": ":NEW.PORTF_PROJ_CD",
+                        "value": ":NEW.PORTF_PROJ_CD;",
                         "type": "assignment_statements"
                       }
                     ]
@@ -656,7 +656,7 @@
                     "exception_name": "DESCRIPTION_TOO_LONG",
                     "sqls": [
                       {
-                        "sql": "RAISE DESCRIPTION_TOO_LONG",
+                        "sql": "RAISE DESCRIPTION_TOO_LONG;",
                         "type": "RAISE_statements"
                       }
                     ]
@@ -665,11 +665,11 @@
               },
               {
                 "variable": "V_COUNTER",
-                "value": "NULL",
+                "value": "NULL;",
                 "type": "assignment_statements"
               },
               {
-                "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM V_THEMES T WHERE T.THEME_DESC = V_DESCRIPTION AND T.THEME_NO <> :NEW.THEME_NO",
+                "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM V_THEMES T WHERE T.THEME_DESC = V_DESCRIPTION AND T.THEME_NO <> :NEW.THEME_NO;",
                 "type": "select_statements"
               },
               {
@@ -680,7 +680,7 @@
                     "exception_name": "THEME_DESC_NOT_UNIQUE",
                     "sqls": [
                       {
-                        "sql": "RAISE THEME_DESC_NOT_UNIQUE",
+                        "sql": "RAISE THEME_DESC_NOT_UNIQUE;",
                         "type": "RAISE_statements"
                       }
                     ]
@@ -689,7 +689,7 @@
               },
               {
                 "variable": "V_COUNTER",
-                "value": "NULL",
+                "value": "NULL;",
                 "type": "assignment_statements"
               },
               {
@@ -697,18 +697,18 @@
                 "condition": "(:NEW.OFFICIAL_IND = 'N')",
                 "then_sql": [
                   {
-                    "sql": "UPDATE GMD.THEMES SET ODG_NO = V_ODG_NO, RESGRP_CD = V_RESGRP_CD, RESLIN_CD = V_RESLIN_CD, THEME_DESC = V_DESCRIPTION, SHORT_NAME = V_SHORT_NAME, STATUS_CD = V_STATUS_CD, DBA_CD = V_DBA_CD, IN_PREP_IND = :NEW.IN_PREP_IND, PROD_SHORT_CD = :NEW.PROD_SHORT_CD, TRADEMARK_NO = :NEW.TRADEMARK_NO, BIO_ACTIVITY = :NEW.BIO_ACTIVITY, APPLICANT = :NEW.APPLICANT, CONTACT = :NEW.CONTACT, LINE_EXT_INFO = :NEW.LINE_EXT_INFO, PORTF_PROJ_CD = V_PORTF_PROJ_CD, CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR, TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR, OFFICIAL_IND = :NEW.OFFICIAL_IND, CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR, PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC WHERE THEME_NO = :NEW.THEME_NO AND TO_DATE(REGISTRAT_DATE, 'DD-MM-YYYY') = V_D_REGISTRAT_DATE",
+                    "sql": "UPDATE GMD.THEMES SET ODG_NO = V_ODG_NO, RESGRP_CD = V_RESGRP_CD, RESLIN_CD = V_RESLIN_CD, THEME_DESC = V_DESCRIPTION, SHORT_NAME = V_SHORT_NAME, STATUS_CD = V_STATUS_CD, DBA_CD = V_DBA_CD, IN_PREP_IND = :NEW.IN_PREP_IND, PROD_SHORT_CD = :NEW.PROD_SHORT_CD, TRADEMARK_NO = :NEW.TRADEMARK_NO, BIO_ACTIVITY = :NEW.BIO_ACTIVITY, APPLICANT = :NEW.APPLICANT, CONTACT = :NEW.CONTACT, LINE_EXT_INFO = :NEW.LINE_EXT_INFO, PORTF_PROJ_CD = V_PORTF_PROJ_CD, CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR, TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR, OFFICIAL_IND = :NEW.OFFICIAL_IND, CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR, PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC WHERE THEME_NO = :NEW.THEME_NO AND TO_DATE(REGISTRAT_DATE, 'DD-MM-YYYY') = V_D_REGISTRAT_DATE;",
                     "type": "update_statements"
                   }
                 ],
                 "else_statement": [
                   {
                     "variable": "V_COUNTER",
-                    "value": "NULL",
+                    "value": "NULL;",
                     "type": "assignment_statements"
                   },
                   {
-                    "sql": "SELECT COUNT(*) INTO V_COUNTER FROM V_THEMES T WHERE TRUNC(T.REGISTRAT_DATE) = TRUNC(SYSDATE) AND T.THEME_NO = :NEW.THEME_NO",
+                    "sql": "SELECT COUNT(*) INTO V_COUNTER FROM V_THEMES T WHERE TRUNC(T.REGISTRAT_DATE) = TRUNC(SYSDATE) AND T.THEME_NO = :NEW.THEME_NO;",
                     "type": "select_statements"
                   },
                   {
@@ -719,7 +719,7 @@
                         "exception_name": "ONLYONEOFFICIALCHANGEPERDAY",
                         "sqls": [
                           {
-                            "sql": "RAISE ONLYONEOFFICIALCHANGEPERDAY",
+                            "sql": "RAISE ONLYONEOFFICIALCHANGEPERDAY;",
                             "type": "RAISE_statements"
                           }
                         ]
@@ -728,11 +728,11 @@
                   },
                   {
                     "variable": "V_COUNTER",
-                    "value": "NULL",
+                    "value": "NULL;",
                     "type": "assignment_statements"
                   },
                   {
-                    "sql": "UPDATE GMD.THEMES SET ODG_NO = V_ODG_NO, RESGRP_CD = V_RESGRP_CD, RESLIN_CD = V_RESLIN_CD, THEME_DESC = V_DESCRIPTION, SHORT_NAME = V_SHORT_NAME, STATUS_CD = V_STATUS_CD, DBA_CD = V_DBA_CD, IN_PREP_IND = :NEW.IN_PREP_IND, PROD_SHORT_CD = :NEW.PROD_SHORT_CD, TRADEMARK_NO = :NEW.TRADEMARK_NO, BIO_ACTIVITY = :NEW.BIO_ACTIVITY, APPLICANT = :NEW.APPLICANT, CONTACT = :NEW.CONTACT, LINE_EXT_INFO = :NEW.LINE_EXT_INFO, PORTF_PROJ_CD = V_PORTF_PROJ_CD, CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR, TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR, OFFICIAL_IND = :NEW.OFFICIAL_IND, CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR, REGISTRAT_DATE = SYSDATE, REGISTRAR = V_USERID, PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC WHERE THEME_NO = :NEW.THEME_NO",
+                    "sql": "UPDATE GMD.THEMES SET ODG_NO = V_ODG_NO, RESGRP_CD = V_RESGRP_CD, RESLIN_CD = V_RESLIN_CD, THEME_DESC = V_DESCRIPTION, SHORT_NAME = V_SHORT_NAME, STATUS_CD = V_STATUS_CD, DBA_CD = V_DBA_CD, IN_PREP_IND = :NEW.IN_PREP_IND, PROD_SHORT_CD = :NEW.PROD_SHORT_CD, TRADEMARK_NO = :NEW.TRADEMARK_NO, BIO_ACTIVITY = :NEW.BIO_ACTIVITY, APPLICANT = :NEW.APPLICANT, CONTACT = :NEW.CONTACT, LINE_EXT_INFO = :NEW.LINE_EXT_INFO, PORTF_PROJ_CD = V_PORTF_PROJ_CD, CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR, TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR, OFFICIAL_IND = :NEW.OFFICIAL_IND, CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR, REGISTRAT_DATE = SYSDATE, REGISTRAR = V_USERID, PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC WHERE THEME_NO = :NEW.THEME_NO;",
                     "type": "update_statements"
                   }
                 ]
@@ -745,7 +745,7 @@
                     "when_value": ":OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL",
                     "then_statement": [
                       {
-                        "sql": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, 1, 'Y' )",
+                        "sql": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, 1, 'Y' );",
                         "type": "insert_statements"
                       }
                     ],
@@ -755,7 +755,7 @@
                     "when_value": ":OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL",
                     "then_statement": [
                       {
-                        "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.MOLECULE_ID = :NEW.MOLECULE_ID, A.VALID_IND = 'Y' WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y'",
+                        "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.MOLECULE_ID = :NEW.MOLECULE_ID, A.VALID_IND = 'Y' WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
                         "type": "update_statements"
                       }
                     ],
@@ -765,7 +765,7 @@
                     "when_value": ":OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL",
                     "then_statement": [
                       {
-                        "sql": "SELECT COUNT(*) INTO V_SEC_MOL_CNT FROM MDM_V_THEME_MOLECULE_MAP_MTN A WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO > 1 AND A.VALID_IND = 'Y'",
+                        "sql": "SELECT COUNT(*) INTO V_SEC_MOL_CNT FROM MDM_V_THEME_MOLECULE_MAP_MTN A WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO > 1 AND A.VALID_IND = 'Y';",
                         "type": "select_statements"
                       },
                       {
@@ -776,7 +776,7 @@
                             "exception_name": "SEC_MOL_LIST_NOT_EMPTY",
                             "sqls": [
                               {
-                                "sql": "RAISE SEC_MOL_LIST_NOT_EMPTY",
+                                "sql": "RAISE SEC_MOL_LIST_NOT_EMPTY;",
                                 "type": "RAISE_statements"
                               }
                             ]
@@ -784,7 +784,7 @@
                         ],
                         "else_statement": [
                           {
-                            "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.VALID_IND = 'N' WHERE A.MOLECULE_ID = :OLD.MOLECULE_ID AND A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y'",
+                            "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.VALID_IND = 'N' WHERE A.MOLECULE_ID = :OLD.MOLECULE_ID AND A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
                             "type": "update_statements"
                           }
                         ]
@@ -806,7 +806,7 @@
                       "exception_name": "ADMIN_UPDATE_ONLY",
                       "sqls": [
                         {
-                          "sql": "RAISE ADMIN_UPDATE_ONLY",
+                          "sql": "RAISE ADMIN_UPDATE_ONLY;",
                           "type": "RAISE_statements"
                         }
                       ]
@@ -818,7 +818,7 @@
                   "condition": "(TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE))",
                   "then_sql": [
                     {
-                      "sql": "DELETE FROM GMD.THEMES A WHERE A.THEME_NO = :OLD.THEME_NO AND TRUNC(A.REGISTRAT_DATE) = TRUNC(SYSDATE)",
+                      "sql": "DELETE FROM GMD.THEMES A WHERE A.THEME_NO = :OLD.THEME_NO AND TRUNC(A.REGISTRAT_DATE) = TRUNC(SYSDATE);",
                       "type": "delete_statements"
                     }
                   ],
@@ -827,7 +827,7 @@
                       "exception_name": "DELETE_NO_MORE_POSSIBLE",
                       "sqls": [
                         {
-                          "sql": "RAISE DELETE_NO_MORE_POSSIBLE",
+                          "sql": "RAISE DELETE_NO_MORE_POSSIBLE;",
                           "type": "RAISE_statements"
                         }
                       ]
@@ -842,18 +842,18 @@
               "exception_name": "INVALID_THEME_NO",
               "sqls": [
                 {
-                  "sql": "RAISE INVALID_THEME_NO; END CASE",
+                  "sql": "RAISE INVALID_THEME_NO; END CASE;",
                   "type": "RAISE_statements"
                 }
               ]
             },
             {
               "variable": "V_COUNTER",
-              "value": "NULL",
+              "value": "NULL;",
               "type": "assignment_statements"
             },
             {
-              "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM ( SELECT THEME_NO FROM V_THEMES UNION ALL SELECT THEME_NO FROM GMD.THEMES_ARCHIVE )                  T WHERE T.THEME_NO = :NEW.THEME_NO",
+              "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM ( SELECT THEME_NO FROM V_THEMES UNION ALL SELECT THEME_NO FROM GMD.THEMES_ARCHIVE )                  T WHERE T.THEME_NO = :NEW.THEME_NO;",
               "type": "select_statements"
             },
             {
@@ -864,7 +864,7 @@
                   "exception_name": "THEME_NO_CANNOT_BE_INSERTED",
                   "sqls": [
                     {
-                      "sql": "RAISE THEME_NO_CANNOT_BE_INSERTED",
+                      "sql": "RAISE THEME_NO_CANNOT_BE_INSERTED;",
                       "type": "RAISE_statements"
                     }
                   ]
@@ -873,12 +873,12 @@
             },
             {
               "variable": "V_COUNTER",
-              "value": "NULL",
+              "value": "NULL;",
               "type": "assignment_statements"
             },
             {
               "variable": "V_D_REGISTRAT_DATE",
-              "value": "SYSDATE",
+              "value": "SYSDATE;",
               "type": "assignment_statements"
             },
             {
@@ -889,7 +889,7 @@
                   "exception_name": "INSERTSMUSTBEOFFICIAL",
                   "sqls": [
                     {
-                      "sql": "RAISE INSERTSMUSTBEOFFICIAL",
+                      "sql": "RAISE INSERTSMUSTBEOFFICIAL;",
                       "type": "RAISE_statements"
                     }
                   ]
@@ -908,7 +908,7 @@
                       "exception_name": "THEMEDESCRIPTIONMANDATORY",
                       "sqls": [
                         {
-                          "sql": "RAISE THEMEDESCRIPTIONMANDATORY",
+                          "sql": "RAISE THEMEDESCRIPTIONMANDATORY;",
                           "type": "RAISE_statements"
                         }
                       ]
@@ -923,7 +923,7 @@
               "then_sql": [
                 {
                   "variable": "V_DESCRIPTION",
-                  "value": "GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO( P_THEME_NO_PORTF => NULL, P_MOLECULE_ID_PORTF => V_MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR, P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO, P_SHORT_NAME_PORTF => :NEW.SHORT_NAME, P_TRUNC_DESC_LENGTH => 'N' )",
+                  "value": "GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO( P_THEME_NO_PORTF => NULL, P_MOLECULE_ID_PORTF => V_MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR, P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO, P_SHORT_NAME_PORTF => :NEW.SHORT_NAME, P_TRUNC_DESC_LENGTH => 'N' );",
                   "type": "assignment_statements"
                 },
                 {
@@ -934,7 +934,7 @@
                       "exception_name": "DESCRIPTION_TOO_LONG",
                       "sqls": [
                         {
-                          "sql": "RAISE DESCRIPTION_TOO_LONG",
+                          "sql": "RAISE DESCRIPTION_TOO_LONG;",
                           "type": "RAISE_statements"
                         }
                       ]
@@ -943,35 +943,35 @@
                 },
                 {
                   "variable": "V_DESCRIPTION",
-                  "value": "TRIM(V_DESCRIPTION)",
+                  "value": "TRIM(V_DESCRIPTION);",
                   "type": "assignment_statements"
                 },
                 {
                   "variable": "V_PORTF_PROJ_CD",
-                  "value": "'Y'",
+                  "value": "'Y';",
                   "type": "assignment_statements"
                 }
               ],
               "else_statement": [
                 {
                   "variable": "V_DESCRIPTION",
-                  "value": ":NEW.THEME_DESC",
+                  "value": ":NEW.THEME_DESC;",
                   "type": "assignment_statements"
                 },
                 {
                   "variable": "V_PORTF_PROJ_CD",
-                  "value": "'N'",
+                  "value": "'N';",
                   "type": "assignment_statements"
                 }
               ]
             },
             {
               "variable": "V_COUNTER",
-              "value": "NULL",
+              "value": "NULL;",
               "type": "assignment_statements"
             },
             {
-              "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM V_THEMES T WHERE T.THEME_DESC = V_DESCRIPTION",
+              "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM V_THEMES T WHERE T.THEME_DESC = V_DESCRIPTION;",
               "type": "select_statements"
             },
             {
@@ -982,7 +982,7 @@
                   "exception_name": "THEME_DESC_NOT_UNIQUE",
                   "sqls": [
                     {
-                      "sql": "RAISE THEME_DESC_NOT_UNIQUE",
+                      "sql": "RAISE THEME_DESC_NOT_UNIQUE;",
                       "type": "RAISE_statements"
                     }
                   ]
@@ -991,21 +991,21 @@
             },
             {
               "variable": "V_COUNTER",
-              "value": "NULL",
+              "value": "NULL;",
               "type": "assignment_statements"
             },
             {
               "variable": "V_VALID_TO",
-              "value": "TO_DATE('09.09.9999', 'DD.MM.YYYY')",
+              "value": "TO_DATE('09.09.9999', 'DD.MM.YYYY');",
               "type": "assignment_statements"
             },
             {
               "variable": "V_SHORT_NAME",
-              "value": "NVL(:NEW.MANUAL_SHORT_DESC, SUBSTR(V_DESCRIPTION, 1, 30))",
+              "value": "NVL(:NEW.MANUAL_SHORT_DESC, SUBSTR(V_DESCRIPTION, 1, 30));",
               "type": "assignment_statements"
             },
             {
-              "sql": "INSERT INTO GMD.THEMES( THEME_NO, REGISTRAT_DATE, ODG_NO, RESGRP_CD, RESLIN_CD, THEME_DESC, SHORT_NAME, STATUS_CD, DBA_CD, IN_PREP_IND, PROD_SHORT_CD, TRADEMARK_NO, BIO_ACTIVITY, APPLICANT, CONTACT, REGISTRAR, LINE_EXT_INFO, PORTF_PROJ_CD, CO_DEV_PRTNR, TECHNOLOGY_PRTNR, OFFICIAL_IND, CO_MAR_PRTNR, VALID_TO, PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC ) VALUES ( :NEW.THEME_NO, V_D_REGISTRAT_DATE, V_ODG_NO, V_RESGRP_CD, V_RESLIN_CD, V_DESCRIPTION, V_SHORT_NAME, V_STATUS_CD, V_DBA_CD, :NEW.IN_PREP_IND, :NEW.PROD_SHORT_CD, :NEW.TRADEMARK_NO, :NEW.BIO_ACTIVITY, :NEW.APPLICANT, :NEW.CONTACT, TXO_UTIL.GET_USERID, :NEW.LINE_EXT_INFO, V_PORTF_PROJ_CD, :NEW.CO_DEV_PRTNR, :NEW.TECHNOLOGY_PRTNR, :NEW.OFFICIAL_IND, :NEW.CO_MAR_PRTNR, V_VALID_TO, :NEW.PORTF_DA_GROUP_ID, :NEW.MANUAL_SHORT_DESC )",
+              "sql": "INSERT INTO GMD.THEMES( THEME_NO, REGISTRAT_DATE, ODG_NO, RESGRP_CD, RESLIN_CD, THEME_DESC, SHORT_NAME, STATUS_CD, DBA_CD, IN_PREP_IND, PROD_SHORT_CD, TRADEMARK_NO, BIO_ACTIVITY, APPLICANT, CONTACT, REGISTRAR, LINE_EXT_INFO, PORTF_PROJ_CD, CO_DEV_PRTNR, TECHNOLOGY_PRTNR, OFFICIAL_IND, CO_MAR_PRTNR, VALID_TO, PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC ) VALUES ( :NEW.THEME_NO, V_D_REGISTRAT_DATE, V_ODG_NO, V_RESGRP_CD, V_RESLIN_CD, V_DESCRIPTION, V_SHORT_NAME, V_STATUS_CD, V_DBA_CD, :NEW.IN_PREP_IND, :NEW.PROD_SHORT_CD, :NEW.TRADEMARK_NO, :NEW.BIO_ACTIVITY, :NEW.APPLICANT, :NEW.CONTACT, TXO_UTIL.GET_USERID, :NEW.LINE_EXT_INFO, V_PORTF_PROJ_CD, :NEW.CO_DEV_PRTNR, :NEW.TECHNOLOGY_PRTNR, :NEW.OFFICIAL_IND, :NEW.CO_MAR_PRTNR, V_VALID_TO, :NEW.PORTF_DA_GROUP_ID, :NEW.MANUAL_SHORT_DESC );",
               "type": "insert_statements"
             },
             {
@@ -1013,12 +1013,12 @@
               "condition": "(:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL)",
               "then_sql": [
                 {
-                  "sql": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' )",
+                  "sql": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' );",
                   "type": "insert_statements"
                 }
               ]
             },
-            "NULL"
+            "NULL;"
           ]
         },
         {
@@ -1030,7 +1030,7 @@
               "condition": "(:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL)",
               "then_sql": [
                 {
-                  "sql": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID AND PROPOSAL_STATUS_CD = 'E'",
+                  "sql": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID AND PROPOSAL_STATUS_CD = 'E';",
                   "type": "select_statements"
                 },
                 {
@@ -1038,7 +1038,7 @@
                   "condition": "(V_EVOLVED_NMP_CNT = 0)",
                   "then_sql": [
                     {
-                      "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'E', EVOLVED_THEME_NO = :NEW.THEME_NO, PROPOSAL_NAME = V_SHORT_NAME, REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID",
+                      "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'E', EVOLVED_THEME_NO = :NEW.THEME_NO, PROPOSAL_NAME = V_SHORT_NAME, REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID;",
                       "type": "update_statements"
                     }
                   ]
@@ -1050,7 +1050,7 @@
                   "condition": "(:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL)",
                   "then_sql": [
                     {
-                      "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'A', EVOLVED_THEME_NO = NULL WHERE PROPOSAL_ID = :OLD.PROPOSAL_ID",
+                      "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'A', EVOLVED_THEME_NO = NULL WHERE PROPOSAL_ID = :OLD.PROPOSAL_ID;",
                       "type": "update_statements"
                     }
                   ],
@@ -1060,11 +1060,11 @@
                       "condition": "(:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID)",
                       "then_sql": [
                         {
-                          "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'A', EVOLVED_THEME_NO = NULL WHERE PROPOSAL_ID = :OLD.PROPOSAL_ID",
+                          "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'A', EVOLVED_THEME_NO = NULL WHERE PROPOSAL_ID = :OLD.PROPOSAL_ID;",
                           "type": "update_statements"
                         },
                         {
-                          "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'E', EVOLVED_THEME_NO = :NEW.THEME_NO, PROPOSAL_NAME = V_SHORT_NAME, REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID",
+                          "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'E', EVOLVED_THEME_NO = :NEW.THEME_NO, PROPOSAL_NAME = V_SHORT_NAME, REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID;",
                           "type": "update_statements"
                         }
                       ]
@@ -1078,7 +1078,7 @@
               "condition": "(NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-'))",
               "then_sql": [
                 {
-                  "sql": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN NMP WHERE NMP.EVOLVED_THEME_NO =:NEW.THEME_NO AND NMP.PROPOSAL_STATUS_CD = 'E'",
+                  "sql": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN NMP WHERE NMP.EVOLVED_THEME_NO =:NEW.THEME_NO AND NMP.PROPOSAL_STATUS_CD = 'E';",
                   "type": "select_statements"
                 },
                 {
@@ -1086,7 +1086,7 @@
                   "condition": "(V_EVOLVED_NMP_CNT > 0)",
                   "then_sql": [
                     {
-                      "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN NMP SET NMP.PROPOSAL_NAME = V_SHORT_NAME, NMP.REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE NMP.EVOLVED_THEME_NO =:NEW.THEME_NO AND NMP.PROPOSAL_STATUS_CD = 'E'",
+                      "sql": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN NMP SET NMP.PROPOSAL_NAME = V_SHORT_NAME, NMP.REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE NMP.EVOLVED_THEME_NO =:NEW.THEME_NO AND NMP.PROPOSAL_STATUS_CD = 'E';",
                       "type": "update_statements"
                     }
                   ]
@@ -1104,7 +1104,7 @@
               "condition": "(:NEW.PROPOSAL_ID IS NOT NULL)",
               "then_sql": [
                 {
-                  "sql": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID AND PROPOSAL_NAME = V_SHORT_NAME AND PROPOSAL_STATUS_CD = 'E'",
+                  "sql": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID AND PROPOSAL_NAME = V_SHORT_NAME AND PROPOSAL_STATUS_CD = 'E';",
                   "type": "select_statements"
                 }
               ]
@@ -1120,7 +1120,7 @@
                     {
                       "sqls": [
                         {
-                          "sql": "SELECT PHARMACOLOGICAL_TYPE_ID, MOLECULE_TYPE_ID INTO V_PHARMACOLOGICAL_TYPE_ID, V_MOLECULE_TYPE_ID FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y'",
+                          "sql": "SELECT PHARMACOLOGICAL_TYPE_ID, MOLECULE_TYPE_ID INTO V_PHARMACOLOGICAL_TYPE_ID, V_MOLECULE_TYPE_ID FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y';",
                           "type": "select_statements"
                         }
                       ],
@@ -1140,7 +1140,7 @@
                   ]
                 },
                 {
-                  "sql": "INSERT INTO MDM_V_NEW_MEDICINE_PROPOSALS_MTN ( PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, PROPOSAL_NAME, PHARMACOLOGICAL_TYPE_ID, MOLECULE_TYPE_ID, REASON_FOR_CHANGE ) VALUES ( 'E', :NEW.THEME_NO, V_SHORT_NAME, NVL(V_PHARMACOLOGICAL_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID), NVL(V_MOLECULE_TYPE_ID, C_MOLECULE_TYPE_ID), '** Automatic creation of nmp for early development themes **' )",
+                  "sql": "INSERT INTO MDM_V_NEW_MEDICINE_PROPOSALS_MTN ( PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, PROPOSAL_NAME, PHARMACOLOGICAL_TYPE_ID, MOLECULE_TYPE_ID, REASON_FOR_CHANGE ) VALUES ( 'E', :NEW.THEME_NO, V_SHORT_NAME, NVL(V_PHARMACOLOGICAL_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID), NVL(V_MOLECULE_TYPE_ID, C_MOLECULE_TYPE_ID), '** Automatic creation of nmp for early development themes **' );",
                   "type": "insert_statements"
                 }
               ]
@@ -1154,7 +1154,7 @@
               "loop_variable": "I1",
               "loop_body": [
                 {
-                  "sql": "DELETE FROM GMD.THEMES WHERE THEME_NO = I1.THEME_NO AND REGISTRAT_DATE = I1.REGISTRAT_DATE",
+                  "sql": "DELETE FROM GMD.THEMES WHERE THEME_NO = I1.THEME_NO AND REGISTRAT_DATE = I1.REGISTRAT_DATE;",
                   "type": "delete_statements"
                 }
               ],

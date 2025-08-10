@@ -1,37 +1,51 @@
-# import os
-# import json
-# import re
+import os
+from datetime import datetime
 from typing import Any, Dict, List, Union
 
 
 JsonNode = Union[Dict[str, Any], str]
 
 
-class FORMATOracleTriggerAnalyzer:
-    """Render Oracle PL/SQL trigger body from analysis JSON produced by the analyzer.
+DEBUG_FORMATTER: bool = True
 
-    Supports constructs present in provided analysis files:
-    - Declarations: variables/constants/exceptions
-    - Statements: assignments, DML, SELECT INTO, RAISE
-    - Control flow: IF/ELSIF/ELSE, CASE (simple and searched), FOR loops
-    - BEGIN/EXCEPTION/END blocks with exception handlers
-    - Raw procedure/function calls provided as multi-line strings
+
+def debug(msg: str) -> None:
+    if DEBUG_FORMATTER:
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        fname = os.path.basename(__file__)
+        print(f"[{now} {fname}] {msg}")
+
+
+class FORMATOracleTriggerAnalyzer:
+    """
+    Render Oracle PL/SQL trigger body from analysis JSON produced by the analyzer.
+
+    Architecture and flow:
+    - Input: a dict with keys like `declarations`, `main`, `sql_comments`.
+    - Declarations are rendered first under a `DECLARE` section.
+    - The first `main` block is rendered inside a `BEGIN ... EXCEPTION ... END;` wrapper.
+    - Helper methods recursively render nested structures (IF/ELSIF/ELSE, CASE, FOR, BEGIN blocks).
+    - String utilities assist with indentation and safe string literal emission.
     """
 
     def __init__(self, analysis: Dict[str, Any]):
         self.analysis = analysis
         self.indent_unit = "  "
+        debug(f"Initialized with analysis keys: {list(self.analysis.keys())}")
 
     def to_sql(self) -> str:
+        debug("Rendering to SQL started")
         lines: List[str] = []
         # Declarations
         decl = self.analysis.get("declarations", {})
+        debug(f"Rendering declarations: keys={list(decl.keys()) if isinstance(decl, dict) else type(decl)}")
         decl_lines = self._render_declarations(decl)
         if decl_lines:
             lines.append("DECLARE")
             lines.extend(self._indent_lines(decl_lines, 1))
         # Main blocks
         main_blocks = self.analysis.get("main", [])
+        debug(f"Rendering main blocks: count={len(main_blocks) if isinstance(main_blocks, list) else 0}")
         if main_blocks:
             # Wrap the first main block as the executable block
             block_sql = self._render_begin_block(main_blocks[0], indent_level=0, wrap_begin_end=True)
@@ -44,11 +58,12 @@ class FORMATOracleTriggerAnalyzer:
             lines.append("-- Additional comments from analysis")
             for comment in sql_comments:
                 for c_line in str(comment).splitlines():
-                    # Ensure we emit as comment lines
                     prefix = "-- " if not c_line.strip().startswith("--") else ""
                     lines.append(f"{prefix}{c_line}")
 
-        return "\n".join(lines).rstrip() + "\n"
+        result = "\n".join(lines).rstrip() + "\n"
+        debug(f"Rendering to SQL finished, length={len(result)} chars")
+        return result
 
     # -----------------------------
     # Rendering helpers
@@ -60,6 +75,7 @@ class FORMATOracleTriggerAnalyzer:
             name = var.get("name")
             data_type = var.get("data_type")
             default_value = var.get("default_value")
+            debug(f"Variable decl: name={name}, type={data_type}, default={default_value}")
             if not name or not data_type:
                 continue
             if default_value is None:
@@ -72,6 +88,7 @@ class FORMATOracleTriggerAnalyzer:
             name = const.get("name")
             data_type = const.get("data_type")
             value = const.get("value")
+            debug(f"Constant decl: name={name}, type={data_type}, value={value}")
             if not name or not data_type:
                 continue
             lines.append(f"{name} CONSTANT {data_type} := {value};")
@@ -79,6 +96,7 @@ class FORMATOracleTriggerAnalyzer:
         # Exceptions
         for exc in decl.get("exceptions", []) or []:
             name = exc.get("name")
+            debug(f"Exception decl: name={name}")
             if not name:
                 continue
             lines.append(f"{name} EXCEPTION;")
@@ -90,6 +108,7 @@ class FORMATOracleTriggerAnalyzer:
         if wrap_begin_end:
             lines.append("BEGIN")
         sqls: List[JsonNode] = node.get("sqls", []) or []
+        debug(f"Begin block: wrap={wrap_begin_end}, sqls={len(sqls)}")
         lines.extend(self._render_sql_list(sqls, indent_level + (1 if wrap_begin_end else 0)))
 
         # Exception handlers
@@ -97,6 +116,7 @@ class FORMATOracleTriggerAnalyzer:
         if handlers:
             lines.append(self._indent("EXCEPTION", indent_level + (1 if wrap_begin_end else 0)))
             for h in handlers:
+                debug(f"Rendering exception handler for: {h.get('exception_name')}")
                 lines.extend(self._render_exception_handler(h, indent_level + (2 if wrap_begin_end else 1)))
 
         if wrap_begin_end:
@@ -110,12 +130,14 @@ class FORMATOracleTriggerAnalyzer:
         lines.append(self._indent(when_header, indent_level - 1))
         # New schema: handler contains a 'sqls' array with actions
         actions = handler.get("sqls", []) or []
+        debug(f"Handler actions count: {len(actions)}")
         if not actions:
             lines.append(self._indent("NULL;", indent_level))
             return lines
         for action in actions:
             # function calling (e.g., raise_application_error)
             a_type = (action.get("type") or "").strip()
+            debug(f"Handler action type: {a_type}")
             if a_type in {"function calling", "function_calling"}:
                 func = (action.get("function_name") or "").strip()
                 if func.lower() == "raise_application_error":
@@ -176,6 +198,7 @@ class FORMATOracleTriggerAnalyzer:
             if not isinstance(item, dict):
                 continue
             node_type = item.get("type")
+            debug(f"Render node type: {node_type}")
             if node_type == "assignment_statements":
                 var = item.get("variable")
                 val = item.get("value")
@@ -209,11 +232,13 @@ class FORMATOracleTriggerAnalyzer:
                 # Nested BEGIN block
                 lines.append(self._indent("BEGIN", indent_level))
                 inner_sqls = item.get("sqls", []) or []
+                debug(f"Nested begin block with {len(inner_sqls)} statements")
                 lines.extend(self._render_sql_list(inner_sqls, indent_level + 1))
                 handlers = item.get("exception_handlers", []) or []
                 if handlers:
                     lines.append(self._indent("EXCEPTION", indent_level + 1))
                     for h in handlers:
+                        debug(f"Nested handler for: {h.get('exception_name')}")
                         lines.extend(self._render_exception_handler(h, indent_level + 2))
                 lines.append(self._indent("END;", indent_level))
             elif "exception_name" in item and isinstance(item.get("sqls"), list):
@@ -222,6 +247,7 @@ class FORMATOracleTriggerAnalyzer:
                 # Reuse handler rendering for actions, but without WHEN header: we just emit actions
                 for act in inner_actions:
                     a_type = (act.get("type") or "").strip()
+                    debug(f"Inline exception action type: {a_type}")
                     if a_type in {"function calling", "function_calling"}:
                         func = (act.get("function_name") or "").strip()
                         if func.lower() == "raise_application_error":
@@ -255,6 +281,7 @@ class FORMATOracleTriggerAnalyzer:
             elif node_type == "for_loop":
                 loop_var = item.get("loop_variable") or "i"
                 cursor_query = item.get("cursor_query") or "SELECT 1 FROM DUAL"
+                debug(f"FOR loop: var={loop_var}, cursor_query_len={len(cursor_query)}")
                 lines.append(self._indent(f"FOR {loop_var} IN ( {cursor_query} ) LOOP", indent_level))
                 loop_body = item.get("loop_body", []) or []
                 lines.extend(self._render_sql_list(loop_body, indent_level + 1))
@@ -275,6 +302,7 @@ class FORMATOracleTriggerAnalyzer:
     def _render_if_else(self, node: Dict[str, Any], indent_level: int) -> List[str]:
         lines: List[str] = []
         condition = node.get("condition", "1=1")
+        debug(f"IF condition: {condition}")
         lines.append(self._indent(f"IF {condition} THEN", indent_level))
         then_sql = node.get("then_sql", []) or []
         lines.extend(self._render_sql_list(then_sql, indent_level + 1))
@@ -284,6 +312,7 @@ class FORMATOracleTriggerAnalyzer:
         while current.get("else_if_statement"):
             current = current.get("else_if_statement")
             cond = current.get("condition", "1=1")
+            debug(f"ELSIF condition: {cond}")
             lines.append(self._indent(f"ELSIF {cond} THEN", indent_level))
             then_part = current.get("then_sql", []) or []
             lines.extend(self._render_sql_list(then_part, indent_level + 1))
@@ -291,6 +320,7 @@ class FORMATOracleTriggerAnalyzer:
         # Else part
         else_stmt = current.get("else_statement")
         if else_stmt is not None:
+            debug("ELSE branch present")
             lines.append(self._indent("ELSE", indent_level))
             else_list: List[JsonNode] = else_stmt if isinstance(else_stmt, list) else [else_stmt]  # type: ignore
             lines.extend(self._render_sql_list(else_list, indent_level + 1))
@@ -303,6 +333,7 @@ class FORMATOracleTriggerAnalyzer:
         case_expr = node.get("case_expression")
         when_clauses: List[Dict[str, Any]] = node.get("when_clauses", []) or []
         searched_case = not case_expr or str(case_expr).strip() == ""
+        debug(f"CASE statement: searched={searched_case}, when_count={len(when_clauses)}")
 
         if searched_case:
             lines.append(self._indent("CASE", indent_level))
@@ -313,6 +344,7 @@ class FORMATOracleTriggerAnalyzer:
                 lines.extend(self._render_sql_list(then_stmt, indent_level + 2))
                 else_stmt = clause.get("else_statement")
                 if else_stmt is not None:
+                    debug("CASE WHEN has ELSE branch")
                     lines.append(self._indent("ELSE", indent_level + 1))
                     else_list: List[JsonNode] = else_stmt if isinstance(else_stmt, list) else [else_stmt]  # type: ignore
                     lines.extend(self._render_sql_list(else_list, indent_level + 2))
@@ -326,6 +358,7 @@ class FORMATOracleTriggerAnalyzer:
                 lines.extend(self._render_sql_list(then_stmt, indent_level + 2))
                 else_stmt = clause.get("else_statement")
                 if else_stmt is not None:
+                    debug("CASE (simple) WHEN has ELSE branch")
                     lines.append(self._indent("ELSE", indent_level + 1))
                     else_list: List[JsonNode] = else_stmt if isinstance(else_stmt, list) else [else_stmt]  # type: ignore
                     lines.extend(self._render_sql_list(else_list, indent_level + 2))

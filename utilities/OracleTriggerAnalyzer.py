@@ -1,20 +1,44 @@
-# import os
-# import json
+import os
 import re
+from datetime import datetime
+from typing import Any, Dict, List, Tuple
 
+
+DEBUG_ANALYZER: bool = True
+
+
+def debug(msg: str) -> None:
+    if DEBUG_ANALYZER:
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        fname = os.path.basename(__file__)
+        print(f"[{now} {fname}] {msg}")
 
 
 class OracleTriggerAnalyzer:
-    def __init__(self, sql_content):
-        self.sql_content = sql_content
-        self.declare_section = ""
-        self.main_section = ""
-        self.variables = []
-        self.constants = []
-        self.exceptions = []
-        self.sql_comments = []
-        self.rule_errors = []
+    """
+    Parser and analyzer for Oracle PL/SQL trigger bodies.
+
+    Architecture and flow:
+    - Constructor receives raw SQL text and splits it into `DECLARE` and main sections.
+    - Rule validation runs immediately to catch formatting violations (e.g., IF/THEN split lines).
+    - Declaration parsing extracts variables, constants, exceptions into structured lists.
+    - Main body is tokenized into lines, strip comments, then grouped into structured nodes:
+      begin_block, if_else, case_when_statements, for_loop, DML/select, assignment, raise.
+    - Finally, `to_json()` emits a dict with `declarations`, `main`, and `sql_comments`.
+    """
+
+    def __init__(self, sql_content: str):
+        self.sql_content: str = sql_content
+        self.declare_section: str = ""
+        self.main_section: str = ""
+        self.variables: List[Dict[str, Any]] = []
+        self.constants: List[Dict[str, Any]] = []
+        self.exceptions: List[Dict[str, Any]] = []
+        self.sql_comments: List[str] = []
+        self.rule_errors: List[Dict[str, Any]] = []
+        debug("Initializing OracleTriggerAnalyzer and parsing SQL")
         self._parse_sql()
+        debug("Running rule validation")
         # Run rule validation as soon as the analyzer is created
         self.rule_errors = self._validate_rules()
 
@@ -46,8 +70,9 @@ class OracleTriggerAnalyzer:
             i += 1
         return "".join(result_chars).rstrip()
 
-    def _parse_sql(self):
+    def _parse_sql(self) -> None:
         # Find the "declare" section (everything between "declare" and "begin")
+        debug("Parsing SQL into declare and main sections")
         pattern = re.compile(r"declare(.*?)begin", re.DOTALL | re.IGNORECASE)
         match = pattern.search(self.sql_content)
 
@@ -57,6 +82,7 @@ class OracleTriggerAnalyzer:
             # Main section is everything from "begin" to the end
             begin_pos = match.end() - 5  # subtract 5 to keep the "begin" keyword
             self.main_section = self.sql_content[begin_pos:].strip()
+            debug(f"Found DECLARE section length={len(self.declare_section)}, main length={len(self.main_section)}")
 
             # Parse the declarations into categories
             self._parse_declarations()
@@ -64,6 +90,37 @@ class OracleTriggerAnalyzer:
             # If no declare section found, assume everything is main section
             self.declare_section = ""
             self.main_section = self.sql_content.strip()
+            debug("No DECLARE section found; entire text treated as main section")
+
+    # -----------------------------
+    # Grouping pipeline (ORDERED)
+    # -----------------------------
+    def _apply_grouping_pipeline(self, elements):
+        """
+        Apply the detection/grouping passes in a strict order:
+        1) IF / ELSIF / ELSE blocks
+        2) CASE / WHEN / ELSE blocks
+        3) FOR loops
+        4) Assignment statements
+        5) DML/SELECT statements
+        6) RAISE statements
+
+        NOTE: BEGIN/END nested blocks are handled by callers via _extract_nested_blocks
+        and _parse_begin_blocks before this pipeline is applied.
+        """
+        # Detect IF blocks first
+        grouped = self._group_if_else_statements(elements)
+        # Then detect CASE blocks
+        grouped = self._group_case_statements(grouped)
+        # Then FOR loops
+        grouped = self._group_for_loops(grouped)
+        # Then assignments
+        grouped = self._group_assignment_statements(grouped)
+        # Then DML/SELECT
+        grouped = self._group_select_statements(grouped)
+        # Finally RAISE
+        grouped = self._group_raise_statements(grouped)
+        return grouped
 
     # --- Rule validation ---
     def _validate_rules(self):
@@ -76,7 +133,7 @@ class OracleTriggerAnalyzer:
         - ELSIF and THEN must be on the same line
         - WHEN and THEN must be on the same line (for CASE statements)
         """
-        errors = []
+        errors: List[Dict[str, Any]] = []
 
         def append_error(line_no: int, rule_text: str, solution_text: str):
             errors.append({
@@ -87,6 +144,7 @@ class OracleTriggerAnalyzer:
 
         in_block_comment = False
         lines = self.sql_content.splitlines()
+        debug(f"Validating {len(lines)} lines for IF/THEN, ELSIF/THEN, WHEN/THEN rules")
         for idx, original_line in enumerate(lines, start=1):
             line = original_line
             # Remove all code segments that are within /* ... */ comments while
@@ -157,9 +215,10 @@ class OracleTriggerAnalyzer:
 
         return errors
 
-    def _parse_declarations(self):
+    def _parse_declarations(self) -> None:
         # Split the declare section into lines
         lines = self.declare_section.split(";")
+        debug(f"Parsing declarations: {len(lines)} segment(s)")
 
         for line in lines:
             line = line.strip()
@@ -174,16 +233,19 @@ class OracleTriggerAnalyzer:
                 parsed_exception = self._parse_exception(line)
                 if parsed_exception:
                     self.exceptions.append(parsed_exception)
+                    debug(f"Parsed exception: {parsed_exception}")
             # Parse constants
             elif "constant" in line.lower():
                 parsed_const = self._parse_constant(line)
                 if parsed_const:
                     self.constants.append(parsed_const)
+                    debug(f"Parsed constant: {parsed_const}")
             # Parse variables (anything else)
             else:
                 parsed_var = self._parse_variable(line)
                 if parsed_var:
                     self.variables.append(parsed_var)
+                    debug(f"Parsed variable: {parsed_var}")
 
     def _parse_exception(self, line):
         # Clean up the line
@@ -197,13 +259,15 @@ class OracleTriggerAnalyzer:
 
         if match:
             name = match.group(1).strip()
-            return {"name": name, "type": "exception"}
+            result = {"name": name, "type": "exception"}
+            return result
         else:
             # For more complex exceptions or ones we can't parse cleanly
-            return {
+            result = {
                 "name": line.replace("exception", "").replace(";", "").strip(),
                 "type": "exception",
             }
+            return result
 
     def _parse_variable(self, line):
         # Clean up common comment patterns at the start of the line
@@ -228,11 +292,12 @@ class OracleTriggerAnalyzer:
             data_type = match.group(2).strip()
             default_value = match.group(3).strip() if match.group(3) else None
 
-            return {
+            result = {
                 "name": name,
                 "data_type": data_type,
                 "default_value": default_value,
             }
+            return result
         else:
             # Handle more complex declarations with special patterns
             # For example: "v_counter simple_integer := 0;"
@@ -247,18 +312,20 @@ class OracleTriggerAnalyzer:
                 data_type = match.group(2).strip()
                 default_value = match.group(3).strip() if match.group(3) else None
 
-                return {
+                result = {
                     "name": name,
                     "data_type": data_type,
                     "default_value": default_value,
                 }
+                return result
 
         # If we couldn't parse it properly, return the raw line
-        return {
+        result = {
             "name": "UNPARSED",
             "data_type": "UNKNOWN",
-            "default_value": line.rstrip(";"),
+            "default_value": line,
         }
+        return result
 
     def _parse_constant(self, line):
         # Clean up common comment patterns
@@ -276,15 +343,16 @@ class OracleTriggerAnalyzer:
             name = match.group(1).strip()
             data_type = match.group(2).strip()
             value = match.group(3).strip() if match.group(3) else None
-
-            return {"name": name, "data_type": data_type, "value": value}
+            result = {"name": name, "data_type": data_type, "value": value}
+            return result
         else:
             # If we couldn't parse it properly, return the raw line
-            return {
+            result = {
                 "name": "UNPARSED",
                 "data_type": "UNKNOWN",
-                "value": line.rstrip(";"),
+                "value": line,
             }
+            return result
 
     # --- Helpers for handling block comments in SQL body ---
     def _strip_block_comments(self, lines):
@@ -326,6 +394,7 @@ class OracleTriggerAnalyzer:
         # if an unterminated block comment remains, capture it
         if in_block and current:
             comments.append("\n".join(current).strip())
+        debug(f"Stripped block comments: kept_lines={len(clean_lines)}, comments_found={len(comments)}")
         return clean_lines, comments
 
     # --- New helpers for parsing main begin...exception...end blocks ---
@@ -334,7 +403,9 @@ class OracleTriggerAnalyzer:
         clean, comments = self._strip_block_comments(raw_lines)
         if comments:
             self.sql_comments.extend(comments)
-        return [line.strip() for line in clean if line.strip()]
+        lines = [line.strip() for line in clean if line.strip()]
+        debug(f"Prepared {len(lines)} main lines after comment stripping")
+        return lines
 
     def _parse_exception_handlers(self, exception_lines):
         text = "\n".join(exception_lines)
@@ -389,6 +460,7 @@ class OracleTriggerAnalyzer:
                     "sqls": sqls,
                 }
             )
+        debug(f"Parsed {len(handlers)} exception handler(s)")
         return handlers
 
     def _extract_nested_blocks(self, lines):
@@ -427,19 +499,10 @@ class OracleTriggerAnalyzer:
                     else:
                         body_lines.append(cur)
                     i += 1
-                # Recursively process body_lines for further nested blocks
-                nested_sqls = self._group_raise_statements(
-                    self._group_select_statements(
-                        self._group_assignment_statements(
-                            self._group_for_loops(
-                                self._group_case_statements(
-                                    self._group_if_else_statements(
-                                        self._extract_nested_blocks(body_lines)
-                                    )
-                                )
-                            )
-                        )
-                    )
+                # Recursively process body_lines for further nested blocks,
+                # then apply the ordered grouping pipeline (IF -> CASE -> FOR -> ASSIGN -> SQL -> RAISE)
+                nested_sqls = self._apply_grouping_pipeline(
+                    self._extract_nested_blocks(body_lines)
                 )
                 # Convert single-line comments to objects; handled in recursion / base case below
                 result.append(
@@ -458,6 +521,7 @@ class OracleTriggerAnalyzer:
                 else:
                     result.append(line)
                 i += 1
+        debug(f"Extracted nested blocks/elements: count={len(result)}")
         return result
 
     def _parse_begin_blocks(self):
@@ -495,18 +559,8 @@ class OracleTriggerAnalyzer:
                     i += 1
                 blocks.append(
                     {
-                        "sqls": self._group_raise_statements(
-                            self._group_select_statements(
-                                self._group_assignment_statements(
-                                    self._group_for_loops(
-                                        self._group_case_statements(
-                                            self._group_if_else_statements(
-                                                self._extract_nested_blocks(body_lines)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
+                        "sqls": self._apply_grouping_pipeline(
+                            self._extract_nested_blocks(body_lines)
                         ),
                         "type": "begin_block",
                         "exception_handlers": self._parse_exception_handlers(
@@ -518,16 +572,16 @@ class OracleTriggerAnalyzer:
                 # Non-begin top-level lines are ignored for now
                 i += 1
         # Cleanup any stray END IF tokens in sql fields
-        return self._cleanup_end_if_in_elements(blocks)
+        cleaned = self._cleanup_end_if_in_elements(blocks)
+        debug(f"Top-level begin blocks parsed: {len(cleaned)}")
+        return cleaned
 
     def _strip_trailing_semicolon(self, sql_text: str) -> str:
         text = sql_text.rstrip()
         # Remove a semicolon immediately before an end-of-line inline comment
         # Example: "...; -- comment" => "... -- comment"
         text = re.sub(r";\s*(--\s*.*)$", r" \1", text)
-        # Then remove trailing semicolon if it is the very last character
-        if text.endswith(";"):
-            return text[:-1].rstrip()
+        # Preserve semicolons - don't strip them
         return text
 
     def _group_select_statements(self, elements):
@@ -577,8 +631,10 @@ class OracleTriggerAnalyzer:
                     # Strip inline comments per line, then join lines with a single space
                     cleaned_lines = [self._strip_inline_sql_comment(line.strip()) for line in buffer_lines]
                     sql_flat = " ".join(line for line in cleaned_lines if line)
+                    # Preserve semicolons with minimal cleanup
                     sql_flat = self._strip_trailing_semicolon(sql_flat)
                     grouped.append({"sql": sql_flat, "type": stmt_type})
+                    debug(f"Grouped {stmt_type}: {sql_flat[:60]}{'...' if len(sql_flat)>60 else ''}")
                     continue
             # Default passthrough
             grouped.append(el)
@@ -652,12 +708,14 @@ class OracleTriggerAnalyzer:
                 if ":=" in flat:
                     var_part, val_part = flat.split(":=", 1)
                     var_part = var_part.strip()
+                    # Preserve semicolons in assignment values
                     val_part = self._strip_trailing_semicolon(val_part.strip())
                     grouped.append({
                         "variable": var_part,
                         "value": val_part,
                         "type": "assignment_statements",
                     })
+                    debug(f"Grouped assignment: {var_part} := {val_part}")
                     continue
                 # Not an assignment, append original buffered strings
                 for s in buffer_lines:
@@ -732,6 +790,7 @@ class OracleTriggerAnalyzer:
                             # Unexpected non-string before THEN; stop
                             break
                 condition = " ".join(part for part in condition_parts if part)
+                debug(f"Detected IF condition: {condition}")
 
                 # Now collect bodies until matching END IF; with nesting support
                 depth = 1
@@ -885,6 +944,7 @@ class OracleTriggerAnalyzer:
                         )
                     )
                 result.append(if_else_obj)
+                debug("Grouped IF/ELSIF/ELSE structure")
                 continue
 
             # default passthrough
@@ -953,6 +1013,7 @@ class OracleTriggerAnalyzer:
                 # Strip inline comments before joining
                 cleaned_lines = [self._strip_inline_sql_comment(line.strip()) for line in buffer_lines]
                 sql_flat = " ".join(line for line in cleaned_lines if line)
+                # Preserve semicolons in RAISE statements
                 sql_flat = self._strip_trailing_semicolon(sql_flat)
                 # Extract exception name after RAISE
                 m = re.search(r"\bRAISE\s+([A-Za-z0-9_]+)", sql_flat, re.IGNORECASE)
@@ -969,9 +1030,11 @@ class OracleTriggerAnalyzer:
                             ],
                         }
                     )
+                    debug(f"Grouped RAISE for exception: {exc_name}")
                 else:
                     # Fallback: keep as a flat RAISE statement
                     grouped.append({"sql": sql_flat, "type": "RAISE_statements"})
+                    debug("Grouped flat RAISE statement")
             else:
                 grouped.append(el)
                 i += 1
@@ -1101,6 +1164,7 @@ class OracleTriggerAnalyzer:
                         "cursor_query": cursor_query,
                     }
                 )
+                debug(f"Grouped FOR loop var={var_name}, body_len={len(grouped_body)}")
             else:
                 grouped.append(el)
                 i += 1
@@ -1334,6 +1398,7 @@ class OracleTriggerAnalyzer:
                         "when_clauses": when_clauses,
                     }
                 )
+                debug(f"Grouped CASE with {len(when_clauses)} WHEN clause(s)")
             else:
                 grouped.append(el)
                 i += 1
@@ -1352,7 +1417,7 @@ class OracleTriggerAnalyzer:
             # Remove standalone trailing END IF/END CASE tokens
             text = end_if_trailing_re.sub("", text)
             text = end_case_trailing_re.sub("", text)
-            # Normalize any trailing semicolon after removal
+            # Apply minimal cleanup but preserve semicolons
             return self._strip_trailing_semicolon(text)
 
         for el in elements:
@@ -1434,19 +1499,33 @@ class OracleTriggerAnalyzer:
                     cleaned.append(el)
             else:
                 cleaned.append(el)
+        debug(f"Cleanup pass complete: elements_in={len(elements)}, elements_out={len(cleaned)}")
         return cleaned
 
     def to_json(self):
         # If rule violations exist, return them instead of attempting conversion
         if self.rule_errors:
+            debug(f"Rule violations detected: {len(self.rule_errors)} error(s)")
             return {"error": self.rule_errors}
 
-        return {
+        main_blocks = self._parse_begin_blocks()
+        result = {
             "declarations": {
                 "variables": self.variables,
                 "constants": self.constants,
                 "exceptions": self.exceptions,
             },
-            "main": self._parse_begin_blocks(),
+            "main": main_blocks,
             "sql_comments": self.sql_comments,
         }
+        debug(
+            "JSON ready: vars=%d, consts=%d, excs=%d, main_blocks=%d, comments=%d"
+            % (
+                len(self.variables),
+                len(self.constants),
+                len(self.exceptions),
+                len(main_blocks),
+                len(self.sql_comments),
+            )
+        )
+        return result
