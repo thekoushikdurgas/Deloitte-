@@ -24,12 +24,10 @@ DECLARE
   V_COMPARATOR_IND V_THEME_MOLECULES.COMPARATOR_IND%TYPE;
   V_THEME_DESC_PROPOSAL MDM_V_THEMES_MTN.THEME_DESC_PROPOSAL%TYPE;
   V_SHORT_NAME VARCHAR2(30);
-  V_EVOLVED_NMP_CNT PLS_INTEGER;
   V_TRADEMARK_NO V_THEMES.TRADEMARK_NO%TYPE;
   V_MOLECULE_TYPE_ID V_MOLECULE_TYPES.MOLECULE_TYPE_ID%TYPE;
   V_PHARMACOLOGICAL_TYPE_ID V_PHARMACOLOGICAL_TYPES.PHARMACOLOGICAL_TYPE_ID%TYPE;
   C_MOLECULE_TYPE_ID CONSTANT V_MOLECULE_TYPES.MOLECULE_TYPE_ID%TYPE := 99;
-  C_PHARMACOLOGICAL_TYPE_ID CONSTANT V_PHARMACOLOGICAL_TYPES.PHARMACOLOGICAL_TYPE_ID%TYPE := 19;
   INVALID_THEME_NO EXCEPTION;
   DELETE_NO_MORE_POSSIBLE EXCEPTION;
   THEME_NO_ONLY_INSERT EXCEPTION;
@@ -276,3 +274,70 @@ BEGIN
   WHEN DEBUGGING THEN
     RAISE_APPLICATION_ERROR(-20900, 'Debug in Themes IOF standard');
 END;
+
+-- Additional comments from analysis
+-- Other Program
+--    C_PHARMACOLOGICAL_TYPE_ID    CONSTANT V_PHARMACOLOGICAL_TYPES.PHARMACOLOGICAL_TYPE_ID%TYPE := 19;
+-- Unknown
+--    V_EVOLVED_NMP_CNT            PLS_INTEGER;
+-- check user
+-- v_is_admin_cnt = 0 => is NOT a full admin user (MDMS_THEME_ADMIN_FULL_ACCESS)
+-- v_is_admin_cnt > 0 => is a full admin user (MDMS_THEME_ADMIN_FULL_ACCESS)
+-- find next free rg_no which may be used later in this trigger :
+-- set THEME_MOLECULE RG Number for first assignment of molecule
+-- no RG_NO for Comparators -----------------------------
+--   for Roche molecules ----------------------------------
+-- first time assignment as RG_NO is empty.
+-- set RG_NO to RG + first theme_no the molecule was ever assigned to
+--:new.theme_no
+-- RAISE debugging;
+-- The Parameter :NEW.RESLIN_DESC_CONCAT consists of 4 fields
+-- CMA 1685, automatic molecule creation
+-- CMA 1820, add RG_NO to inserted values
+--  create molecule mapping (Primary Molecule)
+-- primary molecule!
+-- Is this theme_no really new?
+-- VERIFY OFFICIAL-IND --------------------------
+-- The Theme Description is generated automatically
+-- The given Theme Description is inserted
+-- :NEW.PORTF_PROJ_CD = 'Y'
+-- NOW VERIFY UNIQUENESS OF THEME_DESC --------------
+-- handle primary molecule mapping to this theme
+--(PRIMARY, molecule_seq_no = 1)
+-- End Code  for Inserting
+-- check admin access (role 315)
+-- CMA 1544 Registrat_date is
+--   * always sysdate for official updates
+--   * always :OLD.registrat_date for inofficial updates
+-- inofficial => do not change registrat_date
+-- it is an official change
+-- official change => registrat_date will be set to sysdate
+-- NOW VERIFY UNIQUENESS OF THEME_DESC --------------
+--(but not within the same theme_no, then is no uniqueness required)
+--  Code for INOFFICIAL Changes
+-- Code for OFFICIAL changes  :NEW.OFFICIAL_IND = 'Y'
+-- then this is  the first and only record for this registrat-date
+-- only one official change allowed per day
+-- handle primary molecule mapping to this theme
+-- this code is identical for official and in-official changes
+-- insert a new mapping (PRIMARY, molecule_seq_no = 1)
+-- update an existing mapping (PRIMARY, molecule_seq_no = 1)
+-- error
+-- soft-delete an existing mapping (PRIMARY, molecule_seq_no = 1)
+-- deleting is only possible, if theme_no has been
+-- inserted on the same day
+-- only if this change has been
+--  Code for Inserting, Updating, Deleting
+-- check if the entered NMP is evolved
+----------
+-- if the proposal id is set and the NMP is not evolved then update the corresponding
+-- New Medicinie Proposal status to evolved
+-- set to Active the old New Medicine Proposal
+-- set to Evolved the new choosen New Medicine Proposal
+-- short_name update
+-- check if this is an evolved proposal
+-- short_name has changed so proposal_name must be updated accordingly
+-- handle New Medicine Proposals with theme_no starting with 71.. or 74
+-- automatic create NMP only if no prposal_id is selected or the selected one is evolved
+-- set variable
+-- is_from_theme_validity_check := TRUE;

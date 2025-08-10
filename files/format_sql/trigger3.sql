@@ -181,3 +181,22 @@ BEGIN
   WHEN ERR_NOT_ALLOWED_TO_INVALIDATE THEN
     RAISE_APPLICATION_ERROR(-20113, 'It is not allowed to invalidate/delete this type of address');
 END;
+
+-- Additional comments from analysis
+--insert address P/L + RES/INC with valid_from date
+--check if there are changes on the valid_from date and country => if YES, old records will be expired and new ones will be inserted
+--update the P/L existing address with new valid_from -1
+--update the RES/INC address with valid_to = last day of the year of valid from date
+--insert new P/L address with new valid_from
+--insert new RES/INC address with first day of next year of valid from date
+--particular case for Physical address - change the JU mapping for the company
+--looking for B/L company types which are active and have CBC scope on Yes
+--update existing JU-mapping with last day of the year of valid from date
+--insert new JU mapping with first day of the next year of the valid from date
+--check if the the day used is first day of the year
+--find the first day of the current year of valid from
+--find the first day of the next year of valid from
+--do the mapping changes also for all the other companies (Rep Office and Virtual) which uses this company as legal company
+--update the existing address P/L with valid_from
+--insert address different than P, L address type with valid_from date
+--update address different than P, L address type with valid_from date

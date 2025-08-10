@@ -1,12 +1,8 @@
 DECLARE
   V_COUNT_T_MAPPINGS PLS_INTEGER;
-  V_COUNT_T_MOL_MAP PLS_INTEGER;
-  V_MOLECULE_SEQ_NO PLS_INTEGER;
   V_SEQ_NO_DUPLICATE_CNT PLS_INTEGER;
   INVALID_MAPPING_EXISTS BOOLEAN := FALSE;
   V_MANUAL_SHORT_DESC THEMES.MANUAL_SHORT_DESC%TYPE;
-  v_mappings_changed BOOLEAN := FALSE;
-  v_theme_no_upd_molec_map themes.theme_no%TYPE;
   ERR_MAP_EXISTS EXCEPTION;
   ERR_MOLEC_ID_MISSING EXCEPTION;
   ERR_NO_PORTF_MOLECULE_LEFT EXCEPTION;
@@ -127,6 +123,12 @@ BEGIN
 END;
 
 -- Additional comments from analysis
+-- how many for one theme
+--     V_COUNT_T_MOL_MAP          PLS_INTEGER;
+-- how many for one theme/molecule combination (zero/one expected)
+--     V_MOLECULE_SEQ_NO          PLS_INTEGER;
+--   v_mappings_changed         BOOLEAN := FALSE;
+--   v_theme_no_upd_molec_map   themes.theme_no%TYPE;
 -- DELETE FROM theme_molecule_map tmm
 --               WHERE     tmm.theme_no = :old.theme_no
 --                     AND tmm.molecule_id = :old.molecule_id;
@@ -179,3 +181,66 @@ END;
 --         || :new.molecule_seq_no
 --         || 'error: '
 --         || SQLERRM);
+--chevali1
+-- move left (valid mappings only)
+--   v_mappings_changed := TRUE;
+--  v_theme_no_upd_molec_map := :old.theme_no;
+-- Update Theme Description
+-- Check if theme_no <=> molecule_id valid or invalid mapping exists
+--  for changed molecule_ids
+-- update to valid, place mapping at the end
+-- this is a real new mapping => insert
+-- insert new, valid mapping at the end
+--    v_mappings_changed := TRUE;
+--    v_theme_no_upd_molec_map := :new.theme_no;
+-- move existing and insert mapping
+-- move valid mappings right
+-- place new mapping on new position
+-- update to valid, place mapping at new position
+-- this is a real new mapping => insert
+-- insert mapping on new position
+--    v_mappings_changed := TRUE;
+--    v_theme_no_upd_molec_map := :new.theme_no;
+--(:new.molecule_seq_no < v_count_t_mappings + 1)
+------------- INSERTING-CASES ----------------------------
+---INSERTING -------------------------------------------
+-- BLOCK START  existing molecule is moved (update seq_no)
+-- existing molecule is moved (update seq_no)
+-- delete old mapping
+-- move valid mappings left
+-- move valid mappings right
+-- place valid mapping on new position
+-- update to valid, place mapping at new position
+-- this is a real new mapping => insert
+-- insert mapping on new position
+--   v_mappings_changed := TRUE;
+--   v_theme_no_upd_molec_map := :new.theme_no;
+-- BLOCK END  existing molecule is moved (update seq_no)
+-- BLOCK START  new molecule in arbitrary position
+-- we know that the new mapping doesn't exist yet
+-- we know that the old mapping exists
+-- old mapping  is removed
+-- new mapping is inserted
+-- move valid mappings left
+-- place new mapping on new position
+-- update to valid, update molecule_map_char, place mapping at new position
+-- this is a real new mapping => insert
+-- insert mapping on new position
+--  v_mappings_changed := TRUE;
+--  v_theme_no_upd_molec_map := :new.theme_no;
+-- BLOCK END  new molecule in arbitrary position
+-- BLOCK START  new molecule in existing position
+-- old mapping  is removed
+-- new mapping is inserted
+-- insert mapping on new position
+-- place new mapping on position
+-- update to valid, place mapping at new position
+-- this is a real new mapping => insert
+-- insert mapping on position
+--  v_mappings_changed := TRUE;
+--  v_theme_no_upd_molec_map := :new.theme_no;
+-- BLOCK END  new molecule in existing position
+-------------------------------------------------- UPDATING
+-- Update Theme Description
+---------------------------------------- INSERTING or UPDATING
+-- Sanity check => each seq_no may appear only once for valid Mappings

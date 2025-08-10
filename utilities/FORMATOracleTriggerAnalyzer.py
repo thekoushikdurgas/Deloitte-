@@ -1,19 +1,9 @@
-import os
-from datetime import datetime
 from typing import Any, Dict, List, Union
+from utilities.common import debug
 
 
 JsonNode = Union[Dict[str, Any], str]
 
-
-DEBUG_FORMATTER: bool = True
-
-
-def debug(msg: str) -> None:
-    if DEBUG_FORMATTER:
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        fname = os.path.basename(__file__)
-        print(f"[{now} {fname}] {msg}")
 
 
 class FORMATOracleTriggerAnalyzer:
@@ -123,6 +113,28 @@ class FORMATOracleTriggerAnalyzer:
             lines.append("END;")
         return lines
 
+    def _render_action(self, action: Dict[str, Any], indent_level: int) -> List[str]:
+        lines: List[str] = []
+        a_type = (action.get("type") or "").strip()
+        # function calling (e.g., raise_application_error)
+        if a_type in {"function calling", "function_calling"}:
+            func = (action.get("function_name") or "").strip()
+            if func.lower() == "raise_application_error":
+                param = action.get("parameter", {}) or {}
+                code = str(param.get("handler_code", ""))
+                msg = self._plsql_string_literal(str(param.get("handler_string", "")))
+                lines.append(self._indent(f"RAISE_APPLICATION_ERROR({code}, {msg});", indent_level))
+            elif action.get("sql"):  # Generic function call with SQL
+                sql_txt = action["sql"] if action["sql"].strip().endswith(";") else action["sql"] + ";"
+                lines.append(self._indent(sql_txt, indent_level))
+        elif a_type == "RAISE_statements" and action.get("sql"):
+            sql_txt = action["sql"] if action["sql"].strip().endswith(";") else action["sql"] + ";"
+            lines.append(self._indent(sql_txt, indent_level))
+        elif action.get("sql"):  # Fallback: generic SQL rendering
+            sql_txt = action["sql"] if action["sql"].strip().endswith(";") else action["sql"] + ";"
+            lines.append(self._indent(sql_txt, indent_level))
+        return lines
+    
     def _render_exception_handler(self, handler: Dict[str, Any], indent_level: int) -> List[str]:
         lines: List[str] = []
         exc_name = handler.get("exception_name", "OTHERS")
@@ -134,35 +146,9 @@ class FORMATOracleTriggerAnalyzer:
         if not actions:
             lines.append(self._indent("NULL;", indent_level))
             return lines
+            
         for action in actions:
-            # function calling (e.g., raise_application_error)
-            a_type = (action.get("type") or "").strip()
-            debug(f"Handler action type: {a_type}")
-            if a_type in {"function calling", "function_calling"}:
-                func = (action.get("function_name") or "").strip()
-                if func.lower() == "raise_application_error":
-                    param = action.get("parameter", {}) or {}
-                    code = str(param.get("handler_code", ""))
-                    msg = self._plsql_string_literal(str(param.get("handler_string", "")))
-                    lines.append(self._indent(f"RAISE_APPLICATION_ERROR({code}, {msg});", indent_level))
-                else:
-                    # Generic function call not explicitly supported: skip or render as comment
-                    # Here we skip unless a raw 'sql' exists
-                    sql = action.get("sql")
-                    if sql:
-                        sql_txt = sql if sql.strip().endswith(";") else sql + ";"
-                        lines.append(self._indent(sql_txt, indent_level))
-            elif a_type == "RAISE_statements":
-                sql = action.get("sql")
-                if sql:
-                    sql_txt = sql if sql.strip().endswith(";") else sql + ";"
-                    lines.append(self._indent(sql_txt, indent_level))
-            else:
-                # Fallback: try generic sql rendering
-                sql = action.get("sql")
-                if sql:
-                    sql_txt = sql if sql.strip().endswith(";") else sql + ";"
-                    lines.append(self._indent(sql_txt, indent_level))
+            lines.extend(self._render_action(action, indent_level))
         return lines
 
     def _render_sql_list(self, items: List[JsonNode], indent_level: int) -> List[str]:
@@ -202,31 +188,19 @@ class FORMATOracleTriggerAnalyzer:
             if node_type == "assignment_statements":
                 var = item.get("variable")
                 val = item.get("value")
+                # o_sql is now available if needed, but we'll use the parsed variables for formatting
+                # original_sql = item.get("o_sql")
                 if var is not None and val is not None:
                     lines.append(self._indent(f"{var} := {val};", indent_level))
             elif node_type in {"select_statements", "update_statements", "insert_statements", "delete_statements", "RAISE_statements"}:
-                sql = item.get("sql")
-                if sql:
-                    sql_text = sql.strip()
-                    if not sql_text.endswith(";"):
-                        sql_text += ";"
-                    lines.append(self._indent(sql_text, indent_level))
+                # Use common rendering for all SQL statement types
+                lines.extend(self._render_action(item, indent_level))
             elif node_type in {"function calling", "function_calling"}:
-                # Render function calling shape (primarily raise_application_error)
-                func = (item.get("function_name") or "").strip()
-                if func.lower() == "raise_application_error":
-                    param = item.get("parameter", {}) or {}
-                    code = str(param.get("handler_code", ""))
-                    msg = self._plsql_string_literal(str(param.get("handler_string", "")))
-                    lines.append(self._indent(f"RAISE_APPLICATION_ERROR({code}, {msg});", indent_level))
-                else:
-                    sql = item.get("sql")
-                    if sql:
-                        sql_text = sql.strip()
-                        if not sql_text.endswith(";"):
-                            sql_text += ";"
-                        lines.append(self._indent(sql_text, indent_level))
+                # Render function calling shape using the common helper
+                lines.extend(self._render_action(item, indent_level))
             elif node_type == "if_else":
+                # o_sql is now available if needed, but we'll use the structured representation for formatting
+                # original_sql = item.get("o_sql")
                 lines.extend(self._render_if_else(item, indent_level))
             elif node_type == "begin_block":
                 # Nested BEGIN block
@@ -246,41 +220,16 @@ class FORMATOracleTriggerAnalyzer:
                 inner_actions = item.get("sqls", [])
                 # Reuse handler rendering for actions, but without WHEN header: we just emit actions
                 for act in inner_actions:
-                    a_type = (act.get("type") or "").strip()
-                    debug(f"Inline exception action type: {a_type}")
-                    if a_type in {"function calling", "function_calling"}:
-                        func = (act.get("function_name") or "").strip()
-                        if func.lower() == "raise_application_error":
-                            param = act.get("parameter", {}) or {}
-                            code = str(param.get("handler_code", ""))
-                            msg = self._plsql_string_literal(str(param.get("handler_string", "")))
-                            lines.append(self._indent(f"RAISE_APPLICATION_ERROR({code}, {msg});", indent_level))
-                        else:
-                            sql = act.get("sql")
-                            if sql:
-                                sql_text = sql.strip()
-                                if not sql_text.endswith(";"):
-                                    sql_text += ";"
-                                lines.append(self._indent(sql_text, indent_level))
-                    elif a_type == "RAISE_statements":
-                        sql = act.get("sql")
-                        if sql:
-                            sql_text = sql.strip()
-                            if not sql_text.endswith(";"):
-                                sql_text += ";"
-                            lines.append(self._indent(sql_text, indent_level))
-                    else:
-                        sql = act.get("sql")
-                        if sql:
-                            sql_text = sql.strip()
-                            if not sql_text.endswith(";"):
-                                sql_text += ";"
-                            lines.append(self._indent(sql_text, indent_level))
+                    lines.extend(self._render_action(act, indent_level))
             elif node_type == "case_when_statements":
+                # o_sql is now available if needed, but we'll use the structured representation for formatting
+                # original_sql = item.get("o_sql")
                 lines.extend(self._render_case_when(item, indent_level))
             elif node_type == "for_loop":
                 loop_var = item.get("loop_variable") or "i"
                 cursor_query = item.get("cursor_query") or "SELECT 1 FROM DUAL"
+                # o_sql is now available if needed, but we'll use the structured representation for formatting
+                # original_sql = item.get("o_sql")
                 debug(f"FOR loop: var={loop_var}, cursor_query_len={len(cursor_query)}")
                 lines.append(self._indent(f"FOR {loop_var} IN ( {cursor_query} ) LOOP", indent_level))
                 loop_body = item.get("loop_body", []) or []

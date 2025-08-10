@@ -1,17 +1,6 @@
-import os
 import re
-from datetime import datetime
 from typing import Any, Dict, List, Tuple
-
-
-DEBUG_ANALYZER: bool = True
-
-
-def debug(msg: str) -> None:
-    if DEBUG_ANALYZER:
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        fname = os.path.basename(__file__)
-        print(f"[{now} {fname}] {msg}")
+from utilities.common import debug
 
 
 class OracleTriggerAnalyzer:
@@ -42,33 +31,48 @@ class OracleTriggerAnalyzer:
         # Run rule validation as soon as the analyzer is created
         self.rule_errors = self._validate_rules()
 
-    def _strip_inline_sql_comment(self, text: str) -> str:
-        # Remove inline -- comments occurring outside of single-quoted strings
-        in_str = False
+    def _strip_inline_sql_comment(self, text: str) -> Tuple[str, str]:
+        """
+        Remove inline -- comments occurring outside of single-quoted strings.
+        Returns a tuple of (code_without_comments, extracted_comment)
+        """
+        # If the entire line is a comment, return empty code and the comment
+        if text.lstrip().startswith("--"):
+            return "", text.strip()
+        
+        # Handle strings with single quotes to avoid removing comments inside strings
+        in_string = False
         i = 0
         result_chars = []
+        comment = ""
+        
         while i < len(text):
             ch = text[i]
-            # Toggle on quote; handle doubled single quotes inside strings
+            
+            # Toggle in_string when encountering quotes, handle escaped quotes
             if ch == "'":
                 result_chars.append(ch)
                 i += 1
-                if in_str:
-                    # If next is also a quote, it's an escaped quote within string
+                if in_string:
+                    # Check for escaped quotes (two single quotes in a row)
                     if i < len(text) and text[i] == "'":
                         result_chars.append("'")
                         i += 1
                         continue
-                    in_str = False
+                    in_string = False
                 else:
-                    in_str = True
+                    in_string = True
                 continue
-            # Detect comment start when not inside string
-            if not in_str and ch == '-' and i + 1 < len(text) and text[i + 1] == '-':
+                
+            # Detect comment start when not inside a string
+            if not in_string and ch == '-' and i + 1 < len(text) and text[i + 1] == '-':
+                comment = text[i:].strip()
                 break
+                
             result_chars.append(ch)
             i += 1
-        return "".join(result_chars).rstrip()
+            
+        return "".join(result_chars).rstrip(), comment
 
     def _parse_sql(self) -> None:
         # Find the "declare" section (everything between "declare" and "begin")
@@ -102,8 +106,7 @@ class OracleTriggerAnalyzer:
         2) CASE / WHEN / ELSE blocks
         3) FOR loops
         4) Assignment statements
-        5) DML/SELECT statements
-        6) RAISE statements
+        5) SQL statements (DML/SELECT/RAISE combined)
 
         NOTE: BEGIN/END nested blocks are handled by callers via _extract_nested_blocks
         and _parse_begin_blocks before this pipeline is applied.
@@ -116,10 +119,8 @@ class OracleTriggerAnalyzer:
         grouped = self._group_for_loops(grouped)
         # Then assignments
         grouped = self._group_assignment_statements(grouped)
-        # Then DML/SELECT
-        grouped = self._group_select_statements(grouped)
-        # Finally RAISE
-        grouped = self._group_raise_statements(grouped)
+        # Then SQL statements (DML/SELECT and RAISE combined)
+        grouped = self._group_sql_statements(grouped)
         return grouped
 
     # --- Rule validation ---
@@ -179,11 +180,10 @@ class OracleTriggerAnalyzer:
             code_outside_blocks = "".join(processed_segments)
 
             # Strip inline -- comments outside of strings
-            code_no_inline_comment = self._strip_inline_sql_comment(code_outside_blocks)
-            code = code_no_inline_comment.strip()
+            code, comment = self._strip_inline_sql_comment(code_outside_blocks)
 
             # Skip empty or pure comment lines
-            if not code or code.lstrip().startswith("--"):
+            if comment.lstrip().startswith("--"):
                 continue
 
             # Enforce: IF ... THEN must be on the same line
@@ -216,17 +216,32 @@ class OracleTriggerAnalyzer:
         return errors
 
     def _parse_declarations(self) -> None:
-        # Split the declare section into lines
+        """
+        Parse declarations section and categorize into variables, constants, and exceptions,
+        while removing any comments.
+        """
+        # Split the declare section into lines by semicolon
         lines = self.declare_section.split(";")
         debug(f"Parsing declarations: {len(lines)} segment(s)")
-
+        
+        # Process each declaration segment
         for line in lines:
-            line = line.strip()
-            if not line:
+            if not line.strip():
                 continue
-
+                
             # Add semicolon back for consistent formatting
-            line = line + ";"
+            line = line.strip() + ";"
+            
+            # Strip any inline comments
+            code, comment = self._strip_inline_sql_comment(line)
+            if comment:
+                self.sql_comments.append(comment)
+                
+            # Skip empty lines after comment removal
+            if not code.strip():
+                continue
+                
+            line = code
 
             # Parse exceptions
             if re.search(r"\s*exception\s*;", line, re.IGNORECASE):
@@ -399,13 +414,38 @@ class OracleTriggerAnalyzer:
 
     # --- New helpers for parsing main begin...exception...end blocks ---
     def _get_main_lines(self):
+        """
+        Process the main section of SQL by removing both block and inline comments.
+        Returns a list of clean code lines ready for further analysis.
+        """
+        # First split the main section into raw lines
         raw_lines = [line.rstrip() for line in self.main_section.split("\n")]
-        clean, comments = self._strip_block_comments(raw_lines)
-        if comments:
-            self.sql_comments.extend(comments)
-        lines = [line.strip() for line in clean if line.strip()]
-        debug(f"Prepared {len(lines)} main lines after comment stripping")
-        return lines
+        
+        # Step 1: Remove block comments (/* ... */)
+        clean_block, block_comments = self._strip_block_comments(raw_lines)
+        if block_comments:
+            self.sql_comments.extend(block_comments)
+            
+        # Step 2: Process each line to remove inline comments (-- ...)
+        clean_lines = []
+        inline_comments = []
+        
+        for line in clean_block:
+            if not line.strip():
+                continue
+                
+            code, comment = self._strip_inline_sql_comment(line)
+            if code.strip():
+                clean_lines.append(code.strip())
+            if comment:
+                inline_comments.append(comment)
+                
+        # Store collected inline comments
+        if inline_comments:
+            self.sql_comments.extend(inline_comments)
+            
+        debug(f"Prepared {len(clean_lines)} main lines after comment stripping (block and inline)")
+        return clean_lines
 
     def _parse_exception_handlers(self, exception_lines):
         text = "\n".join(exception_lines)
@@ -464,25 +504,52 @@ class OracleTriggerAnalyzer:
         return handlers
 
     def _extract_nested_blocks(self, lines):
-        # First remove block comments and collect them
-        lines, comments = self._strip_block_comments(lines)
-        if comments:
-            self.sql_comments.extend(comments)
+        """
+        Extract nested BEGIN blocks from the lines of SQL code,
+        removing comments and handling proper nesting of blocks.
+        """
+        # First remove both block and inline comments
+        clean_lines = []
+        all_comments = []
+        
+        # Process block comments first
+        block_clean, block_comments = self._strip_block_comments(lines)
+        if block_comments:
+            all_comments.extend(block_comments)
+            
+        # Then process inline comments
+        for line in block_clean:
+            if not line.strip():
+                continue
+                
+            code, comment = self._strip_inline_sql_comment(line)
+            if code.strip():
+                clean_lines.append(code.strip())
+            if comment:
+                all_comments.append(comment)
+        
+        # Store all extracted comments
+        if all_comments:
+            self.sql_comments.extend(all_comments)
+        
+        # Compile regex patterns for block detection
         begin_re = re.compile(r"^\s*begin\b", re.IGNORECASE)
         exception_re = re.compile(r"^\s*exception\s*$", re.IGNORECASE)
         end_re = re.compile(r"^\s*end\s*;\s*$", re.IGNORECASE)
+        
+        # Process the cleaned lines
         result = []
         i = 0
-        while i < len(lines):
-            if begin_re.match(lines[i]):
+        while i < len(clean_lines):
+            if begin_re.match(clean_lines[i]):
                 # Consume nested block
                 depth = 1
                 i += 1
                 body_lines = []
                 exception_lines = []
                 in_exception = False
-                while i < len(lines) and depth > 0:
-                    cur = lines[i]
+                while i < len(clean_lines) and depth > 0:
+                    cur = clean_lines[i]
                     if begin_re.match(cur):
                         depth += 1
                     if exception_re.match(cur) and depth == 1:
@@ -499,12 +566,21 @@ class OracleTriggerAnalyzer:
                     else:
                         body_lines.append(cur)
                     i += 1
+                    
+                # Store the original SQL for the begin block
+                original_begin = "BEGIN"
+                original_body = "\n".join(body_lines)
+                original_exception = ""
+                if exception_lines:
+                    original_exception = "EXCEPTION\n" + "\n".join(exception_lines)
+                original_sql = f"{original_begin}\n{original_body}\n{original_exception}\nEND;"
+                
                 # Recursively process body_lines for further nested blocks,
                 # then apply the ordered grouping pipeline (IF -> CASE -> FOR -> ASSIGN -> SQL -> RAISE)
                 nested_sqls = self._apply_grouping_pipeline(
                     self._extract_nested_blocks(body_lines)
                 )
-                # Convert single-line comments to objects; handled in recursion / base case below
+                
                 result.append(
                     {
                         "sqls": nested_sqls if nested_sqls else body_lines,
@@ -512,15 +588,14 @@ class OracleTriggerAnalyzer:
                         "exception_handlers": self._parse_exception_handlers(
                             exception_lines
                         ),
+                        "o_sql": original_sql  # Add the original SQL
                     }
                 )
             else:
-                line = lines[i]
-                if line.strip().startswith("--"):
-                    result.append({"sql": line.strip(), "type": "comment"})
-                else:
-                    result.append(line)
+                line = clean_lines[i]
+                result.append(line)
                 i += 1
+                
         debug(f"Extracted nested blocks/elements: count={len(result)}")
         return result
 
@@ -557,6 +632,14 @@ class OracleTriggerAnalyzer:
                     else:
                         body_lines.append(cur)
                     i += 1
+                # Store the original SQL for the begin block
+                original_begin = "BEGIN"
+                original_body = "\n".join(body_lines)
+                original_exception = ""
+                if exception_lines:
+                    original_exception = "EXCEPTION\n" + "\n".join(exception_lines)
+                original_sql = f"{original_begin}\n{original_body}\n{original_exception}\nEND;"
+                
                 blocks.append(
                     {
                         "sqls": self._apply_grouping_pipeline(
@@ -566,25 +649,51 @@ class OracleTriggerAnalyzer:
                         "exception_handlers": self._parse_exception_handlers(
                             exception_lines
                         ),
+                        "o_sql": original_sql  # Add the original SQL
                     }
                 )
             else:
                 # Non-begin top-level lines are ignored for now
                 i += 1
-        # Cleanup any stray END IF tokens in sql fields
-        cleaned = self._cleanup_end_if_in_elements(blocks)
-        debug(f"Top-level begin blocks parsed: {len(cleaned)}")
-        return cleaned
+        # No cleanup needed, return blocks directly
+        debug(f"Top-level begin blocks parsed: {len(blocks)}")
+        return blocks
 
     def _strip_trailing_semicolon(self, sql_text: str) -> str:
+        """
+        Cleans up SQL text by handling semicolons appropriately.
+        This preserves the semicolon but removes any that are immediately 
+        before an inline comment.
+        """
         text = sql_text.rstrip()
+        
         # Remove a semicolon immediately before an end-of-line inline comment
         # Example: "...; -- comment" => "... -- comment"
         text = re.sub(r";\s*(--\s*.*)$", r" \1", text)
-        # Preserve semicolons - don't strip them
+        
+        # Return the text without processing the semicolon further
+        # (We want to preserve the semicolon for SQL statements)
         return text
 
-    def _group_select_statements(self, elements):
+    def _group_sql_statements(self, elements):
+        """
+        Unified method to group both SQL statements (SELECT, INSERT, UPDATE, DELETE) 
+        and RAISE statements.
+        """
+        def process_elif_chain(chain):
+            """Helper function to process ELSIF chains in IF/ELSE blocks."""
+            if not isinstance(chain, dict):
+                return chain
+            if "then_sql" in chain:
+                chain["then_sql"] = self._group_sql_statements(chain["then_sql"])
+            if "else_if_statement" in chain and isinstance(
+                chain["else_if_statement"], dict
+            ):
+                chain["else_if_statement"] = process_elif_chain(
+                    chain["else_if_statement"]
+                )
+            return chain
+
         grouped = []
         i = 0
         while i < len(elements):
@@ -592,18 +701,88 @@ class OracleTriggerAnalyzer:
             # Recurse into nested begin blocks
             if isinstance(el, dict) and el.get("type") == "begin_block":
                 el_sqls = el.get("sqls", [])
-                el["sqls"] = self._group_select_statements(el_sqls)
+                el["sqls"] = self._group_sql_statements(el_sqls)
                 grouped.append(el)
                 i += 1
                 continue
-            # Preserve comment objects as-is
-            if isinstance(el, dict) and el.get("type") == "comment":
+                
+            # Recurse for if_else
+            if isinstance(el, dict) and el.get("type") == "if_else":
+                el["then_sql"] = self._group_sql_statements(el.get("then_sql", []))
+                if "else_statement" in el and isinstance(el["else_statement"], list):
+                    el["else_statement"] = self._group_sql_statements(
+                        el["else_statement"]
+                    )
+                if "else_if_statement" in el and isinstance(
+                    el["else_if_statement"], dict
+                ):
+                    el["else_if_statement"] = process_elif_chain(
+                        el["else_if_statement"]
+                    )
                 grouped.append(el)
                 i += 1
                 continue
-            # Only strings are eligible for grouping
+                
+            # Preserve comment objects and other pre-grouped dicts
+            if isinstance(el, dict):
+                grouped.append(el)
+                i += 1
+                continue
+                
+            # Process string elements that could be SQL or RAISE statements
             if isinstance(el, str):
                 upper = el.strip().upper()
+                
+                # First check if it's a RAISE statement
+                if upper.startswith("RAISE "):
+                    buffer_lines = [el]
+                    i += 1
+                    while i < len(elements):
+                        nxt = elements[i]
+                        if isinstance(nxt, str):
+                            buffer_lines.append(nxt)
+                            i += 1
+                            if nxt.strip().endswith(";"):
+                                break
+                        else:
+                            break
+                    
+                    # Store the original SQL
+                    original_sql = "\n".join(buffer_lines)
+                    
+                    # Join lines with a single space
+                    sql_flat = " ".join(line for line in buffer_lines if line)
+                    # Preserve semicolons in RAISE statements
+                    sql_flat = self._strip_trailing_semicolon(sql_flat)
+                    
+                    # Extract exception name after RAISE
+                    m = re.search(r"\bRAISE\s+([A-Za-z0-9_]+)", sql_flat, re.IGNORECASE)
+                    if m:
+                        exc_name = m.group(1).strip()
+                        grouped.append(
+                            {
+                                "exception_name": exc_name,
+                                "sqls": [
+                                    {
+                                        "sql": sql_flat,
+                                        "type": "RAISE_statements",
+                                        "o_sql": original_sql  # Add the original SQL
+                                    }
+                                ],
+                            }
+                        )
+                        debug(f"Grouped RAISE for exception: {exc_name}")
+                    else:
+                        # Fallback: keep as a flat RAISE statement
+                        grouped.append({
+                            "sql": sql_flat, 
+                            "type": "RAISE_statements",
+                            "o_sql": original_sql  # Add the original SQL
+                        })
+                        debug("Grouped flat RAISE statement")
+                    continue
+                
+                # Check if it's a DML or SELECT statement
                 stmt_type = None
                 if upper.startswith("SELECT"):
                     stmt_type = "select_statements"
@@ -628,15 +807,22 @@ class OracleTriggerAnalyzer:
                         else:
                             # Stop grouping on non-string; let outer loop handle it
                             break
-                    # Strip inline comments per line, then join lines with a single space
-                    cleaned_lines = [self._strip_inline_sql_comment(line.strip()) for line in buffer_lines]
-                    sql_flat = " ".join(line for line in cleaned_lines if line)
+                    # Store the original SQL before cleaning
+                    original_sql = "\n".join(buffer_lines)
+                    
+                    # Join lines with a single space
+                    sql_flat = " ".join(line for line in buffer_lines if line)
                     # Preserve semicolons with minimal cleanup
                     sql_flat = self._strip_trailing_semicolon(sql_flat)
-                    grouped.append({"sql": sql_flat, "type": stmt_type})
+                    grouped.append({
+                        "sql": sql_flat, 
+                        "type": stmt_type,
+                        "o_sql": original_sql  # Add the original SQL
+                    })
                     debug(f"Grouped {stmt_type}: {sql_flat[:60]}{'...' if len(sql_flat)>60 else ''}")
                     continue
-            # Default passthrough
+            
+            # Default passthrough for elements that aren't SQL or RAISE statements
             grouped.append(el)
             i += 1
         return grouped
@@ -685,11 +871,7 @@ class OracleTriggerAnalyzer:
                 grouped.append(el)
                 i += 1
                 continue
-            # Preserve comments as-is
-            if isinstance(el, dict) and el.get("type") == "comment":
-                grouped.append(el)
-                i += 1
-                continue
+            # Process next element
             # Handle strings potentially containing assignment
             if isinstance(el, str):
                 buffer_lines = [el]
@@ -706,6 +888,9 @@ class OracleTriggerAnalyzer:
                             break
                 flat = " ".join(line.strip() for line in buffer_lines)
                 if ":=" in flat:
+                    # Store the original SQL
+                    original_sql = "\n".join(buffer_lines)
+                    
                     var_part, val_part = flat.split(":=", 1)
                     var_part = var_part.strip()
                     # Preserve semicolons in assignment values
@@ -714,6 +899,7 @@ class OracleTriggerAnalyzer:
                         "variable": var_part,
                         "value": val_part,
                         "type": "assignment_statements",
+                        "o_sql": original_sql  # Add the original SQL
                     })
                     debug(f"Grouped assignment: {var_part} := {val_part}")
                     continue
@@ -732,7 +918,7 @@ class OracleTriggerAnalyzer:
                 return None
             head = {
                 "condition": elif_items[0]["condition"],
-                "then_sql": self._group_select_statements(
+                "then_sql": self._group_sql_statements(
                     self._group_assignment_statements(
                         self._group_if_else_statements(elif_items[0]["then_lines"])
                     )
@@ -749,7 +935,7 @@ class OracleTriggerAnalyzer:
             el = elements[i]
             # Recurse into nested begin blocks
             if isinstance(el, dict) and el.get("type") == "begin_block":
-                el["sqls"] = self._group_select_statements(
+                el["sqls"] = self._group_sql_statements(
                     self._group_if_else_statements(el.get("sqls", []))
                 )
                 result.append(el)
@@ -924,21 +1110,41 @@ class OracleTriggerAnalyzer:
                         target.append(cur)
                         i += 1
 
+                # Capture the original if-else block SQL
+                original_lines = []
+                # Start with the IF line
+                original_lines.append(el)  # This is the original IF line
+                
+                # Add all the lines from then, elsif, and else blocks
+                original_lines.extend(then_lines)
+                for elif_item in elif_items:
+                    # Add the ELSIF line
+                    original_lines.extend([f"ELSIF {elif_item['condition']} THEN"])
+                    # Add the ELSIF body lines
+                    original_lines.extend(elif_item.get('then_lines', []))
+                if else_lines:
+                    original_lines.append("ELSE")
+                    original_lines.extend(else_lines)
+                original_lines.append("END IF;")
+                
+                original_sql = "\n".join(str(line) for line in original_lines)
+
                 # Build the if_else object with recursively grouped bodies
                 if_else_obj = {
                     "type": "if_else",
                     "condition": condition,
-                    "then_sql": self._group_select_statements(
+                    "then_sql": self._group_sql_statements(
                         self._group_assignment_statements(
                             self._group_if_else_statements(then_lines)
                         )
                     ),
+                    "o_sql": original_sql  # Add the original SQL
                 }
                 elif_chain = build_elif_chain(elif_items)
                 if elif_chain:
                     if_else_obj["else_if_statement"] = elif_chain
                 if else_lines:
-                    if_else_obj["else_statement"] = self._group_select_statements(
+                    if_else_obj["else_statement"] = self._group_sql_statements(
                         self._group_assignment_statements(
                             self._group_if_else_statements(else_lines)
                         )
@@ -952,93 +1158,7 @@ class OracleTriggerAnalyzer:
             i += 1
         return result
 
-    def _group_raise_statements(self, elements):
-        def process_elif_chain(chain):
-            if not isinstance(chain, dict):
-                return chain
-            if "then_sql" in chain:
-                chain["then_sql"] = self._group_raise_statements(chain["then_sql"])
-            if "else_if_statement" in chain and isinstance(
-                chain["else_if_statement"], dict
-            ):
-                chain["else_if_statement"] = process_elif_chain(
-                    chain["else_if_statement"]
-                )
-            return chain
-
-        grouped = []
-        i = 0
-        while i < len(elements):
-            el = elements[i]
-            # Recurse for begin blocks
-            if isinstance(el, dict) and el.get("type") == "begin_block":
-                el["sqls"] = self._group_raise_statements(el.get("sqls", []))
-                grouped.append(el)
-                i += 1
-                continue
-            # Recurse for if_else
-            if isinstance(el, dict) and el.get("type") == "if_else":
-                el["then_sql"] = self._group_raise_statements(el.get("then_sql", []))
-                if "else_statement" in el and isinstance(el["else_statement"], list):
-                    el["else_statement"] = self._group_raise_statements(
-                        el["else_statement"]
-                    )
-                if "else_if_statement" in el and isinstance(
-                    el["else_if_statement"], dict
-                ):
-                    el["else_if_statement"] = process_elif_chain(
-                        el["else_if_statement"]
-                    )
-                grouped.append(el)
-                i += 1
-                continue
-            # Preserve other pre-grouped dicts
-            if isinstance(el, dict):
-                grouped.append(el)
-                i += 1
-                continue
-            # Handle strings
-            if isinstance(el, str) and el.strip().upper().startswith("RAISE "):
-                buffer_lines = [el]
-                i += 1
-                while i < len(elements):
-                    nxt = elements[i]
-                    if isinstance(nxt, str):
-                        buffer_lines.append(nxt)
-                        i += 1
-                        if nxt.strip().endswith(";"):
-                            break
-                    else:
-                        break
-                # Strip inline comments before joining
-                cleaned_lines = [self._strip_inline_sql_comment(line.strip()) for line in buffer_lines]
-                sql_flat = " ".join(line for line in cleaned_lines if line)
-                # Preserve semicolons in RAISE statements
-                sql_flat = self._strip_trailing_semicolon(sql_flat)
-                # Extract exception name after RAISE
-                m = re.search(r"\bRAISE\s+([A-Za-z0-9_]+)", sql_flat, re.IGNORECASE)
-                if m:
-                    exc_name = m.group(1).strip()
-                    grouped.append(
-                        {
-                            "exception_name": exc_name,
-                            "sqls": [
-                                {
-                                    "sql": sql_flat,
-                                    "type": "RAISE_statements",
-                                }
-                            ],
-                        }
-                    )
-                    debug(f"Grouped RAISE for exception: {exc_name}")
-                else:
-                    # Fallback: keep as a flat RAISE statement
-                    grouped.append({"sql": sql_flat, "type": "RAISE_statements"})
-                    debug("Grouped flat RAISE statement")
-            else:
-                grouped.append(el)
-                i += 1
-        return grouped
+    # _group_raise_statements has been merged into _group_sql_statements
 
     def _group_for_loops(self, elements):
         grouped = []
@@ -1070,10 +1190,10 @@ class OracleTriggerAnalyzer:
                 i += 1
                 continue
             # Preserve comment objects
-            if isinstance(el, dict) and el.get("type") == "comment":
-                grouped.append(el)
-                i += 1
-                continue
+            # if isinstance(el, dict) and el.get("type") == "comment":
+            #     grouped.append(el)
+            #     i += 1
+            #     continue
             # Handle strings
             if isinstance(el, str) and el.strip().upper().startswith("FOR "):
                 buffer_lines = [el]
@@ -1145,23 +1265,25 @@ class OracleTriggerAnalyzer:
                         if in_body:
                             body_elems.append(part)
                 # Run grouping pipeline on loop body to get a list
-                grouped_body = self._group_raise_statements(
-                    self._group_select_statements(
-                        self._group_assignment_statements(
-                            self._group_for_loops(
-                                self._group_case_statements(
-                                    self._group_if_else_statements(body_elems)
-                                )
+                grouped_body = self._group_sql_statements(
+                    self._group_assignment_statements(
+                        self._group_for_loops(
+                            self._group_case_statements(
+                                self._group_if_else_statements(body_elems)
                             )
                         )
                     )
                 )
+                # Store the original SQL
+                original_sql = "\n".join(str(line) for line in buffer_lines if isinstance(line, str))
+                
                 grouped.append(
                     {
                         "type": "for_loop",
                         "loop_variable": var_name,
                         "loop_body": grouped_body,
                         "cursor_query": cursor_query,
+                        "o_sql": original_sql  # Add the original SQL
                     }
                 )
                 debug(f"Grouped FOR loop var={var_name}, body_len={len(grouped_body)}")
@@ -1173,13 +1295,11 @@ class OracleTriggerAnalyzer:
     def _group_case_statements(self, elements):
         # Group CASE ... END CASE; into structured objects with when_clauses
         def recurse(elems):
-            return self._group_raise_statements(
-                self._group_select_statements(
-                    self._group_assignment_statements(
-                        self._group_for_loops(
-                            self._group_case_statements(
-                                self._group_if_else_statements(elems)
-                            )
+            return self._group_sql_statements(
+                self._group_assignment_statements(
+                    self._group_for_loops(
+                        self._group_case_statements(
+                            self._group_if_else_statements(elems)
                         )
                     )
                 )
@@ -1243,8 +1363,8 @@ class OracleTriggerAnalyzer:
                 for p in buffer:
                     if isinstance(p, str):
                         flat_pieces.append(p.strip())
-                    elif isinstance(p, dict) and p.get("type") == "comment":
-                        flat_pieces.append(p.get("sql", ""))
+                    # elif isinstance(p, dict) and p.get("type") == "comment":
+                    #     flat_pieces.append(p.get("sql", ""))
                 sql_flat = " ".join(piece for piece in flat_pieces if piece)
                 # Extract case_expression up to first WHEN
                 header_text = ""
@@ -1391,11 +1511,15 @@ class OracleTriggerAnalyzer:
                     idx += 1
                 if else_array and when_clauses:
                     when_clauses[-1]["else_statement"] = else_array
+                # Store the original SQL
+                original_sql = "\n".join(str(line) for line in buffer if isinstance(line, str))
+                
                 grouped.append(
                     {
                         "type": "case_when_statements",
                         "case_expression": " ".join(case_expression.split()),
                         "when_clauses": when_clauses,
+                        "o_sql": original_sql  # Add the original SQL
                     }
                 )
                 debug(f"Grouped CASE with {len(when_clauses)} WHEN clause(s)")
@@ -1404,103 +1528,7 @@ class OracleTriggerAnalyzer:
                 i += 1
         return grouped
 
-    def _cleanup_end_if_in_elements(self, elements):
-        cleaned = []
-        end_if_line_re = re.compile(r"^\s*END\s+IF\s*;?\s*$", re.IGNORECASE)
-        end_case_line_re = re.compile(r"^\s*END\s+CASE\s*;?\s*$", re.IGNORECASE)
-        end_if_trailing_re = re.compile(r"\s*END\s+IF\s*;?\s*$", re.IGNORECASE)
-        end_case_trailing_re = re.compile(r"\s*END\s+CASE\s*;?\s*$", re.IGNORECASE)
 
-        def strip_end_tokens(text: str) -> str:
-            # First remove inline comments
-            text = self._strip_inline_sql_comment(text)
-            # Remove standalone trailing END IF/END CASE tokens
-            text = end_if_trailing_re.sub("", text)
-            text = end_case_trailing_re.sub("", text)
-            # Apply minimal cleanup but preserve semicolons
-            return self._strip_trailing_semicolon(text)
-
-        for el in elements:
-            if isinstance(el, str):
-                # Drop pure END IF/END CASE lines (and pure comments are already removed earlier)
-                if end_if_line_re.match(el) or end_case_line_re.match(el):
-                    continue
-                # Strip trailing END tokens if present at end of string
-                new_text = strip_end_tokens(el)
-                if new_text == "":
-                    continue
-                cleaned.append(new_text)
-            elif isinstance(el, dict):
-                # Drop comment objects from output entirely
-                if el.get("type") == "comment":
-                    continue
-                # Clean sql-bearing dicts
-                if "sql" in el and isinstance(el["sql"], str):
-                    el["sql"] = strip_end_tokens(el["sql"])
-                el_type = el.get("type")
-                if el_type == "begin_block":
-                    el["sqls"] = self._cleanup_end_if_in_elements(el.get("sqls", []))
-                    cleaned.append(el)
-                elif el_type == "if_else":
-                    el["then_sql"] = self._cleanup_end_if_in_elements(
-                        el.get("then_sql", [])
-                    )
-                    if "else_statement" in el and isinstance(
-                        el["else_statement"], list
-                    ):
-                        el["else_statement"] = self._cleanup_end_if_in_elements(
-                            el["else_statement"]
-                        )
-
-                    # Clean elif chain recursively
-                    def clean_chain(chain):
-                        if not isinstance(chain, dict):
-                            return chain
-                        if "then_sql" in chain and isinstance(chain["then_sql"], list):
-                            chain["then_sql"] = self._cleanup_end_if_in_elements(
-                                chain["then_sql"]
-                            )
-                        if "else_if_statement" in chain and isinstance(
-                            chain["else_if_statement"], dict
-                        ):
-                            chain["else_if_statement"] = clean_chain(
-                                chain["else_if_statement"]
-                            )
-                        return chain
-
-                    if "else_if_statement" in el and isinstance(
-                        el["else_if_statement"], dict
-                    ):
-                        el["else_if_statement"] = clean_chain(el["else_if_statement"])
-                    cleaned.append(el)
-                elif el_type == "for_loop":
-                    el["loop_body"] = self._cleanup_end_if_in_elements(
-                        el.get("loop_body", [])
-                    )
-                    cleaned.append(el)
-                elif el_type == "case_when_statements":
-                    whens = el.get("when_clauses", [])
-                    for w in whens:
-                        if isinstance(w, dict):
-                            if "then_statement" in w and isinstance(
-                                w["then_statement"], list
-                            ):
-                                w["then_statement"] = self._cleanup_end_if_in_elements(
-                                    w["then_statement"]
-                                )
-                            if "else_statement" in w and isinstance(
-                                w["else_statement"], list
-                            ):
-                                w["else_statement"] = self._cleanup_end_if_in_elements(
-                                    w["else_statement"]
-                                )
-                    cleaned.append(el)
-                else:
-                    cleaned.append(el)
-            else:
-                cleaned.append(el)
-        debug(f"Cleanup pass complete: elements_in={len(elements)}, elements_out={len(cleaned)}")
-        return cleaned
 
     def to_json(self):
         # If rule violations exist, return them instead of attempting conversion
