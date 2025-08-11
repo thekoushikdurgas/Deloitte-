@@ -1060,27 +1060,9 @@
       "is_end_semicolon": false
     },
     {
-      "indent": 16,
-      "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 55,
-      "is_end_semicolon": false
-    },
-    {
       "indent": 20,
       "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
       "line_no": 56,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 56,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 57,
       "is_end_semicolon": false
     },
     {
@@ -1097,26 +1079,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 58,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_STREET => :NEW.STREET,",
       "line_no": 59,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_STREET => :NEW.STREET,",
-      "line_no": 59,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 60,
       "is_end_semicolon": false
     },
     {
@@ -1133,26 +1097,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_BUILDING => :NEW.BUILDING,",
-      "line_no": 61,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
       "line_no": 62,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 62,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 63,
       "is_end_semicolon": false
     },
     {
@@ -1169,26 +1115,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_CITY=> :NEW.CITY,",
-      "line_no": 64,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
       "line_no": 65,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 65,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 66,
       "is_end_semicolon": false
     },
     {
@@ -1205,26 +1133,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 67,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
       "line_no": 68,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 68,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 69,
       "is_end_semicolon": false
     },
     {
@@ -1241,18 +1151,6 @@
     },
     {
       "indent": 20,
-      "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 70,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ACTION_TYPE => 'INSERT'",
-      "line_no": 71,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_ACTION_TYPE => 'INSERT'",
       "line_no": 71,
       "is_end_semicolon": false
@@ -1264,27 +1162,9 @@
       "is_end_semicolon": true
     },
     {
-      "indent": 16,
-      "line": "                );",
-      "line_no": 72,
-      "is_end_semicolon": true
-    },
-    {
       "indent": 20,
       "line": "                    MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
       "line_no": 82,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 82,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 83,
       "is_end_semicolon": false
     },
     {
@@ -1301,26 +1181,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 84,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
       "line_no": 85,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 85,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_STREET => :NEW.STREET,",
-      "line_no": 86,
       "is_end_semicolon": false
     },
     {
@@ -1337,26 +1199,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 87,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_BUILDING => :NEW.BUILDING,",
       "line_no": 88,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_BUILDING => :NEW.BUILDING,",
-      "line_no": 88,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 89,
       "is_end_semicolon": false
     },
     {
@@ -1373,26 +1217,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 90,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_CITY=> :NEW.CITY,",
       "line_no": 91,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_CITY=> :NEW.CITY,",
-      "line_no": 91,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 92,
       "is_end_semicolon": false
     },
     {
@@ -1409,26 +1235,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 93,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_LATITUDE => :NEW.LATITUDE,",
       "line_no": 94,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 94,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 95,
       "is_end_semicolon": false
     },
     {
@@ -1445,26 +1253,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 96,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_VALID_FROM => :NEW.VALID_FROM,",
       "line_no": 97,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 97,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ACTION_TYPE => 'CTRY_CHANGE'",
-      "line_no": 98,
       "is_end_semicolon": false
     },
     {
@@ -1480,18 +1270,6 @@
       "is_end_semicolon": true
     },
     {
-      "indent": 20,
-      "line": "                    );",
-      "line_no": 99,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 24,
-      "line": "                        MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
-      "line_no": 136,
-      "is_end_semicolon": false
-    },
-    {
       "indent": 24,
       "line": "                        MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
       "line_no": 136,
@@ -1505,26 +1283,8 @@
     },
     {
       "indent": 28,
-      "line": "                            I_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 137,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
       "line": "                            I_REPORTING_ENTITY_CD => 'J-'",
       "line_no": 138,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_REPORTING_ENTITY_CD => 'J-'",
-      "line_no": 138,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 53,
-      "line": "                                                     || V_COUNTRY_CD,",
-      "line_no": 139,
       "is_end_semicolon": false
     },
     {
@@ -1541,26 +1301,8 @@
     },
     {
       "indent": 28,
-      "line": "                            I_VALID_FROM_DATE => V_VALID_FROM,",
-      "line_no": 140,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
       "line": "                            I_VALID_TO_DATE => NULL,",
       "line_no": 141,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_VALID_TO_DATE => NULL,",
-      "line_no": 141,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_CHANGE_USER => V_USERID,",
-      "line_no": 142,
       "is_end_semicolon": false
     },
     {
@@ -1577,27 +1319,9 @@
     },
     {
       "indent": 28,
-      "line": "                            I_MAPPING_TYPE => 'JU',",
-      "line_no": 143,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
       "line": "                            I_ACTION_TYPE => 'INSERT'",
       "line_no": 144,
       "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_ACTION_TYPE => 'INSERT'",
-      "line_no": 144,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        );",
-      "line_no": 145,
-      "is_end_semicolon": true
     },
     {
       "indent": 24,
@@ -1613,18 +1337,6 @@
     },
     {
       "indent": 28,
-      "line": "                            FOR V_REC IN (",
-      "line_no": 149,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            END LOOP;",
-      "line_no": 170,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 28,
       "line": "                            END LOOP;",
       "line_no": 170,
       "is_end_semicolon": true
@@ -1633,18 +1345,6 @@
       "indent": 20,
       "line": "                    MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
       "line_no": 176,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 176,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 177,
       "is_end_semicolon": false
     },
     {
@@ -1661,26 +1361,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 178,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
       "line_no": 179,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 179,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_STREET => :NEW.STREET,",
-      "line_no": 180,
       "is_end_semicolon": false
     },
     {
@@ -1697,26 +1379,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 181,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_BUILDING => :NEW.BUILDING,",
       "line_no": 182,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_BUILDING => :NEW.BUILDING,",
-      "line_no": 182,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 183,
       "is_end_semicolon": false
     },
     {
@@ -1733,26 +1397,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 184,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_CITY=> :NEW.CITY,",
       "line_no": 185,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_CITY=> :NEW.CITY,",
-      "line_no": 185,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 186,
       "is_end_semicolon": false
     },
     {
@@ -1769,26 +1415,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 187,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_LATITUDE => :NEW.LATITUDE,",
       "line_no": 188,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 188,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 189,
       "is_end_semicolon": false
     },
     {
@@ -1805,26 +1433,8 @@
     },
     {
       "indent": 24,
-      "line": "                        P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 190,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
       "line": "                        P_VALID_FROM => :NEW.VALID_FROM,",
       "line_no": 191,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 191,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ACTION_TYPE => 'UPDATE'",
-      "line_no": 192,
       "is_end_semicolon": false
     },
     {
@@ -1840,27 +1450,9 @@
       "is_end_semicolon": true
     },
     {
-      "indent": 20,
-      "line": "                    );",
-      "line_no": 193,
-      "is_end_semicolon": true
-    },
-    {
       "indent": 16,
       "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
       "line_no": 202,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 202,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 203,
       "is_end_semicolon": false
     },
     {
@@ -1877,26 +1469,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 204,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
       "line_no": 205,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 205,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_STREET => :NEW.STREET,",
-      "line_no": 206,
       "is_end_semicolon": false
     },
     {
@@ -1913,26 +1487,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 207,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_BUILDING => :NEW.BUILDING,",
       "line_no": 208,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_BUILDING => :NEW.BUILDING,",
-      "line_no": 208,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 209,
       "is_end_semicolon": false
     },
     {
@@ -1949,26 +1505,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 210,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_CITY=> :NEW.CITY,",
       "line_no": 211,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_CITY=> :NEW.CITY,",
-      "line_no": 211,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 212,
       "is_end_semicolon": false
     },
     {
@@ -1985,26 +1523,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 213,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_LATITUDE => :NEW.LATITUDE,",
       "line_no": 214,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 214,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 215,
       "is_end_semicolon": false
     },
     {
@@ -2021,26 +1541,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 216,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
       "line_no": 217,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 217,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ACTION_TYPE => 'INSERT'",
-      "line_no": 218,
       "is_end_semicolon": false
     },
     {
@@ -2057,26 +1559,8 @@
     },
     {
       "indent": 16,
-      "line": "                );",
-      "line_no": 219,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 16,
       "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
       "line_no": 223,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 223,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 224,
       "is_end_semicolon": false
     },
     {
@@ -2093,26 +1577,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 225,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
       "line_no": 226,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 226,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_STREET => :NEW.STREET,",
-      "line_no": 227,
       "is_end_semicolon": false
     },
     {
@@ -2129,26 +1595,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 228,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_BUILDING => :NEW.BUILDING,",
       "line_no": 229,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_BUILDING => :NEW.BUILDING,",
-      "line_no": 229,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 230,
       "is_end_semicolon": false
     },
     {
@@ -2165,26 +1613,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 231,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_CITY=> :NEW.CITY,",
       "line_no": 232,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_CITY=> :NEW.CITY,",
-      "line_no": 232,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 233,
       "is_end_semicolon": false
     },
     {
@@ -2201,26 +1631,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 234,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_LATITUDE => :NEW.LATITUDE,",
       "line_no": 235,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 235,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 236,
       "is_end_semicolon": false
     },
     {
@@ -2237,26 +1649,8 @@
     },
     {
       "indent": 20,
-      "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 237,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
       "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
       "line_no": 238,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 238,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ACTION_TYPE => 'UPDATE'",
-      "line_no": 239,
       "is_end_semicolon": false
     },
     {
@@ -2272,18 +1666,6 @@
       "is_end_semicolon": true
     },
     {
-      "indent": 16,
-      "line": "                );",
-      "line_no": 240,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 32,
-      "line": "                                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
-      "line_no": 160,
-      "is_end_semicolon": false
-    },
-    {
       "indent": 32,
       "line": "                                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
       "line_no": 160,
@@ -2297,26 +1679,8 @@
     },
     {
       "indent": 36,
-      "line": "                                    I_COMPANY_CD => V_REC.COMPANY_CD,",
-      "line_no": 161,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
       "line": "                                    I_REPORTING_ENTITY_CD => 'J-'",
       "line_no": 162,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_REPORTING_ENTITY_CD => 'J-'",
-      "line_no": 162,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 61,
-      "line": "                                                             || V_COUNTRY_CD,",
-      "line_no": 163,
       "is_end_semicolon": false
     },
     {
@@ -2333,26 +1697,8 @@
     },
     {
       "indent": 36,
-      "line": "                                    I_VALID_FROM_DATE => V_VALID_FROM,",
-      "line_no": 164,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
       "line": "                                    I_VALID_TO_DATE => NULL,",
       "line_no": 165,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_VALID_TO_DATE => NULL,",
-      "line_no": 165,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_CHANGE_USER => V_USERID,",
-      "line_no": 166,
       "is_end_semicolon": false
     },
     {
@@ -2369,18 +1715,6 @@
     },
     {
       "indent": 36,
-      "line": "                                    I_MAPPING_TYPE => 'JU',",
-      "line_no": 167,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_ACTION_TYPE => 'INSERT'",
-      "line_no": 168,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
       "line": "                                    I_ACTION_TYPE => 'INSERT'",
       "line_no": 168,
       "is_end_semicolon": false
@@ -2389,18 +1723,6 @@
       "indent": 32,
       "line": "                                );",
       "line_no": 169,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 32,
-      "line": "                                );",
-      "line_no": 169,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');",
-      "line_no": 250,
       "is_end_semicolon": true
     },
     {
@@ -2412,10 +1734,12 @@
   ],
   "conversion_stats": {
     "declaration_count": 12,
-    "comment_count": 17
+    "comment_count": 17,
+    "rest_string_count": 113,
+    "sql_convert_count": 114
   },
   "metadata": {
-    "parse_timestamp": "2025-08-11T16:42:00.852871",
+    "parse_timestamp": "2025-08-11T21:33:08.576266",
     "parser_version": "1.0"
   }
 }

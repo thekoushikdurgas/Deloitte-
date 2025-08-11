@@ -300,36 +300,24 @@
           "condition": "(:NEW.MOLECULE_ID IS NOT NULL)",
           "then_statements": [
             {
-              "indent": 6,
-              "line": "      BEGIN",
-              "line_no": 112,
-              "is_end_semicolon": false
-            },
-            {
-              "sql": "SELECT RG_NO, M.COMPARATOR_IND INTO V_MOLECULE_RG_NO, V_COMPARATOR_IND FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y';",
-              "type": "select_statement"
-            },
-            {
-              "indent": 6,
-              "line": "      EXCEPTION",
-              "line_no": 122,
-              "is_end_semicolon": false
-            },
-            {
-              "indent": 9,
-              "line": "         WHEN NO_DATA_FOUND THEN",
-              "line_no": 123,
-              "is_end_semicolon": false
-            },
-            {
-              "sql": "RAISE INVALID_MOLECULE_ID;",
-              "type": "raise_statement"
-            },
-            {
-              "indent": 6,
-              "line": "      END;",
-              "line_no": 125,
-              "is_end_semicolon": true
+              "type": "begin_end",
+              "begin_end_statements": [
+                {
+                  "sql": "SELECT RG_NO, M.COMPARATOR_IND INTO V_MOLECULE_RG_NO, V_COMPARATOR_IND FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y';",
+                  "type": "select_statement"
+                }
+              ],
+              "exception_handlers": [
+                {
+                  "exception_name": "NO_DATA_FOUND",
+                  "exception_statements": [
+                    {
+                      "sql": "RAISE INVALID_MOLECULE_ID;",
+                      "type": "raise_statement"
+                    }
+                  ]
+                }
+              ]
             },
             {
               "type": "if_else",
@@ -539,10 +527,61 @@
               "else_statements": []
             },
             {
-              "indent": 6,
-              "line": "      CASE LENGTH(:NEW.THEME_NO)",
-              "line_no": 241,
-              "is_end_semicolon": false
+              "type": "case_when",
+              "case_expression": "LENGTH(:NEW.THEME_NO)",
+              "when_clauses": [
+                {
+                  "when_value": "4",
+                  "then_statements": [
+                    {
+                      "indent": 12,
+                      "line": "            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) THEN",
+                      "line_no": 243,
+                      "is_end_semicolon": false
+                    },
+                    {
+                      "sql": "RAISE INVALID_THEME_NO;",
+                      "type": "raise_statement"
+                    },
+                    {
+                      "indent": 12,
+                      "line": "            END IF;",
+                      "line_no": 245,
+                      "is_end_semicolon": true
+                    }
+                  ]
+                },
+                {
+                  "when_value": "5",
+                  "then_statements": [
+                    {
+                      "indent": 12,
+                      "line": "            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) THEN",
+                      "line_no": 247,
+                      "is_end_semicolon": false
+                    },
+                    {
+                      "sql": "RAISE INVALID_THEME_NO;",
+                      "type": "raise_statement"
+                    },
+                    {
+                      "indent": 12,
+                      "line": "            END IF;",
+                      "line_no": 249,
+                      "is_end_semicolon": true
+                    }
+                  ]
+                },
+                {
+                  "else_statements": [
+                    {
+                      "sql": "RAISE INVALID_THEME_NO;",
+                      "type": "raise_statement"
+                    }
+                  ]
+                }
+              ],
+              "sql": "CASE LENGTH(:NEW.THEME_NO)\n         WHEN 4 THEN\n            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) THEN\n               RAISE INVALID_THEME_NO;\n            END IF;\n         WHEN 5 THEN\n            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) THEN\n               RAISE INVALID_THEME_NO;\n            END IF;\n         ELSE\n            RAISE INVALID_THEME_NO;\n      END CASE;"
             },
             {
               "indent": 9,
@@ -934,10 +973,74 @@
                   ]
                 },
                 {
-                  "indent": 6,
-                  "line": "      CASE",
-                  "line_no": 555,
-                  "is_end_semicolon": false
+                  "type": "case_when",
+                  "case_expression": "",
+                  "when_clauses": [
+                    {
+                      "when_value": ":OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL",
+                      "then_statements": [
+                        {
+                          "sql": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, 1, 'Y' );",
+                          "type": "insert_statement"
+                        }
+                      ]
+                    },
+                    {
+                      "when_value": ":OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL",
+                      "then_statements": [
+                        {
+                          "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.MOLECULE_ID = :NEW.MOLECULE_ID, A.VALID_IND = 'Y' WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
+                          "type": "update_statement"
+                        }
+                      ]
+                    },
+                    {
+                      "when_value": ":OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL",
+                      "then_statements": [
+                        {
+                          "sql": "SELECT COUNT(*) INTO V_SEC_MOL_CNT FROM MDM_V_THEME_MOLECULE_MAP_MTN A WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO > 1 AND A.VALID_IND = 'Y';",
+                          "type": "select_statement"
+                        },
+                        {
+                          "indent": 12,
+                          "line": "            IF (V_SEC_MOL_CNT > 0) THEN",
+                          "line_no": 590,
+                          "is_end_semicolon": false
+                        },
+                        {
+                          "sql": "RAISE SEC_MOL_LIST_NOT_EMPTY;",
+                          "type": "raise_statement"
+                        },
+                        {
+                          "indent": 12,
+                          "line": "            ELSE",
+                          "line_no": 592,
+                          "is_end_semicolon": false
+                        },
+                        {
+                          "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.VALID_IND = 'N' WHERE A.MOLECULE_ID = :OLD.MOLECULE_ID AND A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
+                          "type": "update_statement"
+                        },
+                        {
+                          "indent": 12,
+                          "line": "            END IF;",
+                          "line_no": 603,
+                          "is_end_semicolon": true
+                        }
+                      ]
+                    },
+                    {
+                      "else_statements": [
+                        {
+                          "indent": 12,
+                          "line": "            NULL;",
+                          "line_no": 605,
+                          "is_end_semicolon": true
+                        }
+                      ]
+                    }
+                  ],
+                  "sql": "CASE\n         WHEN :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN\n            INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A(\n               A.THEME_NO,\n               A.MOLECULE_ID,\n               A.MOLECULE_SEQ_NO,\n               A.VALID_IND\n            ) VALUES (\n               :NEW.THEME_NO,\n               :NEW.MOLECULE_ID,\n               1,\n               'Y'\n            );\n         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN\n            UPDATE MDM_V_THEME_MOLECULE_MAP A\n            SET\n               A.MOLECULE_ID = :NEW.MOLECULE_ID,\n               A.VALID_IND = 'Y'\n            WHERE\n               A.THEME_NO = :NEW.THEME_NO\n               AND A.MOLECULE_SEQ_NO = 1\n               AND A.VALID_IND = 'Y';\n         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL THEN\n            SELECT\n               COUNT(*) INTO V_SEC_MOL_CNT\n            FROM\n               MDM_V_THEME_MOLECULE_MAP_MTN A\n            WHERE\n               A.THEME_NO = :NEW.THEME_NO\n               AND A.MOLECULE_SEQ_NO > 1\n               AND A.VALID_IND = 'Y';\n            IF (V_SEC_MOL_CNT > 0) THEN\n               RAISE SEC_MOL_LIST_NOT_EMPTY;\n            ELSE\n               UPDATE MDM_V_THEME_MOLECULE_MAP A\n               SET\n                  A.VALID_IND = 'N'\n               WHERE\n                  A.MOLECULE_ID = :OLD.MOLECULE_ID\n                  AND A.THEME_NO = :NEW.THEME_NO\n                  AND A.MOLECULE_SEQ_NO = 1\n                  AND A.VALID_IND = 'Y';\n            END IF;\n         ELSE\n            NULL;\n      END CASE;"
                 },
                 {
                   "indent": 9,
@@ -1442,60 +1545,6 @@
       "is_end_semicolon": true
     },
     {
-      "indent": 9,
-      "line": "         TXO_UTIL.SET_WARNING('No Molecule assigned to In-Prep Theme ' || :NEW.THEME_NO || '!');",
-      "line_no": 105,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 6,
-      "line": "      BEGIN",
-      "line_no": 112,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 6,
-      "line": "      BEGIN",
-      "line_no": 112,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 6,
-      "line": "      EXCEPTION",
-      "line_no": 122,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 6,
-      "line": "      EXCEPTION",
-      "line_no": 122,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN NO_DATA_FOUND THEN",
-      "line_no": 123,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN NO_DATA_FOUND THEN",
-      "line_no": 123,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 6,
-      "line": "      END;",
-      "line_no": 125,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 6,
-      "line": "      END;",
-      "line_no": 125,
-      "is_end_semicolon": true
-    },
-    {
       "indent": 12,
       "line": "            NULL;",
       "line_no": 129,
@@ -1503,27 +1552,27 @@
     },
     {
       "indent": 12,
-      "line": "            NULL;",
-      "line_no": 129,
+      "line": "            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) THEN",
+      "line_no": 243,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 245,
       "is_end_semicolon": true
     },
     {
-      "indent": 6,
-      "line": "      CASE LENGTH(:NEW.THEME_NO)",
-      "line_no": 241,
+      "indent": 12,
+      "line": "            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) THEN",
+      "line_no": 247,
       "is_end_semicolon": false
     },
     {
-      "indent": 6,
-      "line": "      CASE LENGTH(:NEW.THEME_NO)",
-      "line_no": 241,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN 4 THEN",
-      "line_no": 242,
-      "is_end_semicolon": false
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 249,
+      "is_end_semicolon": true
     },
     {
       "indent": 9,
@@ -1539,18 +1588,6 @@
     },
     {
       "indent": 9,
-      "line": "         WHEN 5 THEN",
-      "line_no": 246,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         ELSE",
-      "line_no": 250,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
       "line": "         ELSE",
       "line_no": 250,
       "is_end_semicolon": false
@@ -1562,39 +1599,33 @@
       "is_end_semicolon": true
     },
     {
-      "indent": 6,
-      "line": "      END CASE;",
-      "line_no": 252,
+      "indent": 12,
+      "line": "            IF (V_SEC_MOL_CNT > 0) THEN",
+      "line_no": 590,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            ELSE",
+      "line_no": 592,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 603,
       "is_end_semicolon": true
     },
     {
-      "indent": 6,
-      "line": "      CASE",
-      "line_no": 555,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 6,
-      "line": "      CASE",
-      "line_no": 555,
-      "is_end_semicolon": false
+      "indent": 12,
+      "line": "            NULL;",
+      "line_no": 605,
+      "is_end_semicolon": true
     },
     {
       "indent": 9,
       "line": "         WHEN :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN",
       "line_no": 556,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN",
-      "line_no": 556,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN",
-      "line_no": 570,
       "is_end_semicolon": false
     },
     {
@@ -1611,18 +1642,6 @@
     },
     {
       "indent": 9,
-      "line": "         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL THEN",
-      "line_no": 581,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         ELSE",
-      "line_no": 604,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
       "line": "         ELSE",
       "line_no": 604,
       "is_end_semicolon": false
@@ -1631,18 +1650,6 @@
       "indent": 12,
       "line": "            NULL;",
       "line_no": 605,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            NULL;",
-      "line_no": 605,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 6,
-      "line": "      END CASE;",
-      "line_no": 606,
       "is_end_semicolon": true
     },
     {
@@ -1654,10 +1661,12 @@
   ],
   "conversion_stats": {
     "declaration_count": 49,
-    "comment_count": 63
+    "comment_count": 63,
+    "rest_string_count": 20,
+    "sql_convert_count": 677
   },
   "metadata": {
-    "parse_timestamp": "2025-08-11T16:42:00.805797",
+    "parse_timestamp": "2025-08-11T21:33:08.537275",
     "parser_version": "1.0"
   }
 }

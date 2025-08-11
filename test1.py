@@ -46,6 +46,7 @@ class OracleTriggerAnalyzer:
         self.sql_comments: List[str] = []
         self.rule_errors: List[Dict[str, Any]] = []
         self.structured_lines: List[Dict[str, Any]] = []
+        self.rest_strings_line: List[Dict] = []
 
         # Step 2: Parse SQL into declare and main sections
         logger.debug("Starting SQL section parsing")
@@ -698,9 +699,126 @@ class OracleTriggerAnalyzer:
         self._parse_case_when()
         self._parse_for_loop()
         self._parse_if_else()
-        self._parse_sql_statements()
+        self._parse_final_statement()
         self._parse_assignment_statement()
+        self._parse_sql_statements()
+        
+        # to check how many rest strings are in main section
+        self.rest_strings_line = self.rest_strings()
 
+    def _parse_final_statement(self):
+        """
+        Parse the final statement of the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        
+        Detects the final statement of the main section of SQL.
+        """
+        
+        def process_final_statements_in_list(statements_list, parent_context=""):
+            """Recursively process final statements in a list of statements"""
+            if not statements_list:
+                return
+                
+            i = 0
+            while i < len(statements_list):
+                item = statements_list[i]
+                
+                # Handle line_info objects (from structured_lines)
+                if isinstance(item, dict) and "line" in item and "line_no" in item:
+                    line = item["line"].strip()
+                    line_upper = line.upper()
+                    
+                    # Check for BEGIN block start
+                    if line_upper.startswith("BEGIN"):
+                        logger.debug("Found BEGIN block at line %d in %s", item["line_no"], parent_context)
+                        begin_result = self._parse_begin_end_structure(self._find_line_index(item["line_no"]))
+                        if begin_result:
+                            begin_block, end_idx = begin_result
+                            # Replace the line_info with the parsed begin_block
+                            statements_list[i] = begin_block
+                            logger.debug("Parsed complete BEGIN block structure in %s", parent_context)
+                            # Remove any subsequent line_info objects that are part of the BEGIN block
+                            # (they will be included in the begin_block)
+                            j = i + 1
+                            while j < len(statements_list):
+                                next_item = statements_list[j]
+                                if isinstance(next_item, dict) and "line_no" in next_item:
+                                    if next_item["line_no"] > end_idx:
+                                        break
+                                    statements_list.pop(j)
+                                else:
+                                    j += 1
+                            continue
+                    # Check for CASE statement start
+                    elif line_upper.startswith("CASE"):
+                        logger.debug("Found CASE statement at line %d in %s", item["line_no"], parent_context)
+                        case_result = self._parse_case_statement(self._find_line_index(item["line_no"]))
+                        if case_result:
+                            case_block, end_idx = case_result
+                            # Replace the line_info with the parsed case_block
+                            statements_list[i] = case_block
+                            logger.debug("Parsed complete CASE statement structure in %s", parent_context)
+                            # Remove any subsequent line_info objects that are part of the CASE statement
+                            # (they will be included in the case_block)
+                            j = i + 1
+                            while j < len(statements_list):
+                                next_item = statements_list[j]
+                                if isinstance(next_item, dict) and "line_no" in next_item:
+                                    if next_item["line_no"] > end_idx:
+                                        break
+                                    statements_list.pop(j)
+                                else:
+                                    j += 1
+                            continue
+                
+                # Handle nested structures (begin_end blocks, exception handlers, etc.)
+                elif isinstance(item, dict) and "type" in item:
+                    if item["type"] == "begin_end":
+                        # Process final statements in begin_end_statements
+                        if "begin_end_statements" in item:
+                            process_final_statements_in_list(item["begin_end_statements"], f"{parent_context}.begin_end_statements")
+                        
+                        # Process final statements in exception_handlers
+                        if "exception_handlers" in item:
+                            for handler in item["exception_handlers"]:
+                                if "exception_statements" in handler:
+                                    process_final_statements_in_list(handler["exception_statements"], f"{parent_context}.exception_statements")
+                    
+                    elif item["type"] == "case_when":
+                        # Process final statements in when_clauses (then_statements and else_statements)
+                        if "when_clauses" in item:
+                            for clause in item["when_clauses"]:
+                                if "when_value" in clause and "then_statements" in clause:
+                                    process_final_statements_in_list(clause["then_statements"], f"{parent_context}.then_statements")
+                                elif "else_statements" in clause:
+                                    process_final_statements_in_list(clause["else_statements"], f"{parent_context}.else_statements")
+                    
+                    elif item["type"] == "if_else":
+                        # Process final statements in then_statements, else_if, and else_statements
+                        if "then_statements" in item:
+                            process_final_statements_in_list(item["then_statements"], f"{parent_context}.then_statements")
+                        
+                        if "else_if" in item:
+                            for elsif_block in item["else_if"]:
+                                if "then_statements" in elsif_block:
+                                    process_final_statements_in_list(elsif_block["then_statements"], f"{parent_context}.else_if.then_statements")
+                        
+                        if "else_statements" in item:
+                            process_final_statements_in_list(item["else_statements"], f"{parent_context}.else_statements")
+                    
+                    elif item["type"] == "for_loop":
+                        # Process final statements in loop_statements
+                        if "loop_statements" in item:
+                            process_final_statements_in_list(item["loop_statements"], f"{parent_context}.loop_statements")
+                
+                i += 1
+        
+        # Process the main_section_lines
+        process_final_statements_in_list(self.main_section_lines, "main_section_lines")
+        
+        logger.debug("Final statement parsing complete")
+        
     def _parse_for_loop(self):
         """
         Parse FOR loop statements from the main section of SQL.
@@ -2452,15 +2570,9 @@ class OracleTriggerAnalyzer:
         def extract_rest_strings_from_item(item):
             """Recursively extract rest strings from any item"""
             if isinstance(item, dict):
-                # Check for "indent" field which contains rest string content
-                if "indent" in item:
+                # Check for "line_no" field which contains rest string content
+                if "line_no" in item:
                     rest_strings_list.append(item)
-                
-                # Check for "line" field which contains individual SQL statements
-                if "line" in item:
-                    line_content = item["line"].strip()
-                    if line_content and not line_content.startswith("--"):
-                        rest_strings_list.append(item)
                 
                 # Recursively process all values in the dictionary
                 for value in item.values():
@@ -2506,7 +2618,7 @@ class OracleTriggerAnalyzer:
             },
             "main": self.main_section_lines,
             "sql_comments": self.sql_comments,
-            "rest_strings" : self.rest_strings(),
+            "rest_strings" : self.rest_strings_line,
         }
 
         # # Step 5: Add additional metadata to the result
@@ -2519,6 +2631,8 @@ class OracleTriggerAnalyzer:
             + len(self.constants)
             + len(self.exceptions),
             "comment_count": len(self.sql_comments),
+            "rest_string_count": len(self.rest_strings_line),
+            "sql_convert_count": len(self.structured_lines) - len(self.rest_strings_line),
         }
 
         # Include parse timestamp
