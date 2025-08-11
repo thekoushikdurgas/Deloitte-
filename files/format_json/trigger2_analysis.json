@@ -72,54 +72,60 @@
           "type": "select_statement"
         },
         {
-          "type": "if_else",
-          "condition": "(DELETING)",
-          "then_statements": [
-            {
-              "sql": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'N' WHERE TMM.THEME_NO = :OLD.THEME_NO AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID;",
-              "type": "update_statement"
-            },
-            {
-              "sql": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO - 1 WHERE TMM.THEME_NO = :OLD.THEME_NO AND TMM.MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO AND TMM.VALID_IND = 'Y';",
-              "type": "update_statement"
-            },
-            {
-              "indent": 8,
-              "line": "        MDMAPPL.MDM_UTIL_THEMES.REFRESH_THEME_DESC (",
-              "line_no": 52,
-              "is_end_semicolon": false
-            },
-            {
-              "indent": 12,
-              "line": "            P_THEME_NO => :OLD.THEME_NO,",
-              "line_no": 53,
-              "is_end_semicolon": false
-            },
-            {
-              "indent": 12,
-              "line": "            P_MOLECULE_ID => :OLD.MOLECULE_ID,",
-              "line_no": 54,
-              "is_end_semicolon": false
-            },
-            {
-              "indent": 12,
-              "line": "            P_DATE => SYSDATE,",
-              "line_no": 55,
-              "is_end_semicolon": false
-            },
-            {
-              "indent": 12,
-              "line": "            P_MANUAL_SHORT_DESC => V_MANUAL_SHORT_DESC",
-              "line_no": 56,
-              "is_end_semicolon": false
-            },
-            {
-              "indent": 8,
-              "line": "        );",
-              "line_no": 57,
-              "is_end_semicolon": true
-            }
-          ]
+          "indent": 4,
+          "line": "    IF (DELETING) THEN",
+          "line_no": 27,
+          "is_end_semicolon": false
+        },
+        {
+          "sql": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'N' WHERE TMM.THEME_NO = :OLD.THEME_NO AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID;",
+          "type": "update_statement"
+        },
+        {
+          "sql": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO - 1 WHERE TMM.THEME_NO = :OLD.THEME_NO AND TMM.MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO AND TMM.VALID_IND = 'Y';",
+          "type": "update_statement"
+        },
+        {
+          "indent": 8,
+          "line": "        MDMAPPL.MDM_UTIL_THEMES.REFRESH_THEME_DESC (",
+          "line_no": 52,
+          "is_end_semicolon": false
+        },
+        {
+          "indent": 12,
+          "line": "            P_THEME_NO => :OLD.THEME_NO,",
+          "line_no": 53,
+          "is_end_semicolon": false
+        },
+        {
+          "indent": 12,
+          "line": "            P_MOLECULE_ID => :OLD.MOLECULE_ID,",
+          "line_no": 54,
+          "is_end_semicolon": false
+        },
+        {
+          "indent": 12,
+          "line": "            P_DATE => SYSDATE,",
+          "line_no": 55,
+          "is_end_semicolon": false
+        },
+        {
+          "indent": 12,
+          "line": "            P_MANUAL_SHORT_DESC => V_MANUAL_SHORT_DESC",
+          "line_no": 56,
+          "is_end_semicolon": false
+        },
+        {
+          "indent": 8,
+          "line": "        );",
+          "line_no": 57,
+          "is_end_semicolon": true
+        },
+        {
+          "indent": 4,
+          "line": "    END IF;",
+          "line_no": 58,
+          "is_end_semicolon": true
         },
         {
           "indent": 4,
@@ -132,51 +138,83 @@
           "type": "select_statement"
         },
         {
-          "type": "if_else",
-          "condition": "(:NEW.MOLECULE_ID IS NULL)",
-          "then_statements": []
+          "indent": 8,
+          "line": "        IF (:NEW.MOLECULE_ID IS NULL) THEN",
+          "line_no": 68,
+          "is_end_semicolon": false
         },
         {
-          "type": "if_else",
-          "condition": "(UPDATING)",
-          "then_statements": [
-            {
-              "type": "if_else",
-              "condition": "(:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS)",
-              "then_statements": []
-            }
-          ]
+          "indent": 8,
+          "line": "        END IF;",
+          "line_no": 87,
+          "is_end_semicolon": true
         },
         {
-          "type": "if_else",
-          "condition": "(:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1'))",
-          "then_statements": [
-            {
-              "sql": "SELECT COUNT (*) INTO V_COUNT_T_MOL_MAP FROM V_THEME_MOLECULE_MAP TMM WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID AND TMM.VALID_IND = 'Y';",
-              "type": "select_statement"
-            },
-            {
-              "indent": 12,
-              "line": "            IF (V_COUNT_T_MOL_MAP > 0) THEN",
-              "line_no": 107,
-              "is_end_semicolon": false
-            }
-          ]
+          "indent": 8,
+          "line": "        IF (UPDATING) THEN",
+          "line_no": 89,
+          "is_end_semicolon": false
+        },
+        {
+          "indent": 12,
+          "line": "            IF (:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS) THEN",
+          "line_no": 90,
+          "is_end_semicolon": false
+        },
+        {
+          "indent": 12,
+          "line": "            END IF;",
+          "line_no": 92,
+          "is_end_semicolon": true
+        },
+        {
+          "indent": 8,
+          "line": "        END IF;",
+          "line_no": 93,
+          "is_end_semicolon": true
+        },
+        {
+          "indent": 8,
+          "line": "        IF (:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')) THEN",
+          "line_no": 98,
+          "is_end_semicolon": false
+        },
+        {
+          "sql": "SELECT COUNT (*) INTO V_COUNT_T_MOL_MAP FROM V_THEME_MOLECULE_MAP TMM WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID AND TMM.VALID_IND = 'Y';",
+          "type": "select_statement"
+        },
+        {
+          "indent": 12,
+          "line": "            IF (V_COUNT_T_MOL_MAP > 0) THEN",
+          "line_no": 107,
+          "is_end_semicolon": false
+        },
+        {
+          "indent": 12,
+          "line": "            END IF;",
+          "line_no": 109,
+          "is_end_semicolon": true
         },
         {
           "sql": "SELECT COUNT (*) INTO V_COUNT_T_MOL_MAP FROM V_THEME_MOLECULE_MAP TMM WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID AND TMM.VALID_IND = 'N';",
           "type": "select_statement"
         },
         {
-          "type": "if_else",
-          "condition": "(V_COUNT_T_MOL_MAP > 0)",
-          "then_statements": [
-            {
-              "variable": "INVALID_MAPPING_EXISTS",
-              "value": "TRUE",
-              "type": "assignment_statement"
-            }
-          ]
+          "indent": 12,
+          "line": "            IF (V_COUNT_T_MOL_MAP > 0) THEN",
+          "line_no": 119,
+          "is_end_semicolon": false
+        },
+        {
+          "variable": "INVALID_MAPPING_EXISTS",
+          "value": "TRUE",
+          "type": "assignment_statement"
+        },
+        {
+          "indent": 12,
+          "line": "            END IF;",
+          "line_no": 121,
+          "is_end_semicolon": true
         },
         {
           "indent": 8,
@@ -344,6 +382,12 @@
   ],
   "rest_strings": [
     {
+      "indent": 4,
+      "line": "    IF (DELETING) THEN",
+      "line_no": 27,
+      "is_end_semicolon": false
+    },
+    {
       "indent": 8,
       "line": "        MDMAPPL.MDM_UTIL_THEMES.REFRESH_THEME_DESC (",
       "line_no": 52,
@@ -381,8 +425,56 @@
     },
     {
       "indent": 4,
+      "line": "    END IF;",
+      "line_no": 58,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
       "line": "    IF (INSERTING OR UPDATING) THEN",
       "line_no": 60,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        IF (:NEW.MOLECULE_ID IS NULL) THEN",
+      "line_no": 68,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 87,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF (UPDATING) THEN",
+      "line_no": 89,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            IF (:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS) THEN",
+      "line_no": 90,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 92,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 93,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF (:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')) THEN",
+      "line_no": 98,
       "is_end_semicolon": false
     },
     {
@@ -390,6 +482,24 @@
       "line": "            IF (V_COUNT_T_MOL_MAP > 0) THEN",
       "line_no": 107,
       "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 109,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            IF (V_COUNT_T_MOL_MAP > 0) THEN",
+      "line_no": 119,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 121,
+      "is_end_semicolon": true
     },
     {
       "indent": 8,
@@ -407,11 +517,11 @@
   "conversion_stats": {
     "declaration_count": 13,
     "comment_count": 73,
-    "rest_string_count": 10,
-    "sql_convert_count": 305
+    "rest_string_count": 22,
+    "sql_convert_count": 293
   },
   "metadata": {
-    "parse_timestamp": "2025-08-12T00:02:59.055608",
+    "parse_timestamp": "2025-08-12T00:09:44.568453",
     "parser_version": "1.0"
   }
 }
