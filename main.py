@@ -10,33 +10,33 @@ High-level flow:
 - Read each `*_analysis.json` and render it back to PL/SQL with
   `FORMATOracleTriggerAnalyzer`, writing to `files/format_sql/trigger{N}.sql`.
 
-Debugging:
-- A simple DEBUG flag and helper `debug()` prints detailed progress for each step.
-- Try/except blocks ensure errors are reported without stopping the whole batch.
+Logging:
+- All operations are logged to both console and a timestamped log file in 'output/'.
+- The log file name format is 'oracle_conversion_YYYYMMDD_HHMMSS.log'.
+- Log levels: DEBUG for detailed operations, INFO for main steps, ERROR for failures.
 """
 
 import os
 import json
 import re
+import logging
 from typing import Any, Dict, Callable
 
 from utilities.OracleTriggerAnalyzer import OracleTriggerAnalyzer
 from utilities.FORMATOracleTriggerAnalyzer import FORMATOracleTriggerAnalyzer
-from utilities.common import debug
-
-
+from utilities.common import debug, logger, setup_logging
 
 def ensure_dir(directory: str) -> None:
     """Ensure that the specified directory exists."""
     if not os.path.exists(directory):
         os.makedirs(directory)
-        debug(f"Created directory: {directory}")
+        logger.debug(f"Created directory: {directory}")
 
 
 def process_files(source_dir: str, target_dir: str, file_pattern: str, 
                   output_suffix: str, processor_func) -> None:
     """Process files from source_dir to target_dir using the provided processor function."""
-    debug(f"Processing files from '{source_dir}' to '{target_dir}'")
+    logger.info(f"Processing files from '{source_dir}' to '{target_dir}'")
     
     # Ensure directories exist
     ensure_dir(target_dir)
@@ -45,23 +45,23 @@ def process_files(source_dir: str, target_dir: str, file_pattern: str,
     try:
         files = [f for f in os.listdir(source_dir) if f.endswith(file_pattern)]
     except FileNotFoundError:
-        print(f"[ERROR main] Source directory not found: {source_dir}")
+        logger.error(f"Source directory not found: {source_dir}")
         return
     
-    debug(f"Found {len(files)} files matching pattern: {files}")
+    logger.debug(f"Found {len(files)} files matching pattern: {files}")
     
     # Process each file
     for file_name in files:
-        debug(f"Processing file: {file_name}")
+        logger.debug(f"Processing file: {file_name}")
         try:
             # Extract trigger number from filename using regex
             match = re.search(r"trigger(\d+)", file_name)
             if not match:
-                debug(f"Filename '{file_name}' does not match expected pattern; skipping")
+                logger.warning(f"Filename '{file_name}' does not match expected pattern; skipping")
                 continue
             
             trigger_num = match.group(1)
-            debug(f"Extracted trigger number: {trigger_num}")
+            logger.debug(f"Extracted trigger number: {trigger_num}")
             
             # Process the file
             src_path = os.path.join(source_dir, file_name)
@@ -71,9 +71,9 @@ def process_files(source_dir: str, target_dir: str, file_pattern: str,
             # Run the processor function
             processor_func(src_path, out_path, trigger_num)
             
-            print(f"Created {output_filename}")
+            logger.info(f"Created {output_filename}")
         except Exception as exc:
-            print(f"[ERROR main] Failed to process {file_name}: {exc}")
+            logger.error(f"Failed to process {file_name}: {exc}", exc_info=True)
 
 
 def sql_to_json_processor(src_path: str, out_path: str, _trigger_num: str) -> None:
@@ -81,18 +81,18 @@ def sql_to_json_processor(src_path: str, out_path: str, _trigger_num: str) -> No
     # Read the SQL file content
     with open(src_path, "r", encoding="utf-8") as f:
         sql_content: str = f.read()
-    debug(f"Read {len(sql_content)} characters from {src_path}")
+    logger.debug(f"Read {len(sql_content)} characters from {src_path}")
     
     # Analyze the SQL content
     analyzer = OracleTriggerAnalyzer(sql_content)
-    debug("Generating JSON analysis...")
+    logger.debug("Generating JSON analysis...")
     json_content: Dict[str, Any] = analyzer.to_json()
-    debug(f"Generated JSON with keys: {list(json_content.keys())}")
+    logger.debug(f"Generated JSON with keys: {list(json_content.keys())}")
     
     # Write to JSON file
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(json_content, f, indent=2)
-    debug(f"Wrote analysis JSON to {out_path}")
+    logger.debug(f"Wrote analysis JSON to {out_path}")
 
 
 def json_to_sql_processor(src_path: str, out_path: str, _trigger_num: str) -> None:
@@ -100,18 +100,18 @@ def json_to_sql_processor(src_path: str, out_path: str, _trigger_num: str) -> No
     # Read the JSON file
     with open(src_path, "r", encoding="utf-8") as f:
         analysis = json.load(f)
-    debug(f"Loaded analysis JSON with keys: {list(analysis.keys())}")
+    logger.debug(f"Loaded analysis JSON with keys: {list(analysis.keys())}")
     
     # Render the SQL
     analyzer = FORMATOracleTriggerAnalyzer(analysis)
-    debug("Rendering SQL...")
+    logger.debug("Rendering SQL...")
     sql_content: str = analyzer.to_sql()
-    debug(f"Rendered SQL length: {len(sql_content)} characters")
+    logger.debug(f"Rendered SQL length: {len(sql_content)} characters")
     
     # Write to SQL file
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(sql_content)
-    debug(f"Wrote formatted SQL to {out_path}")
+    logger.debug(f"Wrote formatted SQL to {out_path}")
 
 
 def read_oracle_triggers_to_json() -> None:
@@ -136,9 +136,14 @@ def read_json_to_oracle_triggers() -> None:
     )
         
 if __name__ == "__main__":
-    debug("Starting batch conversion: SQL -> JSON -> SQL")
+    # Set up logging for the main script
+    main_logger, log_path = setup_logging()
+    logger.info(f"Starting batch conversion: SQL -> JSON -> SQL (Logging to {log_path})")
+    
     read_oracle_triggers_to_json()
-    print("JSON conversion complete!")
+    logger.info("JSON conversion complete!")
+    
     read_json_to_oracle_triggers()
-    print("SQL formatting complete!")
-    debug("Batch conversion finished")
+    logger.info("SQL formatting complete!")
+    
+    logger.info("Batch conversion finished")

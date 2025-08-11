@@ -251,21 +251,13 @@ BEGIN
     END IF;
 EXCEPTION
     WHEN ERR_UPD THEN
-        RAISE_APPLICATION_ERROR (-20111, 'The address cannot be updated because the Address type is different. Old address type: '
-                                         ||:OLD.ADDRESS_TYPE_CD
-                                         ||' New address type: '
-                                         ||:NEW.ADDRESS_TYPE_CD);
+        RAISE_APPLICATION_ERROR (-20111, 'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD);
     WHEN ERR_INS THEN
         RAISE_APPLICATION_ERROR (-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');
     WHEN ERR_CTRY_CHG THEN
         RAISE_APPLICATION_ERROR (-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');
     WHEN TEST_ERR THEN
-        RAISE_APPLICATION_ERROR (-20113, 'New: '
-                                         ||:NEW.COMPANY_CD
-                                         ||' Old:'
-                                         ||:OLD.COMPANY_CD
-                                         ||'Count: '
-                                         ||CNTR);
+        RAISE_APPLICATION_ERROR (-20113, 'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR);
     WHEN ERR_INS_LEGAL_ADDR THEN
         RAISE_APPLICATION_ERROR (-20113, 'The legal address cannot be inserted for this type of company');
     WHEN ERR_NOT_ALLOWED_TO_INVALIDATE THEN

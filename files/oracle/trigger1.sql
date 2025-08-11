@@ -797,17 +797,11 @@ EXCEPTION
    WHEN THEME_NO_ONLY_INSERT THEN
       RAISE_APPLICATION_ERROR(-20400, 'Theme No cannot be updated');
    WHEN DESCRIPTION_TOO_LONG THEN
-      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Theme Description "'
-                                      || V_DESCRIPTION
-                                      || '" is too long');
+      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Theme Description "' || V_DESCRIPTION || '" is too long');
    WHEN THEME_DESC_PROPOSAL_TOO_LONG THEN
-      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Short Description Proposal "'
-                                      || :OLD.THEME_DESC_PROPOSAL
-                                      || '" is too long');
+      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Short Description Proposal "' || :OLD.THEME_DESC_PROPOSAL || '" is too long');
    WHEN THEME_DESC_ALT_TOO_LONG THEN
-      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Downstream Theme Description "'
-                                      || :OLD.THEME_DESC_ALT
-                                      || '" is too long');
+      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Downstream Theme Description "' || :OLD.THEME_DESC_ALT || '" is too long');
    WHEN THEME_NO_CANNOT_BE_INSERTED THEN
       RAISE_APPLICATION_ERROR(-20400, 'This Theme No already exists');
    WHEN ONLYONEOFFICIALCHANGEPERDAY THEN

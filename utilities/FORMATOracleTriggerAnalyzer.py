@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Union
-from utilities.common import debug
+from utilities.common import debug, logger
 
 
 JsonNode = Union[Dict[str, Any], str]
@@ -21,21 +21,21 @@ class FORMATOracleTriggerAnalyzer:
     def __init__(self, analysis: Dict[str, Any]):
         self.analysis = analysis
         self.indent_unit = "  "
-        debug(f"Initialized with analysis keys: {list(self.analysis.keys())}")
+        logger.debug(f"Initialized with analysis keys: {list(self.analysis.keys())}")
 
     def to_sql(self) -> str:
-        debug("Rendering to SQL started")
+        logger.debug("Rendering to SQL started")
         lines: List[str] = []
         # Declarations
         decl = self.analysis.get("declarations", {})
-        debug(f"Rendering declarations: keys={list(decl.keys()) if isinstance(decl, dict) else type(decl)}")
+        logger.debug(f"Rendering declarations: keys={list(decl.keys()) if isinstance(decl, dict) else type(decl)}")
         decl_lines = self._render_declarations(decl)
         if decl_lines:
             lines.append("DECLARE")
             lines.extend(self._indent_lines(decl_lines, 1))
         # Main blocks
         main_blocks = self.analysis.get("main", [])
-        debug(f"Rendering main blocks: count={len(main_blocks) if isinstance(main_blocks, list) else 0}")
+        logger.debug(f"Rendering main blocks: count={len(main_blocks) if isinstance(main_blocks, list) else 0}")
         if main_blocks:
             # Wrap the first main block as the executable block
             block_sql = self._render_begin_block(main_blocks[0], indent_level=0, wrap_begin_end=True)
@@ -52,7 +52,7 @@ class FORMATOracleTriggerAnalyzer:
                     lines.append(f"{prefix}{c_line}")
 
         result = "\n".join(lines).rstrip() + "\n"
-        debug(f"Rendering to SQL finished, length={len(result)} chars")
+        logger.debug(f"Rendering to SQL finished, length={len(result)} chars")
         return result
 
     # -----------------------------
@@ -65,7 +65,7 @@ class FORMATOracleTriggerAnalyzer:
             name = var.get("name")
             data_type = var.get("data_type")
             default_value = var.get("default_value")
-            debug(f"Variable decl: name={name}, type={data_type}, default={default_value}")
+            logger.debug(f"Variable decl: name={name}, type={data_type}, default={default_value}")
             if not name or not data_type:
                 continue
             if default_value is None:
@@ -78,7 +78,7 @@ class FORMATOracleTriggerAnalyzer:
             name = const.get("name")
             data_type = const.get("data_type")
             value = const.get("value")
-            debug(f"Constant decl: name={name}, type={data_type}, value={value}")
+            logger.debug(f"Constant decl: name={name}, type={data_type}, value={value}")
             if not name or not data_type:
                 continue
             lines.append(f"{name} CONSTANT {data_type} := {value};")
@@ -86,7 +86,7 @@ class FORMATOracleTriggerAnalyzer:
         # Exceptions
         for exc in decl.get("exceptions", []) or []:
             name = exc.get("name")
-            debug(f"Exception decl: name={name}")
+            logger.debug(f"Exception decl: name={name}")
             if not name:
                 continue
             lines.append(f"{name} EXCEPTION;")
@@ -98,7 +98,7 @@ class FORMATOracleTriggerAnalyzer:
         if wrap_begin_end:
             lines.append("BEGIN")
         sqls: List[JsonNode] = node.get("sqls", []) or []
-        debug(f"Begin block: wrap={wrap_begin_end}, sqls={len(sqls)}")
+        logger.debug(f"Begin block: wrap={wrap_begin_end}, sqls={len(sqls)}")
         lines.extend(self._render_sql_list(sqls, indent_level + (1 if wrap_begin_end else 0)))
 
         # Exception handlers
@@ -106,7 +106,7 @@ class FORMATOracleTriggerAnalyzer:
         if handlers:
             lines.append(self._indent("EXCEPTION", indent_level + (1 if wrap_begin_end else 0)))
             for h in handlers:
-                debug(f"Rendering exception handler for: {h.get('exception_name')}")
+                logger.debug(f"Rendering exception handler for: {h.get('exception_name')}")
                 lines.extend(self._render_exception_handler(h, indent_level + (2 if wrap_begin_end else 1)))
 
         if wrap_begin_end:
@@ -142,7 +142,7 @@ class FORMATOracleTriggerAnalyzer:
         lines.append(self._indent(when_header, indent_level - 1))
         # New schema: handler contains a 'sqls' array with actions
         actions = handler.get("sqls", []) or []
-        debug(f"Handler actions count: {len(actions)}")
+        logger.debug(f"Handler actions count: {len(actions)}")
         if not actions:
             lines.append(self._indent("NULL;", indent_level))
             return lines
@@ -184,7 +184,7 @@ class FORMATOracleTriggerAnalyzer:
             if not isinstance(item, dict):
                 continue
             node_type = item.get("type")
-            debug(f"Render node type: {node_type}")
+            logger.debug(f"Render node type: {node_type}")
             if node_type == "assignment_statements":
                 var = item.get("variable")
                 val = item.get("value")
@@ -206,13 +206,13 @@ class FORMATOracleTriggerAnalyzer:
                 # Nested BEGIN block
                 lines.append(self._indent("BEGIN", indent_level))
                 inner_sqls = item.get("sqls", []) or []
-                debug(f"Nested begin block with {len(inner_sqls)} statements")
+                logger.debug(f"Nested begin block with {len(inner_sqls)} statements")
                 lines.extend(self._render_sql_list(inner_sqls, indent_level + 1))
                 handlers = item.get("exception_handlers", []) or []
                 if handlers:
                     lines.append(self._indent("EXCEPTION", indent_level + 1))
                     for h in handlers:
-                        debug(f"Nested handler for: {h.get('exception_name')}")
+                        logger.debug(f"Nested handler for: {h.get('exception_name')}")
                         lines.extend(self._render_exception_handler(h, indent_level + 2))
                 lines.append(self._indent("END;", indent_level))
             elif "exception_name" in item and isinstance(item.get("sqls"), list):
@@ -251,7 +251,7 @@ class FORMATOracleTriggerAnalyzer:
     def _render_if_else(self, node: Dict[str, Any], indent_level: int) -> List[str]:
         lines: List[str] = []
         condition = node.get("condition", "1=1")
-        debug(f"IF condition: {condition}")
+        logger.debug(f"IF condition: {condition}")
         lines.append(self._indent(f"IF {condition} THEN", indent_level))
         then_sql = node.get("then_sql", []) or []
         lines.extend(self._render_sql_list(then_sql, indent_level + 1))
@@ -261,7 +261,7 @@ class FORMATOracleTriggerAnalyzer:
         while current.get("else_if_statement"):
             current = current.get("else_if_statement")
             cond = current.get("condition", "1=1")
-            debug(f"ELSIF condition: {cond}")
+            logger.debug(f"ELSIF condition: {cond}")
             lines.append(self._indent(f"ELSIF {cond} THEN", indent_level))
             then_part = current.get("then_sql", []) or []
             lines.extend(self._render_sql_list(then_part, indent_level + 1))
@@ -269,7 +269,7 @@ class FORMATOracleTriggerAnalyzer:
         # Else part
         else_stmt = current.get("else_statement")
         if else_stmt is not None:
-            debug("ELSE branch present")
+            logger.debug("ELSE branch present")
             lines.append(self._indent("ELSE", indent_level))
             else_list: List[JsonNode] = else_stmt if isinstance(else_stmt, list) else [else_stmt]  # type: ignore
             lines.extend(self._render_sql_list(else_list, indent_level + 1))
@@ -282,7 +282,7 @@ class FORMATOracleTriggerAnalyzer:
         case_expr = node.get("case_expression")
         when_clauses: List[Dict[str, Any]] = node.get("when_clauses", []) or []
         searched_case = not case_expr or str(case_expr).strip() == ""
-        debug(f"CASE statement: searched={searched_case}, when_count={len(when_clauses)}")
+        logger.debug(f"CASE statement: searched={searched_case}, when_count={len(when_clauses)}")
 
         if searched_case:
             lines.append(self._indent("CASE", indent_level))
@@ -293,7 +293,7 @@ class FORMATOracleTriggerAnalyzer:
                 lines.extend(self._render_sql_list(then_stmt, indent_level + 2))
                 else_stmt = clause.get("else_statement")
                 if else_stmt is not None:
-                    debug("CASE WHEN has ELSE branch")
+                    logger.debug("CASE WHEN has ELSE branch")
                     lines.append(self._indent("ELSE", indent_level + 1))
                     else_list: List[JsonNode] = else_stmt if isinstance(else_stmt, list) else [else_stmt]  # type: ignore
                     lines.extend(self._render_sql_list(else_list, indent_level + 2))
@@ -307,7 +307,7 @@ class FORMATOracleTriggerAnalyzer:
                 lines.extend(self._render_sql_list(then_stmt, indent_level + 2))
                 else_stmt = clause.get("else_statement")
                 if else_stmt is not None:
-                    debug("CASE (simple) WHEN has ELSE branch")
+                    logger.debug("CASE (simple) WHEN has ELSE branch")
                     lines.append(self._indent("ELSE", indent_level + 1))
                     else_list: List[JsonNode] = else_stmt if isinstance(else_stmt, list) else [else_stmt]  # type: ignore
                     lines.extend(self._render_sql_list(else_list, indent_level + 2))
