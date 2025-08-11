@@ -38,7 +38,7 @@ class OracleTriggerAnalyzer:
         )
         self.sql_content: str = sql_content
         self.declare_section: List[int] = [0, 0]
-        self.main_section: List[int] = [0, 0]
+        self.main_section: int = 0
         self.main_section_lines: List[Dict] = []
         self.variables: List[Dict[str, Any]] = []
         self.constants: List[Dict[str, Any]] = []
@@ -270,7 +270,6 @@ class OracleTriggerAnalyzer:
         # Find DECLARE and BEGIN sections
         declare_start = -1
         begin_start = -1
-        end_start = self.structured_lines[-1]["line_no"]
 
         for i, line_info in enumerate(self.structured_lines):
             line_content = line_info["line"].strip().upper()
@@ -294,11 +293,11 @@ class OracleTriggerAnalyzer:
             self.declare_section = [0, 0]
             logger.debug("No DECLARE section found")
 
-        if begin_start != -1 and end_start != -1:
-            self.main_section = [begin_start, end_start]
-            logger.debug("Main section: lines %d-%d", begin_start, end_start)
+        if begin_start != -1:
+            self.main_section = begin_start
+            logger.debug("Main section: lines %d", begin_start)
         else:
-            self.main_section = [0, 0]
+            self.main_section = 0
             logger.debug("Could not identify main section (BEGIN/END)")
 
         # Process declarations if DECLARE section exists
@@ -306,7 +305,7 @@ class OracleTriggerAnalyzer:
             self._parse_declarations()
 
         # Process main section if main section exists
-        if self.main_section[0] > 0:
+        if self.main_section > 0:
             self._process_main_section()
 
     def _parse_declarations(self) -> None:
@@ -685,9 +684,8 @@ class OracleTriggerAnalyzer:
         the main section of the Oracle PL/SQL trigger.
         """
         logger.debug(
-            "Processing main section from lines %d-%d",
-            self.main_section[0],
-            self.main_section[1],
+            "Processing main section from lines %d",
+            self.main_section
         )
 
         # Clear any existing main section lines
@@ -725,7 +723,7 @@ class OracleTriggerAnalyzer:
         self.main_section_lines = []
         
         for line_info in self.structured_lines:
-            if self.main_section[0] <= line_info["line_no"] <= self.main_section[1]:
+            if self.main_section <= line_info["line_no"]:
                 line = line_info["line"].strip()
                 line_upper = line.upper()
                 
@@ -792,7 +790,7 @@ class OracleTriggerAnalyzer:
                 # Add regular SQL statements to current block
                 elif block_stack and line and not line.startswith("--"):
                     # Add to the current block's sqls
-                    block_stack[-1]["sqls"].append(line)
+                    block_stack[-1]["sqls"].append(line_info)
         
         # # Update self.main_section_lines with the parsed blocks
         # self.main_section_lines = blocks

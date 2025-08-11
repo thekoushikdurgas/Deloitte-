@@ -1,0 +1,250 @@
+2025-08-11 08:51:36,237 - root - INFO - Starting batch conversion: SQL -> JSON -> SQL (Logging to output\oracle_conversion_20250811_085136.log)
+2025-08-11 08:51:36,238 - root - INFO - Processing files from 'files/oracle' to 'files/format_json'
+2025-08-11 08:51:36,238 - root - DEBUG - Found 3 files matching pattern: ['trigger1.sql', 'trigger2.sql', 'trigger3.sql']
+2025-08-11 08:51:36,238 - root - DEBUG - Processing file: trigger1.sql
+2025-08-11 08:51:36,238 - root - DEBUG - Extracted trigger number: 1
+2025-08-11 08:51:36,238 - root - DEBUG - Read 29058 characters from files/oracle\trigger1.sql
+2025-08-11 08:51:36,238 - root - DEBUG - Initializing OracleTriggerAnalyzer with 29058 characters of SQL
+2025-08-11 08:51:36,241 - root - DEBUG - Starting SQL section parsing
+2025-08-11 08:51:36,241 - root - DEBUG - Converting SQL content to structured lines
+2025-08-11 08:51:36,241 - root - DEBUG - Structured lines conversion complete: 750 total, 213 with semicolons, 69 empty lines skipped
+2025-08-11 08:51:36,242 - root - DEBUG - Block comment stripping complete: 0 comments extracted, 750 lines cleaned
+2025-08-11 08:51:36,242 - root - DEBUG - Removed block comments from main section
+2025-08-11 08:51:36,242 - root - DEBUG - Inline comment stripping complete: 63 comments extracted, 697 lines cleaned
+2025-08-11 08:51:36,242 - root - DEBUG - Removed inline comments from main section
+2025-08-11 08:51:36,242 - root - DEBUG - Found DECLARE at line 1
+2025-08-11 08:51:36,242 - root - DEBUG - Found BEGIN at line 51
+2025-08-11 08:51:36,243 - root - DEBUG - DECLARE section: lines 1-50
+2025-08-11 08:51:36,243 - root - DEBUG - Main section: lines 51
+2025-08-11 08:51:36,243 - root - DEBUG - Starting declaration parsing
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: INVALID_THEME_NO
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: DELETE_NO_MORE_POSSIBLE
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: THEME_NO_ONLY_INSERT
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: DESCRIPTION_TOO_LONG
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: THEME_DESC_PROPOSAL_TOO_LONG
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: THEME_DESC_ALT_TOO_LONG
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: THEME_NO_CANNOT_BE_INSERTED
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: ONLYONEOFFICIALCHANGEPERDAY
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: INSERTSMUSTBEOFFICIAL
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: THEMEDESCRIPTIONMANDATORY
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: THEME_DESC_NOT_UNIQUE
+2025-08-11 08:51:36,243 - root - DEBUG - Processed exception: IN_PREP_NOT_PORTF_PROJ
+2025-08-11 08:51:36,244 - root - DEBUG - Processed exception: IN_PREP_NOT_CLOSED
+2025-08-11 08:51:36,244 - root - DEBUG - Processed exception: INVALID_MOLECULE_ID
+2025-08-11 08:51:36,244 - root - DEBUG - Processed exception: SEC_MOL_LIST_NOT_EMPTY
+2025-08-11 08:51:36,244 - root - DEBUG - Processed exception: ADMIN_UPDATE_ONLY
+2025-08-11 08:51:36,244 - root - DEBUG - Processed exception: PORTF_PROJ_MOL_CRE_ERR
+2025-08-11 08:51:36,244 - root - DEBUG - Processed exception: DEBUGGING
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_COUNTER
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_CODE
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_ODG_NO
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_RESGRP_CD
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_RESLIN_CD
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_STATUS_CD
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_DBA_CD
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_PORTF_PROJ_CD
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_DESCRIPTION
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_RESLIN_DESC
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_THEME_DESC_LENGTH
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_D_REGISTRAT_DATE
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_D_INS_DATE
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_FUTURE_REGISTRAT
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_VALID_TO
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_USERID
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_IS_ADMIN_CNT
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_SEC_MOL_CNT
+2025-08-11 08:51:36,244 - root - DEBUG - Processed variable: V_MOLECULE_ID
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_MOLECULE_RG_NO
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_MOLEC_IN_LIC_PRTNR
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_NEW_RG_NO
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_COMPARATOR_IND
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_THEME_DESC_PROPOSAL
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_SHORT_NAME
+2025-08-11 08:51:36,245 - root - DEBUG - Processed constant: C_MOLECULE_TYPE_ID
+2025-08-11 08:51:36,245 - root - DEBUG - Processed constant: C_PHARMACOLOGICAL_TYPE_ID
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_EVOLVED_NMP_CNT
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_TRADEMARK_NO
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_MOLECULE_TYPE_ID
+2025-08-11 08:51:36,245 - root - DEBUG - Processed variable: V_PHARMACOLOGICAL_TYPE_ID
+2025-08-11 08:51:36,245 - root - DEBUG - Processing main section from lines 51
+2025-08-11 08:51:36,245 - root - DEBUG - Main section processing complete: 0 lines extracted
+2025-08-11 08:51:36,245 - root - DEBUG - Parsing BEGIN blocks for JSON conversion
+2025-08-11 08:51:36,245 - root - DEBUG - Starting BEGIN block parsing
+2025-08-11 08:51:36,245 - root - DEBUG - Found BEGIN block at line 51
+2025-08-11 08:51:36,245 - root - DEBUG - Found BEGIN block at line 112
+2025-08-11 08:51:36,245 - root - DEBUG - Found EXCEPTION section at line 122
+2025-08-11 08:51:36,245 - root - DEBUG - Parsed exception handler: NO_DATA_FOUND
+2025-08-11 08:51:36,245 - root - DEBUG - Completed nested BEGIN block
+2025-08-11 08:51:36,245 - root - DEBUG - Parsed exception handler: 4
+2025-08-11 08:51:36,245 - root - DEBUG - Parsed exception handler: 5
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-11 08:51:36,246 - root - DEBUG - Found BEGIN block at line 729
+2025-08-11 08:51:36,246 - root - DEBUG - Found EXCEPTION section at line 739
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: NO_DATA_FOUND
+2025-08-11 08:51:36,246 - root - DEBUG - Completed nested BEGIN block
+2025-08-11 08:51:36,246 - root - DEBUG - Found BEGIN block at line 763
+2025-08-11 08:51:36,246 - root - DEBUG - Completed nested BEGIN block
+2025-08-11 08:51:36,246 - root - DEBUG - Found EXCEPTION section at line 782
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: ADMIN_UPDATE_ONLY
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20115', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: IN_PREP_NOT_PORTF_PROJ
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20116', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: IN_PREP_NOT_CLOSED
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20117', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: INVALID_MOLECULE_ID
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20118', 'handler_string': 'This is not a valid Molecule ID'}
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed exception handler: SEC_MOL_LIST_NOT_EMPTY
+2025-08-11 08:51:36,246 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20119', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: INVALID_THEME_NO
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20101', 'handler_string': 'This is not a valid Theme No'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: DELETE_NO_MORE_POSSIBLE
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: THEME_NO_ONLY_INSERT
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'Theme No cannot be updated'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: DESCRIPTION_TOO_LONG
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'The automatically generated Theme Description "\' || V_DESCRIPTION || \'" is too long'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: THEME_DESC_PROPOSAL_TOO_LONG
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'The automatically generated Short Description Proposal "\' || :OLD.THEME_DESC_PROPOSAL || \'" is too long'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: THEME_DESC_ALT_TOO_LONG
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'The automatically generated Downstream Theme Description "\' || :OLD.THEME_DESC_ALT || \'" is too long'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: THEME_NO_CANNOT_BE_INSERTED
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'This Theme No already exists'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: ONLYONEOFFICIALCHANGEPERDAY
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'Official Change for this Theme No and Day already exists'}
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed exception handler: INSERTSMUSTBEOFFICIAL
+2025-08-11 08:51:36,247 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'New Themes can only be inserted by Official Changes'}
+2025-08-11 08:51:36,248 - root - DEBUG - Parsed exception handler: THEMEDESCRIPTIONMANDATORY
+2025-08-11 08:51:36,248 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'If Pharma Rx Portfolio Project is set to "No", then the Theme Description must be filled'}
+2025-08-11 08:51:36,248 - root - DEBUG - Parsed exception handler: THEME_DESC_NOT_UNIQUE
+2025-08-11 08:51:36,248 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20400', 'handler_string': 'This Theme Description already exists'}
+2025-08-11 08:51:36,248 - root - DEBUG - Parsed exception handler: PORTF_PROJ_MOL_CRE_ERR
+2025-08-11 08:51:36,248 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20120', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 08:51:36,248 - root - DEBUG - Parsed exception handler: DEBUGGING
+2025-08-11 08:51:36,248 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20900', 'handler_string': 'Debug in Themes IOF standard'}
+2025-08-11 08:51:36,248 - root - DEBUG - Completed top-level BEGIN block
+2025-08-11 08:51:36,248 - root - DEBUG - BEGIN block parsing complete: updated main_section_lines with 1 blocks
+2025-08-11 08:51:36,248 - root - DEBUG - Starting rule validation
+2025-08-11 08:51:36,248 - root - DEBUG - Rule validation complete: found 0 violations
+2025-08-11 08:51:36,248 - root - DEBUG - Generating JSON analysis...
+2025-08-11 08:51:36,249 - root - INFO - JSON conversion complete: 29 vars, 2 consts, 18 excs, 1 main_blocks, 63 comments
+2025-08-11 08:51:36,249 - root - DEBUG - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'conversion_stats', 'metadata']
+2025-08-11 08:51:36,256 - root - DEBUG - Wrote analysis JSON to files/format_json\trigger1_analysis.json
+2025-08-11 08:51:36,256 - root - INFO - Created trigger1_analysis.json
+2025-08-11 08:51:36,256 - root - DEBUG - Processing file: trigger2.sql
+2025-08-11 08:51:36,256 - root - DEBUG - Extracted trigger number: 2
+2025-08-11 08:51:36,256 - root - DEBUG - Read 18805 characters from files/oracle\trigger2.sql
+2025-08-11 08:51:36,256 - root - DEBUG - Initializing OracleTriggerAnalyzer with 18805 characters of SQL
+2025-08-11 08:51:36,256 - root - DEBUG - Starting SQL section parsing
+2025-08-11 08:51:36,256 - root - DEBUG - Converting SQL content to structured lines
+2025-08-11 08:51:36,257 - root - DEBUG - Structured lines conversion complete: 422 total, 89 with semicolons, 43 empty lines skipped
+2025-08-11 08:51:36,257 - root - DEBUG - Block comment stripping complete: 6 comments extracted, 364 lines cleaned
+2025-08-11 08:51:36,257 - root - DEBUG - Removed block comments from main section
+2025-08-11 08:51:36,258 - root - DEBUG - Inline comment stripping complete: 67 comments extracted, 315 lines cleaned
+2025-08-11 08:51:36,258 - root - DEBUG - Removed inline comments from main section
+2025-08-11 08:51:36,258 - root - DEBUG - Found DECLARE at line 1
+2025-08-11 08:51:36,258 - root - DEBUG - Found BEGIN at line 18
+2025-08-11 08:51:36,258 - root - DEBUG - DECLARE section: lines 1-17
+2025-08-11 08:51:36,258 - root - DEBUG - Main section: lines 18
+2025-08-11 08:51:36,258 - root - DEBUG - Starting declaration parsing
+2025-08-11 08:51:36,258 - root - DEBUG - Processed exception: ERR_MAP_EXISTS
+2025-08-11 08:51:36,258 - root - DEBUG - Processed exception: ERR_MOLEC_ID_MISSING
+2025-08-11 08:51:36,258 - root - DEBUG - Processed exception: ERR_NO_PORTF_MOLECULE_LEFT
+2025-08-11 08:51:36,258 - root - DEBUG - Processed exception: ERR_UPD_INV_MAP
+2025-08-11 08:51:36,258 - root - DEBUG - Processed exception: ERR_INS_INV_MAP
+2025-08-11 08:51:36,258 - root - DEBUG - Processed exception: ERR_INV_MOL_SEQUENCE
+2025-08-11 08:51:36,258 - root - DEBUG - Processed exception: UPDATE_UPD
+2025-08-11 08:51:36,258 - root - DEBUG - Processed variable: V_COUNT_T_MAPPINGS
+2025-08-11 08:51:36,258 - root - DEBUG - Processed variable: V_COUNT_T_MOL_MAP
+2025-08-11 08:51:36,258 - root - DEBUG - Processed variable: V_MOLECULE_SEQ_NO
+2025-08-11 08:51:36,258 - root - DEBUG - Processed variable: V_SEQ_NO_DUPLICATE_CNT
+2025-08-11 08:51:36,258 - root - DEBUG - Processed variable: INVALID_MAPPING_EXISTS
+2025-08-11 08:51:36,258 - root - DEBUG - Processed variable: V_MANUAL_SHORT_DESC
+2025-08-11 08:51:36,259 - root - DEBUG - Processing main section from lines 18
+2025-08-11 08:51:36,259 - root - DEBUG - Main section processing complete: 0 lines extracted
+2025-08-11 08:51:36,259 - root - DEBUG - Parsing BEGIN blocks for JSON conversion
+2025-08-11 08:51:36,259 - root - DEBUG - Starting BEGIN block parsing
+2025-08-11 08:51:36,259 - root - DEBUG - Found BEGIN block at line 18
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed exception handler: :NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed exception handler: :NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-11 08:51:36,259 - root - DEBUG - Found EXCEPTION section at line 439
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed exception handler: ERR_MAP_EXISTS
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20110', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed exception handler: ERR_MOLEC_ID_MISSING
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20111', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed exception handler: ERR_UPD_INV_MAP
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20112', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed exception handler: ERR_INS_INV_MAP
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20113', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed exception handler: ERR_INV_MOL_SEQUENCE
+2025-08-11 08:51:36,259 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20120', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 08:51:36,259 - root - DEBUG - Completed top-level BEGIN block
+2025-08-11 08:51:36,259 - root - DEBUG - BEGIN block parsing complete: updated main_section_lines with 1 blocks
+2025-08-11 08:51:36,259 - root - DEBUG - Starting rule validation
+2025-08-11 08:51:36,260 - root - DEBUG - Rule validation complete: found 0 violations
+2025-08-11 08:51:36,260 - root - DEBUG - Generating JSON analysis...
+2025-08-11 08:51:36,260 - root - INFO - JSON conversion complete: 6 vars, 0 consts, 7 excs, 1 main_blocks, 73 comments
+2025-08-11 08:51:36,260 - root - DEBUG - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'conversion_stats', 'metadata']
+2025-08-11 08:51:36,263 - root - DEBUG - Wrote analysis JSON to files/format_json\trigger2_analysis.json
+2025-08-11 08:51:36,264 - root - INFO - Created trigger2_analysis.json
+2025-08-11 08:51:36,264 - root - DEBUG - Processing file: trigger3.sql
+2025-08-11 08:51:36,264 - root - DEBUG - Extracted trigger number: 3
+2025-08-11 08:51:36,264 - root - DEBUG - Read 12985 characters from files/oracle\trigger3.sql
+2025-08-11 08:51:36,264 - root - DEBUG - Initializing OracleTriggerAnalyzer with 12985 characters of SQL
+2025-08-11 08:51:36,264 - root - DEBUG - Starting SQL section parsing
+2025-08-11 08:51:36,264 - root - DEBUG - Converting SQL content to structured lines
+2025-08-11 08:51:36,264 - root - DEBUG - Structured lines conversion complete: 244 total, 58 with semicolons, 21 empty lines skipped
+2025-08-11 08:51:36,264 - root - DEBUG - Block comment stripping complete: 0 comments extracted, 244 lines cleaned
+2025-08-11 08:51:36,264 - root - DEBUG - Removed block comments from main section
+2025-08-11 08:51:36,265 - root - DEBUG - Inline comment stripping complete: 17 comments extracted, 227 lines cleaned
+2025-08-11 08:51:36,265 - root - DEBUG - Removed inline comments from main section
+2025-08-11 08:51:36,265 - root - DEBUG - Found DECLARE at line 1
+2025-08-11 08:51:36,265 - root - DEBUG - Found BEGIN at line 14
+2025-08-11 08:51:36,265 - root - DEBUG - DECLARE section: lines 1-13
+2025-08-11 08:51:36,265 - root - DEBUG - Main section: lines 14
+2025-08-11 08:51:36,265 - root - DEBUG - Starting declaration parsing
+2025-08-11 08:51:36,265 - root - DEBUG - Processed variable: V_TRIGGER_NAME
+2025-08-11 08:51:36,265 - root - DEBUG - Processed variable: CNTR
+2025-08-11 08:51:36,265 - root - DEBUG - Processed exception: ERR_UPD
+2025-08-11 08:51:36,265 - root - DEBUG - Processed exception: ERR_INS
+2025-08-11 08:51:36,265 - root - DEBUG - Processed exception: ERR_CTRY_CHG
+2025-08-11 08:51:36,265 - root - DEBUG - Processed exception: ERR_NOT_ALLOWED_TO_INVALIDATE
+2025-08-11 08:51:36,265 - root - DEBUG - Processed variable: V_USERID
+2025-08-11 08:51:36,265 - root - DEBUG - Processed exception: TEST_ERR
+2025-08-11 08:51:36,265 - root - DEBUG - Processed variable: V_COUNTRY_CD
+2025-08-11 08:51:36,265 - root - DEBUG - Processed variable: V_COMPANY_TYPE_CD
+2025-08-11 08:51:36,265 - root - DEBUG - Processed exception: ERR_INS_LEGAL_ADDR
+2025-08-11 08:51:36,266 - root - DEBUG - Processed variable: V_VALID_FROM
+2025-08-11 08:51:36,266 - root - DEBUG - Processing main section from lines 14
+2025-08-11 08:51:36,266 - root - DEBUG - Main section processing complete: 0 lines extracted
+2025-08-11 08:51:36,266 - root - DEBUG - Parsing BEGIN blocks for JSON conversion
+2025-08-11 08:51:36,266 - root - DEBUG - Starting BEGIN block parsing
+2025-08-11 08:51:36,266 - root - DEBUG - Found BEGIN block at line 14
+2025-08-11 08:51:36,266 - root - DEBUG - Found BEGIN block at line 15
+2025-08-11 08:51:36,266 - root - DEBUG - Found EXCEPTION section at line 17
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed exception handler: OTHERS
+2025-08-11 08:51:36,266 - root - DEBUG - Completed nested BEGIN block
+2025-08-11 08:51:36,266 - root - DEBUG - Found EXCEPTION section at line 252
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed exception handler: ERR_UPD
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20111', 'handler_string': "'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD"}
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed exception handler: ERR_INS
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20112', 'handler_string': 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.'}
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed exception handler: ERR_CTRY_CHG
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20113', 'handler_string': 'The company country modified but not the Valid From Date. Please update also the Valid From Date.'}
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed exception handler: TEST_ERR
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20113', 'handler_string': "'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR"}
+2025-08-11 08:51:36,266 - root - DEBUG - Parsed exception handler: ERR_INS_LEGAL_ADDR
+2025-08-11 08:51:36,267 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20113', 'handler_string': 'The legal address cannot be inserted for this type of company'}
+2025-08-11 08:51:36,267 - root - DEBUG - Parsed exception handler: ERR_NOT_ALLOWED_TO_INVALIDATE
+2025-08-11 08:51:36,267 - root - DEBUG - Parsed RAISE_APPLICATION_ERROR: {'handler_code': '-20113', 'handler_string': 'It is not allowed to invalidate/delete this type of address'}
+2025-08-11 08:51:36,267 - root - DEBUG - Completed top-level BEGIN block
+2025-08-11 08:51:36,267 - root - DEBUG - BEGIN block parsing complete: updated main_section_lines with 1 blocks
+2025-08-11 08:51:36,267 - root - DEBUG - Starting rule validation
+2025-08-11 08:51:36,267 - root - DEBUG - Rule validation complete: found 0 violations
+2025-08-11 08:51:36,267 - root - DEBUG - Generating JSON analysis...
+2025-08-11 08:51:36,267 - root - INFO - JSON conversion complete: 6 vars, 0 consts, 6 excs, 1 main_blocks, 17 comments
+2025-08-11 08:51:36,267 - root - DEBUG - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'conversion_stats', 'metadata']
+2025-08-11 08:51:36,270 - root - DEBUG - Wrote analysis JSON to files/format_json\trigger3_analysis.json
+2025-08-11 08:51:36,270 - root - INFO - Created trigger3_analysis.json
+2025-08-11 08:51:36,270 - root - INFO - JSON conversion complete!
