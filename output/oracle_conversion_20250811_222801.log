@@ -1,0 +1,1036 @@
+2025-08-11 22:28:01,512 - root - INFO - Starting batch conversion: SQL -> JSON -> SQL (Logging to output\oracle_conversion_20250811_222801.log)
+2025-08-11 22:28:01,512 - root - INFO - Processing files from 'files/oracle' to 'files/format_json'
+2025-08-11 22:28:01,512 - root - DEBUG - Found 3 files matching pattern: ['trigger1.sql', 'trigger2.sql', 'trigger3.sql']
+2025-08-11 22:28:01,512 - root - DEBUG - Processing file: trigger1.sql
+2025-08-11 22:28:01,513 - root - DEBUG - Extracted trigger number: 1
+2025-08-11 22:28:01,513 - root - DEBUG - Read 29058 characters from files/oracle\trigger1.sql
+2025-08-11 22:28:01,513 - root - DEBUG - Initializing OracleTriggerAnalyzer with 29058 characters of SQL
+2025-08-11 22:28:01,514 - root - DEBUG - Starting SQL section parsing
+2025-08-11 22:28:01,514 - root - DEBUG - Converting SQL content to structured lines
+2025-08-11 22:28:01,514 - root - DEBUG - Structured lines conversion complete: 750 total, 213 with semicolons, 69 empty lines skipped
+2025-08-11 22:28:01,515 - root - DEBUG - Block comment stripping complete: 0 comments extracted, 750 lines cleaned
+2025-08-11 22:28:01,515 - root - DEBUG - Removed block comments from main section
+2025-08-11 22:28:01,515 - root - DEBUG - Inline comment stripping complete: 63 comments extracted, 697 lines cleaned
+2025-08-11 22:28:01,515 - root - DEBUG - Removed inline comments from main section
+2025-08-11 22:28:01,515 - root - DEBUG - Found DECLARE at line 1
+2025-08-11 22:28:01,515 - root - DEBUG - Found BEGIN at line 51
+2025-08-11 22:28:01,515 - root - DEBUG - DECLARE section: lines 1-50
+2025-08-11 22:28:01,515 - root - DEBUG - Main section: lines 51
+2025-08-11 22:28:01,515 - root - DEBUG - Starting declaration parsing
+2025-08-11 22:28:01,515 - root - DEBUG - Processed exception: INVALID_THEME_NO
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: DELETE_NO_MORE_POSSIBLE
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: THEME_NO_ONLY_INSERT
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: DESCRIPTION_TOO_LONG
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: THEME_DESC_PROPOSAL_TOO_LONG
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: THEME_DESC_ALT_TOO_LONG
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: THEME_NO_CANNOT_BE_INSERTED
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: ONLYONEOFFICIALCHANGEPERDAY
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: INSERTSMUSTBEOFFICIAL
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: THEMEDESCRIPTIONMANDATORY
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: THEME_DESC_NOT_UNIQUE
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: IN_PREP_NOT_PORTF_PROJ
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: IN_PREP_NOT_CLOSED
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: INVALID_MOLECULE_ID
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: SEC_MOL_LIST_NOT_EMPTY
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: ADMIN_UPDATE_ONLY
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: PORTF_PROJ_MOL_CRE_ERR
+2025-08-11 22:28:01,516 - root - DEBUG - Processed exception: DEBUGGING
+2025-08-11 22:28:01,516 - root - DEBUG - Processed variable: V_COUNTER
+2025-08-11 22:28:01,516 - root - DEBUG - Processed variable: V_CODE
+2025-08-11 22:28:01,516 - root - DEBUG - Processed variable: V_ODG_NO
+2025-08-11 22:28:01,516 - root - DEBUG - Processed variable: V_RESGRP_CD
+2025-08-11 22:28:01,516 - root - DEBUG - Processed variable: V_RESLIN_CD
+2025-08-11 22:28:01,516 - root - DEBUG - Processed variable: V_STATUS_CD
+2025-08-11 22:28:01,516 - root - DEBUG - Processed variable: V_DBA_CD
+2025-08-11 22:28:01,516 - root - DEBUG - Processed variable: V_PORTF_PROJ_CD
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_DESCRIPTION
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_RESLIN_DESC
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_THEME_DESC_LENGTH
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_D_REGISTRAT_DATE
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_D_INS_DATE
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_FUTURE_REGISTRAT
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_VALID_TO
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_USERID
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_IS_ADMIN_CNT
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_SEC_MOL_CNT
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_MOLECULE_ID
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_MOLECULE_RG_NO
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_MOLEC_IN_LIC_PRTNR
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_NEW_RG_NO
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_COMPARATOR_IND
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_THEME_DESC_PROPOSAL
+2025-08-11 22:28:01,517 - root - DEBUG - Processed variable: V_SHORT_NAME
+2025-08-11 22:28:01,517 - root - DEBUG - Processed constant: C_MOLECULE_TYPE_ID
+2025-08-11 22:28:01,518 - root - DEBUG - Processed constant: C_PHARMACOLOGICAL_TYPE_ID
+2025-08-11 22:28:01,518 - root - DEBUG - Processed variable: V_EVOLVED_NMP_CNT
+2025-08-11 22:28:01,518 - root - DEBUG - Processed variable: V_TRADEMARK_NO
+2025-08-11 22:28:01,518 - root - DEBUG - Processed variable: V_MOLECULE_TYPE_ID
+2025-08-11 22:28:01,518 - root - DEBUG - Processed variable: V_PHARMACOLOGICAL_TYPE_ID
+2025-08-11 22:28:01,518 - root - DEBUG - Processing main section from lines 51
+2025-08-11 22:28:01,518 - root - DEBUG - Main section processing complete: 0 lines extracted
+2025-08-11 22:28:01,518 - root - DEBUG - Parsing BEGIN blocks for JSON conversion
+2025-08-11 22:28:01,518 - root - DEBUG - Starting BEGIN block parsing
+2025-08-11 22:28:01,518 - root - DEBUG - Found BEGIN block at line 51
+2025-08-11 22:28:01,518 - root - DEBUG - Found BEGIN block at line 112
+2025-08-11 22:28:01,518 - root - DEBUG - Found EXCEPTION section at line 122
+2025-08-11 22:28:01,519 - root - DEBUG - Parsed exception handler: NO_DATA_FOUND
+2025-08-11 22:28:01,519 - root - DEBUG - Added RAISE statement: RAISE INVALID_MOLECULE_ID;
+2025-08-11 22:28:01,519 - root - DEBUG - Processing block begin_end_statements for potential nested CASE statements
+2025-08-11 22:28:01,519 - root - DEBUG - Completed nested BEGIN block
+2025-08-11 22:28:01,519 - root - DEBUG - Parsed exception handler: 4
+2025-08-11 22:28:01,519 - root - DEBUG - Added SQL statement to exception handler: IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) THEN
+2025-08-11 22:28:01,519 - root - DEBUG - Added RAISE statement: RAISE INVALID_THEME_NO;
+2025-08-11 22:28:01,519 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,519 - root - DEBUG - Parsed exception handler: 5
+2025-08-11 22:28:01,519 - root - DEBUG - Added SQL statement to exception handler: IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) THEN
+2025-08-11 22:28:01,519 - root - DEBUG - Added RAISE statement: RAISE INVALID_THEME_NO;
+2025-08-11 22:28:01,520 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,520 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,520 - root - DEBUG - Added RAISE statement: RAISE INVALID_THEME_NO;
+2025-08-11 22:28:01,520 - root - DEBUG - Added SQL statement to exception handler: END CASE;
+2025-08-11 22:28:01,520 - root - DEBUG - Added SQL statement to exception handler: V_COUNTER := NULL;
+2025-08-11 22:28:01,520 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,520 - root - DEBUG - Added SQL statement to exception handler: COUNT(T.THEME_NO) INTO V_COUNTER
+2025-08-11 22:28:01,521 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: (
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: THEME_NO
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: V_THEMES
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: UNION
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: ALL
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: THEME_NO
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,522 - root - DEBUG - Added SQL statement to exception handler: GMD.THEMES_ARCHIVE
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: )                  T
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: T.THEME_NO = :NEW.THEME_NO;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: IF (V_COUNTER > 0) THEN
+2025-08-11 22:28:01,523 - root - DEBUG - Added RAISE statement: RAISE THEME_NO_CANNOT_BE_INSERTED;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: V_COUNTER := NULL;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: V_D_REGISTRAT_DATE := SYSDATE;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.OFFICIAL_IND = 'N') THEN
+2025-08-11 22:28:01,523 - root - DEBUG - Added RAISE statement: RAISE INSERTSMUSTBEOFFICIAL;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: IF (UPPER(:NEW.PORTF_PROJ_CD) = 'N') THEN
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0) THEN
+2025-08-11 22:28:01,523 - root - DEBUG - Added RAISE statement: RAISE THEMEDESCRIPTIONMANDATORY;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: IF (UPPER(:NEW.PORTF_PROJ_CD) = 'Y') THEN
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: V_DESCRIPTION := GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO(
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: P_THEME_NO_PORTF => NULL,
+2025-08-11 22:28:01,523 - root - DEBUG - Added SQL statement to exception handler: P_MOLECULE_ID_PORTF => V_MOLECULE_ID,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_ODG_NO_PORT => V_ODG_NO,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_RESGRP_CD_PORT => V_RESGRP_CD,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_RESLIN_CD_PORT => V_RESLIN_CD,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_SHORT_NAME_PORTF => :NEW.SHORT_NAME,
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: P_TRUNC_DESC_LENGTH => 'N'
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: IF (LENGTH(V_DESCRIPTION) > 90) THEN
+2025-08-11 22:28:01,524 - root - DEBUG - Added RAISE statement: RAISE DESCRIPTION_TOO_LONG;
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: V_DESCRIPTION := TRIM(V_DESCRIPTION);
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: V_PORTF_PROJ_CD := 'Y';
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: V_DESCRIPTION := :NEW.THEME_DESC;
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: V_PORTF_PROJ_CD := 'N';
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: V_COUNTER := NULL;
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: COUNT(T.THEME_NO) INTO V_COUNTER
+2025-08-11 22:28:01,524 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: V_THEMES T
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: T.THEME_DESC = V_DESCRIPTION;
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: IF (V_COUNTER > 0) THEN
+2025-08-11 22:28:01,525 - root - DEBUG - Added RAISE statement: RAISE THEME_DESC_NOT_UNIQUE;
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: V_COUNTER := NULL;
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: V_VALID_TO := TO_DATE('09.09.9999', 'DD.MM.YYYY');
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: V_SHORT_NAME := NVL(:NEW.MANUAL_SHORT_DESC, SUBSTR(V_DESCRIPTION, 1, 30));
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO GMD.THEMES(
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: THEME_NO,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: REGISTRAT_DATE,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: ODG_NO,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: RESGRP_CD,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: RESLIN_CD,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: THEME_DESC,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: SHORT_NAME,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: STATUS_CD,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: DBA_CD,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: IN_PREP_IND,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: PROD_SHORT_CD,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: TRADEMARK_NO,
+2025-08-11 22:28:01,525 - root - DEBUG - Added SQL statement to exception handler: BIO_ACTIVITY,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: APPLICANT,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: CONTACT,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: REGISTRAR,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: LINE_EXT_INFO,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: PORTF_PROJ_CD,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: CO_DEV_PRTNR,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: TECHNOLOGY_PRTNR,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: OFFICIAL_IND,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: CO_MAR_PRTNR,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: VALID_TO,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: PORTF_DA_GROUP_ID,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: MANUAL_SHORT_DESC
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: V_D_REGISTRAT_DATE,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: V_ODG_NO,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: V_RESGRP_CD,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: V_RESLIN_CD,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: V_DESCRIPTION,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: V_SHORT_NAME,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: V_STATUS_CD,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: V_DBA_CD,
+2025-08-11 22:28:01,526 - root - DEBUG - Added SQL statement to exception handler: :NEW.IN_PREP_IND,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.PROD_SHORT_CD,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.TRADEMARK_NO,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.BIO_ACTIVITY,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.APPLICANT,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.CONTACT,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: TXO_UTIL.GET_USERID,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.LINE_EXT_INFO,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: V_PORTF_PROJ_CD,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.CO_DEV_PRTNR,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.TECHNOLOGY_PRTNR,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.OFFICIAL_IND,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.CO_MAR_PRTNR,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: V_VALID_TO,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.PORTF_DA_GROUP_ID,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: :NEW.MANUAL_SHORT_DESC
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: IF (:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL) THEN
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A(
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: A.THEME_NO,
+2025-08-11 22:28:01,527 - root - DEBUG - Added SQL statement to exception handler: A.MOLECULE_ID,
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: A.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: A.VALID_IND
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: V_MOLECULE_ID,
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: 1,
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: 'Y'
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: ELSIF (UPDATING) THEN
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: IF (:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0 THEN
+2025-08-11 22:28:01,528 - root - DEBUG - Added RAISE statement: RAISE ADMIN_UPDATE_ONLY;
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.THEME_NO <> :OLD.THEME_NO) THEN
+2025-08-11 22:28:01,528 - root - DEBUG - Added RAISE statement: RAISE THEME_NO_ONLY_INSERT;
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.OFFICIAL_IND = 'N') THEN
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: V_D_REGISTRAT_DATE := TO_DATE(:OLD.REGISTRAT_DATE, 'dd-mm-yyyy');
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: V_D_REGISTRAT_DATE := SYSDATE;
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: IF (UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD) THEN
+2025-08-11 22:28:01,528 - root - DEBUG - Added SQL statement to exception handler: V_DESCRIPTION := GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO(
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_THEME_NO_PORTF => :NEW.THEME_NO,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_ODG_NO_PORT => V_ODG_NO,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_RESGRP_CD_PORT => V_RESGRP_CD,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_RESLIN_CD_PORT => V_RESLIN_CD,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_SHORT_NAME_PORTF => :NEW.SHORT_NAME,
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: P_TRUNC_DESC_LENGTH => 'N'
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: V_DESCRIPTION := TRIM(V_DESCRIPTION);
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: V_PORTF_PROJ_CD := 'Y';
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0) THEN
+2025-08-11 22:28:01,529 - root - DEBUG - Added RAISE statement: RAISE THEMEDESCRIPTIONMANDATORY;
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: V_DESCRIPTION := :NEW.THEME_DESC;
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: V_PORTF_PROJ_CD := :NEW.PORTF_PROJ_CD;
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,529 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: IF (LENGTH(V_DESCRIPTION) > 90) THEN
+2025-08-11 22:28:01,530 - root - DEBUG - Added RAISE statement: RAISE DESCRIPTION_TOO_LONG;
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: V_COUNTER := NULL;
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: COUNT(T.THEME_NO) INTO V_COUNTER
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: V_THEMES T
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: T.THEME_DESC = V_DESCRIPTION
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: AND T.THEME_NO <> :NEW.THEME_NO;
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: IF (V_COUNTER > 0) THEN
+2025-08-11 22:28:01,530 - root - DEBUG - Added RAISE statement: RAISE THEME_DESC_NOT_UNIQUE;
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: V_COUNTER := NULL;
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.OFFICIAL_IND = 'N') THEN
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: UPDATE GMD.THEMES
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: ODG_NO = V_ODG_NO,
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: RESGRP_CD = V_RESGRP_CD,
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: RESLIN_CD = V_RESLIN_CD,
+2025-08-11 22:28:01,530 - root - DEBUG - Added SQL statement to exception handler: THEME_DESC = V_DESCRIPTION,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: SHORT_NAME = V_SHORT_NAME,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: STATUS_CD = V_STATUS_CD,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: DBA_CD = V_DBA_CD,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: IN_PREP_IND = :NEW.IN_PREP_IND,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: PROD_SHORT_CD = :NEW.PROD_SHORT_CD,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: TRADEMARK_NO = :NEW.TRADEMARK_NO,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: BIO_ACTIVITY = :NEW.BIO_ACTIVITY,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: APPLICANT = :NEW.APPLICANT,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: CONTACT = :NEW.CONTACT,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: LINE_EXT_INFO = :NEW.LINE_EXT_INFO,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: PORTF_PROJ_CD = V_PORTF_PROJ_CD,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: OFFICIAL_IND = :NEW.OFFICIAL_IND,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID,
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: AND TO_DATE(REGISTRAT_DATE, 'DD-MM-YYYY') = V_D_REGISTRAT_DATE;
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: V_COUNTER := NULL;
+2025-08-11 22:28:01,531 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: COUNT(*) INTO V_COUNTER
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: V_THEMES T
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: TRUNC(T.REGISTRAT_DATE) = TRUNC(SYSDATE)
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: AND T.THEME_NO = :NEW.THEME_NO;
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: IF (V_COUNTER > 0) THEN
+2025-08-11 22:28:01,532 - root - DEBUG - Added RAISE statement: RAISE ONLYONEOFFICIALCHANGEPERDAY;
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: V_COUNTER := NULL;
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: UPDATE GMD.THEMES
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: ODG_NO = V_ODG_NO,
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: RESGRP_CD = V_RESGRP_CD,
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: RESLIN_CD = V_RESLIN_CD,
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: THEME_DESC = V_DESCRIPTION,
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: SHORT_NAME = V_SHORT_NAME,
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: STATUS_CD = V_STATUS_CD,
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: DBA_CD = V_DBA_CD,
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: IN_PREP_IND = :NEW.IN_PREP_IND,
+2025-08-11 22:28:01,532 - root - DEBUG - Added SQL statement to exception handler: PROD_SHORT_CD = :NEW.PROD_SHORT_CD,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: TRADEMARK_NO = :NEW.TRADEMARK_NO,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: BIO_ACTIVITY = :NEW.BIO_ACTIVITY,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: APPLICANT = :NEW.APPLICANT,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: CONTACT = :NEW.CONTACT,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: LINE_EXT_INFO = :NEW.LINE_EXT_INFO,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: PORTF_PROJ_CD = V_PORTF_PROJ_CD,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: OFFICIAL_IND = :NEW.OFFICIAL_IND,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: REGISTRAT_DATE = SYSDATE,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: REGISTRAR = V_USERID,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: THEME_NO = :NEW.THEME_NO;
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: CASE
+2025-08-11 22:28:01,533 - root - DEBUG - Parsed exception handler: :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A(
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: A.THEME_NO,
+2025-08-11 22:28:01,533 - root - DEBUG - Added SQL statement to exception handler: A.MOLECULE_ID,
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: A.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: A.VALID_IND
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_ID,
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: 1,
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: 'Y'
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,534 - root - DEBUG - Parsed exception handler: :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: UPDATE MDM_V_THEME_MOLECULE_MAP A
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: A.MOLECULE_ID = :NEW.MOLECULE_ID,
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: A.VALID_IND = 'Y'
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: A.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: AND A.MOLECULE_SEQ_NO = 1
+2025-08-11 22:28:01,534 - root - DEBUG - Added SQL statement to exception handler: AND A.VALID_IND = 'Y';
+2025-08-11 22:28:01,535 - root - DEBUG - Parsed exception handler: :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: COUNT(*) INTO V_SEC_MOL_CNT
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: MDM_V_THEME_MOLECULE_MAP_MTN A
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: A.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: AND A.MOLECULE_SEQ_NO > 1
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: AND A.VALID_IND = 'Y';
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: IF (V_SEC_MOL_CNT > 0) THEN
+2025-08-11 22:28:01,535 - root - DEBUG - Added RAISE statement: RAISE SEC_MOL_LIST_NOT_EMPTY;
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: UPDATE MDM_V_THEME_MOLECULE_MAP A
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: A.VALID_IND = 'N'
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: A.MOLECULE_ID = :OLD.MOLECULE_ID
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: AND A.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: AND A.MOLECULE_SEQ_NO = 1
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: AND A.VALID_IND = 'Y';
+2025-08-11 22:28:01,535 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: NULL;
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: END CASE;
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: ELSIF (DELETING) THEN
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: IF ((:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0) THEN
+2025-08-11 22:28:01,536 - root - DEBUG - Added RAISE statement: RAISE ADMIN_UPDATE_ONLY;
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: IF (TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE)) THEN
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: DELETE FROM GMD.THEMES A
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: A.THEME_NO = :OLD.THEME_NO
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: AND TRUNC(A.REGISTRAT_DATE) = TRUNC(SYSDATE);
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,536 - root - DEBUG - Added RAISE statement: RAISE DELETE_NO_MORE_POSSIBLE;
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,536 - root - DEBUG - Added SQL statement to exception handler: IF (INSERTING OR UPDATING) THEN
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL) THEN
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: COUNT(*) INTO V_EVOLVED_NMP_CNT
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: MDM_V_NEW_MEDICINE_PROPOSALS_MTN
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_ID = :NEW.PROPOSAL_ID
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: AND PROPOSAL_STATUS_CD = 'E';
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: IF (V_EVOLVED_NMP_CNT = 0) THEN
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_STATUS_CD = 'E',
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: EVOLVED_THEME_NO = :NEW.THEME_NO,
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_NAME = V_SHORT_NAME,
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **'
+2025-08-11 22:28:01,537 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_ID = :NEW.PROPOSAL_ID;
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL) THEN
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_STATUS_CD = 'A',
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: EVOLVED_THEME_NO = NULL
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_ID = :OLD.PROPOSAL_ID;
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID) THEN
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_STATUS_CD = 'A',
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: EVOLVED_THEME_NO = NULL
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_ID = :OLD.PROPOSAL_ID;
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,538 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_STATUS_CD = 'E',
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: EVOLVED_THEME_NO = :NEW.THEME_NO,
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_NAME = V_SHORT_NAME,
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **'
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_ID = :NEW.PROPOSAL_ID;
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: IF (NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')) THEN
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: COUNT(*) INTO V_EVOLVED_NMP_CNT
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: MDM_V_NEW_MEDICINE_PROPOSALS_MTN NMP
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: NMP.EVOLVED_THEME_NO =:NEW.THEME_NO
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: AND NMP.PROPOSAL_STATUS_CD = 'E';
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: IF (V_EVOLVED_NMP_CNT > 0) THEN
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN NMP
+2025-08-11 22:28:01,539 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: NMP.PROPOSAL_NAME = V_SHORT_NAME,
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: NMP.REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **'
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: NMP.EVOLVED_THEME_NO =:NEW.THEME_NO
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: AND NMP.PROPOSAL_STATUS_CD = 'E';
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: IF (INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y') THEN
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.PROPOSAL_ID IS NOT NULL) THEN
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: COUNT(*) INTO V_EVOLVED_NMP_CNT
+2025-08-11 22:28:01,540 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,541 - root - DEBUG - Added SQL statement to exception handler: MDM_V_NEW_MEDICINE_PROPOSALS_MTN
+2025-08-11 22:28:01,541 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,541 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_ID = :NEW.PROPOSAL_ID
+2025-08-11 22:28:01,541 - root - DEBUG - Added SQL statement to exception handler: AND PROPOSAL_NAME = V_SHORT_NAME
+2025-08-11 22:28:01,541 - root - DEBUG - Added SQL statement to exception handler: AND PROPOSAL_STATUS_CD = 'E';
+2025-08-11 22:28:01,541 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,541 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)) THEN
+2025-08-11 22:28:01,541 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.MOLECULE_ID IS NOT NULL) THEN
+2025-08-11 22:28:01,541 - root - DEBUG - Found BEGIN block at line 729
+2025-08-11 22:28:01,541 - root - DEBUG - Found EXCEPTION section at line 739
+2025-08-11 22:28:01,541 - root - DEBUG - Parsed exception handler: NO_DATA_FOUND
+2025-08-11 22:28:01,541 - root - DEBUG - Added RAISE statement: RAISE INVALID_MOLECULE_ID;
+2025-08-11 22:28:01,541 - root - DEBUG - Processing block begin_end_statements for potential nested CASE statements
+2025-08-11 22:28:01,542 - root - DEBUG - Completed nested BEGIN block
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO MDM_V_NEW_MEDICINE_PROPOSALS_MTN (
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_STATUS_CD,
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: EVOLVED_THEME_NO,
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: PROPOSAL_NAME,
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: PHARMACOLOGICAL_TYPE_ID,
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: MOLECULE_TYPE_ID,
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: REASON_FOR_CHANGE
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: 'E',
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: V_SHORT_NAME,
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: NVL(V_PHARMACOLOGICAL_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID),
+2025-08-11 22:28:01,542 - root - DEBUG - Added SQL statement to exception handler: NVL(V_MOLECULE_TYPE_ID, C_MOLECULE_TYPE_ID),
+2025-08-11 22:28:01,543 - root - DEBUG - Added SQL statement to exception handler: '** Automatic creation of nmp for early development themes **'
+2025-08-11 22:28:01,543 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,543 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,543 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,543 - root - DEBUG - Found BEGIN block at line 763
+2025-08-11 22:28:01,543 - root - DEBUG - Processing block begin_end_statements for potential nested CASE statements
+2025-08-11 22:28:01,543 - root - DEBUG - Completed nested BEGIN block
+2025-08-11 22:28:01,543 - root - DEBUG - Found EXCEPTION section at line 782
+2025-08-11 22:28:01,543 - root - DEBUG - Parsed exception handler: ADMIN_UPDATE_ONLY
+2025-08-11 22:28:01,543 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20115', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 22:28:01,543 - root - DEBUG - Parsed exception handler: IN_PREP_NOT_PORTF_PROJ
+2025-08-11 22:28:01,543 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20116', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 22:28:01,543 - root - DEBUG - Parsed exception handler: IN_PREP_NOT_CLOSED
+2025-08-11 22:28:01,543 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20117', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 22:28:01,543 - root - DEBUG - Parsed exception handler: INVALID_MOLECULE_ID
+2025-08-11 22:28:01,543 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20118', 'handler_string': 'This is not a valid Molecule ID'}
+2025-08-11 22:28:01,543 - root - DEBUG - Parsed exception handler: SEC_MOL_LIST_NOT_EMPTY
+2025-08-11 22:28:01,543 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20119', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: INVALID_THEME_NO
+2025-08-11 22:28:01,544 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20101', 'handler_string': 'This is not a valid Theme No'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: DELETE_NO_MORE_POSSIBLE
+2025-08-11 22:28:01,544 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: THEME_NO_ONLY_INSERT
+2025-08-11 22:28:01,544 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Theme No cannot be updated'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: DESCRIPTION_TOO_LONG
+2025-08-11 22:28:01,544 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Theme Description "\' || V_DESCRIPTION || \'" is too long'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: THEME_DESC_PROPOSAL_TOO_LONG
+2025-08-11 22:28:01,544 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Short Description Proposal "\' || :OLD.THEME_DESC_PROPOSAL || \'" is too long'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: THEME_DESC_ALT_TOO_LONG
+2025-08-11 22:28:01,544 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Downstream Theme Description "\' || :OLD.THEME_DESC_ALT || \'" is too long'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: THEME_NO_CANNOT_BE_INSERTED
+2025-08-11 22:28:01,544 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'This Theme No already exists'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: ONLYONEOFFICIALCHANGEPERDAY
+2025-08-11 22:28:01,544 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Official Change for this Theme No and Day already exists'}
+2025-08-11 22:28:01,544 - root - DEBUG - Parsed exception handler: INSERTSMUSTBEOFFICIAL
+2025-08-11 22:28:01,545 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'New Themes can only be inserted by Official Changes'}
+2025-08-11 22:28:01,545 - root - DEBUG - Parsed exception handler: THEMEDESCRIPTIONMANDATORY
+2025-08-11 22:28:01,545 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'If Pharma Rx Portfolio Project is set to "No", then the Theme Description must be filled'}
+2025-08-11 22:28:01,545 - root - DEBUG - Parsed exception handler: THEME_DESC_NOT_UNIQUE
+2025-08-11 22:28:01,545 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'This Theme Description already exists'}
+2025-08-11 22:28:01,545 - root - DEBUG - Parsed exception handler: PORTF_PROJ_MOL_CRE_ERR
+2025-08-11 22:28:01,545 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20120', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-11 22:28:01,545 - root - DEBUG - Parsed exception handler: DEBUGGING
+2025-08-11 22:28:01,545 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20900', 'handler_string': 'Debug in Themes IOF standard'}
+2025-08-11 22:28:01,545 - root - DEBUG - Processing block begin_end_statements for potential nested CASE statements
+2025-08-11 22:28:01,545 - root - DEBUG - Completed top-level BEGIN block
+2025-08-11 22:28:01,545 - root - DEBUG - BEGIN block parsing complete: updated main_section_lines with 1 blocks
+2025-08-11 22:28:01,545 - root - DEBUG - Starting CASE WHEN parsing
+2025-08-11 22:28:01,545 - root - DEBUG - Found CASE statement at line 241 in main_section_lines.begin_end_statements
+2025-08-11 22:28:01,545 - root - DEBUG - Starting CASE statement parsing from index 210
+2025-08-11 22:28:01,545 - root - DEBUG - CASE statement - Type: with expression, Expression: 'LENGTH(:NEW.THEME_NO)'
+2025-08-11 22:28:01,546 - root - DEBUG - Found WHEN clause: 4
+2025-08-11 22:28:01,546 - root - DEBUG - Found WHEN clause: 5
+2025-08-11 22:28:01,546 - root - DEBUG - Found ELSE clause at indent 9 (case indent: 6)
+2025-08-11 22:28:01,546 - root - DEBUG - Processing nested structures in CASE statement
+2025-08-11 22:28:01,546 - root - DEBUG - Completed CASE statement parsing: 3 when clauses, end at index 221
+2025-08-11 22:28:01,546 - root - DEBUG - Parsed complete CASE statement structure in main_section_lines.begin_end_statements
+2025-08-11 22:28:01,546 - root - DEBUG - CASE WHEN parsing complete
+2025-08-11 22:28:01,546 - root - DEBUG - Starting FOR loop parsing
+2025-08-11 22:28:01,546 - root - DEBUG - Found FOR loop at line 767 in main_section_lines.begin_end_statements.begin_end_statements
+2025-08-11 22:28:01,546 - root - DEBUG - Parsing FOR loop structure starting at line 767: FOR I1 IN (
+2025-08-11 22:28:01,546 - root - DEBUG - Found END LOOP at line 780
+2025-08-11 22:28:01,546 - root - DEBUG - Successfully parsed FOR loop: I1 IN (SELECT A.THEME_NO, A.REGISTRAT)
+2025-08-11 22:28:01,546 - root - DEBUG - Parsed complete FOR loop structure in main_section_lines.begin_end_statements.begin_end_statements
+2025-08-11 22:28:01,546 - root - DEBUG - FOR loop parsing complete
+2025-08-11 22:28:01,546 - root - DEBUG - Starting IF ELSE parsing
+2025-08-11 22:28:01,546 - root - DEBUG - Found IF statement at line 95 in main_section.begin_end_statements: IF (:NEW.IN_PREP_IND = 'Y') THEN
+2025-08-11 22:28:01,546 - root - DEBUG - Parsed IF-ELSE block with condition: (:NEW.IN_PREP_IND = 'Y')
+2025-08-11 22:28:01,546 - root - DEBUG - Found IF statement at line 127 in main_section.begin_end_statements: IF (V_MOLECULE_RG_NO IS NULL) THEN
+2025-08-11 22:28:01,547 - root - DEBUG - Parsed IF-ELSE block with condition: (V_MOLECULE_RG_NO IS NULL)
+2025-08-11 22:28:01,547 - root - DEBUG - Found IF statement at line 149 in main_section.begin_end_statements: IF (:NEW.STATUS_DESC IS NOT NULL) THEN
+2025-08-11 22:28:01,547 - root - DEBUG - Parsed IF-ELSE block with condition: (:NEW.STATUS_DESC IS NOT NULL)
+2025-08-11 22:28:01,547 - root - DEBUG - Found IF statement at line 174 in main_section.begin_end_statements: IF (:NEW.OFFICIAL_IND = 'N') THEN
+2025-08-11 22:28:01,547 - root - DEBUG - Parsed IF-ELSE block with condition: (:NEW.OFFICIAL_IND = 'N')
+2025-08-11 22:28:01,547 - root - DEBUG - Found IF statement at line 181 in main_section.begin_end_statements: IF (:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_TH
+2025-08-11 22:28:01,547 - root - DEBUG - Parsed IF-ELSE block with condition: (:NEW.MANUAL_SHORT_DESC IS NUL
+2025-08-11 22:28:01,547 - root - DEBUG - Found IF statement at line 186 in main_section.begin_end_statements: IF (INSERTING) THEN
+2025-08-11 22:28:01,547 - root - DEBUG - Parsed IF-ELSE block with condition: (INSERTING)
+2025-08-11 22:28:01,547 - root - DEBUG - Found IF statement at line 195 in main_section.begin_end_statements: IF (:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID 
+2025-08-11 22:28:01,547 - root - DEBUG - Parsed IF-ELSE block with condition: (:NEW.PORTF_PROJ_CD = 'Y' AND 
+2025-08-11 22:28:01,547 - root - DEBUG - Starting assignment statements parsing
+2025-08-11 22:28:01,547 - root - DEBUG - Found assignment statement at line 145 in main_section_lines.begin_end_statements: V_ODG_NO := SUBSTR(:NEW.RESLIN
+2025-08-11 22:28:01,547 - root - DEBUG - Parsed single-line assignment statement: V_ODG_NO
+2025-08-11 22:28:01,547 - root - DEBUG - Found assignment statement at line 146 in main_section_lines.begin_end_statements: V_RESGRP_CD := SUBSTR(:NEW.RES
+2025-08-11 22:28:01,547 - root - DEBUG - Parsed single-line assignment statement: V_RESGRP_CD
+2025-08-11 22:28:01,548 - root - DEBUG - Found assignment statement at line 147 in main_section_lines.begin_end_statements: V_RESLIN_CD := SUBSTR(:NEW.RES
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed single-line assignment statement: V_RESLIN_CD
+2025-08-11 22:28:01,548 - root - DEBUG - Found assignment statement at line 148 in main_section_lines.begin_end_statements: V_RESLIN_DESC := SUBSTR(:NEW.R
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed single-line assignment statement: V_RESLIN_DESC
+2025-08-11 22:28:01,548 - root - DEBUG - Found assignment statement at line 157 in main_section_lines.begin_end_statements.else_statements: V_STATUS_CD := NULL;
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed single-line assignment statement: V_STATUS_CD
+2025-08-11 22:28:01,548 - root - DEBUG - Found assignment statement at line 170 in main_section_lines.begin_end_statements: V_DBA_CD := NULL;
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed single-line assignment statement: V_DBA_CD
+2025-08-11 22:28:01,548 - root - DEBUG - Found assignment statement at line 173 in main_section_lines.begin_end_statements: V_MOLEC_IN_LIC_PRTNR := GMD_UT
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed single-line assignment statement: V_MOLEC_IN_LIC_PRTNR
+2025-08-11 22:28:01,548 - root - DEBUG - Found assignment statement at line 177 in main_section_lines.begin_end_statements.else_statements: V_TRADEMARK_NO := :OLD.TRADEMA
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed single-line assignment statement: V_TRADEMARK_NO
+2025-08-11 22:28:01,548 - root - DEBUG - Found assignment statement at line 194 in main_section_lines.begin_end_statements: V_MOLECULE_ID := :NEW.MOLECULE
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed single-line assignment statement: V_MOLECULE_ID
+2025-08-11 22:28:01,548 - root - DEBUG - Assignment statements parsing complete
+2025-08-11 22:28:01,548 - root - DEBUG - Starting SQL statements parsing
+2025-08-11 22:28:01,548 - root - DEBUG - Found SQL statement at line 54 in main_section_lines.begin_end_statements: SELECT
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,548 - root - DEBUG - Found SQL statement at line 61 in main_section_lines.begin_end_statements: SELECT
+2025-08-11 22:28:01,548 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,548 - root - DEBUG - Found SQL statement at line 70 in main_section_lines.begin_end_statements: SELECT
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 113 in main_section_lines.begin_end_statements.begin_end_statements: SELECT
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 133 in main_section_lines.begin_end_statements.then_statements.else_statements: UPDATE V_THEME_MOLEC
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: update_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 161 in main_section_lines.begin_end_statements: SELECT
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 199 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements: INSERT INTO MDM_V_TH
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: insert_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 214 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements: SELECT
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 227 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements: INSERT INTO THEME_MO
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: insert_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 199 in main_section_lines.begin_end_statements.then_statements.else_statements: INSERT INTO MDM_V_TH
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: insert_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 214 in main_section_lines.begin_end_statements.then_statements.else_statements: SELECT
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,549 - root - DEBUG - Found SQL statement at line 227 in main_section_lines.begin_end_statements.then_statements.else_statements: INSERT INTO THEME_MO
+2025-08-11 22:28:01,549 - root - DEBUG - Parsed multi-line SQL statement: insert_statement
+2025-08-11 22:28:01,550 - root - DEBUG - Found SQL statement at line 730 in main_section_lines.begin_end_statements.begin_end_statements: SELECT
+2025-08-11 22:28:01,550 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,550 - root - DEBUG - Found SQL statement at line 776 in main_section_lines.begin_end_statements.begin_end_statements.loop_statements: DELETE FROM GMD.THEM
+2025-08-11 22:28:01,550 - root - DEBUG - Parsed multi-line SQL statement: delete_statement
+2025-08-11 22:28:01,550 - root - DEBUG - SQL statements parsing complete
+2025-08-11 22:28:01,550 - root - DEBUG - Starting rule validation
+2025-08-11 22:28:01,550 - root - DEBUG - Rule validation complete: found 0 violations
+2025-08-11 22:28:01,550 - root - DEBUG - Generating JSON analysis...
+2025-08-11 22:28:01,550 - root - INFO - JSON conversion complete: 29 vars, 2 consts, 18 excs, 63 comments
+2025-08-11 22:28:01,550 - root - DEBUG - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-11 22:28:01,552 - root - DEBUG - Wrote analysis JSON to files/format_json\trigger1_analysis.json
+2025-08-11 22:28:01,553 - root - INFO - Created trigger1_analysis.json
+2025-08-11 22:28:01,553 - root - DEBUG - Processing file: trigger2.sql
+2025-08-11 22:28:01,553 - root - DEBUG - Extracted trigger number: 2
+2025-08-11 22:28:01,553 - root - DEBUG - Read 18805 characters from files/oracle\trigger2.sql
+2025-08-11 22:28:01,553 - root - DEBUG - Initializing OracleTriggerAnalyzer with 18805 characters of SQL
+2025-08-11 22:28:01,553 - root - DEBUG - Starting SQL section parsing
+2025-08-11 22:28:01,553 - root - DEBUG - Converting SQL content to structured lines
+2025-08-11 22:28:01,554 - root - DEBUG - Structured lines conversion complete: 422 total, 89 with semicolons, 43 empty lines skipped
+2025-08-11 22:28:01,554 - root - DEBUG - Block comment stripping complete: 6 comments extracted, 364 lines cleaned
+2025-08-11 22:28:01,554 - root - DEBUG - Removed block comments from main section
+2025-08-11 22:28:01,555 - root - DEBUG - Inline comment stripping complete: 67 comments extracted, 315 lines cleaned
+2025-08-11 22:28:01,555 - root - DEBUG - Removed inline comments from main section
+2025-08-11 22:28:01,555 - root - DEBUG - Found DECLARE at line 1
+2025-08-11 22:28:01,555 - root - DEBUG - Found BEGIN at line 18
+2025-08-11 22:28:01,555 - root - DEBUG - DECLARE section: lines 1-17
+2025-08-11 22:28:01,555 - root - DEBUG - Main section: lines 18
+2025-08-11 22:28:01,555 - root - DEBUG - Starting declaration parsing
+2025-08-11 22:28:01,555 - root - DEBUG - Processed exception: ERR_MAP_EXISTS
+2025-08-11 22:28:01,555 - root - DEBUG - Processed exception: ERR_MOLEC_ID_MISSING
+2025-08-11 22:28:01,555 - root - DEBUG - Processed exception: ERR_NO_PORTF_MOLECULE_LEFT
+2025-08-11 22:28:01,555 - root - DEBUG - Processed exception: ERR_UPD_INV_MAP
+2025-08-11 22:28:01,555 - root - DEBUG - Processed exception: ERR_INS_INV_MAP
+2025-08-11 22:28:01,555 - root - DEBUG - Processed exception: ERR_INV_MOL_SEQUENCE
+2025-08-11 22:28:01,555 - root - DEBUG - Processed exception: UPDATE_UPD
+2025-08-11 22:28:01,555 - root - DEBUG - Processed variable: V_COUNT_T_MAPPINGS
+2025-08-11 22:28:01,555 - root - DEBUG - Processed variable: V_COUNT_T_MOL_MAP
+2025-08-11 22:28:01,555 - root - DEBUG - Processed variable: V_MOLECULE_SEQ_NO
+2025-08-11 22:28:01,555 - root - DEBUG - Processed variable: V_SEQ_NO_DUPLICATE_CNT
+2025-08-11 22:28:01,555 - root - DEBUG - Processed variable: INVALID_MAPPING_EXISTS
+2025-08-11 22:28:01,555 - root - DEBUG - Processed variable: V_MANUAL_SHORT_DESC
+2025-08-11 22:28:01,556 - root - DEBUG - Processing main section from lines 18
+2025-08-11 22:28:01,556 - root - DEBUG - Main section processing complete: 0 lines extracted
+2025-08-11 22:28:01,556 - root - DEBUG - Parsing BEGIN blocks for JSON conversion
+2025-08-11 22:28:01,556 - root - DEBUG - Starting BEGIN block parsing
+2025-08-11 22:28:01,556 - root - DEBUG - Found BEGIN block at line 18
+2025-08-11 22:28:01,556 - root - DEBUG - Parsed exception handler: :NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: IF (INVALID_MAPPING_EXISTS) THEN
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND = 'Y',
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO THEME_MOLECULE_MAP TMM (
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO,
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_ID,
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR,
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND
+2025-08-11 22:28:01,556 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_ID,
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_MAP_CHAR,
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: 'Y'
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,557 - root - DEBUG - Parsed exception handler: :NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO + 1
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,557 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_SEQ_NO >= :NEW.MOLECULE_SEQ_NO
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: AND TMM.VALID_IND = 'Y';
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: IF (INVALID_MAPPING_EXISTS) THEN
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND = 'Y',
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO THEME_MOLECULE_MAP TMM (
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO,
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_ID,
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR,
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND
+2025-08-11 22:28:01,558 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_ID,
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_MAP_CHAR,
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: 'Y'
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,559 - root - DEBUG - Added RAISE statement: RAISE ERR_INS_INV_MAP;
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: END CASE;
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: IF (UPDATING) THEN
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.MOLECULE_ID IS NOT NULL) THEN
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR) THEN
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR = :NEW.MOLECULE_MAP_CHAR
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,559 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO) THEN
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND = 'N'
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID;
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: IF (:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO) THEN
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO - 1
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: AND TMM.VALID_IND = 'Y'
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_SEQ_NO <= :NEW.MOLECULE_SEQ_NO;
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO + 1
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: AND TMM.VALID_IND = 'Y'
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_SEQ_NO >= :NEW.MOLECULE_SEQ_NO
+2025-08-11 22:28:01,560 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_SEQ_NO < :OLD.MOLECULE_SEQ_NO;
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: IF (INVALID_MAPPING_EXISTS) THEN
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND = 'Y',
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR =: NEW.MOLECULE_MAP_CHAR
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO THEME_MOLECULE_MAP TMM (
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_ID,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_ID,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_MAP_CHAR,
+2025-08-11 22:28:01,561 - root - DEBUG - Added SQL statement to exception handler: 'Y'
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO) THEN
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND = 'N'
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID;
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO - 1
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_SEQ_NO <= :NEW.MOLECULE_SEQ_NO
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: AND TMM.VALID_IND = 'Y';
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: IF (INVALID_MAPPING_EXISTS) THEN
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND = 'Y',
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,562 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR =:NEW.MOLECULE_MAP_CHAR
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO THEME_MOLECULE_MAP TMM (
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO,
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_ID,
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR,
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_ID,
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_MAP_CHAR,
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: 'Y'
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: IF (:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO THEN
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND = 'N'
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,563 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: AND MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO;
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: IF (INVALID_MAPPING_EXISTS) THEN
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: UPDATE THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: SET
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: TMM.VALID_IND = 'Y',
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR =:NEW.MOLECULE_MAP_CHAR
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: ELSE
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: INSERT INTO THEME_MOLECULE_MAP TMM (
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO,
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_ID,
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: TMM.MOLECULE_MAP_CHAR
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: ) VALUES (
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: :NEW.THEME_NO,
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_ID,
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_SEQ_NO,
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: :NEW.MOLECULE_MAP_CHAR
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,564 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: MDMAPPL.MDM_UTIL_THEMES.REFRESH_THEME_DESC (
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: P_THEME_NO => :NEW.THEME_NO,
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: P_MOLECULE_ID => 0,
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: P_DATE => SYSDATE,
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: P_MANUAL_SHORT_DESC => V_MANUAL_SHORT_DESC
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: COUNT (*) INTO V_SEQ_NO_DUPLICATE_CNT
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: (
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: SELECT
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: MOLECULE_SEQ_NO
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: FROM
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: THEME_MOLECULE_MAP TMM
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: WHERE
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: TMM.THEME_NO = :NEW.THEME_NO
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: AND VALID_IND = 'Y'
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: GROUP BY
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: MOLECULE_SEQ_NO
+2025-08-11 22:28:01,565 - root - DEBUG - Added SQL statement to exception handler: HAVING
+2025-08-11 22:28:01,566 - root - DEBUG - Added SQL statement to exception handler: COUNT (*) > 1
+2025-08-11 22:28:01,566 - root - DEBUG - Added SQL statement to exception handler: );
+2025-08-11 22:28:01,566 - root - DEBUG - Added SQL statement to exception handler: IF (V_SEQ_NO_DUPLICATE_CNT > 0) THEN
+2025-08-11 22:28:01,566 - root - DEBUG - Added RAISE statement: RAISE ERR_INV_MOL_SEQUENCE;
+2025-08-11 22:28:01,566 - root - DEBUG - Added SQL statement to exception handler: END IF;
+2025-08-11 22:28:01,566 - root - DEBUG - Found EXCEPTION section at line 439
+2025-08-11 22:28:01,566 - root - DEBUG - Parsed exception handler: ERR_MAP_EXISTS
+2025-08-11 22:28:01,566 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20110', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 22:28:01,566 - root - DEBUG - Parsed exception handler: ERR_MOLEC_ID_MISSING
+2025-08-11 22:28:01,566 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20111', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 22:28:01,566 - root - DEBUG - Parsed exception handler: ERR_UPD_INV_MAP
+2025-08-11 22:28:01,566 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20112', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 22:28:01,566 - root - DEBUG - Parsed exception handler: ERR_INS_INV_MAP
+2025-08-11 22:28:01,566 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 22:28:01,566 - root - DEBUG - Parsed exception handler: ERR_INV_MOL_SEQUENCE
+2025-08-11 22:28:01,566 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20120', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-11 22:28:01,566 - root - DEBUG - Processing block begin_end_statements for potential nested CASE statements
+2025-08-11 22:28:01,566 - root - DEBUG - Completed top-level BEGIN block
+2025-08-11 22:28:01,566 - root - DEBUG - BEGIN block parsing complete: updated main_section_lines with 1 blocks
+2025-08-11 22:28:01,566 - root - DEBUG - Starting CASE WHEN parsing
+2025-08-11 22:28:01,566 - root - DEBUG - Found CASE statement at line 125 in main_section_lines.begin_end_statements
+2025-08-11 22:28:01,567 - root - DEBUG - Starting CASE statement parsing from index 83
+2025-08-11 22:28:01,567 - root - DEBUG - CASE statement - Type: simple, Expression: ''
+2025-08-11 22:28:01,567 - root - DEBUG - Processing nested structures in CASE statement
+2025-08-11 22:28:01,567 - root - DEBUG - Completed CASE statement parsing: 0 when clauses, end at index 141
+2025-08-11 22:28:01,567 - root - DEBUG - Parsed complete CASE statement structure in main_section_lines.begin_end_statements
+2025-08-11 22:28:01,567 - root - DEBUG - CASE WHEN parsing complete
+2025-08-11 22:28:01,567 - root - DEBUG - Starting FOR loop parsing
+2025-08-11 22:28:01,567 - root - DEBUG - FOR loop parsing complete
+2025-08-11 22:28:01,567 - root - DEBUG - Starting IF ELSE parsing
+2025-08-11 22:28:01,567 - root - DEBUG - Found IF statement at line 27 in main_section.begin_end_statements: IF (DELETING) THEN
+2025-08-11 22:28:01,567 - root - DEBUG - Parsed IF-ELSE block with condition: (DELETING)
+2025-08-11 22:28:01,567 - root - DEBUG - Found IF statement at line 68 in main_section.begin_end_statements: IF (:NEW.MOLECULE_ID IS NULL) THEN
+2025-08-11 22:28:01,567 - root - DEBUG - Parsed IF-ELSE block with condition: (:NEW.MOLECULE_ID IS NULL)
+2025-08-11 22:28:01,567 - root - DEBUG - Found IF statement at line 90 in main_section.begin_end_statements: IF (:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS) THE
+2025-08-11 22:28:01,567 - root - DEBUG - Parsed IF-ELSE block with condition: (:NEW.MOLECULE_SEQ_NO > V_COUN
+2025-08-11 22:28:01,567 - root - DEBUG - Found IF statement at line 98 in main_section.begin_end_statements: IF (:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1
+2025-08-11 22:28:01,567 - root - DEBUG - Parsed IF-ELSE block with condition: (:NEW.MOLECULE_ID <> NVL (:OLD
+2025-08-11 22:28:01,568 - root - DEBUG - Starting assignment statements parsing
+2025-08-11 22:28:01,568 - root - DEBUG - Assignment statements parsing complete
+2025-08-11 22:28:01,568 - root - DEBUG - Starting SQL statements parsing
+2025-08-11 22:28:01,568 - root - DEBUG - Found SQL statement at line 21 in main_section_lines.begin_end_statements: SELECT
+2025-08-11 22:28:01,568 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,568 - root - DEBUG - Found SQL statement at line 61 in main_section_lines.begin_end_statements: SELECT
+2025-08-11 22:28:01,568 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,568 - root - DEBUG - SQL statements parsing complete
+2025-08-11 22:28:01,568 - root - DEBUG - Starting rule validation
+2025-08-11 22:28:01,568 - root - DEBUG - Rule validation complete: found 0 violations
+2025-08-11 22:28:01,568 - root - DEBUG - Generating JSON analysis...
+2025-08-11 22:28:01,568 - root - INFO - JSON conversion complete: 6 vars, 0 consts, 7 excs, 73 comments
+2025-08-11 22:28:01,569 - root - DEBUG - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-11 22:28:01,570 - root - DEBUG - Wrote analysis JSON to files/format_json\trigger2_analysis.json
+2025-08-11 22:28:01,570 - root - INFO - Created trigger2_analysis.json
+2025-08-11 22:28:01,570 - root - DEBUG - Processing file: trigger3.sql
+2025-08-11 22:28:01,570 - root - DEBUG - Extracted trigger number: 3
+2025-08-11 22:28:01,570 - root - DEBUG - Read 12985 characters from files/oracle\trigger3.sql
+2025-08-11 22:28:01,571 - root - DEBUG - Initializing OracleTriggerAnalyzer with 12985 characters of SQL
+2025-08-11 22:28:01,571 - root - DEBUG - Starting SQL section parsing
+2025-08-11 22:28:01,571 - root - DEBUG - Converting SQL content to structured lines
+2025-08-11 22:28:01,571 - root - DEBUG - Structured lines conversion complete: 244 total, 58 with semicolons, 21 empty lines skipped
+2025-08-11 22:28:01,571 - root - DEBUG - Block comment stripping complete: 0 comments extracted, 244 lines cleaned
+2025-08-11 22:28:01,571 - root - DEBUG - Removed block comments from main section
+2025-08-11 22:28:01,571 - root - DEBUG - Inline comment stripping complete: 17 comments extracted, 227 lines cleaned
+2025-08-11 22:28:01,571 - root - DEBUG - Removed inline comments from main section
+2025-08-11 22:28:01,571 - root - DEBUG - Found DECLARE at line 1
+2025-08-11 22:28:01,571 - root - DEBUG - Found BEGIN at line 14
+2025-08-11 22:28:01,571 - root - DEBUG - DECLARE section: lines 1-13
+2025-08-11 22:28:01,571 - root - DEBUG - Main section: lines 14
+2025-08-11 22:28:01,571 - root - DEBUG - Starting declaration parsing
+2025-08-11 22:28:01,571 - root - DEBUG - Processed variable: V_TRIGGER_NAME
+2025-08-11 22:28:01,571 - root - DEBUG - Processed variable: CNTR
+2025-08-11 22:28:01,572 - root - DEBUG - Processed exception: ERR_UPD
+2025-08-11 22:28:01,572 - root - DEBUG - Processed exception: ERR_INS
+2025-08-11 22:28:01,572 - root - DEBUG - Processed exception: ERR_CTRY_CHG
+2025-08-11 22:28:01,572 - root - DEBUG - Processed exception: ERR_NOT_ALLOWED_TO_INVALIDATE
+2025-08-11 22:28:01,572 - root - DEBUG - Processed variable: V_USERID
+2025-08-11 22:28:01,572 - root - DEBUG - Processed exception: TEST_ERR
+2025-08-11 22:28:01,572 - root - DEBUG - Processed variable: V_COUNTRY_CD
+2025-08-11 22:28:01,572 - root - DEBUG - Processed variable: V_COMPANY_TYPE_CD
+2025-08-11 22:28:01,572 - root - DEBUG - Processed exception: ERR_INS_LEGAL_ADDR
+2025-08-11 22:28:01,572 - root - DEBUG - Processed variable: V_VALID_FROM
+2025-08-11 22:28:01,572 - root - DEBUG - Processing main section from lines 14
+2025-08-11 22:28:01,572 - root - DEBUG - Main section processing complete: 0 lines extracted
+2025-08-11 22:28:01,572 - root - DEBUG - Parsing BEGIN blocks for JSON conversion
+2025-08-11 22:28:01,572 - root - DEBUG - Starting BEGIN block parsing
+2025-08-11 22:28:01,572 - root - DEBUG - Found BEGIN block at line 14
+2025-08-11 22:28:01,572 - root - DEBUG - Found BEGIN block at line 15
+2025-08-11 22:28:01,572 - root - DEBUG - Found EXCEPTION section at line 17
+2025-08-11 22:28:01,572 - root - DEBUG - Parsed exception handler: OTHERS
+2025-08-11 22:28:01,572 - root - DEBUG - Added SQL statement to exception handler: V_USERID := USER;
+2025-08-11 22:28:01,572 - root - DEBUG - Processing block begin_end_statements for potential nested CASE statements
+2025-08-11 22:28:01,572 - root - DEBUG - Completed nested BEGIN block
+2025-08-11 22:28:01,572 - root - DEBUG - Found EXCEPTION section at line 252
+2025-08-11 22:28:01,573 - root - DEBUG - Parsed exception handler: ERR_UPD
+2025-08-11 22:28:01,573 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20111', 'handler_string': "'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD"}
+2025-08-11 22:28:01,573 - root - DEBUG - Parsed exception handler: ERR_INS
+2025-08-11 22:28:01,573 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20112', 'handler_string': 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.'}
+2025-08-11 22:28:01,573 - root - DEBUG - Parsed exception handler: ERR_CTRY_CHG
+2025-08-11 22:28:01,573 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'The company country modified but not the Valid From Date. Please update also the Valid From Date.'}
+2025-08-11 22:28:01,573 - root - DEBUG - Parsed exception handler: TEST_ERR
+2025-08-11 22:28:01,573 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': "'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR"}
+2025-08-11 22:28:01,573 - root - DEBUG - Parsed exception handler: ERR_INS_LEGAL_ADDR
+2025-08-11 22:28:01,573 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'The legal address cannot be inserted for this type of company'}
+2025-08-11 22:28:01,573 - root - DEBUG - Parsed exception handler: ERR_NOT_ALLOWED_TO_INVALIDATE
+2025-08-11 22:28:01,573 - root - DEBUG - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'It is not allowed to invalidate/delete this type of address'}
+2025-08-11 22:28:01,573 - root - DEBUG - Processing block begin_end_statements for potential nested CASE statements
+2025-08-11 22:28:01,573 - root - DEBUG - Completed top-level BEGIN block
+2025-08-11 22:28:01,573 - root - DEBUG - BEGIN block parsing complete: updated main_section_lines with 1 blocks
+2025-08-11 22:28:01,573 - root - DEBUG - Starting CASE WHEN parsing
+2025-08-11 22:28:01,573 - root - DEBUG - CASE WHEN parsing complete
+2025-08-11 22:28:01,574 - root - DEBUG - Starting FOR loop parsing
+2025-08-11 22:28:01,574 - root - DEBUG - Found FOR loop at line 149 in main_section_lines.begin_end_statements
+2025-08-11 22:28:01,574 - root - DEBUG - Parsing FOR loop structure starting at line 149: FOR V_REC IN (
+2025-08-11 22:28:01,574 - root - DEBUG - Found END LOOP at line 170
+2025-08-11 22:28:01,574 - root - DEBUG - Successfully parsed FOR loop: V_REC IN (SELECT COMPANY_CD FROM CFG_V_C)
+2025-08-11 22:28:01,574 - root - DEBUG - Parsed complete FOR loop structure in main_section_lines.begin_end_statements
+2025-08-11 22:28:01,574 - root - DEBUG - FOR loop parsing complete
+2025-08-11 22:28:01,574 - root - DEBUG - Starting IF ELSE parsing
+2025-08-11 22:28:01,574 - root - DEBUG - Found IF statement at line 30 in main_section.begin_end_statements: IF (INSERTING) THEN
+2025-08-11 22:28:01,574 - root - DEBUG - Parsed IF-ELSE block with condition: (INSERTING)
+2025-08-11 22:28:01,574 - root - DEBUG - Found IF statement at line 43 in main_section.begin_end_statements: IF (V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:N
+2025-08-11 22:28:01,574 - root - DEBUG - Parsed IF-ELSE block with condition: (V_COMPANY_TYPE_CD NOT IN ('L'
+2025-08-11 22:28:01,574 - root - DEBUG - Found IF statement at line 48 in main_section.begin_end_statements: IF (NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NE
+2025-08-11 22:28:01,574 - root - DEBUG - Parsed IF-ELSE block with condition: (NVL(:OLD.VALID_FROM, TRUNC(SY
+2025-08-11 22:28:01,574 - root - DEBUG - Found IF statement at line 76 in main_section.begin_end_statements: IF (NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:N
+2025-08-11 22:28:01,574 - root - DEBUG - Parsed IF-ELSE block with condition: (NVL(:OLD.VALID_FROM, TRUNC(SY
+2025-08-11 22:28:01,574 - root - DEBUG - Found IF statement at line 198 in main_section.begin_end_statements: IF (NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD
+2025-08-11 22:28:01,574 - root - DEBUG - Parsed IF-ELSE block with condition: (NVL(:NEW.ADDRESS_TYPE_CD, :OL
+2025-08-11 22:28:01,575 - root - DEBUG - Found IF statement at line 245 in main_section.begin_end_statements: IF (DELETING) THEN
+2025-08-11 22:28:01,575 - root - DEBUG - Parsed IF-ELSE block with condition: (DELETING)
+2025-08-11 22:28:01,575 - root - DEBUG - Starting assignment statements parsing
+2025-08-11 22:28:01,575 - root - DEBUG - Found assignment statement at line 16 in main_section_lines.begin_end_statements.begin_end_statements: V_USERID := TXO_UTIL.GET_USERI
+2025-08-11 22:28:01,575 - root - DEBUG - Parsed single-line assignment statement: V_USERID
+2025-08-11 22:28:01,575 - root - DEBUG - Found assignment statement at line 22 in main_section_lines.begin_end_statements: CNTR := 0;
+2025-08-11 22:28:01,575 - root - DEBUG - Parsed single-line assignment statement: CNTR
+2025-08-11 22:28:01,575 - root - DEBUG - Found assignment statement at line 133 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements: V_VALID_FROM := TO_DATE(ADD_MO
+2025-08-11 22:28:01,575 - root - DEBUG - Parsed single-line assignment statement: V_VALID_FROM
+2025-08-11 22:28:01,575 - root - DEBUG - Assignment statements parsing complete
+2025-08-11 22:28:01,575 - root - DEBUG - Starting SQL statements parsing
+2025-08-11 22:28:01,575 - root - DEBUG - Found SQL statement at line 23 in main_section_lines.begin_end_statements: SELECT
+2025-08-11 22:28:01,575 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,575 - root - DEBUG - Found SQL statement at line 37 in main_section_lines.begin_end_statements: SELECT
+2025-08-11 22:28:01,575 - root - DEBUG - Parsed multi-line SQL statement: select_statement
+2025-08-11 22:28:01,575 - root - DEBUG - SQL statements parsing complete
+2025-08-11 22:28:01,575 - root - DEBUG - Starting rule validation
+2025-08-11 22:28:01,576 - root - DEBUG - Rule validation complete: found 0 violations
+2025-08-11 22:28:01,576 - root - DEBUG - Generating JSON analysis...
+2025-08-11 22:28:01,576 - root - INFO - JSON conversion complete: 6 vars, 0 consts, 6 excs, 17 comments
+2025-08-11 22:28:01,576 - root - DEBUG - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-11 22:28:01,579 - root - DEBUG - Wrote analysis JSON to files/format_json\trigger3_analysis.json
+2025-08-11 22:28:01,579 - root - INFO - Created trigger3_analysis.json
+2025-08-11 22:28:01,580 - root - INFO - JSON conversion complete!

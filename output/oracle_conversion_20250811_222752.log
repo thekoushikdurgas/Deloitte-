@@ -1,0 +1,42 @@
+2025-08-11 22:27:52,727 - root - DEBUG - Initializing OracleTriggerAnalyzer with 270 characters of SQL
+2025-08-11 22:27:52,728 - root - DEBUG - Starting SQL section parsing
+2025-08-11 22:27:52,728 - root - DEBUG - Converting SQL content to structured lines
+2025-08-11 22:27:52,728 - root - DEBUG - Structured lines conversion complete: 14 total, 8 with semicolons, 1 empty lines skipped
+2025-08-11 22:27:52,728 - root - DEBUG - Block comment stripping complete: 0 comments extracted, 14 lines cleaned
+2025-08-11 22:27:52,728 - root - DEBUG - Removed block comments from main section
+2025-08-11 22:27:52,728 - root - DEBUG - Inline comment stripping complete: 0 comments extracted, 14 lines cleaned
+2025-08-11 22:27:52,729 - root - DEBUG - Removed inline comments from main section
+2025-08-11 22:27:52,729 - root - DEBUG - Found DECLARE at line 2
+2025-08-11 22:27:52,730 - root - DEBUG - Found BEGIN at line 4
+2025-08-11 22:27:52,730 - root - DEBUG - DECLARE section: lines 2-3
+2025-08-11 22:27:52,730 - root - DEBUG - Main section: lines 4
+2025-08-11 22:27:52,730 - root - DEBUG - Starting declaration parsing
+2025-08-11 22:27:52,730 - root - DEBUG - Processed variable: V_COUNTER
+2025-08-11 22:27:52,730 - root - DEBUG - Processing main section from lines 4
+2025-08-11 22:27:52,730 - root - DEBUG - Main section processing complete: 0 lines extracted
+2025-08-11 22:27:52,730 - root - DEBUG - Parsing BEGIN blocks for JSON conversion
+2025-08-11 22:27:52,730 - root - DEBUG - Starting BEGIN block parsing
+2025-08-11 22:27:52,730 - root - DEBUG - Found BEGIN block at line 4
+2025-08-11 22:27:52,730 - root - DEBUG - Processing block begin_end_statements for potential nested CASE statements
+2025-08-11 22:27:52,730 - root - DEBUG - Completed top-level BEGIN block
+2025-08-11 22:27:52,730 - root - DEBUG - BEGIN block parsing complete: updated main_section_lines with 1 blocks
+2025-08-11 22:27:52,730 - root - DEBUG - Starting CASE WHEN parsing
+2025-08-11 22:27:52,730 - root - DEBUG - CASE WHEN parsing complete
+2025-08-11 22:27:52,730 - root - DEBUG - Starting FOR loop parsing
+2025-08-11 22:27:52,730 - root - DEBUG - FOR loop parsing complete
+2025-08-11 22:27:52,730 - root - DEBUG - Starting IF ELSE parsing
+2025-08-11 22:27:52,730 - root - DEBUG - Found IF statement at line 5 in main_section.begin_end_statements: IF (V_COUNTER > 0) THEN
+2025-08-11 22:27:52,730 - root - DEBUG - Parsed IF-ELSE block with condition: (V_COUNTER > 0)
+2025-08-11 22:27:52,730 - root - DEBUG - Found IF statement at line 7 in main_section.begin_end_statements: IF (V_COUNTER > 10) THEN
+2025-08-11 22:27:52,730 - root - DEBUG - Parsed IF-ELSE block with condition: (V_COUNTER > 10)
+2025-08-11 22:27:52,730 - root - DEBUG - Starting assignment statements parsing
+2025-08-11 22:27:52,730 - root - DEBUG - Found assignment statement at line 11 in main_section_lines.begin_end_statements: V_COUNTER := 0;
+2025-08-11 22:27:52,731 - root - DEBUG - Parsed single-line assignment statement: V_COUNTER
+2025-08-11 22:27:52,731 - root - DEBUG - Found assignment statement at line 13 in main_section_lines.begin_end_statements: V_COUNTER := 1;
+2025-08-11 22:27:52,731 - root - DEBUG - Parsed single-line assignment statement: V_COUNTER
+2025-08-11 22:27:52,731 - root - DEBUG - Assignment statements parsing complete
+2025-08-11 22:27:52,731 - root - DEBUG - Starting SQL statements parsing
+2025-08-11 22:27:52,731 - root - DEBUG - SQL statements parsing complete
+2025-08-11 22:27:52,731 - root - DEBUG - Starting rule validation
+2025-08-11 22:27:52,731 - root - DEBUG - Rule validation complete: found 0 violations
+2025-08-11 22:27:52,731 - root - INFO - JSON conversion complete: 1 vars, 0 consts, 0 excs, 0 comments

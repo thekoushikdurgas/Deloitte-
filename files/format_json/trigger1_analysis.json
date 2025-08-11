@@ -256,26 +256,12 @@
             {
               "type": "if_else",
               "condition": "(:NEW.PORTF_PROJ_CD <> 'Y')",
-              "then_statements": [
-                {
-                  "sql": "RAISE IN_PREP_NOT_PORTF_PROJ;",
-                  "type": "raise_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
+              "then_statements": []
             },
             {
               "type": "if_else",
               "condition": "(:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0)",
-              "then_statements": [
-                {
-                  "sql": "RAISE IN_PREP_NOT_CLOSED;",
-                  "type": "raise_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
+              "then_statements": []
             },
             {
               "type": "if_else",
@@ -287,26 +273,22 @@
                   "line_no": 105,
                   "is_end_semicolon": true
                 }
-              ],
-              "else_if": [],
-              "else_statements": []
+              ]
             }
-          ],
-          "else_if": [],
-          "else_statements": []
+          ]
         },
         {
           "type": "if_else",
           "condition": "(:NEW.MOLECULE_ID IS NOT NULL)",
           "then_statements": [
             {
-              "type": "begin_end",
               "begin_end_statements": [
                 {
                   "sql": "SELECT RG_NO, M.COMPARATOR_IND INTO V_MOLECULE_RG_NO, V_COMPARATOR_IND FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y';",
                   "type": "select_statement"
                 }
               ],
+              "type": "begin_end",
               "exception_handlers": [
                 {
                   "exception_name": "NO_DATA_FOUND",
@@ -320,55 +302,36 @@
               ]
             },
             {
+              "indent": 6,
+              "line": "      IF (V_MOLECULE_RG_NO IS NULL) THEN",
+              "line_no": 127,
+              "is_end_semicolon": false
+            },
+            {
               "type": "if_else",
-              "condition": "(V_MOLECULE_RG_NO IS NULL)",
+              "condition": "(V_COMPARATOR_IND = 'Y')",
               "then_statements": [
                 {
-                  "type": "if_else",
-                  "condition": "(V_COMPARATOR_IND = 'Y')",
-                  "then_statements": [
-                    {
-                      "indent": 12,
-                      "line": "            NULL;",
-                      "line_no": 129,
-                      "is_end_semicolon": true
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "sql": "UPDATE V_THEME_MOLECULES SET RG_NO = V_NEW_RG_NO WHERE MOLECULE_ID = :NEW.MOLECULE_ID;",
-                      "type": "update_statement"
-                    }
-                  ]
+                  "indent": 12,
+                  "line": "            NULL;",
+                  "line_no": 129,
+                  "is_end_semicolon": true
                 }
               ],
-              "else_if": [],
-              "else_statements": []
-            }
-          ],
-          "else_if": [],
-          "else_statements": []
-        },
-        {
-          "begin_end_statements": [
-            {
-              "sql": "SELECT RG_NO, M.COMPARATOR_IND INTO V_MOLECULE_RG_NO, V_COMPARATOR_IND FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y';",
-              "type": "select_statement"
-            }
-          ],
-          "type": "begin_end",
-          "exception_handlers": [
-            {
-              "exception_name": "NO_DATA_FOUND",
-              "exception_statements": [
+              "else_statements": [
                 {
-                  "sql": "RAISE INVALID_MOLECULE_ID;",
-                  "type": "raise_statement"
+                  "sql": "UPDATE V_THEME_MOLECULES SET RG_NO = V_NEW_RG_NO WHERE MOLECULE_ID = :NEW.MOLECULE_ID;",
+                  "type": "update_statement"
                 }
               ]
             }
           ]
+        },
+        {
+          "indent": 3,
+          "line": "   END IF;",
+          "line_no": 140,
+          "is_end_semicolon": true
         },
         {
           "variable": "V_ODG_NO",
@@ -399,7 +362,6 @@
               "type": "select_statement"
             }
           ],
-          "else_if": [],
           "else_statements": [
             {
               "variable": "V_STATUS_CD",
@@ -417,7 +379,6 @@
               "type": "select_statement"
             }
           ],
-          "else_if": [],
           "else_statements": [
             {
               "variable": "V_DBA_CD",
@@ -441,7 +402,6 @@
               "type": "assignment_statement"
             }
           ],
-          "else_if": [],
           "else_statements": [
             {
               "variable": "V_TRADEMARK_NO",
@@ -458,14 +418,7 @@
         {
           "type": "if_else",
           "condition": "(:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30)",
-          "then_statements": [
-            {
-              "sql": "RAISE THEME_DESC_PROPOSAL_TOO_LONG;",
-              "type": "raise_statement"
-            }
-          ],
-          "else_if": [],
-          "else_statements": []
+          "then_statements": []
         },
         {
           "variable": "V_SHORT_NAME",
@@ -473,678 +426,45 @@
           "type": "assignment_statement"
         },
         {
+          "indent": 3,
+          "line": "   IF (INSERTING) THEN",
+          "line_no": 186,
+          "is_end_semicolon": false
+        },
+        {
           "type": "if_else",
-          "condition": "(INSERTING)",
+          "condition": "(:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0)",
+          "then_statements": []
+        },
+        {
+          "variable": "V_MOLECULE_ID",
+          "value": ":NEW.MOLECULE_ID",
+          "type": "assignment_statement"
+        },
+        {
+          "type": "if_else",
+          "condition": "(:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL)",
           "then_statements": [
             {
               "type": "if_else",
-              "condition": "(:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0)",
-              "then_statements": [
-                {
-                  "sql": "RAISE ADMIN_UPDATE_ONLY;",
-                  "type": "raise_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            },
-            {
-              "variable": "V_MOLECULE_ID",
-              "value": ":NEW.MOLECULE_ID",
-              "type": "assignment_statement"
-            },
-            {
-              "type": "if_else",
-              "condition": "(:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL)",
-              "then_statements": [
-                {
-                  "type": "if_else",
-                  "condition": "(NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL)",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE PORTF_PROJ_MOL_CRE_ERR;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "sql": "INSERT INTO MDM_V_THEME_MOLECULES_MTN( MOLECULE_DESC, VALID_IND, RG_NO, CANCER_IMMUNOTHERAPY_IND, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID ) VALUES ( NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL), 'Y', V_NEW_RG_NO, 'N', C_MOLECULE_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID );",
-                      "type": "insert_statement"
-                    },
-                    {
-                      "sql": "SELECT MOLECULE_ID INTO V_MOLECULE_ID FROM V_THEME_MOLECULES WHERE MOLECULE_DESC = NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) AND VALID_IND = 'Y' AND RG_NO = V_NEW_RG_NO AND CANCER_IMMUNOTHERAPY_IND = 'N' AND MOLECULE_TYPE_ID = C_MOLECULE_TYPE_ID AND PHARMACOLOGICAL_TYPE_ID = C_PHARMACOLOGICAL_TYPE_ID;",
-                      "type": "select_statement"
-                    },
-                    {
-                      "sql": "INSERT INTO THEME_MOLECULE_MAP TMMAP( TMMAP.THEME_NO, TMMAP.MOLECULE_ID, TMMAP.MOLECULE_SEQ_NO, TMMAP.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' );",
-                      "type": "insert_statement"
-                    }
-                  ]
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            },
-            {
-              "type": "case_when",
-              "case_expression": "LENGTH(:NEW.THEME_NO)",
-              "when_clauses": [
-                {
-                  "when_value": "4",
-                  "then_statements": [
-                    {
-                      "indent": 12,
-                      "line": "            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) THEN",
-                      "line_no": 243,
-                      "is_end_semicolon": false
-                    },
-                    {
-                      "sql": "RAISE INVALID_THEME_NO;",
-                      "type": "raise_statement"
-                    },
-                    {
-                      "indent": 12,
-                      "line": "            END IF;",
-                      "line_no": 245,
-                      "is_end_semicolon": true
-                    }
-                  ]
-                },
-                {
-                  "when_value": "5",
-                  "then_statements": [
-                    {
-                      "indent": 12,
-                      "line": "            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) THEN",
-                      "line_no": 247,
-                      "is_end_semicolon": false
-                    },
-                    {
-                      "sql": "RAISE INVALID_THEME_NO;",
-                      "type": "raise_statement"
-                    },
-                    {
-                      "indent": 12,
-                      "line": "            END IF;",
-                      "line_no": 249,
-                      "is_end_semicolon": true
-                    }
-                  ]
-                },
-                {
-                  "else_statements": [
-                    {
-                      "sql": "RAISE INVALID_THEME_NO;",
-                      "type": "raise_statement"
-                    }
-                  ]
-                }
-              ],
-              "sql": "CASE LENGTH(:NEW.THEME_NO)\n         WHEN 4 THEN\n            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) THEN\n               RAISE INVALID_THEME_NO;\n            END IF;\n         WHEN 5 THEN\n            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) THEN\n               RAISE INVALID_THEME_NO;\n            END IF;\n         ELSE\n            RAISE INVALID_THEME_NO;\n      END CASE;"
-            },
-            {
-              "indent": 9,
-              "line": "         WHEN 4 THEN",
-              "line_no": 242,
-              "is_end_semicolon": false
-            },
-            {
-              "type": "if_else",
-              "condition": "(SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9)",
-              "then_statements": [
-                {
-                  "sql": "RAISE INVALID_THEME_NO;",
-                  "type": "raise_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            },
-            {
-              "indent": 9,
-              "line": "         WHEN 5 THEN",
-              "line_no": 246,
-              "is_end_semicolon": false
-            },
-            {
-              "type": "if_else",
-              "condition": "(SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9)",
-              "then_statements": [
-                {
-                  "sql": "RAISE INVALID_THEME_NO;",
-                  "type": "raise_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            },
-            {
-              "indent": 9,
-              "line": "         ELSE",
-              "line_no": 250,
-              "is_end_semicolon": false
-            },
-            {
-              "sql": "RAISE INVALID_THEME_NO;",
-              "type": "raise_statement"
-            },
-            {
-              "indent": 6,
-              "line": "      END CASE;",
-              "line_no": 252,
-              "is_end_semicolon": true
-            },
-            {
-              "variable": "V_COUNTER",
-              "value": "NULL",
-              "type": "assignment_statement"
-            },
-            {
-              "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM ( SELECT THEME_NO FROM V_THEMES UNION ALL SELECT THEME_NO FROM GMD.THEMES_ARCHIVE )                  T WHERE T.THEME_NO = :NEW.THEME_NO;",
-              "type": "select_statement"
-            },
-            {
-              "type": "if_else",
-              "condition": "(V_COUNTER > 0)",
-              "then_statements": [
-                {
-                  "sql": "RAISE THEME_NO_CANNOT_BE_INSERTED;",
-                  "type": "raise_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            },
-            {
-              "variable": "V_COUNTER",
-              "value": "NULL",
-              "type": "assignment_statement"
-            },
-            {
-              "variable": "V_D_REGISTRAT_DATE",
-              "value": "SYSDATE",
-              "type": "assignment_statement"
-            },
-            {
-              "type": "if_else",
-              "condition": "(:NEW.OFFICIAL_IND = 'N')",
-              "then_statements": [
-                {
-                  "sql": "RAISE INSERTSMUSTBEOFFICIAL;",
-                  "type": "raise_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            },
-            {
-              "type": "if_else",
-              "condition": "(UPPER(:NEW.PORTF_PROJ_CD) = 'N')",
-              "then_statements": [
-                {
-                  "type": "if_else",
-                  "condition": "(:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0)",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE THEMEDESCRIPTIONMANDATORY;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            },
-            {
-              "type": "if_else",
-              "condition": "(UPPER(:NEW.PORTF_PROJ_CD) = 'Y')",
-              "then_statements": [
-                {
-                  "variable": "V_DESCRIPTION",
-                  "value": "GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO( P_THEME_NO_PORTF => NULL, P_MOLECULE_ID_PORTF => V_MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR, P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO, P_SHORT_NAME_PORTF => :NEW.SHORT_NAME, P_TRUNC_DESC_LENGTH => 'N' )",
-                  "type": "assignment_statement"
-                },
-                {
-                  "type": "if_else",
-                  "condition": "(LENGTH(V_DESCRIPTION) > 90)",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE DESCRIPTION_TOO_LONG;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
-                },
-                {
-                  "variable": "V_DESCRIPTION",
-                  "value": "TRIM(V_DESCRIPTION)",
-                  "type": "assignment_statement"
-                },
-                {
-                  "variable": "V_PORTF_PROJ_CD",
-                  "value": "'Y'",
-                  "type": "assignment_statement"
-                }
-              ],
-              "else_if": [],
+              "condition": "(NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL)",
+              "then_statements": [],
               "else_statements": [
                 {
-                  "variable": "V_DESCRIPTION",
-                  "value": ":NEW.THEME_DESC",
-                  "type": "assignment_statement"
-                },
-                {
-                  "variable": "V_PORTF_PROJ_CD",
-                  "value": "'N'",
-                  "type": "assignment_statement"
-                }
-              ]
-            },
-            {
-              "variable": "V_COUNTER",
-              "value": "NULL",
-              "type": "assignment_statement"
-            },
-            {
-              "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM V_THEMES T WHERE T.THEME_DESC = V_DESCRIPTION;",
-              "type": "select_statement"
-            },
-            {
-              "type": "if_else",
-              "condition": "(V_COUNTER > 0)",
-              "then_statements": [
-                {
-                  "sql": "RAISE THEME_DESC_NOT_UNIQUE;",
-                  "type": "raise_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            },
-            {
-              "variable": "V_COUNTER",
-              "value": "NULL",
-              "type": "assignment_statement"
-            },
-            {
-              "variable": "V_VALID_TO",
-              "value": "TO_DATE('09.09.9999', 'DD.MM.YYYY')",
-              "type": "assignment_statement"
-            },
-            {
-              "variable": "V_SHORT_NAME",
-              "value": "NVL(:NEW.MANUAL_SHORT_DESC, SUBSTR(V_DESCRIPTION, 1, 30))",
-              "type": "assignment_statement"
-            },
-            {
-              "sql": "INSERT INTO GMD.THEMES( THEME_NO, REGISTRAT_DATE, ODG_NO, RESGRP_CD, RESLIN_CD, THEME_DESC, SHORT_NAME, STATUS_CD, DBA_CD, IN_PREP_IND, PROD_SHORT_CD, TRADEMARK_NO, BIO_ACTIVITY, APPLICANT, CONTACT, REGISTRAR, LINE_EXT_INFO, PORTF_PROJ_CD, CO_DEV_PRTNR, TECHNOLOGY_PRTNR, OFFICIAL_IND, CO_MAR_PRTNR, VALID_TO, PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC ) VALUES ( :NEW.THEME_NO, V_D_REGISTRAT_DATE, V_ODG_NO, V_RESGRP_CD, V_RESLIN_CD, V_DESCRIPTION, V_SHORT_NAME, V_STATUS_CD, V_DBA_CD, :NEW.IN_PREP_IND, :NEW.PROD_SHORT_CD, :NEW.TRADEMARK_NO, :NEW.BIO_ACTIVITY, :NEW.APPLICANT, :NEW.CONTACT, TXO_UTIL.GET_USERID, :NEW.LINE_EXT_INFO, V_PORTF_PROJ_CD, :NEW.CO_DEV_PRTNR, :NEW.TECHNOLOGY_PRTNR, :NEW.OFFICIAL_IND, :NEW.CO_MAR_PRTNR, V_VALID_TO, :NEW.PORTF_DA_GROUP_ID, :NEW.MANUAL_SHORT_DESC );",
-              "type": "insert_statement"
-            },
-            {
-              "type": "if_else",
-              "condition": "(:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL)",
-              "then_statements": [
-                {
-                  "sql": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' );",
-                  "type": "insert_statement"
-                }
-              ],
-              "else_if": [],
-              "else_statements": []
-            }
-          ],
-          "else_if": [
-            {
-              "condition": "(UPDATING)",
-              "then_statements": [
-                {
-                  "type": "if_else",
-                  "condition": "(:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE ADMIN_UPDATE_ONLY;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
-                },
-                {
-                  "type": "if_else",
-                  "condition": "(:NEW.THEME_NO <> :OLD.THEME_NO)",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE THEME_NO_ONLY_INSERT;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
-                },
-                {
-                  "type": "if_else",
-                  "condition": "(:NEW.OFFICIAL_IND = 'N')",
-                  "then_statements": [
-                    {
-                      "variable": "V_D_REGISTRAT_DATE",
-                      "value": "TO_DATE(:OLD.REGISTRAT_DATE, 'dd-mm-yyyy')",
-                      "type": "assignment_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "variable": "V_D_REGISTRAT_DATE",
-                      "value": "SYSDATE",
-                      "type": "assignment_statement"
-                    }
-                  ]
-                },
-                {
-                  "type": "if_else",
-                  "condition": "(UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD)",
-                  "then_statements": [
-                    {
-                      "variable": "V_DESCRIPTION",
-                      "value": "GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO( P_THEME_NO_PORTF => :NEW.THEME_NO, P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR, P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO, P_SHORT_NAME_PORTF => :NEW.SHORT_NAME, P_TRUNC_DESC_LENGTH => 'N' )",
-                      "type": "assignment_statement"
-                    },
-                    {
-                      "variable": "V_DESCRIPTION",
-                      "value": "TRIM(V_DESCRIPTION)",
-                      "type": "assignment_statement"
-                    },
-                    {
-                      "variable": "V_PORTF_PROJ_CD",
-                      "value": "'Y'",
-                      "type": "assignment_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "type": "if_else",
-                      "condition": "(:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0)",
-                      "then_statements": [
-                        {
-                          "sql": "RAISE THEMEDESCRIPTIONMANDATORY;",
-                          "type": "raise_statement"
-                        }
-                      ],
-                      "else_if": [],
-                      "else_statements": [
-                        {
-                          "variable": "V_DESCRIPTION",
-                          "value": ":NEW.THEME_DESC",
-                          "type": "assignment_statement"
-                        },
-                        {
-                          "variable": "V_PORTF_PROJ_CD",
-                          "value": ":NEW.PORTF_PROJ_CD",
-                          "type": "assignment_statement"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "if_else",
-                  "condition": "(LENGTH(V_DESCRIPTION) > 90)",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE DESCRIPTION_TOO_LONG;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
-                },
-                {
-                  "variable": "V_COUNTER",
-                  "value": "NULL",
-                  "type": "assignment_statement"
-                },
-                {
-                  "sql": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM V_THEMES T WHERE T.THEME_DESC = V_DESCRIPTION AND T.THEME_NO <> :NEW.THEME_NO;",
-                  "type": "select_statement"
-                },
-                {
-                  "type": "if_else",
-                  "condition": "(V_COUNTER > 0)",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE THEME_DESC_NOT_UNIQUE;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
-                },
-                {
-                  "variable": "V_COUNTER",
-                  "value": "NULL",
-                  "type": "assignment_statement"
-                },
-                {
-                  "type": "if_else",
-                  "condition": "(:NEW.OFFICIAL_IND = 'N')",
-                  "then_statements": [
-                    {
-                      "sql": "UPDATE GMD.THEMES SET ODG_NO = V_ODG_NO, RESGRP_CD = V_RESGRP_CD, RESLIN_CD = V_RESLIN_CD, THEME_DESC = V_DESCRIPTION, SHORT_NAME = V_SHORT_NAME, STATUS_CD = V_STATUS_CD, DBA_CD = V_DBA_CD, IN_PREP_IND = :NEW.IN_PREP_IND, PROD_SHORT_CD = :NEW.PROD_SHORT_CD, TRADEMARK_NO = :NEW.TRADEMARK_NO, BIO_ACTIVITY = :NEW.BIO_ACTIVITY, APPLICANT = :NEW.APPLICANT, CONTACT = :NEW.CONTACT, LINE_EXT_INFO = :NEW.LINE_EXT_INFO, PORTF_PROJ_CD = V_PORTF_PROJ_CD, CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR, TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR, OFFICIAL_IND = :NEW.OFFICIAL_IND, CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR, PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC WHERE THEME_NO = :NEW.THEME_NO AND TO_DATE(REGISTRAT_DATE, 'DD-MM-YYYY') = V_D_REGISTRAT_DATE;",
-                      "type": "update_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "variable": "V_COUNTER",
-                      "value": "NULL",
-                      "type": "assignment_statement"
-                    },
-                    {
-                      "sql": "SELECT COUNT(*) INTO V_COUNTER FROM V_THEMES T WHERE TRUNC(T.REGISTRAT_DATE) = TRUNC(SYSDATE) AND T.THEME_NO = :NEW.THEME_NO;",
-                      "type": "select_statement"
-                    },
-                    {
-                      "type": "if_else",
-                      "condition": "(V_COUNTER > 0)",
-                      "then_statements": [
-                        {
-                          "sql": "RAISE ONLYONEOFFICIALCHANGEPERDAY;",
-                          "type": "raise_statement"
-                        }
-                      ],
-                      "else_if": [],
-                      "else_statements": []
-                    },
-                    {
-                      "variable": "V_COUNTER",
-                      "value": "NULL",
-                      "type": "assignment_statement"
-                    },
-                    {
-                      "sql": "UPDATE GMD.THEMES SET ODG_NO = V_ODG_NO, RESGRP_CD = V_RESGRP_CD, RESLIN_CD = V_RESLIN_CD, THEME_DESC = V_DESCRIPTION, SHORT_NAME = V_SHORT_NAME, STATUS_CD = V_STATUS_CD, DBA_CD = V_DBA_CD, IN_PREP_IND = :NEW.IN_PREP_IND, PROD_SHORT_CD = :NEW.PROD_SHORT_CD, TRADEMARK_NO = :NEW.TRADEMARK_NO, BIO_ACTIVITY = :NEW.BIO_ACTIVITY, APPLICANT = :NEW.APPLICANT, CONTACT = :NEW.CONTACT, LINE_EXT_INFO = :NEW.LINE_EXT_INFO, PORTF_PROJ_CD = V_PORTF_PROJ_CD, CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR, TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR, OFFICIAL_IND = :NEW.OFFICIAL_IND, CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR, REGISTRAT_DATE = SYSDATE, REGISTRAR = V_USERID, PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC WHERE THEME_NO = :NEW.THEME_NO;",
-                      "type": "update_statement"
-                    }
-                  ]
-                },
-                {
-                  "type": "case_when",
-                  "case_expression": "",
-                  "when_clauses": [
-                    {
-                      "when_value": ":OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL",
-                      "then_statements": [
-                        {
-                          "sql": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, 1, 'Y' );",
-                          "type": "insert_statement"
-                        }
-                      ]
-                    },
-                    {
-                      "when_value": ":OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL",
-                      "then_statements": [
-                        {
-                          "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.MOLECULE_ID = :NEW.MOLECULE_ID, A.VALID_IND = 'Y' WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
-                          "type": "update_statement"
-                        }
-                      ]
-                    },
-                    {
-                      "when_value": ":OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL",
-                      "then_statements": [
-                        {
-                          "sql": "SELECT COUNT(*) INTO V_SEC_MOL_CNT FROM MDM_V_THEME_MOLECULE_MAP_MTN A WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO > 1 AND A.VALID_IND = 'Y';",
-                          "type": "select_statement"
-                        },
-                        {
-                          "indent": 12,
-                          "line": "            IF (V_SEC_MOL_CNT > 0) THEN",
-                          "line_no": 590,
-                          "is_end_semicolon": false
-                        },
-                        {
-                          "sql": "RAISE SEC_MOL_LIST_NOT_EMPTY;",
-                          "type": "raise_statement"
-                        },
-                        {
-                          "indent": 12,
-                          "line": "            ELSE",
-                          "line_no": 592,
-                          "is_end_semicolon": false
-                        },
-                        {
-                          "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.VALID_IND = 'N' WHERE A.MOLECULE_ID = :OLD.MOLECULE_ID AND A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
-                          "type": "update_statement"
-                        },
-                        {
-                          "indent": 12,
-                          "line": "            END IF;",
-                          "line_no": 603,
-                          "is_end_semicolon": true
-                        }
-                      ]
-                    },
-                    {
-                      "else_statements": [
-                        {
-                          "indent": 12,
-                          "line": "            NULL;",
-                          "line_no": 605,
-                          "is_end_semicolon": true
-                        }
-                      ]
-                    }
-                  ],
-                  "sql": "CASE\n         WHEN :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN\n            INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A(\n               A.THEME_NO,\n               A.MOLECULE_ID,\n               A.MOLECULE_SEQ_NO,\n               A.VALID_IND\n            ) VALUES (\n               :NEW.THEME_NO,\n               :NEW.MOLECULE_ID,\n               1,\n               'Y'\n            );\n         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN\n            UPDATE MDM_V_THEME_MOLECULE_MAP A\n            SET\n               A.MOLECULE_ID = :NEW.MOLECULE_ID,\n               A.VALID_IND = 'Y'\n            WHERE\n               A.THEME_NO = :NEW.THEME_NO\n               AND A.MOLECULE_SEQ_NO = 1\n               AND A.VALID_IND = 'Y';\n         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL THEN\n            SELECT\n               COUNT(*) INTO V_SEC_MOL_CNT\n            FROM\n               MDM_V_THEME_MOLECULE_MAP_MTN A\n            WHERE\n               A.THEME_NO = :NEW.THEME_NO\n               AND A.MOLECULE_SEQ_NO > 1\n               AND A.VALID_IND = 'Y';\n            IF (V_SEC_MOL_CNT > 0) THEN\n               RAISE SEC_MOL_LIST_NOT_EMPTY;\n            ELSE\n               UPDATE MDM_V_THEME_MOLECULE_MAP A\n               SET\n                  A.VALID_IND = 'N'\n               WHERE\n                  A.MOLECULE_ID = :OLD.MOLECULE_ID\n                  AND A.THEME_NO = :NEW.THEME_NO\n                  AND A.MOLECULE_SEQ_NO = 1\n                  AND A.VALID_IND = 'Y';\n            END IF;\n         ELSE\n            NULL;\n      END CASE;"
-                },
-                {
-                  "indent": 9,
-                  "line": "         WHEN :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN",
-                  "line_no": 556,
-                  "is_end_semicolon": false
-                },
-                {
-                  "sql": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, 1, 'Y' );",
+                  "sql": "INSERT INTO MDM_V_THEME_MOLECULES_MTN( MOLECULE_DESC, VALID_IND, RG_NO, CANCER_IMMUNOTHERAPY_IND, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID ) VALUES ( NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL), 'Y', V_NEW_RG_NO, 'N', C_MOLECULE_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID );",
                   "type": "insert_statement"
                 },
                 {
-                  "indent": 9,
-                  "line": "         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN",
-                  "line_no": 570,
-                  "is_end_semicolon": false
-                },
-                {
-                  "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.MOLECULE_ID = :NEW.MOLECULE_ID, A.VALID_IND = 'Y' WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
-                  "type": "update_statement"
-                },
-                {
-                  "indent": 9,
-                  "line": "         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL THEN",
-                  "line_no": 581,
-                  "is_end_semicolon": false
-                },
-                {
-                  "sql": "SELECT COUNT(*) INTO V_SEC_MOL_CNT FROM MDM_V_THEME_MOLECULE_MAP_MTN A WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO > 1 AND A.VALID_IND = 'Y';",
+                  "sql": "SELECT MOLECULE_ID INTO V_MOLECULE_ID FROM V_THEME_MOLECULES WHERE MOLECULE_DESC = NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) AND VALID_IND = 'Y' AND RG_NO = V_NEW_RG_NO AND CANCER_IMMUNOTHERAPY_IND = 'N' AND MOLECULE_TYPE_ID = C_MOLECULE_TYPE_ID AND PHARMACOLOGICAL_TYPE_ID = C_PHARMACOLOGICAL_TYPE_ID;",
                   "type": "select_statement"
                 },
                 {
-                  "type": "if_else",
-                  "condition": "(V_SEC_MOL_CNT > 0)",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE SEC_MOL_LIST_NOT_EMPTY;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "sql": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.VALID_IND = 'N' WHERE A.MOLECULE_ID = :OLD.MOLECULE_ID AND A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
-                      "type": "update_statement"
-                    }
-                  ]
-                },
-                {
-                  "indent": 9,
-                  "line": "         ELSE",
-                  "line_no": 604,
-                  "is_end_semicolon": false
-                },
-                {
-                  "indent": 12,
-                  "line": "            NULL;",
-                  "line_no": 605,
-                  "is_end_semicolon": true
-                },
-                {
-                  "indent": 6,
-                  "line": "      END CASE;",
-                  "line_no": 606,
-                  "is_end_semicolon": true
-                }
-              ]
-            },
-            {
-              "condition": "(DELETING)",
-              "then_statements": [
-                {
-                  "type": "if_else",
-                  "condition": "((:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0)",
-                  "then_statements": [
-                    {
-                      "sql": "RAISE ADMIN_UPDATE_ONLY;",
-                      "type": "raise_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
-                },
-                {
-                  "type": "if_else",
-                  "condition": "(TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE))",
-                  "then_statements": [
-                    {
-                      "sql": "DELETE FROM GMD.THEMES A WHERE A.THEME_NO = :OLD.THEME_NO AND TRUNC(A.REGISTRAT_DATE) = TRUNC(SYSDATE);",
-                      "type": "delete_statement"
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "sql": "RAISE DELETE_NO_MORE_POSSIBLE;",
-                      "type": "raise_statement"
-                    }
-                  ]
+                  "sql": "INSERT INTO THEME_MOLECULE_MAP TMMAP( TMMAP.THEME_NO, TMMAP.MOLECULE_ID, TMMAP.MOLECULE_SEQ_NO, TMMAP.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' );",
+                  "type": "insert_statement"
                 }
               ]
             }
-          ],
-          "else_statements": []
+          ]
         },
         {
           "type": "case_when",
@@ -1161,9 +481,7 @@
                       "sql": "RAISE INVALID_THEME_NO;",
                       "type": "raise_statement"
                     }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
+                  ]
                 }
               ]
             },
@@ -1178,9 +496,7 @@
                       "sql": "RAISE INVALID_THEME_NO;",
                       "type": "raise_statement"
                     }
-                  ],
-                  "else_if": [],
-                  "else_statements": []
+                  ]
                 }
               ]
             },
@@ -1545,128 +861,38 @@
       "is_end_semicolon": true
     },
     {
+      "indent": 6,
+      "line": "      IF (V_MOLECULE_RG_NO IS NULL) THEN",
+      "line_no": 127,
+      "is_end_semicolon": false
+    },
+    {
       "indent": 12,
       "line": "            NULL;",
       "line_no": 129,
       "is_end_semicolon": true
     },
     {
-      "indent": 12,
-      "line": "            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) THEN",
-      "line_no": 243,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            END IF;",
-      "line_no": 245,
+      "indent": 3,
+      "line": "   END IF;",
+      "line_no": 140,
       "is_end_semicolon": true
     },
     {
-      "indent": 12,
-      "line": "            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) THEN",
-      "line_no": 247,
+      "indent": 3,
+      "line": "   IF (INSERTING) THEN",
+      "line_no": 186,
       "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            END IF;",
-      "line_no": 249,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN 4 THEN",
-      "line_no": 242,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN 5 THEN",
-      "line_no": 246,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         ELSE",
-      "line_no": 250,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 6,
-      "line": "      END CASE;",
-      "line_no": 252,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            IF (V_SEC_MOL_CNT > 0) THEN",
-      "line_no": 590,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            ELSE",
-      "line_no": 592,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            END IF;",
-      "line_no": 603,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            NULL;",
-      "line_no": 605,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN",
-      "line_no": 556,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL THEN",
-      "line_no": 570,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         WHEN :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL THEN",
-      "line_no": 581,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 9,
-      "line": "         ELSE",
-      "line_no": 604,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            NULL;",
-      "line_no": 605,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 6,
-      "line": "      END CASE;",
-      "line_no": 606,
-      "is_end_semicolon": true
     }
   ],
   "conversion_stats": {
     "declaration_count": 49,
     "comment_count": 63,
-    "rest_string_count": 20,
-    "sql_convert_count": 677
+    "rest_string_count": 5,
+    "sql_convert_count": 692
   },
   "metadata": {
-    "parse_timestamp": "2025-08-11T21:33:08.537275",
+    "parse_timestamp": "2025-08-12T00:02:58.922283",
     "parser_version": "1.0"
   }
 }

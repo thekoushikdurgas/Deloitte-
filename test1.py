@@ -698,10 +698,10 @@ class OracleTriggerAnalyzer:
         self._parse_begin_end()
         self._parse_case_when()
         self._parse_for_loop()
-        self._parse_if_else()
-        self._parse_final_statement()
         self._parse_assignment_statement()
         self._parse_sql_statements()
+        self._parse_if_else()
+        # self._parse_final_statement()
         
         # to check how many rest strings are in main section
         self.rest_strings_line = self.rest_strings()
@@ -731,46 +731,10 @@ class OracleTriggerAnalyzer:
                     
                     # Check for BEGIN block start
                     if line_upper.startswith("BEGIN"):
-                        logger.debug("Found BEGIN block at line %d in %s", item["line_no"], parent_context)
-                        begin_result = self._parse_begin_end_structure(self._find_line_index(item["line_no"]))
-                        if begin_result:
-                            begin_block, end_idx = begin_result
-                            # Replace the line_info with the parsed begin_block
-                            statements_list[i] = begin_block
-                            logger.debug("Parsed complete BEGIN block structure in %s", parent_context)
-                            # Remove any subsequent line_info objects that are part of the BEGIN block
-                            # (they will be included in the begin_block)
-                            j = i + 1
-                            while j < len(statements_list):
-                                next_item = statements_list[j]
-                                if isinstance(next_item, dict) and "line_no" in next_item:
-                                    if next_item["line_no"] > end_idx:
-                                        break
-                                    statements_list.pop(j)
-                                else:
-                                    j += 1
-                            continue
+                        print("BEGIN statement found")
                     # Check for CASE statement start
                     elif line_upper.startswith("CASE"):
-                        logger.debug("Found CASE statement at line %d in %s", item["line_no"], parent_context)
-                        case_result = self._parse_case_statement(self._find_line_index(item["line_no"]))
-                        if case_result:
-                            case_block, end_idx = case_result
-                            # Replace the line_info with the parsed case_block
-                            statements_list[i] = case_block
-                            logger.debug("Parsed complete CASE statement structure in %s", parent_context)
-                            # Remove any subsequent line_info objects that are part of the CASE statement
-                            # (they will be included in the case_block)
-                            j = i + 1
-                            while j < len(statements_list):
-                                next_item = statements_list[j]
-                                if isinstance(next_item, dict) and "line_no" in next_item:
-                                    if next_item["line_no"] > end_idx:
-                                        break
-                                    statements_list.pop(j)
-                                else:
-                                    j += 1
-                            continue
+                        print("CASE statement found")
                 
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
@@ -1081,13 +1045,13 @@ class OracleTriggerAnalyzer:
 
     def _parse_if_else(self):
         """
-        Parse IF ELSE statements from the main section of SQL.
+        Parse n-nested IF ELSE statements from the main section of SQL.
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
         
         This method recursively processes all statement lists (begin_end_statements,
         exception_statements, then_statements, else_statements, etc.) to find and
-        parse IF-ELSE blocks, including nested blocks.
+        parse IF-ELSE blocks.
         
         The parsed blocks are structured as:
         {
@@ -1104,372 +1068,372 @@ class OracleTriggerAnalyzer:
             "else_statements": [...]
         }
         """
-        logger.debug("Starting IF ELSE parsing")
+        logger.debug("Starting n-nested IF ELSE parsing")
         
-        def process_if_else_in_list(statements_list, parent_context=""):
-            """Recursively process IF-ELSE statements in a list of statements"""
+        def process_if_else_in_list(statements_list, parent_context="", processed_lists=None):
+            """Recursively process IF ELSE statements in a list of statements"""
             if not statements_list:
                 return
+                
+            # Initialize processed_lists if not provided (prevents infinite recursion)
+            if processed_lists is None:
+                processed_lists = set()
+                
+            # Skip if we've already processed this list
+            list_id = id(statements_list)
+            if list_id in processed_lists:
+                logger.debug("Skipping already processed statements list in %s", parent_context)
+                return
+                
+            # Mark this list as processed
+            processed_lists.add(list_id)
             
+            # First process any top-level IF-ELSIF-ELSE structures
+            # This handles cases where IF and ELSIF are at the same indent level
+            # and might be far apart in the list
+            process_top_level_if_elsif(statements_list, parent_context, processed_lists)
+                
             i = 0
             while i < len(statements_list):
                 item = statements_list[i]
                 
-                # Handle line_info objects (from structured_lines)
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
-                    line = item["line"].strip()
-                    line_upper = line.upper()
+                # Skip non-dict items or already processed items
+                if not isinstance(item, dict):
+                    i += 1
+                    continue
+                
+                # Process nested statement lists first
+                if "begin_end_statements" in item:
+                    logger.debug("Processing IF-ELSE in begin_end_statements in %s", parent_context)
+                    process_if_else_in_list(item["begin_end_statements"], f"{parent_context}.begin_end_statements", processed_lists)
+                
+                if "exception_handlers" in item:
+                    for handler in item.get("exception_handlers", []):
+                        if "exception_statements" in handler:
+                            logger.debug("Processing IF-ELSE in exception_statements in %s", parent_context)
+                            process_if_else_in_list(handler["exception_statements"], f"{parent_context}.exception_statements", processed_lists)
+                
+                if "when_clauses" in item:
+                    for clause in item.get("when_clauses", []):
+                        if "then_statements" in clause:
+                            logger.debug("Processing IF-ELSE in case-when then_statements in %s", parent_context)
+                            process_if_else_in_list(clause["then_statements"], f"{parent_context}.then_statements", processed_lists)
+                        if "else_statements" in clause:
+                            logger.debug("Processing IF-ELSE in case-when else_statements in %s", parent_context)
+                            process_if_else_in_list(clause["else_statements"], f"{parent_context}.else_statements", processed_lists)
+                
+                # Process existing if-else blocks recursively
+                if item.get("type") == "if_else":
+                    if "then_statements" in item:
+                        logger.debug("Processing IF-ELSE in then_statements in %s", parent_context)
+                        process_if_else_in_list(item["then_statements"], f"{parent_context}.then_statements", processed_lists)
                     
-                    # Check for IF statement start
-                    if line_upper.startswith("IF ") and not line_upper.endswith("END IF;"):
-                        logger.debug("Found IF statement at line %d in %s", item["line_no"], parent_context)
-                        if_else_result = self._parse_if_else_structure(self._find_line_index(item["line_no"]))
-                        if if_else_result:
-                            if_else_block, end_idx = if_else_result
-                            # Replace the line_info with the parsed if_else_block
-                            statements_list[i] = if_else_block
-                            logger.debug("Parsed complete IF-ELSE structure in %s", parent_context)
-                            # Remove any subsequent line_info objects that are part of the IF-ELSE block
-                            # (they will be included in the if_else_block)
-                            j = i + 1
-                            while j < len(statements_list):
-                                next_item = statements_list[j]
-                                if isinstance(next_item, dict) and "line_no" in next_item:
-                                    if next_item["line_no"] > end_idx:
-                                        break
-                                    statements_list.pop(j)
-                                else:
-                                    j += 1
+                    for elsif_block in item.get("else_if", []):
+                        if "then_statements" in elsif_block:
+                            logger.debug("Processing IF-ELSE in else_if.then_statements in %s", parent_context)
+                            process_if_else_in_list(elsif_block["then_statements"], f"{parent_context}.else_if.then_statements", processed_lists)
+                    
+                    if "else_statements" in item:
+                        logger.debug("Processing IF-ELSE in else_statements in %s", parent_context)
+                        process_if_else_in_list(item["else_statements"], f"{parent_context}.else_statements", processed_lists)
+                
+                # Process loops
+                if "loop_statements" in item:
+                    logger.debug("Processing IF-ELSE in loop_statements in %s", parent_context)
+                    process_if_else_in_list(item["loop_statements"], f"{parent_context}.loop_statements", processed_lists)
+                
+                # Look for start of new IF blocks (dictionaries with line/line_no that start with IF)
+                if isinstance(item, dict) and "line" in item and "indent" in item and "line_no" in item:
+                    line = item["line"].strip()
+                    base_indent = item["indent"]
+                    
+                    if line.startswith("IF") and " THEN" in line:
+                        logger.debug("Found IF block start at line %d in %s: %s", item["line_no"], parent_context, line[:50])
+                        
+                        # Extract the condition from the IF statement
+                        condition_match = re.match(r"IF\s+(.+?)\s+THEN", line)
+                        if not condition_match:
+                            i += 1
                             continue
-                
-                # Handle nested structures (begin_end blocks, exception handlers, etc.)
-                elif isinstance(item, dict) and "type" in item:
-                    if item["type"] == "begin_end":
-                        # Process IF-ELSE statements in begin_end_statements
-                        if "begin_end_statements" in item:
-                            process_if_else_in_list(item["begin_end_statements"], f"{parent_context}.begin_end_statements")
+                            
+                        condition = condition_match.group(1)
+                        logger.debug("Extracted condition: %s", condition)
                         
-                        # Process IF-ELSE statements in exception_handlers
-                        if "exception_handlers" in item:
-                            for handler in item["exception_handlers"]:
-                                if "exception_statements" in handler:
-                                    process_if_else_in_list(handler["exception_statements"], f"{parent_context}.exception_statements")
-                    
-                    elif item["type"] == "case_when":
-                        # Process IF-ELSE statements in when_clauses (then_statements and else_statements)
-                        if "when_clauses" in item:
-                            for clause in item["when_clauses"]:
-                                if "when_value" in clause and "then_statements" in clause:
-                                    process_if_else_in_list(clause["then_statements"], f"{parent_context}.then_statements")
-                                elif "else_statements" in clause:
-                                    process_if_else_in_list(clause["else_statements"], f"{parent_context}.else_statements")
-                    
-                    elif item["type"] == "if_else":
-                        # Process nested IF-ELSE statements in then_statements, else_if, and else_statements
-                        if "then_statements" in item:
-                            process_if_else_in_list(item["then_statements"], f"{parent_context}.then_statements")
+                        # Collect then statements, else_if blocks, and else statements
+                        then_statements = []
+                        else_if_blocks = []
+                        else_statements = []
                         
-                        if "else_if" in item:
-                            for elsif_block in item["else_if"]:
-                                if "then_statements" in elsif_block:
+                        # Variables to track parsing state
+                        current_section = "then"  # Can be "then", "elsif", or "else"
+                        current_elsif_condition = None
+                        current_elsif_statements = []
+                        
+                        j = i + 1
+                        while j < len(statements_list):
+                            next_item = statements_list[j]
+                            
+                            # Skip if not a structured line
+                            if not isinstance(next_item, dict) or "line" not in next_item or "indent" not in next_item:
+                                j += 1
+                                continue
+                                
+                            next_line = next_item["line"].strip()
+                            next_indent = next_item["indent"]
+                            
+                            # Check if we've found END IF at the same indent level
+                            if next_line == "END IF;" and next_indent == base_indent:
+                                # Found the end of the IF block
+                                logger.debug("Found END IF at line %d in %s", next_item["line_no"], parent_context)
+                                
+                                # Add the last elsif block if we were processing one
+                                if current_section == "elsif" and current_elsif_condition:
+                                    else_if_blocks.append({
+                                        "condition": current_elsif_condition,
+                                        "then_statements": current_elsif_statements
+                                    })
+                                
+                                # Create the complete if-else structure
+                                if_else_block = {
+                                    "type": "if_else",
+                                    "condition": condition,
+                                    "then_statements": then_statements
+                                }
+                                
+                                if else_if_blocks:
+                                    if_else_block["else_if"] = else_if_blocks
+                                    
+                                if else_statements:
+                                    if_else_block["else_statements"] = else_statements
+                                
+                                # Replace the range from i to j with the new if-else block
+                                del statements_list[i:j+1]
+                                statements_list.insert(i, if_else_block)
+                                
+                                logger.debug("Parsed IF-ELSE block with %d then statements, %d else-if blocks, %d else statements", 
+                                         len(then_statements), len(else_if_blocks), len(else_statements))
+                                
+                                # Process the newly created if-else block's contents
+                                process_if_else_in_list(then_statements, f"{parent_context}.then_statements")
+                                
+                                for elsif_block in else_if_blocks:
                                     process_if_else_in_list(elsif_block["then_statements"], f"{parent_context}.else_if.then_statements")
-                        
-                        if "else_statements" in item:
-                            process_if_else_in_list(item["else_statements"], f"{parent_context}.else_statements")
-                    
-                    elif item["type"] == "for_loop":
-                        # Process IF-ELSE statements in loop_statements
-                        if "loop_statements" in item:
-                            process_if_else_in_list(item["loop_statements"], f"{parent_context}.loop_statements")
-                
-                i += 1
-        
-        # Process the main_section_lines
-        process_if_else_in_list(self.main_section_lines, "main_section_lines")
-        
-        logger.debug("IF-ELSE parsing complete")
-    
-    def _parse_if_else_structure(self, start_idx):
-        """
-        Parse a complete IF-ELSE structure starting from the given index.
-        Uses a stack-based approach to handle nested IF statements.
-        
-        Args:
-            start_idx (int): Index in structured_lines where the IF statement starts
-            
-        Returns:
-            tuple: (if_else_block, end_line_index) or None if parsing fails
-        """
-        if start_idx < 0 or start_idx >= len(self.structured_lines):
-            return None
-            
-        start_line_info = self.structured_lines[start_idx]
-        start_line = start_line_info["line"].strip()
-        start_line_upper = start_line.upper()
-        
-        # Validate that this is an IF statement start
-        if not start_line_upper.startswith("IF "):
-            return None
-            
-        logger.debug("Parsing IF-ELSE structure starting at line %d: %s", start_line_info["line_no"], start_line[:50])
-        
-        # Extract condition (between IF and THEN)
-        condition_text = ""
-        if " THEN" in start_line_upper:
-            condition_text = start_line[3:start_line_upper.find(" THEN")].strip()
-        else:
-            # Multi-line condition, try to find the THEN keyword in subsequent lines
-            j = start_idx + 1
-            condition_part = start_line[3:].strip()  # Skip "IF "
-            condition_lines = [condition_part]
-            
-            while j < len(self.structured_lines):
-                next_line = self.structured_lines[j]["line"].strip()
-                next_line_upper = next_line.upper()
-                
-                if " THEN" in next_line_upper:
-                    then_pos = next_line_upper.find(" THEN")
-                    condition_lines.append(next_line[:then_pos].strip())
-                    break
-                else:
-                    condition_lines.append(next_line)
-                j += 1
-                
-            condition_text = " ".join(condition_lines)
-        
-        if not condition_text:
-            logger.warning("Failed to extract condition from IF statement: %s", start_line)
-            return None
-            
-        # Initialize IF-ELSE block structure
-        if_else_block = {
-            "type": "if_else",
-            "condition": condition_text,
-            "then_statements": [],
-            "else_if": [],
-            "else_statements": []
-        }
-        
-        # Find the matching END IF; using a stack to handle nested IF statements
-        stack = [("IF", start_line_info["indent"])]
-        current_section = "then_statements"  # Current section being processed: 'then_statements', 'elsif', 'else'
-        current_stmt_list = if_else_block["then_statements"]
-        current_elsif_block = None
-        end_idx = -1
-        i = start_idx + 1
-        
-        while i < len(self.structured_lines) and stack:
-            line_info = self.structured_lines[i]
-            line = line_info["line"].strip()
-            line_upper = line.upper()
-            indent = line_info["indent"]
-            
-            # Skip the initial THEN if it's on a separate line
-            if line_upper == "THEN" and i == start_idx + 1:
-                i += 1
-                continue
-                
-            # Check for nested IF statements
-            if line_upper.startswith("IF "):
-                # Push to stack to track nested IF
-                stack.append(("IF", indent))
-                
-                # If we're inside an active section, add this line to that section
-                if current_section == "then_statements":
-                    if_else_block["then_statements"].append(line_info)
-                elif current_section == "elsif" and current_elsif_block is not None:
-                    current_elsif_block["then_statements"].append(line_info)
-                elif current_section == "else":
-                    if_else_block["else_statements"].append(line_info)
-            
-            # Check for ELSIF (at the same indentation level as the original IF)
-            elif line_upper.startswith("ELSIF ") and indent == stack[0][1] and len(stack) == 1:
-                current_section = "elsif"
-                
-                # Extract the ELSIF condition
-                elsif_condition = ""
-                if " THEN" in line_upper:
-                    elsif_condition = line[6:line_upper.find(" THEN")].strip()
-                else:
-                    # Multi-line ELSIF condition
-                    j = i + 1
-                    elsif_part = line[6:].strip()  # Skip "ELSIF "
-                    elsif_lines = [elsif_part]
-                    
-                    while j < len(self.structured_lines):
-                        next_line = self.structured_lines[j]["line"].strip()
-                        next_line_upper = next_line.upper()
-                        
-                        if " THEN" in next_line_upper:
-                            then_pos = next_line_upper.find(" THEN")
-                            elsif_lines.append(next_line[:then_pos].strip())
-                            break
-                        else:
-                            elsif_lines.append(next_line)
-                        j += 1
-                        
-                    elsif_condition = " ".join(elsif_lines)
-                
-                # Create a new ELSIF block
-                current_elsif_block = {
-                    "condition": elsif_condition,
-                    "then_statements": []
-                }
-                if_else_block["else_if"].append(current_elsif_block)
-                current_stmt_list = current_elsif_block["then_statements"]
-            
-            # Check for ELSE (at the same indentation level as the original IF)
-            elif line_upper == "ELSE" and indent == stack[0][1] and len(stack) == 1:
-                current_section = "else"
-                current_stmt_list = if_else_block["else_statements"]
-            
-            # Check for END IF; (matching the current IF level)
-            elif line_upper == "END IF;" or line_upper == "END IF":
-                # Pop from the stack
-                if stack and stack[-1][0] == "IF":
-                    stack.pop()
-                    
-                    # If this was the outermost IF, we're done
-                    if not stack:
-                        end_idx = i
-                        break
-                    
-                # Add this END IF to the current section if we're still inside a nested IF
-                if stack:  # Still inside a nested IF
-                    if current_section == "then_statements":
-                        if_else_block["then_statements"].append(line_info)
-                    elif current_section == "elsif" and current_elsif_block is not None:
-                        current_elsif_block["then_statements"].append(line_info)
-                    elif current_section == "else":
-                        if_else_block["else_statements"].append(line_info)
-            
-            # Regular line - add to the current section
-            else:
-                if stack:  # Only add if we're inside an IF block
-                    if current_section == "then_statements":
-                        if_else_block["then_statements"].append(line_info)
-                    elif current_section == "elsif" and current_elsif_block is not None:
-                        current_elsif_block["then_statements"].append(line_info)
-                    elif current_section == "else":
-                        if_else_block["else_statements"].append(line_info)
-            
-            i += 1
-        
-        # Check if we found a complete IF-ELSE structure
-        if end_idx == -1:
-            logger.warning("Could not find matching END IF; for IF statement at line %d", start_line_info["line_no"])
-            return None
-        
-        # Recursively process nested structures in the IF-ELSE blocks
-        self._process_nested_if_else_blocks(if_else_block)
-        
-        logger.debug("Successfully parsed IF-ELSE structure from line %d to %d", 
-                   start_line_info["line_no"], self.structured_lines[end_idx]["line_no"])
-        
-        return if_else_block, self.structured_lines[end_idx]["line_no"]
-    
-    def _process_nested_if_else_blocks(self, if_else_block):
-        """
-        Process nested structures within an IF-ELSE block recursively.
-        This converts any nested IF-ELSE blocks from line_info objects to structured blocks.
-        
-        Args:
-            if_else_block (dict): The IF-ELSE block structure to process
-        """
-        # Process then_statements section
-        if "then_statements" in if_else_block:
-            i = 0
-            while i < len(if_else_block["then_statements"]):
-                item = if_else_block["then_statements"][i]
-                
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
-                    line = item["line"].strip()
-                    if line.upper().startswith("IF "):
-                        # Found a nested IF statement
-                        nested_if_idx = self._find_line_index(item["line_no"])
-                        if nested_if_idx >= 0:
-                            nested_result = self._parse_if_else_structure(nested_if_idx)
-                            if nested_result:
-                                nested_block, end_idx = nested_result
-                                # Replace with parsed nested block
-                                if_else_block["then_statements"][i] = nested_block
+                                    
+                                if else_statements:
+                                    process_if_else_in_list(else_statements, f"{parent_context}.else_statements")
                                 
-                                # Remove subsequent statements that are part of this nested IF
-                                j = i + 1
-                                while j < len(if_else_block["then_statements"]):
-                                    next_item = if_else_block["then_statements"][j]
-                                    if isinstance(next_item, dict) and "line_no" in next_item:
-                                        if next_item["line_no"] <= end_idx:
-                                            if_else_block["then_statements"].pop(j)
-                                        else:
-                                            break
-                                    else:
-                                        j += 1
-                i += 1
-        
-        # Process each ELSIF block
-        if "else_if" in if_else_block:
-            for elsif_block in if_else_block["else_if"]:
-                if "then_statements" in elsif_block:
-                    i = 0
-                    while i < len(elsif_block["then_statements"]):
-                        item = elsif_block["then_statements"][i]
+                                break  # Exit the inner loop
+                                
+                            # Check if this is an ELSIF at the same indent level
+                            elif next_line.startswith("ELSIF") and " THEN" in next_line and next_indent == base_indent:
+                                logger.debug("Found ELSIF at line %d in %s: %s", next_item["line_no"], parent_context, next_line[:50])
+                                
+                                # Add the current elsif block if we were processing one
+                                if current_section == "elsif" and current_elsif_condition:
+                                    else_if_blocks.append({
+                                        "condition": current_elsif_condition,
+                                        "then_statements": current_elsif_statements
+                                    })
+                                
+                                # Extract the new elsif condition
+                                elsif_condition_match = re.match(r"ELSIF\s+(.+?)\s+THEN", next_line)
+                                if elsif_condition_match:
+                                    current_section = "elsif"
+                                    current_elsif_condition = elsif_condition_match.group(1)
+                                    current_elsif_statements = []
+                                    logger.debug("Extracted ELSIF condition: %s", current_elsif_condition)
+                                
+                                j += 1
+                                continue
+                                
+                            # Check if this is an ELSE at the same indent level
+                            elif next_line == "ELSE" and next_indent == base_indent:
+                                logger.debug("Found ELSE at line %d in %s", next_item["line_no"], parent_context)
+                                
+                                # Add the current elsif block if we were processing one
+                                if current_section == "elsif" and current_elsif_condition:
+                                    else_if_blocks.append({
+                                        "condition": current_elsif_condition,
+                                        "then_statements": current_elsif_statements
+                                    })
+                                    
+                                current_section = "else"
+                                j += 1
+                                continue
+                                
+                            # Add the statement to the appropriate section
+                            if current_section == "then":
+                                then_statements.append(next_item)
+                            elif current_section == "elsif":
+                                current_elsif_statements.append(next_item)
+                            elif current_section == "else":
+                                else_statements.append(next_item)
+                                
+                            j += 1
                         
-                        if isinstance(item, dict) and "line" in item and "line_no" in item:
-                            line = item["line"].strip()
-                            if line.upper().startswith("IF "):
-                                # Found a nested IF statement
-                                nested_if_idx = self._find_line_index(item["line_no"])
-                                if nested_if_idx >= 0:
-                                    nested_result = self._parse_if_else_structure(nested_if_idx)
-                                    if nested_result:
-                                        nested_block, end_idx = nested_result
-                                        # Replace with parsed nested block
-                                        elsif_block["then_statements"][i] = nested_block
-                                        
-                                        # Remove subsequent statements that are part of this nested IF
-                                        j = i + 1
-                                        while j < len(elsif_block["then_statements"]):
-                                            next_item = elsif_block["then_statements"][j]
-                                            if isinstance(next_item, dict) and "line_no" in next_item:
-                                                if next_item["line_no"] <= end_idx:
-                                                    elsif_block["then_statements"].pop(j)
-                                                else:
-                                                    break
-                                            else:
-                                                j += 1
+                        # If we didn't find the END IF, just move to the next statement
+                        if j >= len(statements_list):
+                            i += 1
+                        # We've already handled this by replacing the statements, so don't increment i
+                    else:
                         i += 1
+                else:
+                    i += 1
         
-        # Process else_statements section
-        if "else_statements" in if_else_block:
-            i = 0
-            while i < len(if_else_block["else_statements"]):
-                item = if_else_block["else_statements"][i]
+        def process_top_level_if_elsif(statements_list, parent_context="", processed_lists=None):
+            """Process top-level IF-ELSIF-ELSE structures that may span across multiple items in the list"""
+            if not statements_list:
+                return
                 
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
-                    line = item["line"].strip()
-                    if line.upper().startswith("IF "):
-                        # Found a nested IF statement
-                        nested_if_idx = self._find_line_index(item["line_no"])
-                        if nested_if_idx >= 0:
-                            nested_result = self._parse_if_else_structure(nested_if_idx)
-                            if nested_result:
-                                nested_block, end_idx = nested_result
-                                # Replace with parsed nested block
-                                if_else_block["else_statements"][i] = nested_block
-                                
-                                # Remove subsequent statements that are part of this nested IF
-                                j = i + 1
-                                while j < len(if_else_block["else_statements"]):
-                                    next_item = if_else_block["else_statements"][j]
-                                    if isinstance(next_item, dict) and "line_no" in next_item:
-                                        if next_item["line_no"] <= end_idx:
-                                            if_else_block["else_statements"].pop(j)
-                                        else:
-                                            break
-                                    else:
-                                        j += 1
-                i += 1
+            # Initialize processed_lists if not provided
+            if processed_lists is None:
+                processed_lists = set()
+            
+            # Find all top-level IF statements and their corresponding ELSIF/ELSE/END IF
+            if_positions = []
+            elsif_positions = []
+            else_positions = []
+            endif_positions = []
+            
+            # First pass: collect all the positions
+            for i, item in enumerate(statements_list):
+                if not isinstance(item, dict) or "line" not in item or "indent" not in item:
+                    continue
+                    
+                line = item["line"].strip()
+                
+                if line.startswith("IF") and " THEN" in line:
+                    if_positions.append((i, item["indent"]))
+                elif line.startswith("ELSIF") and " THEN" in line:
+                    elsif_positions.append((i, item["indent"]))
+                elif line == "ELSE":
+                    else_positions.append((i, item["indent"]))
+                elif line == "END IF;":
+                    endif_positions.append((i, item["indent"]))
+            
+            # Second pass: identify complete IF-ELSIF-ELSE-ENDIF blocks
+            i = 0
+            while i < len(if_positions):
+                if_idx, if_indent = if_positions[i]
+                
+                # Find all corresponding ELSIF, ELSE, and END IF at the same indent level
+                matching_elsifs = [(idx, pos) for idx, (pos, indent) in enumerate(elsif_positions) if indent == if_indent and pos > if_idx]
+                matching_else = next(((pos, indent) for pos, indent in else_positions if indent == if_indent and pos > if_idx), None)
+                matching_endif = next(((pos, indent) for pos, indent in endif_positions if indent == if_indent and pos > if_idx), None)
+                
+                if not matching_endif:
+                    i += 1
+                    continue
+                    
+                endif_idx, endif_indent = matching_endif
+                
+                # Extract the condition from the IF statement
+                if_item = statements_list[if_idx]
+                
+                # Skip items without a line property (already processed items)
+                if not isinstance(if_item, dict) or "line" not in if_item:
+                    i += 1
+                    continue
+                    
+                line = if_item["line"].strip()
+                condition_match = re.match(r"IF\s+(.+?)\s+THEN", line)
+                if not condition_match:
+                    i += 1
+                    continue
+                    
+                condition = condition_match.group(1)
+                logger.debug("Found top-level IF-ELSIF structure at line %d in %s: %s", if_item["line_no"], parent_context, line[:50])
+                
+                # Collect statements for the IF block (until first ELSIF, ELSE, or END IF)
+                then_statements = []
+                next_break = min([pos for pos, _ in matching_elsifs] + [matching_else[0] if matching_else else float('inf'), endif_idx])
+                
+                for j in range(if_idx + 1, next_break):
+                    then_statements.append(statements_list[j])
+                
+                # Collect ELSIF blocks
+                else_if_blocks = []
+                for idx, (elsif_idx, _) in enumerate(matching_elsifs):
+                    elsif_item = statements_list[elsif_idx]
+                    
+                    # Skip items without a line property (already processed items)
+                    if not isinstance(elsif_item, dict) or "line" not in elsif_item:
+                        continue
+                        
+                    elsif_line = elsif_item["line"].strip()
+                    elsif_condition_match = re.match(r"ELSIF\s+(.+?)\s+THEN", elsif_line)
+                    
+                    if not elsif_condition_match:
+                        continue
+                        
+                    elsif_condition = elsif_condition_match.group(1)
+                    elsif_statements = []
+                    
+                    # Find the end of this ELSIF block (next ELSIF, ELSE, or END IF)
+                    next_elsif_idx = matching_elsifs[idx + 1][1] if idx + 1 < len(matching_elsifs) else float('inf')
+                    next_break = min([next_elsif_idx, matching_else[0] if matching_else else float('inf'), endif_idx])
+                    
+                    for j in range(elsif_idx + 1, next_break):
+                        elsif_statements.append(statements_list[j])
+                    
+                    else_if_blocks.append({
+                        "condition": elsif_condition,
+                        "then_statements": elsif_statements
+                    })
+                    
+                    logger.debug("  - ELSIF condition: %s with %d statements", elsif_condition, len(elsif_statements))
+                
+                # Collect ELSE block
+                else_statements = []
+                if matching_else:
+                    else_idx, _ = matching_else
+                    for j in range(else_idx + 1, endif_idx):
+                        else_statements.append(statements_list[j])
+                
+                # Create the complete if-else structure
+                if_else_block = {
+                    "type": "if_else",
+                    "condition": condition,
+                    "then_statements": then_statements
+                }
+                
+                if else_if_blocks:
+                    if_else_block["else_if"] = else_if_blocks
+                    
+                if else_statements:
+                    if_else_block["else_statements"] = else_statements
+                
+                logger.debug("Parsed top-level IF-ELSIF block with %d then statements, %d else-if blocks, %d else statements", 
+                         len(then_statements), len(else_if_blocks), len(else_statements))
+                
+                # Replace the range from if_idx to endif_idx with the new if-else block
+                del statements_list[if_idx:endif_idx + 1]
+                statements_list.insert(if_idx, if_else_block)
+                
+                # Process the newly created if-else block's contents
+                process_if_else_in_list(then_statements, f"{parent_context}.then_statements", processed_lists)
+                
+                for elsif_block in else_if_blocks:
+                    process_if_else_in_list(elsif_block["then_statements"], f"{parent_context}.else_if.then_statements", processed_lists)
+                    
+                if else_statements:
+                    process_if_else_in_list(else_statements, f"{parent_context}.else_statements", processed_lists)
+                
+                # Update positions of all remaining structures
+                for j in range(len(if_positions)):
+                    if if_positions[j][0] > endif_idx:
+                        if_positions[j] = (if_positions[j][0] - (endif_idx - if_idx), if_positions[j][1])
+                
+                # Remove processed positions
+                elsif_positions = [(pos - (endif_idx - if_idx), indent) for pos, indent in elsif_positions if pos > endif_idx]
+                else_positions = [(pos - (endif_idx - if_idx), indent) for pos, indent in else_positions if pos > endif_idx]
+                endif_positions = [(pos - (endif_idx - if_idx), indent) for pos, indent in endif_positions if pos > endif_idx]
+                
+                # Don't increment i as we have modified the list
+            
+        # Start processing from the main section
+        process_if_else_in_list(self.main_section_lines, "main_section_lines")
+        logger.debug("Completed n-nested IF ELSE parsing")
         
     def _parse_assignment_statement(self):
         """
