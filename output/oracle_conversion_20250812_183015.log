@@ -1,0 +1,1346 @@
+2025-08-12 18:30:15,518 - root - INFO - [common.py:72] - Starting batch conversion: SQL -> JSON -> SQL (Logging to output\oracle_conversion_20250812_183015.log)
+2025-08-12 18:30:15,518 - root - INFO - [common.py:72] - Processing files from 'files/oracle' to 'files/format_json'
+2025-08-12 18:30:15,518 - root - DEBUG - [common.py:68] - Found 3 files matching pattern: ['trigger1.sql', 'trigger2.sql', 'trigger3.sql']
+2025-08-12 18:30:15,518 - root - DEBUG - [common.py:68] - Processing file: trigger1.sql
+2025-08-12 18:30:15,519 - root - DEBUG - [common.py:68] - Extracted trigger number: 1
+2025-08-12 18:30:15,519 - root - DEBUG - [common.py:68] - Read 29058 characters from files/oracle\trigger1.sql
+2025-08-12 18:30:15,520 - root - DEBUG - [common.py:68] - Initializing OracleTriggerAnalyzer with 29058 characters of SQL
+2025-08-12 18:30:15,520 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing: 0 lines processed
+2025-08-12 18:30:15,520 - root - INFO - [common.py:96] - 🔄 Starting SQL section parsing parsing
+2025-08-12 18:30:15,521 - root - INFO - [common.py:96] - 🔄 Starting structured lines conversion parsing
+2025-08-12 18:30:15,521 - root - DEBUG - [common.py:68] - Converting SQL content to structured lines
+2025-08-12 18:30:15,521 - root - DEBUG - [common.py:68] - Structured lines conversion complete: 750 total, 213 with semicolons, 69 empty lines skipped
+2025-08-12 18:30:15,521 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:205] - Block comment stripping complete: 0 comments extracted, 750 lines cleaned
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:277] - Removed block comments from main section
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:252] - Inline comment stripping complete: 63 comments extracted, 697 lines cleaned
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:281] - Removed inline comments from main section
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:293] - Found DECLARE at line 1
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:298] - Found BEGIN at line 51
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:304] - DECLARE section: lines 1-50
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:311] - Main section: lines 51
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:338] - Starting declaration parsing
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:411] - Processed exception: INVALID_THEME_NO
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:411] - Processed exception: DELETE_NO_MORE_POSSIBLE
+2025-08-12 18:30:15,522 - root - DEBUG - [test1.py:411] - Processed exception: THEME_NO_ONLY_INSERT
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: DESCRIPTION_TOO_LONG
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: THEME_DESC_PROPOSAL_TOO_LONG
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: THEME_DESC_ALT_TOO_LONG
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: THEME_NO_CANNOT_BE_INSERTED
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: ONLYONEOFFICIALCHANGEPERDAY
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: INSERTSMUSTBEOFFICIAL
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: THEMEDESCRIPTIONMANDATORY
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: THEME_DESC_NOT_UNIQUE
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: IN_PREP_NOT_PORTF_PROJ
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: IN_PREP_NOT_CLOSED
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: INVALID_MOLECULE_ID
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: SEC_MOL_LIST_NOT_EMPTY
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: ADMIN_UPDATE_ONLY
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: PORTF_PROJ_MOL_CRE_ERR
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:411] - Processed exception: DEBUGGING
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_COUNTER
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_CODE
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_ODG_NO
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_RESGRP_CD
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_RESLIN_CD
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_STATUS_CD
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_DBA_CD
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_PORTF_PROJ_CD
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_DESCRIPTION
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_RESLIN_DESC
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_THEME_DESC_LENGTH
+2025-08-12 18:30:15,523 - root - DEBUG - [test1.py:381] - Processed variable: V_D_REGISTRAT_DATE
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_D_INS_DATE
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_FUTURE_REGISTRAT
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_VALID_TO
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_USERID
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_IS_ADMIN_CNT
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_SEC_MOL_CNT
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLECULE_ID
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLECULE_RG_NO
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLEC_IN_LIC_PRTNR
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_NEW_RG_NO
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_COMPARATOR_IND
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_THEME_DESC_PROPOSAL
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_SHORT_NAME
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:396] - Processed constant: C_MOLECULE_TYPE_ID
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:396] - Processed constant: C_PHARMACOLOGICAL_TYPE_ID
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_EVOLVED_NMP_CNT
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_TRADEMARK_NO
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLECULE_TYPE_ID
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:381] - Processed variable: V_PHARMACOLOGICAL_TYPE_ID
+2025-08-12 18:30:15,524 - root - DEBUG - [common.py:68] - Processing main section from lines 51
+2025-08-12 18:30:15,524 - root - INFO - [common.py:96] - 🔄 Starting First BEGIN blocks parsing
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:744] - Starting top-level BEGIN blocks parsing
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:754] - Collected 647 lines from main section
+2025-08-12 18:30:15,524 - root - DEBUG - [test1.py:771] - Found top-level BEGIN block at line 51 (indent 0)
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:832] - Parsing top-level BEGIN-END block starting at line 51 (indent 0)
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:864] - Found EXCEPTION at line 782
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:870] - Found END; at line 819
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:2943] - Found exception handler: ADMIN_UPDATE_ONLY
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20115', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:2943] - Found exception handler: IN_PREP_NOT_PORTF_PROJ
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20116', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:2943] - Found exception handler: IN_PREP_NOT_CLOSED
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20117', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:30:15,525 - root - DEBUG - [test1.py:2943] - Found exception handler: INVALID_MOLECULE_ID
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20118', 'handler_string': 'This is not a valid Molecule ID'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: SEC_MOL_LIST_NOT_EMPTY
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20119', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: INVALID_THEME_NO
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20101', 'handler_string': 'This is not a valid Theme No'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: DELETE_NO_MORE_POSSIBLE
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: THEME_NO_ONLY_INSERT
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Theme No cannot be updated'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: DESCRIPTION_TOO_LONG
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Theme Description "\' || V_DESCRIPTION || \'" is too long'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: THEME_DESC_PROPOSAL_TOO_LONG
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Short Description Proposal "\' || :OLD.THEME_DESC_PROPOSAL || \'" is too long'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: THEME_DESC_ALT_TOO_LONG
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Downstream Theme Description "\' || :OLD.THEME_DESC_ALT || \'" is too long'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: THEME_NO_CANNOT_BE_INSERTED
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'This Theme No already exists'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: ONLYONEOFFICIALCHANGEPERDAY
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Official Change for this Theme No and Day already exists'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: INSERTSMUSTBEOFFICIAL
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'New Themes can only be inserted by Official Changes'}
+2025-08-12 18:30:15,526 - root - DEBUG - [test1.py:2943] - Found exception handler: THEMEDESCRIPTIONMANDATORY
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'If Pharma Rx Portfolio Project is set to "No", then the Theme Description must be filled'}
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:2943] - Found exception handler: THEME_DESC_NOT_UNIQUE
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'This Theme Description already exists'}
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:2943] - Found exception handler: PORTF_PROJ_MOL_CRE_ERR
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20120', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:2943] - Found exception handler: DEBUGGING
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20900', 'handler_string': 'Debug in Themes IOF standard'}
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:2983] - Parsed exception section: 18 handlers
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:889] - Successfully parsed top-level BEGIN-END block: 608 statements, 18 exception handlers
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:795] - Successfully parsed top-level BEGIN-END block from line 51 to 819
+2025-08-12 18:30:15,527 - root - DEBUG - [test1.py:801] - Top-level BEGIN blocks parsing complete: 1 items in main_section_lines
+2025-08-12 18:30:15,527 - root - INFO - [common.py:103] - ✅ Completed First BEGIN blocks parsing
+2025-08-12 18:30:15,527 - root - INFO - [common.py:96] - 🔄 Starting CASE-WHEN statements in main section parsing
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2091] - Starting CASE WHEN ELSE parsing with indentation-based nesting
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2109] - Found CASE statement at line 241 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2403] - Starting enhanced CASE statement parsing from index 210
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2421] - CASE statement - Type: with expression, Expression: 'LENGTH(:NEW.THEME_NO)', Indent: 6
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2440] - Found END CASE; at line 252 (indent 6)
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2477] - Found WHEN clause at line 242 (indent 9, case indent 6)
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2477] - Found WHEN clause at line 246 (indent 9, case indent 6)
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2482] - Found ELSE clause at line 250 (indent 9, case indent 6)
+2025-08-12 18:30:15,528 - root - DEBUG - [test1.py:2732] - Parsed WHEN clause: 4
+2025-08-12 18:30:15,529 - root - DEBUG - [test1.py:2732] - Parsed WHEN clause: 5
+2025-08-12 18:30:15,529 - root - DEBUG - [test1.py:2791] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,529 - root - DEBUG - [test1.py:2801] - Processing nested structures in enhanced CASE statement
+2025-08-12 18:30:15,529 - root - DEBUG - [test1.py:2511] - Completed enhanced CASE statement parsing: 2 when clauses, ELSE at line 250, end at line 252
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2115] - Parsed complete CASE statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2109] - Found CASE statement at line 555 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2403] - Starting enhanced CASE statement parsing from index 474
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2421] - CASE statement - Type: simple, Expression: '', Indent: 6
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2440] - Found END CASE; at line 606 (indent 6)
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2477] - Found WHEN clause at line 556 (indent 9, case indent 6)
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2477] - Found WHEN clause at line 570 (indent 9, case indent 6)
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2477] - Found WHEN clause at line 581 (indent 9, case indent 6)
+2025-08-12 18:30:15,530 - root - DEBUG - [test1.py:2482] - Found ELSE clause at line 592 (indent 12, case indent 6)
+2025-08-12 18:30:15,531 - root - DEBUG - [test1.py:2482] - Found ELSE clause at line 604 (indent 9, case indent 6)
+2025-08-12 18:30:15,531 - root - DEBUG - [test1.py:2732] - Parsed WHEN clause: :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-12 18:30:15,531 - root - DEBUG - [test1.py:2732] - Parsed WHEN clause: :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-12 18:30:15,531 - root - DEBUG - [test1.py:2732] - Parsed WHEN clause: :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-12 18:30:15,532 - root - DEBUG - [test1.py:2791] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,532 - root - DEBUG - [test1.py:2801] - Processing nested structures in enhanced CASE statement
+2025-08-12 18:30:15,532 - root - DEBUG - [test1.py:2511] - Completed enhanced CASE statement parsing: 3 when clauses, ELSE at line 604, end at line 606
+2025-08-12 18:30:15,532 - root - DEBUG - [test1.py:2115] - Parsed complete CASE statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,532 - root - DEBUG - [test1.py:2176] - CASE WHEN ELSE parsing complete
+2025-08-12 18:30:15,532 - root - INFO - [common.py:103] - ✅ Completed CASE-WHEN statements in main section parsing
+2025-08-12 18:30:15,533 - root - INFO - [common.py:96] - 🔄 Starting IF-ELSE statements in main section parsing
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1239] - Starting IF-ELSEIF-ELSE parsing with indentation-based nesting
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1257] - Found IF statement at line 95 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 87
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.IN_PREP_IND = 'Y')', Indent: 3
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1371] - Found END IF; at line 107 (indent 3)
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 107
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1257] - Found IF statement at line 96 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 88
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.PORTF_PROJ_CD <> 'Y')', Indent: 6
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1371] - Found END IF; at line 98 (indent 6)
+2025-08-12 18:30:15,533 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 98
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1257] - Found IF statement at line 100 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 91
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0)', Indent: 6
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1371] - Found END IF; at line 102 (indent 6)
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 102
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1257] - Found IF statement at line 104 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 94
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID IS NULL)', Indent: 6
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1371] - Found END IF; at line 106 (indent 6)
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 106
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1257] - Found IF statement at line 111 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 98
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID IS NOT NULL)', Indent: 3
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1371] - Found END IF; at line 140 (indent 3)
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 140
+2025-08-12 18:30:15,534 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1257] - Found IF statement at line 127 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 113
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_MOLECULE_RG_NO IS NULL)', Indent: 6
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1371] - Found END IF; at line 139 (indent 6)
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 139
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1257] - Found IF statement at line 128 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 114
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COMPARATOR_IND = 'Y')', Indent: 9
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1371] - Found END IF; at line 138 (indent 9)
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 130 (indent 9)
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 5 statements
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 130, end at line 138
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1257] - Found IF statement at line 149 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 129
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.STATUS_DESC IS NOT NULL)', Indent: 3
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1371] - Found END IF; at line 158 (indent 3)
+2025-08-12 18:30:15,535 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 156 (indent 3)
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 156, end at line 158
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1257] - Found IF statement at line 160 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 139
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.DBA_DESC_CONCAT IS NOT NULL)', Indent: 3
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1371] - Found END IF; at line 171 (indent 3)
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 169 (indent 3)
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 169, end at line 171
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1257] - Found IF statement at line 174 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 152
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.OFFICIAL_IND = 'N')', Indent: 3
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1371] - Found END IF; at line 178 (indent 3)
+2025-08-12 18:30:15,536 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 176 (indent 3)
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 176, end at line 178
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1257] - Found IF statement at line 181 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 158
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30)', Indent: 3
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1371] - Found END IF; at line 183 (indent 3)
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 183
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1257] - Found IF statement at line 186 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 162
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INSERTING)', Indent: 3
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1371] - Found END IF; at line 624 (indent 3)
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1408] - Found ELSIF clause at line 406 (indent 3)
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1408] - Found ELSIF clause at line 607 (indent 3)
+2025-08-12 18:30:15,537 - root - DEBUG - [test1.py:1657] - Parsed ELSEIF clause: (UPDATING)
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1657] - Parsed ELSEIF clause: (DELETING)
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:2887] - Found nested CASE statement in clause
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:2887] - Found nested CASE statement in clause
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 2 else_if clauses, ELSE at line None, end at line 624
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1257] - Found IF statement at line 187 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 163
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0)', Indent: 6
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1371] - Found END IF; at line 189 (indent 6)
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 189
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,538 - root - DEBUG - [test1.py:1257] - Found IF statement at line 195 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 167
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL)', Indent: 6
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1371] - Found END IF; at line 239 (indent 6)
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 239
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1257] - Found IF statement at line 196 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 168
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL)', Indent: 9
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1371] - Found END IF; at line 238 (indent 9)
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 198 (indent 9)
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 37 statements
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 198, end at line 238
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1257] - Found IF statement at line 274 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 240
+2025-08-12 18:30:15,539 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COUNTER > 0)', Indent: 6
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1371] - Found END IF; at line 276 (indent 6)
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 276
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1257] - Found IF statement at line 282 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 245
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.OFFICIAL_IND = 'N')', Indent: 6
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1371] - Found END IF; at line 284 (indent 6)
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 284
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1257] - Found IF statement at line 286 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 248
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(UPPER(:NEW.PORTF_PROJ_CD) = 'N')', Indent: 6
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1371] - Found END IF; at line 290 (indent 6)
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 290
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1257] - Found IF statement at line 287 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 249
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0)', Indent: 9
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1371] - Found END IF; at line 289 (indent 9)
+2025-08-12 18:30:15,540 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 289
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1257] - Found IF statement at line 294 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 253
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(UPPER(:NEW.PORTF_PROJ_CD) = 'Y')', Indent: 6
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1371] - Found END IF; at line 319 (indent 6)
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 314 (indent 6)
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 2 statements
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 314, end at line 319
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1257] - Found IF statement at line 308 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 267
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(LENGTH(V_DESCRIPTION) > 90)', Indent: 9
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1371] - Found END IF; at line 310 (indent 9)
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 310
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1257] - Found IF statement at line 328 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 283
+2025-08-12 18:30:15,541 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COUNTER > 0)', Indent: 6
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1371] - Found END IF; at line 330 (indent 6)
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 330
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1257] - Found IF statement at line 388 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 342
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL)', Indent: 6
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1371] - Found END IF; at line 402 (indent 6)
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 402
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1257] - Found IF statement at line 409 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 356
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0', Indent: 6
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1371] - Found END IF; at line 411 (indent 6)
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 411
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1257] - Found IF statement at line 413 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 359
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.THEME_NO <> :OLD.THEME_NO)', Indent: 6
+2025-08-12 18:30:15,542 - root - DEBUG - [test1.py:1371] - Found END IF; at line 415 (indent 6)
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 415
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1257] - Found IF statement at line 421 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 362
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.OFFICIAL_IND = 'N')', Indent: 6
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1371] - Found END IF; at line 428 (indent 6)
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 425 (indent 6)
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 425, end at line 428
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1257] - Found IF statement at line 430 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 367
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD)', Indent: 6
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1371] - Found END IF; at line 453 (indent 6)
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 446 (indent 6)
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 6 statements
+2025-08-12 18:30:15,543 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 446, end at line 453
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1257] - Found IF statement at line 447 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 384
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0)', Indent: 9
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1371] - Found END IF; at line 452 (indent 9)
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 449 (indent 9)
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 2 statements
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 449, end at line 452
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements.else_statements
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1257] - Found IF statement at line 455 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 391
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(LENGTH(V_DESCRIPTION) > 90)', Indent: 6
+2025-08-12 18:30:15,544 - root - DEBUG - [test1.py:1371] - Found END IF; at line 457 (indent 6)
+2025-08-12 18:30:15,545 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,545 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 457
+2025-08-12 18:30:15,545 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,545 - root - DEBUG - [test1.py:1257] - Found IF statement at line 470 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,545 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 402
+2025-08-12 18:30:15,545 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COUNTER > 0)', Indent: 6
+2025-08-12 18:30:15,545 - root - DEBUG - [test1.py:1371] - Found END IF; at line 472 (indent 6)
+2025-08-12 18:30:15,545 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,546 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 472
+2025-08-12 18:30:15,546 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,546 - root - DEBUG - [test1.py:1257] - Found IF statement at line 477 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,546 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 406
+2025-08-12 18:30:15,546 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.OFFICIAL_IND = 'N')', Indent: 6
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1371] - Found END IF; at line 550 (indent 6)
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 504 (indent 6)
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 39 statements
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 504, end at line 550
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1257] - Found IF statement at line 518 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 442
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COUNTER > 0)', Indent: 9
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1371] - Found END IF; at line 520 (indent 9)
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 520
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements.else_statements
+2025-08-12 18:30:15,547 - root - DEBUG - [test1.py:1257] - Found IF statement at line 608 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 521
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '((:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0)', Indent: 6
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1371] - Found END IF; at line 610 (indent 6)
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 610
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1257] - Found IF statement at line 616 in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 524
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE))', Indent: 6
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1371] - Found END IF; at line 623 (indent 6)
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 621 (indent 6)
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 621, end at line 623
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.else_if.then_statements
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1257] - Found IF statement at line 243 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 212
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9)', Indent: 12
+2025-08-12 18:30:15,548 - root - DEBUG - [test1.py:1371] - Found END IF; at line 245 (indent 12)
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 245
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1257] - Found IF statement at line 247 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 216
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9)', Indent: 12
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1371] - Found END IF; at line 249 (indent 12)
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 249
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1257] - Found IF statement at line 590 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 505
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_SEC_MOL_CNT > 0)', Indent: 12
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1371] - Found END IF; at line 603 (indent 12)
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 592 (indent 12)
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 8 statements
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 592, end at line 603
+2025-08-12 18:30:15,549 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1257] - Found IF statement at line 628 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 533
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INSERTING OR UPDATING)', Indent: 3
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1371] - Found END IF; at line 709 (indent 3)
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 709
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1257] - Found IF statement at line 629 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 534
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL)', Indent: 6
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1371] - Found END IF; at line 683 (indent 6)
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 653 (indent 6)
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 25 statements
+2025-08-12 18:30:15,550 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 653, end at line 683
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1257] - Found IF statement at line 643 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 542
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_EVOLVED_NMP_CNT = 0)', Indent: 9
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1371] - Found END IF; at line 652 (indent 9)
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 652
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1257] - Found IF statement at line 654 in main_section_lines.begin_end_statements.then_statements.else_statements
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 553
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL)', Indent: 9
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1371] - Found END IF; at line 682 (indent 9)
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 661 (indent 9)
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 16 statements
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,551 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 661, end at line 682
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.else_statements
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1257] - Found IF statement at line 662 in main_section_lines.begin_end_statements.then_statements.else_statements.else_statements
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 561
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID)', Indent: 12
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1371] - Found END IF; at line 681 (indent 12)
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 681
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.else_statements.else_statements
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1257] - Found IF statement at line 687 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 579
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-'))', Indent: 6
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1371] - Found END IF; at line 708 (indent 6)
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 708
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,552 - root - DEBUG - [test1.py:1257] - Found IF statement at line 697 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 587
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_EVOLVED_NMP_CNT > 0)', Indent: 9
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1371] - Found END IF; at line 707 (indent 9)
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 707
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1257] - Found IF statement at line 713 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 598
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y')', Indent: 3
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1371] - Found END IF; at line 761 (indent 3)
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 761
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,553 - root - DEBUG - [test1.py:1257] - Found IF statement at line 714 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 599
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.PROPOSAL_ID IS NOT NULL)', Indent: 6
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1371] - Found END IF; at line 723 (indent 6)
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 723
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1257] - Found IF statement at line 727 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 609
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0))', Indent: 6
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1371] - Found END IF; at line 760 (indent 6)
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 760
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1257] - Found IF statement at line 728 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 610
+2025-08-12 18:30:15,554 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID IS NOT NULL)', Indent: 9
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:1371] - Found END IF; at line 743 (indent 9)
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 743
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:1324] - IF-ELSEIF-ELSE parsing complete
+2025-08-12 18:30:15,555 - root - INFO - [common.py:103] - ✅ Completed IF-ELSE statements in main section parsing
+2025-08-12 18:30:15,555 - root - INFO - [common.py:96] - 🔄 Starting BEGIN blocks in main section parsing
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:2191] - Starting nested BEGIN block parsing
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:2209] - Found nested BEGIN block at line 112 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:2293] - Parsing BEGIN-END block starting at line 112
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:2341] - Found EXCEPTION section at line 122
+2025-08-12 18:30:15,555 - root - DEBUG - [test1.py:2352] - Parsed exception handler: NO_DATA_FOUND
+2025-08-12 18:30:15,556 - root - DEBUG - [test1.py:2334] - Ended main BEGIN block at line 125
+2025-08-12 18:30:15,556 - root - DEBUG - [test1.py:2216] - Parsed complete nested BEGIN block structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,556 - root - DEBUG - [test1.py:2209] - Found nested BEGIN block at line 729 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,556 - root - DEBUG - [test1.py:2293] - Parsing BEGIN-END block starting at line 729
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2341] - Found EXCEPTION section at line 739
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2352] - Parsed exception handler: NO_DATA_FOUND
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2334] - Ended main BEGIN block at line 742
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2216] - Parsed complete nested BEGIN block structure in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2209] - Found nested BEGIN block at line 763 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2293] - Parsing BEGIN-END block starting at line 763
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2334] - Ended main BEGIN block at line 781
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2216] - Parsed complete nested BEGIN block structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,557 - root - DEBUG - [test1.py:2275] - Nested BEGIN block parsing complete
+2025-08-12 18:30:15,557 - root - INFO - [common.py:103] - ✅ Completed BEGIN blocks in main section parsing
+2025-08-12 18:30:15,558 - root - INFO - [common.py:96] - 🔄 Starting FOR loops in main section parsing
+2025-08-12 18:30:15,558 - root - DEBUG - [test1.py:985] - Starting FOR loop parsing
+2025-08-12 18:30:15,558 - root - DEBUG - [test1.py:1006] - Found FOR loop at line 767 in main_section_lines.begin_end_statements.begin_end_statements
+2025-08-12 18:30:15,559 - root - DEBUG - [test1.py:1089] - Parsing FOR loop structure starting at line 767: FOR I1 IN (
+2025-08-12 18:30:15,559 - root - DEBUG - [test1.py:1159] - Found END LOOP at line 780
+2025-08-12 18:30:15,559 - root - DEBUG - [test1.py:1185] - Successfully parsed FOR loop: I1 IN (SELECT A.THEME_NO, A.REGISTRAT)
+2025-08-12 18:30:15,559 - root - DEBUG - [test1.py:1012] - Parsed complete FOR loop structure in main_section_lines.begin_end_statements.begin_end_statements
+2025-08-12 18:30:15,559 - root - DEBUG - [test1.py:1071] - FOR loop parsing complete
+2025-08-12 18:30:15,559 - root - INFO - [common.py:103] - ✅ Completed FOR loops in main section parsing
+2025-08-12 18:30:15,559 - root - INFO - [common.py:96] - 🔄 Starting assignment statements in main section parsing
+2025-08-12 18:30:15,559 - root - DEBUG - [test1.py:1790] - Starting assignment statements parsing
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 145 in main_section_lines.begin_end_statements: V_ODG_NO := SUBSTR(:NEW.RESLIN
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_ODG_NO
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 146 in main_section_lines.begin_end_statements: V_RESGRP_CD := SUBSTR(:NEW.RES
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_RESGRP_CD
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 147 in main_section_lines.begin_end_statements: V_RESLIN_CD := SUBSTR(:NEW.RES
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_RESLIN_CD
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 148 in main_section_lines.begin_end_statements: V_RESLIN_DESC := SUBSTR(:NEW.R
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_RESLIN_DESC
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 157 in main_section_lines.begin_end_statements.else_statements: V_STATUS_CD := NULL;
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_STATUS_CD
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 170 in main_section_lines.begin_end_statements.else_statements: V_DBA_CD := NULL;
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_DBA_CD
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 173 in main_section_lines.begin_end_statements: V_MOLEC_IN_LIC_PRTNR := GMD_UT
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_MOLEC_IN_LIC_PRTNR
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 175 in main_section_lines.begin_end_statements.then_statements: V_TRADEMARK_NO := :NEW.TRADEMA
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_TRADEMARK_NO
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 177 in main_section_lines.begin_end_statements.else_statements: V_TRADEMARK_NO := :OLD.TRADEMA
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_TRADEMARK_NO
+2025-08-12 18:30:15,560 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 180 in main_section_lines.begin_end_statements: V_THEME_DESC_PROPOSAL := GMD_U
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_THEME_DESC_PROPOSAL
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 185 in main_section_lines.begin_end_statements: V_SHORT_NAME := COALESCE(:NEW.
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_SHORT_NAME
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 194 in main_section_lines.begin_end_statements.then_statements: V_MOLECULE_ID := :NEW.MOLECULE
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_MOLECULE_ID
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 254 in main_section_lines.begin_end_statements.then_statements: V_COUNTER := NULL;
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 278 in main_section_lines.begin_end_statements.then_statements: V_COUNTER := NULL;
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 279 in main_section_lines.begin_end_statements.then_statements: V_D_REGISTRAT_DATE := SYSDATE;
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_D_REGISTRAT_DATE
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 295 in main_section_lines.begin_end_statements.then_statements.then_statements: V_DESCRIPTION := GMD.GMD_UTIL_
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1860] - Parsed multi-line assignment statement: V_DESCRIPTION
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 312 in main_section_lines.begin_end_statements.then_statements.then_statements: V_DESCRIPTION := TRIM(V_DESCRI
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_DESCRIPTION
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 313 in main_section_lines.begin_end_statements.then_statements.then_statements: V_PORTF_PROJ_CD := 'Y';
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_PORTF_PROJ_CD
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 317 in main_section_lines.begin_end_statements.then_statements.else_statements: V_DESCRIPTION := :NEW.THEME_DE
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_DESCRIPTION
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 318 in main_section_lines.begin_end_statements.then_statements.else_statements: V_PORTF_PROJ_CD := 'N';
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_PORTF_PROJ_CD
+2025-08-12 18:30:15,561 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 321 in main_section_lines.begin_end_statements.then_statements: V_COUNTER := NULL;
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 332 in main_section_lines.begin_end_statements.then_statements: V_COUNTER := NULL;
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 333 in main_section_lines.begin_end_statements.then_statements: V_VALID_TO := TO_DATE('09.09.9
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_VALID_TO
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 334 in main_section_lines.begin_end_statements.then_statements: V_SHORT_NAME := NVL(:NEW.MANUA
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_SHORT_NAME
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 424 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: V_D_REGISTRAT_DATE := TO_DATE(
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_D_REGISTRAT_DATE
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 427 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements: V_D_REGISTRAT_DATE := SYSDATE;
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_D_REGISTRAT_DATE
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 431 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: V_DESCRIPTION := GMD.GMD_UTIL_
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1860] - Parsed multi-line assignment statement: V_DESCRIPTION
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 444 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: V_DESCRIPTION := TRIM(V_DESCRI
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_DESCRIPTION
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 445 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: V_PORTF_PROJ_CD := 'Y';
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_PORTF_PROJ_CD
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 450 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements.else_statements: V_DESCRIPTION := :NEW.THEME_DE
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_DESCRIPTION
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 451 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements.else_statements: V_PORTF_PROJ_CD := :NEW.PORTF_
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_PORTF_PROJ_CD
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 462 in main_section_lines.begin_end_statements.else_if.then_statements: V_COUNTER := NULL;
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:30:15,562 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 474 in main_section_lines.begin_end_statements.else_if.then_statements: V_COUNTER := NULL;
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 508 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements: V_COUNTER := NULL;
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 522 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements: V_COUNTER := NULL;
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1908] - Assignment statements parsing complete
+2025-08-12 18:30:15,563 - root - INFO - [common.py:103] - ✅ Completed assignment statements in main section parsing
+2025-08-12 18:30:15,563 - root - INFO - [common.py:96] - 🔄 Starting SQL statements in main section parsing
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1955] - Starting SQL statements parsing
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 54 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,563 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 61 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 70 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 97 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE IN_PREP_NOT_PO
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 101 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE IN_PREP_NOT_CL
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 113 in main_section_lines.begin_end_statements.then_statements.begin_end_statements: SELECT
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 124 in main_section_lines.begin_end_statements.then_statements.exception_statements: RAISE INVALID_MOLECU
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 133 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements: UPDATE V_THEME_MOLEC
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 150 in main_section_lines.begin_end_statements.then_statements: SELECT
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 161 in main_section_lines.begin_end_statements.then_statements: SELECT
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 182 in main_section_lines.begin_end_statements.then_statements: RAISE THEME_DESC_PRO
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 188 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE ADMIN_UPDATE_O
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 197 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: RAISE PORTF_PROJ_MOL
+2025-08-12 18:30:15,564 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 199 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements: INSERT INTO MDM_V_TH
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 214 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements: SELECT
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 227 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements: INSERT INTO THEME_MO
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 257 in main_section_lines.begin_end_statements.then_statements: SELECT
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 275 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE THEME_NO_CANNO
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 283 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE INSERTSMUSTBEO
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 288 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: RAISE THEMEDESCRIPTI
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 309 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: RAISE DESCRIPTION_TO
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 322 in main_section_lines.begin_end_statements.then_statements: SELECT
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 329 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE THEME_DESC_NOT
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,565 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 335 in main_section_lines.begin_end_statements.then_statements: INSERT INTO GMD.THEM
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 391 in main_section_lines.begin_end_statements.then_statements.then_statements: INSERT INTO MDM_V_TH
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 410 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: RAISE ADMIN_UPDATE_O
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 414 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: RAISE THEME_NO_ONLY_
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 448 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements.then_statements: RAISE THEMEDESCRIPTI
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 456 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: RAISE DESCRIPTION_TO
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 463 in main_section_lines.begin_end_statements.else_if.then_statements: SELECT
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 471 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: RAISE THEME_DESC_NOT
+2025-08-12 18:30:15,566 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 478 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: UPDATE GMD.THEMES
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 511 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements: SELECT
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 519 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements.then_statements: RAISE ONLYONEOFFICIA
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 523 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements: UPDATE GMD.THEMES
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 609 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: RAISE ADMIN_UPDATE_O
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 617 in main_section_lines.begin_end_statements.else_if.then_statements.then_statements: DELETE FROM GMD.THEM
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: delete_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 622 in main_section_lines.begin_end_statements.else_if.then_statements.else_statements: RAISE DELETE_NO_MORE
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 244 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE INVALID_THEME_
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 248 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE INVALID_THEME_
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 251 in main_section_lines.begin_end_statements.else_statements: RAISE INVALID_THEME_
+2025-08-12 18:30:15,567 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 559 in main_section_lines.begin_end_statements.then_statements: INSERT INTO MDM_V_TH
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 573 in main_section_lines.begin_end_statements.then_statements: UPDATE MDM_V_THEME_M
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 582 in main_section_lines.begin_end_statements.then_statements: SELECT
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 591 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE SEC_MOL_LIST_N
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 595 in main_section_lines.begin_end_statements.then_statements.else_statements: UPDATE MDM_V_THEME_M
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 632 in main_section_lines.begin_end_statements.then_statements.then_statements: SELECT
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 644 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 655 in main_section_lines.begin_end_statements.then_statements.else_statements.then_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 665 in main_section_lines.begin_end_statements.then_statements.else_statements.else_statements.then_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 673 in main_section_lines.begin_end_statements.then_statements.else_statements.else_statements.then_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 690 in main_section_lines.begin_end_statements.then_statements.then_statements: SELECT
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 700 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,568 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 715 in main_section_lines.begin_end_statements.then_statements.then_statements: SELECT
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 730 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.begin_end_statements: SELECT
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 741 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.exception_statements: RAISE INVALID_MOLECU
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 745 in main_section_lines.begin_end_statements.then_statements.then_statements: INSERT INTO MDM_V_NE
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 776 in main_section_lines.begin_end_statements.begin_end_statements.loop_statements: DELETE FROM GMD.THEM
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: delete_statement
+2025-08-12 18:30:15,569 - root - DEBUG - [test1.py:2082] - SQL statements parsing complete
+2025-08-12 18:30:15,569 - root - INFO - [common.py:103] - ✅ Completed SQL statements in main section parsing
+2025-08-12 18:30:15,569 - root - INFO - [common.py:96] - 🔄 Starting final statement in main section parsing
+2025-08-12 18:30:15,570 - root - DEBUG - [test1.py:970] - Final statement parsing complete
+2025-08-12 18:30:15,570 - root - INFO - [common.py:103] - ✅ Completed final statement in main section parsing
+2025-08-12 18:30:15,570 - root - INFO - [common.py:103] - ✅ Completed SQL section parsing parsing
+2025-08-12 18:30:15,570 - root - INFO - [common.py:96] - 🔄 Starting rule validation parsing
+2025-08-12 18:30:15,571 - root - DEBUG - [test1.py:689] - Rule validation complete: found 0 violations
+2025-08-12 18:30:15,571 - root - INFO - [common.py:103] - ✅ Completed rule validation parsing
+2025-08-12 18:30:15,571 - root - DEBUG - [common.py:126] - ⏱️ OracleTriggerAnalyzer initialization completed in 0.051s
+2025-08-12 18:30:15,571 - root - DEBUG - [common.py:68] - Generating JSON analysis...
+2025-08-12 18:30:15,571 - root - INFO - [test1.py:3175] - JSON conversion complete: 29 vars, 2 consts, 18 excs, 63 comments
+2025-08-12 18:30:15,572 - root - DEBUG - [common.py:68] - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-12 18:30:15,576 - root - DEBUG - [common.py:68] - Wrote analysis JSON to files/format_json\trigger1_analysis.json
+2025-08-12 18:30:15,576 - root - INFO - [common.py:72] - Created trigger1_analysis.json
+2025-08-12 18:30:15,576 - root - DEBUG - [common.py:68] - Processing file: trigger2.sql
+2025-08-12 18:30:15,576 - root - DEBUG - [common.py:68] - Extracted trigger number: 2
+2025-08-12 18:30:15,576 - root - DEBUG - [common.py:68] - Read 18805 characters from files/oracle\trigger2.sql
+2025-08-12 18:30:15,577 - root - DEBUG - [common.py:68] - Initializing OracleTriggerAnalyzer with 18805 characters of SQL
+2025-08-12 18:30:15,577 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing: 0 lines processed
+2025-08-12 18:30:15,577 - root - INFO - [common.py:96] - 🔄 Starting SQL section parsing parsing
+2025-08-12 18:30:15,577 - root - INFO - [common.py:96] - 🔄 Starting structured lines conversion parsing
+2025-08-12 18:30:15,577 - root - DEBUG - [common.py:68] - Converting SQL content to structured lines
+2025-08-12 18:30:15,578 - root - DEBUG - [common.py:68] - Structured lines conversion complete: 422 total, 89 with semicolons, 43 empty lines skipped
+2025-08-12 18:30:15,578 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing
+2025-08-12 18:30:15,580 - root - DEBUG - [test1.py:205] - Block comment stripping complete: 6 comments extracted, 364 lines cleaned
+2025-08-12 18:30:15,580 - root - DEBUG - [test1.py:277] - Removed block comments from main section
+2025-08-12 18:30:15,580 - root - DEBUG - [test1.py:252] - Inline comment stripping complete: 67 comments extracted, 315 lines cleaned
+2025-08-12 18:30:15,580 - root - DEBUG - [test1.py:281] - Removed inline comments from main section
+2025-08-12 18:30:15,580 - root - DEBUG - [test1.py:293] - Found DECLARE at line 1
+2025-08-12 18:30:15,580 - root - DEBUG - [test1.py:298] - Found BEGIN at line 18
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:304] - DECLARE section: lines 1-17
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:311] - Main section: lines 18
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:338] - Starting declaration parsing
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:411] - Processed exception: ERR_MAP_EXISTS
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:411] - Processed exception: ERR_MOLEC_ID_MISSING
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:411] - Processed exception: ERR_NO_PORTF_MOLECULE_LEFT
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:411] - Processed exception: ERR_UPD_INV_MAP
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:411] - Processed exception: ERR_INS_INV_MAP
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:411] - Processed exception: ERR_INV_MOL_SEQUENCE
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:411] - Processed exception: UPDATE_UPD
+2025-08-12 18:30:15,581 - root - DEBUG - [test1.py:381] - Processed variable: V_COUNT_T_MAPPINGS
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:381] - Processed variable: V_COUNT_T_MOL_MAP
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLECULE_SEQ_NO
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:381] - Processed variable: V_SEQ_NO_DUPLICATE_CNT
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:381] - Processed variable: INVALID_MAPPING_EXISTS
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:381] - Processed variable: V_MANUAL_SHORT_DESC
+2025-08-12 18:30:15,582 - root - DEBUG - [common.py:68] - Processing main section from lines 18
+2025-08-12 18:30:15,582 - root - INFO - [common.py:96] - 🔄 Starting First BEGIN blocks parsing
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:744] - Starting top-level BEGIN blocks parsing
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:754] - Collected 301 lines from main section
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:771] - Found top-level BEGIN block at line 18 (indent 0)
+2025-08-12 18:30:15,582 - root - DEBUG - [test1.py:832] - Parsing top-level BEGIN-END block starting at line 18 (indent 0)
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:864] - Found EXCEPTION at line 439
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:870] - Found END; at line 465
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_MAP_EXISTS
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20110', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_MOLEC_ID_MISSING
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20111', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_UPD_INV_MAP
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20112', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_INS_INV_MAP
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_INV_MOL_SEQUENCE
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20120', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:2983] - Parsed exception section: 5 handlers
+2025-08-12 18:30:15,583 - root - DEBUG - [test1.py:889] - Successfully parsed top-level BEGIN-END block: 288 statements, 5 exception handlers
+2025-08-12 18:30:15,584 - root - DEBUG - [test1.py:795] - Successfully parsed top-level BEGIN-END block from line 18 to 465
+2025-08-12 18:30:15,584 - root - DEBUG - [test1.py:801] - Top-level BEGIN blocks parsing complete: 1 items in main_section_lines
+2025-08-12 18:30:15,584 - root - INFO - [common.py:103] - ✅ Completed First BEGIN blocks parsing
+2025-08-12 18:30:15,584 - root - INFO - [common.py:96] - 🔄 Starting CASE-WHEN statements in main section parsing
+2025-08-12 18:30:15,584 - root - DEBUG - [test1.py:2091] - Starting CASE WHEN ELSE parsing with indentation-based nesting
+2025-08-12 18:30:15,584 - root - DEBUG - [test1.py:2109] - Found CASE statement at line 125 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,584 - root - DEBUG - [test1.py:2403] - Starting enhanced CASE statement parsing from index 83
+2025-08-12 18:30:15,584 - root - DEBUG - [test1.py:2421] - CASE statement - Type: simple, Expression: '', Indent: 12
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2440] - Found END CASE; at line 200 (indent 12)
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2477] - Found WHEN clause at line 126 (indent 16, case indent 12)
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2482] - Found ELSE clause at line 137 (indent 20, case indent 12)
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2477] - Found WHEN clause at line 156 (indent 16, case indent 12)
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2482] - Found ELSE clause at line 177 (indent 20, case indent 12)
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2482] - Found ELSE clause at line 196 (indent 16, case indent 12)
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2732] - Parsed WHEN clause: :NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2732] - Parsed WHEN clause: :NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2791] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2801] - Processing nested structures in enhanced CASE statement
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2511] - Completed enhanced CASE statement parsing: 2 when clauses, ELSE at line 196, end at line 200
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2115] - Parsed complete CASE statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,585 - root - DEBUG - [test1.py:2176] - CASE WHEN ELSE parsing complete
+2025-08-12 18:30:15,585 - root - INFO - [common.py:103] - ✅ Completed CASE-WHEN statements in main section parsing
+2025-08-12 18:30:15,586 - root - INFO - [common.py:96] - 🔄 Starting IF-ELSE statements in main section parsing
+2025-08-12 18:30:15,586 - root - DEBUG - [test1.py:1239] - Starting IF-ELSEIF-ELSE parsing with indentation-based nesting
+2025-08-12 18:30:15,586 - root - DEBUG - [test1.py:1257] - Found IF statement at line 27 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,586 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 21
+2025-08-12 18:30:15,586 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(DELETING)', Indent: 4
+2025-08-12 18:30:15,586 - root - DEBUG - [test1.py:1371] - Found END IF; at line 58 (indent 4)
+2025-08-12 18:30:15,587 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,587 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 58
+2025-08-12 18:30:15,587 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,587 - root - DEBUG - [test1.py:1257] - Found IF statement at line 60 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,587 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 42
+2025-08-12 18:30:15,587 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INSERTING OR UPDATING)', Indent: 4
+2025-08-12 18:30:15,587 - root - DEBUG - [test1.py:1371] - Found END IF; at line 401 (indent 4)
+2025-08-12 18:30:15,587 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:2887] - Found nested CASE statement in clause
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 401
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1257] - Found IF statement at line 68 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 50
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID IS NULL)', Indent: 8
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1371] - Found END IF; at line 87 (indent 8)
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 87
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1257] - Found IF statement at line 89 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 53
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(UPDATING)', Indent: 8
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1371] - Found END IF; at line 93 (indent 8)
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 93
+2025-08-12 18:30:15,588 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1257] - Found IF statement at line 90 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 54
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS)', Indent: 12
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1371] - Found END IF; at line 92 (indent 12)
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 92
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1257] - Found IF statement at line 98 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 58
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1'))', Indent: 8
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1371] - Found END IF; at line 122 (indent 8)
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 122
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1257] - Found IF statement at line 107 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 67
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COUNT_T_MOL_MAP > 0)', Indent: 12
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1371] - Found END IF; at line 109 (indent 12)
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 109
+2025-08-12 18:30:15,589 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1257] - Found IF statement at line 119 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 78
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COUNT_T_MOL_MAP > 0)', Indent: 12
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1371] - Found END IF; at line 121 (indent 12)
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 121
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1257] - Found IF statement at line 124 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 82
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INSERTING)', Indent: 8
+2025-08-12 18:30:15,590 - root - DEBUG - [test1.py:1371] - Found END IF; at line 201 (indent 8)
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:2887] - Found nested CASE statement in clause
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 201
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1257] - Found IF statement at line 202 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 143
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(UPDATING)', Indent: 8
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1371] - Found END IF; at line 393 (indent 8)
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 393
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1257] - Found IF statement at line 203 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 144
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID IS NOT NULL)', Indent: 12
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1371] - Found END IF; at line 289 (indent 12)
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,591 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 289
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1257] - Found IF statement at line 204 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 145
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR)', Indent: 16
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1371] - Found END IF; at line 211 (indent 16)
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 211
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1257] - Found IF statement at line 213 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 153
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO)', Indent: 16
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1371] - Found END IF; at line 285 (indent 16)
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 285
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1257] - Found IF statement at line 228 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 160
+2025-08-12 18:30:15,592 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO)', Indent: 20
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1371] - Found END IF; at line 250 (indent 20)
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 239 (indent 20)
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 8 statements
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 239, end at line 250
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1257] - Found IF statement at line 254 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 179
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INVALID_MAPPING_EXISTS)', Indent: 20
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1371] - Found END IF; at line 280 (indent 20)
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 265 (indent 20)
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 13 statements
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 265, end at line 280
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1257] - Found IF statement at line 291 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 205
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO)', Indent: 12
+2025-08-12 18:30:15,593 - root - DEBUG - [test1.py:1371] - Found END IF; at line 351 (indent 12)
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 351
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1257] - Found IF statement at line 320 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 220
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INVALID_MAPPING_EXISTS)', Indent: 16
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1371] - Found END IF; at line 346 (indent 16)
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 331 (indent 16)
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 13 statements
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 331, end at line 346
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1257] - Found IF statement at line 352 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 245
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO', Indent: 12
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1371] - Found END IF; at line 392 (indent 12)
+2025-08-12 18:30:15,594 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 392
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1257] - Found IF statement at line 363 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 253
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INVALID_MAPPING_EXISTS)', Indent: 16
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1371] - Found END IF; at line 387 (indent 16)
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 374 (indent 16)
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 11 statements
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 374, end at line 387
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1257] - Found IF statement at line 127 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 85
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INVALID_MAPPING_EXISTS)', Indent: 20
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1371] - Found END IF; at line 152 (indent 20)
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 137 (indent 20)
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 13 statements
+2025-08-12 18:30:15,595 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 137, end at line 152
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1257] - Found IF statement at line 167 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 116
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INVALID_MAPPING_EXISTS)', Indent: 20
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1371] - Found END IF; at line 192 (indent 20)
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 177 (indent 20)
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 13 statements
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 177, end at line 192
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1257] - Found IF statement at line 419 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,596 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 300
+2025-08-12 18:30:15,597 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_SEQ_NO_DUPLICATE_CNT > 0)', Indent: 4
+2025-08-12 18:30:15,597 - root - DEBUG - [test1.py:1371] - Found END IF; at line 421 (indent 4)
+2025-08-12 18:30:15,597 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,597 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 421
+2025-08-12 18:30:15,597 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,597 - root - DEBUG - [test1.py:1324] - IF-ELSEIF-ELSE parsing complete
+2025-08-12 18:30:15,597 - root - INFO - [common.py:103] - ✅ Completed IF-ELSE statements in main section parsing
+2025-08-12 18:30:15,597 - root - INFO - [common.py:96] - 🔄 Starting BEGIN blocks in main section parsing
+2025-08-12 18:30:15,597 - root - DEBUG - [test1.py:2191] - Starting nested BEGIN block parsing
+2025-08-12 18:30:15,598 - root - DEBUG - [test1.py:2275] - Nested BEGIN block parsing complete
+2025-08-12 18:30:15,598 - root - INFO - [common.py:103] - ✅ Completed BEGIN blocks in main section parsing
+2025-08-12 18:30:15,598 - root - INFO - [common.py:96] - 🔄 Starting FOR loops in main section parsing
+2025-08-12 18:30:15,598 - root - DEBUG - [test1.py:985] - Starting FOR loop parsing
+2025-08-12 18:30:15,599 - root - DEBUG - [test1.py:1071] - FOR loop parsing complete
+2025-08-12 18:30:15,599 - root - INFO - [common.py:103] - ✅ Completed FOR loops in main section parsing
+2025-08-12 18:30:15,599 - root - INFO - [common.py:96] - 🔄 Starting assignment statements in main section parsing
+2025-08-12 18:30:15,599 - root - DEBUG - [test1.py:1790] - Starting assignment statements parsing
+2025-08-12 18:30:15,600 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 120 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: INVALID_MAPPING_EXISTS := TRUE
+2025-08-12 18:30:15,600 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: INVALID_MAPPING_EXISTS
+2025-08-12 18:30:15,600 - root - DEBUG - [test1.py:1908] - Assignment statements parsing complete
+2025-08-12 18:30:15,600 - root - INFO - [common.py:103] - ✅ Completed assignment statements in main section parsing
+2025-08-12 18:30:15,600 - root - INFO - [common.py:96] - 🔄 Starting SQL statements in main section parsing
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1955] - Starting SQL statements parsing
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 21 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 33 in main_section_lines.begin_end_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 41 in main_section_lines.begin_end_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 61 in main_section_lines.begin_end_statements.then_statements: SELECT
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 69 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE ERR_MOLEC_ID_M
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 91 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: RAISE ERR_UPD_INV_MA
+2025-08-12 18:30:15,601 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 99 in main_section_lines.begin_end_statements.then_statements.then_statements: SELECT
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 108 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: RAISE ERR_MAP_EXISTS
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 111 in main_section_lines.begin_end_statements.then_statements.then_statements: SELECT
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 205 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 222 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 231 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 242 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements.else_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 257 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 267 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements.else_statements: INSERT INTO THEME_MO
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 302 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,602 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 310 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 323 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 333 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.else_statements: INSERT INTO THEME_MO
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 355 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 366 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 376 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements.else_statements: INSERT INTO THEME_MO
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 130 in main_section_lines.begin_end_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 139 in main_section_lines.begin_end_statements.then_statements.else_statements: INSERT INTO THEME_MO
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 158 in main_section_lines.begin_end_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 170 in main_section_lines.begin_end_statements.then_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 179 in main_section_lines.begin_end_statements.then_statements.else_statements: INSERT INTO THEME_MO
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 199 in main_section_lines.begin_end_statements.else_statements: RAISE ERR_INS_INV_MA
+2025-08-12 18:30:15,603 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,604 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 403 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:30:15,604 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,604 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 420 in main_section_lines.begin_end_statements.then_statements: RAISE ERR_INV_MOL_SE
+2025-08-12 18:30:15,604 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,604 - root - DEBUG - [test1.py:2082] - SQL statements parsing complete
+2025-08-12 18:30:15,604 - root - INFO - [common.py:103] - ✅ Completed SQL statements in main section parsing
+2025-08-12 18:30:15,604 - root - INFO - [common.py:96] - 🔄 Starting final statement in main section parsing
+2025-08-12 18:30:15,604 - root - DEBUG - [test1.py:970] - Final statement parsing complete
+2025-08-12 18:30:15,604 - root - INFO - [common.py:103] - ✅ Completed final statement in main section parsing
+2025-08-12 18:30:15,605 - root - INFO - [common.py:103] - ✅ Completed SQL section parsing parsing
+2025-08-12 18:30:15,605 - root - INFO - [common.py:96] - 🔄 Starting rule validation parsing
+2025-08-12 18:30:15,605 - root - DEBUG - [test1.py:689] - Rule validation complete: found 0 violations
+2025-08-12 18:30:15,606 - root - INFO - [common.py:103] - ✅ Completed rule validation parsing
+2025-08-12 18:30:15,606 - root - DEBUG - [common.py:126] - ⏱️ OracleTriggerAnalyzer initialization completed in 0.029s
+2025-08-12 18:30:15,606 - root - DEBUG - [common.py:68] - Generating JSON analysis...
+2025-08-12 18:30:15,606 - root - INFO - [test1.py:3175] - JSON conversion complete: 6 vars, 0 consts, 7 excs, 73 comments
+2025-08-12 18:30:15,606 - root - DEBUG - [common.py:68] - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-12 18:30:15,608 - root - DEBUG - [common.py:68] - Wrote analysis JSON to files/format_json\trigger2_analysis.json
+2025-08-12 18:30:15,608 - root - INFO - [common.py:72] - Created trigger2_analysis.json
+2025-08-12 18:30:15,609 - root - DEBUG - [common.py:68] - Processing file: trigger3.sql
+2025-08-12 18:30:15,609 - root - DEBUG - [common.py:68] - Extracted trigger number: 3
+2025-08-12 18:30:15,609 - root - DEBUG - [common.py:68] - Read 12985 characters from files/oracle\trigger3.sql
+2025-08-12 18:30:15,609 - root - DEBUG - [common.py:68] - Initializing OracleTriggerAnalyzer with 12985 characters of SQL
+2025-08-12 18:30:15,609 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing: 0 lines processed
+2025-08-12 18:30:15,610 - root - INFO - [common.py:96] - 🔄 Starting SQL section parsing parsing
+2025-08-12 18:30:15,610 - root - INFO - [common.py:96] - 🔄 Starting structured lines conversion parsing
+2025-08-12 18:30:15,610 - root - DEBUG - [common.py:68] - Converting SQL content to structured lines
+2025-08-12 18:30:15,611 - root - DEBUG - [common.py:68] - Structured lines conversion complete: 244 total, 58 with semicolons, 21 empty lines skipped
+2025-08-12 18:30:15,611 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:205] - Block comment stripping complete: 0 comments extracted, 244 lines cleaned
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:277] - Removed block comments from main section
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:252] - Inline comment stripping complete: 17 comments extracted, 227 lines cleaned
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:281] - Removed inline comments from main section
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:293] - Found DECLARE at line 1
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:298] - Found BEGIN at line 14
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:304] - DECLARE section: lines 1-13
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:311] - Main section: lines 14
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:338] - Starting declaration parsing
+2025-08-12 18:30:15,611 - root - DEBUG - [test1.py:381] - Processed variable: V_TRIGGER_NAME
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:381] - Processed variable: CNTR
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:411] - Processed exception: ERR_UPD
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:411] - Processed exception: ERR_INS
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:411] - Processed exception: ERR_CTRY_CHG
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:411] - Processed exception: ERR_NOT_ALLOWED_TO_INVALIDATE
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:381] - Processed variable: V_USERID
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:411] - Processed exception: TEST_ERR
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:381] - Processed variable: V_COUNTRY_CD
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:381] - Processed variable: V_COMPANY_TYPE_CD
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:411] - Processed exception: ERR_INS_LEGAL_ADDR
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:381] - Processed variable: V_VALID_FROM
+2025-08-12 18:30:15,612 - root - DEBUG - [common.py:68] - Processing main section from lines 14
+2025-08-12 18:30:15,612 - root - INFO - [common.py:96] - 🔄 Starting First BEGIN blocks parsing
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:744] - Starting top-level BEGIN blocks parsing
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:754] - Collected 214 lines from main section
+2025-08-12 18:30:15,612 - root - DEBUG - [test1.py:771] - Found top-level BEGIN block at line 14 (indent 0)
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:832] - Parsing top-level BEGIN-END block starting at line 14 (indent 0)
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:864] - Found EXCEPTION at line 252
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:870] - Found END; at line 265
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_UPD
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20111', 'handler_string': "'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD"}
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_INS
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20112', 'handler_string': 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.'}
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_CTRY_CHG
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'The company country modified but not the Valid From Date. Please update also the Valid From Date.'}
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2943] - Found exception handler: TEST_ERR
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': "'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR"}
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_INS_LEGAL_ADDR
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'The legal address cannot be inserted for this type of company'}
+2025-08-12 18:30:15,613 - root - DEBUG - [test1.py:2943] - Found exception handler: ERR_NOT_ALLOWED_TO_INVALIDATE
+2025-08-12 18:30:15,614 - root - DEBUG - [test1.py:2960] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'It is not allowed to invalidate/delete this type of address'}
+2025-08-12 18:30:15,614 - root - DEBUG - [test1.py:2983] - Parsed exception section: 6 handlers
+2025-08-12 18:30:15,614 - root - DEBUG - [test1.py:889] - Successfully parsed top-level BEGIN-END block: 199 statements, 6 exception handlers
+2025-08-12 18:30:15,614 - root - DEBUG - [test1.py:795] - Successfully parsed top-level BEGIN-END block from line 14 to 265
+2025-08-12 18:30:15,614 - root - DEBUG - [test1.py:801] - Top-level BEGIN blocks parsing complete: 1 items in main_section_lines
+2025-08-12 18:30:15,614 - root - INFO - [common.py:103] - ✅ Completed First BEGIN blocks parsing
+2025-08-12 18:30:15,614 - root - INFO - [common.py:96] - 🔄 Starting CASE-WHEN statements in main section parsing
+2025-08-12 18:30:15,614 - root - DEBUG - [test1.py:2091] - Starting CASE WHEN ELSE parsing with indentation-based nesting
+2025-08-12 18:30:15,615 - root - DEBUG - [test1.py:2176] - CASE WHEN ELSE parsing complete
+2025-08-12 18:30:15,615 - root - INFO - [common.py:103] - ✅ Completed CASE-WHEN statements in main section parsing
+2025-08-12 18:30:15,615 - root - INFO - [common.py:96] - 🔄 Starting IF-ELSE statements in main section parsing
+2025-08-12 18:30:15,615 - root - DEBUG - [test1.py:1239] - Starting IF-ELSEIF-ELSE parsing with indentation-based nesting
+2025-08-12 18:30:15,615 - root - DEBUG - [test1.py:1257] - Found IF statement at line 30 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,615 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 28
+2025-08-12 18:30:15,615 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INSERTING)', Indent: 4
+2025-08-12 18:30:15,615 - root - DEBUG - [test1.py:1371] - Found END IF; at line 34 (indent 4)
+2025-08-12 18:30:15,615 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 34
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1257] - Found IF statement at line 31 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 29
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(CNTR > 0)', Indent: 8
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1371] - Found END IF; at line 33 (indent 8)
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 33
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,616 - root - DEBUG - [test1.py:1257] - Found IF statement at line 36 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,617 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 33
+2025-08-12 18:30:15,617 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(INSERTING OR UPDATING)', Indent: 4
+2025-08-12 18:30:15,617 - root - DEBUG - [test1.py:1371] - Found END IF; at line 243 (indent 4)
+2025-08-12 18:30:15,617 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,617 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 243
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1257] - Found IF statement at line 43 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 40
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L'))', Indent: 8
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1371] - Found END IF; at line 45 (indent 8)
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 45
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1257] - Found IF statement at line 47 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 43
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L'))', Indent: 8
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1371] - Found END IF; at line 196 (indent 8)
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 196
+2025-08-12 18:30:15,618 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1257] - Found IF statement at line 48 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 44
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)', Indent: 12
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1371] - Found END IF; at line 50 (indent 12)
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 50
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1257] - Found IF statement at line 52 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 47
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(CNTR = 0)', Indent: 12
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1371] - Found END IF; at line 195 (indent 12)
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 73 (indent 12)
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 96 statements
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 73, end at line 195
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1257] - Found IF statement at line 76 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements
+2025-08-12 18:30:15,619 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 67
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)', Indent: 16
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1371] - Found END IF; at line 194 (indent 16)
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 173 (indent 16)
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 18 statements
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 173, end at line 194
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1257] - Found IF statement at line 114 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 96
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0)', Indent: 20
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1371] - Found END IF; at line 172 (indent 20)
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 172
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1257] - Found IF statement at line 126 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements
+2025-08-12 18:30:15,620 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 103
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01')', Indent: 24
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1371] - Found END IF; at line 134 (indent 24)
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 130 (indent 24)
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 1 statements
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 130, end at line 134
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1257] - Found IF statement at line 148 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 118
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(V_COMPANY_TYPE_CD = 'L')', Indent: 24
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1371] - Found END IF; at line 171 (indent 24)
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,621 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 171
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1257] - Found IF statement at line 198 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 165
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L'))', Indent: 8
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1371] - Found END IF; at line 242 (indent 8)
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 242
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1257] - Found IF statement at line 199 in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 166
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(CNTR = 0)', Indent: 12
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1371] - Found END IF; at line 241 (indent 12)
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1413] - Found ELSE clause at line 220 (indent 12)
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1697] - Parsed ELSE clause with 18 statements
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line 220, end at line 241
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements.then_statements
+2025-08-12 18:30:15,622 - root - DEBUG - [test1.py:1257] - Found IF statement at line 245 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 207
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(DELETING)', Indent: 4
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1371] - Found END IF; at line 251 (indent 4)
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 251
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1257] - Found IF statement at line 246 in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1337] - Starting enhanced IF statement parsing from index 208
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1354] - IF statement - Condition: '(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P'))', Indent: 8
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1371] - Found END IF; at line 248 (indent 8)
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1707] - Processing nested structures in enhanced IF statement
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1449] - Completed enhanced IF statement parsing: 0 else_if clauses, ELSE at line None, end at line 248
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1263] - Parsed complete IF statement structure in main_section_lines.begin_end_statements.then_statements
+2025-08-12 18:30:15,623 - root - DEBUG - [test1.py:1324] - IF-ELSEIF-ELSE parsing complete
+2025-08-12 18:30:15,623 - root - INFO - [common.py:103] - ✅ Completed IF-ELSE statements in main section parsing
+2025-08-12 18:30:15,623 - root - INFO - [common.py:96] - 🔄 Starting BEGIN blocks in main section parsing
+2025-08-12 18:30:15,624 - root - DEBUG - [test1.py:2191] - Starting nested BEGIN block parsing
+2025-08-12 18:30:15,624 - root - DEBUG - [test1.py:2209] - Found nested BEGIN block at line 15 in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,624 - root - DEBUG - [test1.py:2293] - Parsing BEGIN-END block starting at line 15
+2025-08-12 18:30:15,624 - root - DEBUG - [test1.py:2341] - Found EXCEPTION section at line 17
+2025-08-12 18:30:15,624 - root - DEBUG - [test1.py:2352] - Parsed exception handler: OTHERS
+2025-08-12 18:30:15,624 - root - DEBUG - [test1.py:2334] - Ended main BEGIN block at line 20
+2025-08-12 18:30:15,624 - root - DEBUG - [test1.py:2216] - Parsed complete nested BEGIN block structure in main_section_lines.begin_end_statements
+2025-08-12 18:30:15,624 - root - DEBUG - [test1.py:2275] - Nested BEGIN block parsing complete
+2025-08-12 18:30:15,625 - root - INFO - [common.py:103] - ✅ Completed BEGIN blocks in main section parsing
+2025-08-12 18:30:15,625 - root - INFO - [common.py:96] - 🔄 Starting FOR loops in main section parsing
+2025-08-12 18:30:15,625 - root - DEBUG - [test1.py:985] - Starting FOR loop parsing
+2025-08-12 18:30:15,625 - root - DEBUG - [test1.py:1006] - Found FOR loop at line 149 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,625 - root - DEBUG - [test1.py:1089] - Parsing FOR loop structure starting at line 149: FOR V_REC IN (
+2025-08-12 18:30:15,625 - root - DEBUG - [test1.py:1159] - Found END LOOP at line 170
+2025-08-12 18:30:15,625 - root - DEBUG - [test1.py:1185] - Successfully parsed FOR loop: V_REC IN (SELECT COMPANY_CD FROM CFG_V_C)
+2025-08-12 18:30:15,625 - root - DEBUG - [test1.py:1012] - Parsed complete FOR loop structure in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements.then_statements
+2025-08-12 18:30:15,626 - root - DEBUG - [test1.py:1071] - FOR loop parsing complete
+2025-08-12 18:30:15,626 - root - INFO - [common.py:103] - ✅ Completed FOR loops in main section parsing
+2025-08-12 18:30:15,626 - root - INFO - [common.py:96] - 🔄 Starting assignment statements in main section parsing
+2025-08-12 18:30:15,626 - root - DEBUG - [test1.py:1790] - Starting assignment statements parsing
+2025-08-12 18:30:15,626 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 16 in main_section_lines.begin_end_statements.begin_end_statements: V_USERID := TXO_UTIL.GET_USERI
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_USERID
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 19 in main_section_lines.begin_end_statements.exception_statements: V_USERID := USER;
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_USERID
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 22 in main_section_lines.begin_end_statements: CNTR := 0;
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: CNTR
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 102 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements: CNTR := 0;
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: CNTR
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 129 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements.then_statements: V_VALID_FROM := TO_DATE(ADD_MO
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_VALID_FROM
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1807] - Found assignment statement at line 133 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements.else_statements: V_VALID_FROM := TO_DATE(ADD_MO
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1820] - Parsed single-line assignment statement: V_VALID_FROM
+2025-08-12 18:30:15,627 - root - DEBUG - [test1.py:1908] - Assignment statements parsing complete
+2025-08-12 18:30:15,627 - root - INFO - [common.py:103] - ✅ Completed assignment statements in main section parsing
+2025-08-12 18:30:15,627 - root - INFO - [common.py:96] - 🔄 Starting SQL statements in main section parsing
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1955] - Starting SQL statements parsing
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 23 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 32 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE ERR_INS;
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 37 in main_section_lines.begin_end_statements.then_statements: SELECT
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 44 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE ERR_INS_LEGAL_
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 49 in main_section_lines.begin_end_statements.then_statements.then_statements.then_statements: RAISE ERR_CTRY_CHG;
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 105 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements: SELECT
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 118 in main_section_lines.begin_end_statements.then_statements.then_statements.else_statements.then_statements.then_statements: SELECT
+2025-08-12 18:30:15,628 - root - DEBUG - [test1.py:2034] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:30:15,629 - root - DEBUG - [test1.py:1988] - Found SQL statement at line 247 in main_section_lines.begin_end_statements.then_statements.then_statements: RAISE ERR_NOT_ALLOWE
+2025-08-12 18:30:15,629 - root - DEBUG - [test1.py:1998] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:30:15,629 - root - DEBUG - [test1.py:2082] - SQL statements parsing complete
+2025-08-12 18:30:15,629 - root - INFO - [common.py:103] - ✅ Completed SQL statements in main section parsing
+2025-08-12 18:30:15,629 - root - INFO - [common.py:96] - 🔄 Starting final statement in main section parsing
+2025-08-12 18:30:15,629 - root - DEBUG - [test1.py:970] - Final statement parsing complete
+2025-08-12 18:30:15,629 - root - INFO - [common.py:103] - ✅ Completed final statement in main section parsing
+2025-08-12 18:30:15,630 - root - INFO - [common.py:103] - ✅ Completed SQL section parsing parsing
+2025-08-12 18:30:15,630 - root - INFO - [common.py:96] - 🔄 Starting rule validation parsing
+2025-08-12 18:30:15,630 - root - DEBUG - [test1.py:689] - Rule validation complete: found 0 violations
+2025-08-12 18:30:15,630 - root - INFO - [common.py:103] - ✅ Completed rule validation parsing
+2025-08-12 18:30:15,631 - root - DEBUG - [common.py:126] - ⏱️ OracleTriggerAnalyzer initialization completed in 0.021s
+2025-08-12 18:30:15,631 - root - DEBUG - [common.py:68] - Generating JSON analysis...
+2025-08-12 18:30:15,631 - root - INFO - [test1.py:3175] - JSON conversion complete: 6 vars, 0 consts, 6 excs, 17 comments
+2025-08-12 18:30:15,631 - root - DEBUG - [common.py:68] - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-12 18:30:15,635 - root - DEBUG - [common.py:68] - Wrote analysis JSON to files/format_json\trigger3_analysis.json
+2025-08-12 18:30:15,635 - root - INFO - [common.py:72] - Created trigger3_analysis.json
+2025-08-12 18:30:15,635 - root - INFO - [common.py:72] - JSON conversion complete!

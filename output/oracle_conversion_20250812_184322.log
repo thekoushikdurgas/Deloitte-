@@ -1,0 +1,689 @@
+2025-08-12 18:43:22,452 - root - INFO - [common.py:72] - Starting batch conversion: SQL -> JSON -> SQL (Logging to output\oracle_conversion_20250812_184322.log)
+2025-08-12 18:43:22,452 - root - INFO - [common.py:72] - Processing files from 'files/oracle' to 'files/format_json'
+2025-08-12 18:43:22,452 - root - DEBUG - [common.py:68] - Found 3 files matching pattern: ['trigger1.sql', 'trigger2.sql', 'trigger3.sql']
+2025-08-12 18:43:22,452 - root - DEBUG - [common.py:68] - Processing file: trigger1.sql
+2025-08-12 18:43:22,452 - root - DEBUG - [common.py:68] - Extracted trigger number: 1
+2025-08-12 18:43:22,453 - root - DEBUG - [common.py:68] - Read 29058 characters from files/oracle\trigger1.sql
+2025-08-12 18:43:22,454 - root - DEBUG - [common.py:68] - Initializing OracleTriggerAnalyzer with 29058 characters of SQL
+2025-08-12 18:43:22,454 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing: 0 lines processed
+2025-08-12 18:43:22,454 - root - INFO - [common.py:96] - 🔄 Starting SQL section parsing parsing
+2025-08-12 18:43:22,454 - root - INFO - [common.py:96] - 🔄 Starting structured lines conversion parsing
+2025-08-12 18:43:22,454 - root - DEBUG - [common.py:68] - Converting SQL content to structured lines
+2025-08-12 18:43:22,455 - root - DEBUG - [common.py:68] - Structured lines conversion complete: 750 total, 213 with semicolons, 69 empty lines skipped
+2025-08-12 18:43:22,455 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing
+2025-08-12 18:43:22,455 - root - DEBUG - [test1.py:205] - Block comment stripping complete: 0 comments extracted, 750 lines cleaned
+2025-08-12 18:43:22,455 - root - DEBUG - [test1.py:277] - Removed block comments from main section
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:252] - Inline comment stripping complete: 63 comments extracted, 697 lines cleaned
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:281] - Removed inline comments from main section
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:293] - Found DECLARE at line 1
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:298] - Found BEGIN at line 51
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:304] - DECLARE section: lines 1-50
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:311] - Main section: lines 51
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:338] - Starting declaration parsing
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: INVALID_THEME_NO
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: DELETE_NO_MORE_POSSIBLE
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: THEME_NO_ONLY_INSERT
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: DESCRIPTION_TOO_LONG
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: THEME_DESC_PROPOSAL_TOO_LONG
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: THEME_DESC_ALT_TOO_LONG
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: THEME_NO_CANNOT_BE_INSERTED
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: ONLYONEOFFICIALCHANGEPERDAY
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: INSERTSMUSTBEOFFICIAL
+2025-08-12 18:43:22,456 - root - DEBUG - [test1.py:411] - Processed exception: THEMEDESCRIPTIONMANDATORY
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:411] - Processed exception: THEME_DESC_NOT_UNIQUE
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:411] - Processed exception: IN_PREP_NOT_PORTF_PROJ
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:411] - Processed exception: IN_PREP_NOT_CLOSED
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:411] - Processed exception: INVALID_MOLECULE_ID
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:411] - Processed exception: SEC_MOL_LIST_NOT_EMPTY
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:411] - Processed exception: ADMIN_UPDATE_ONLY
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:411] - Processed exception: PORTF_PROJ_MOL_CRE_ERR
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:411] - Processed exception: DEBUGGING
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_COUNTER
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_CODE
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_ODG_NO
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_RESGRP_CD
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_RESLIN_CD
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_STATUS_CD
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_DBA_CD
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_PORTF_PROJ_CD
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_DESCRIPTION
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_RESLIN_DESC
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_THEME_DESC_LENGTH
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_D_REGISTRAT_DATE
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_D_INS_DATE
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_FUTURE_REGISTRAT
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_VALID_TO
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_USERID
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_IS_ADMIN_CNT
+2025-08-12 18:43:22,457 - root - DEBUG - [test1.py:381] - Processed variable: V_SEC_MOL_CNT
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLECULE_ID
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLECULE_RG_NO
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLEC_IN_LIC_PRTNR
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_NEW_RG_NO
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_COMPARATOR_IND
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_THEME_DESC_PROPOSAL
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_SHORT_NAME
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:396] - Processed constant: C_MOLECULE_TYPE_ID
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:396] - Processed constant: C_PHARMACOLOGICAL_TYPE_ID
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_EVOLVED_NMP_CNT
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_TRADEMARK_NO
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLECULE_TYPE_ID
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:381] - Processed variable: V_PHARMACOLOGICAL_TYPE_ID
+2025-08-12 18:43:22,458 - root - DEBUG - [common.py:68] - Processing main section from lines 51
+2025-08-12 18:43:22,458 - root - INFO - [common.py:96] - 🔄 Starting First BEGIN blocks parsing
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:744] - Starting top-level BEGIN blocks parsing
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:754] - Collected 647 lines from main section
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:771] - Found top-level BEGIN block at line 51 (indent 0)
+2025-08-12 18:43:22,458 - root - DEBUG - [test1.py:832] - Parsing top-level BEGIN-END block starting at line 51 (indent 0)
+2025-08-12 18:43:22,459 - root - DEBUG - [test1.py:864] - Found EXCEPTION at line 782
+2025-08-12 18:43:22,459 - root - DEBUG - [test1.py:870] - Found END; at line 819
+2025-08-12 18:43:22,459 - root - DEBUG - [test1.py:2932] - Found exception handler: ADMIN_UPDATE_ONLY
+2025-08-12 18:43:22,459 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20115', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:43:22,459 - root - DEBUG - [test1.py:2932] - Found exception handler: IN_PREP_NOT_PORTF_PROJ
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20116', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: IN_PREP_NOT_CLOSED
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20117', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: INVALID_MOLECULE_ID
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20118', 'handler_string': 'This is not a valid Molecule ID'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: SEC_MOL_LIST_NOT_EMPTY
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20119', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: INVALID_THEME_NO
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20101', 'handler_string': 'This is not a valid Theme No'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: DELETE_NO_MORE_POSSIBLE
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: THEME_NO_ONLY_INSERT
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Theme No cannot be updated'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: DESCRIPTION_TOO_LONG
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Theme Description "\' || V_DESCRIPTION || \'" is too long'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: THEME_DESC_PROPOSAL_TOO_LONG
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Short Description Proposal "\' || :OLD.THEME_DESC_PROPOSAL || \'" is too long'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: THEME_DESC_ALT_TOO_LONG
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'The automatically generated Downstream Theme Description "\' || :OLD.THEME_DESC_ALT || \'" is too long'}
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2932] - Found exception handler: THEME_NO_CANNOT_BE_INSERTED
+2025-08-12 18:43:22,460 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'This Theme No already exists'}
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2932] - Found exception handler: ONLYONEOFFICIALCHANGEPERDAY
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'Official Change for this Theme No and Day already exists'}
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2932] - Found exception handler: INSERTSMUSTBEOFFICIAL
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'New Themes can only be inserted by Official Changes'}
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2932] - Found exception handler: THEMEDESCRIPTIONMANDATORY
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'If Pharma Rx Portfolio Project is set to "No", then the Theme Description must be filled'}
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2932] - Found exception handler: THEME_DESC_NOT_UNIQUE
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20400', 'handler_string': 'This Theme Description already exists'}
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2932] - Found exception handler: PORTF_PROJ_MOL_CRE_ERR
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20120', 'handler_string': 'MDM_V_THEMES_IOF'}
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2932] - Found exception handler: DEBUGGING
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20900', 'handler_string': 'Debug in Themes IOF standard'}
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:2972] - Parsed exception section: 18 handlers
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:889] - Successfully parsed top-level BEGIN-END block: 608 statements, 18 exception handlers
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:795] - Successfully parsed top-level BEGIN-END block from line 51 to 819
+2025-08-12 18:43:22,461 - root - DEBUG - [test1.py:801] - Top-level BEGIN blocks parsing complete: 1 items in main_section_lines
+2025-08-12 18:43:22,461 - root - INFO - [common.py:103] - ✅ Completed First BEGIN blocks parsing
+2025-08-12 18:43:22,462 - root - INFO - [common.py:96] - 🔄 Starting CASE-WHEN statements in main section parsing
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2080] - Starting CASE WHEN ELSE parsing with indentation-based nesting
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2098] - Found CASE statement at line 241 in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2392] - Starting enhanced CASE statement parsing from index 210
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2410] - CASE statement - Type: with expression, Expression: 'LENGTH(:NEW.THEME_NO)', Indent: 6
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2429] - Found END CASE; at line 252 (indent 6)
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2466] - Found WHEN clause at line 242 (indent 9, case indent 6)
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2466] - Found WHEN clause at line 246 (indent 9, case indent 6)
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2471] - Found ELSE clause at line 250 (indent 9, case indent 6)
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2721] - Parsed WHEN clause: 4
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2721] - Parsed WHEN clause: 5
+2025-08-12 18:43:22,462 - root - DEBUG - [test1.py:2780] - Parsed ELSE clause with 1 statements
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2790] - Processing nested structures in enhanced CASE statement
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2500] - Completed enhanced CASE statement parsing: 2 when clauses, ELSE at line 250, end at line 252
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2104] - Parsed complete CASE statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2098] - Found CASE statement at line 555 in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2392] - Starting enhanced CASE statement parsing from index 474
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2410] - CASE statement - Type: simple, Expression: '', Indent: 6
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2429] - Found END CASE; at line 606 (indent 6)
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2466] - Found WHEN clause at line 556 (indent 9, case indent 6)
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2466] - Found WHEN clause at line 570 (indent 9, case indent 6)
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2466] - Found WHEN clause at line 581 (indent 9, case indent 6)
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2471] - Found ELSE clause at line 592 (indent 12, case indent 6)
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2471] - Found ELSE clause at line 604 (indent 9, case indent 6)
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2721] - Parsed WHEN clause: :OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-12 18:43:22,463 - root - DEBUG - [test1.py:2721] - Parsed WHEN clause: :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-12 18:43:22,464 - root - DEBUG - [test1.py:2721] - Parsed WHEN clause: :OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-12 18:43:22,464 - root - DEBUG - [test1.py:2780] - Parsed ELSE clause with 1 statements
+2025-08-12 18:43:22,464 - root - DEBUG - [test1.py:2790] - Processing nested structures in enhanced CASE statement
+2025-08-12 18:43:22,464 - root - DEBUG - [test1.py:2500] - Completed enhanced CASE statement parsing: 3 when clauses, ELSE at line 604, end at line 606
+2025-08-12 18:43:22,464 - root - DEBUG - [test1.py:2104] - Parsed complete CASE statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,464 - root - DEBUG - [test1.py:2165] - CASE WHEN ELSE parsing complete
+2025-08-12 18:43:22,464 - root - INFO - [common.py:103] - ✅ Completed CASE-WHEN statements in main section parsing
+2025-08-12 18:43:22,464 - root - INFO - [common.py:96] - 🔄 Starting IF-ELSE statements in main section parsing
+2025-08-12 18:43:22,464 - root - DEBUG - [test1.py:1239] - Starting IF-ELSEIF-ELSE parsing with indentation-based nesting
+2025-08-12 18:43:22,465 - root - DEBUG - [test1.py:1305] - IF-ELSEIF-ELSE parsing complete
+2025-08-12 18:43:22,465 - root - INFO - [common.py:103] - ✅ Completed IF-ELSE statements in main section parsing
+2025-08-12 18:43:22,465 - root - INFO - [common.py:96] - 🔄 Starting BEGIN blocks in main section parsing
+2025-08-12 18:43:22,465 - root - DEBUG - [test1.py:2180] - Starting nested BEGIN block parsing
+2025-08-12 18:43:22,465 - root - DEBUG - [test1.py:2198] - Found nested BEGIN block at line 112 in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,465 - root - DEBUG - [test1.py:2282] - Parsing BEGIN-END block starting at line 112
+2025-08-12 18:43:22,465 - root - DEBUG - [test1.py:2330] - Found EXCEPTION section at line 122
+2025-08-12 18:43:22,465 - root - DEBUG - [test1.py:2341] - Parsed exception handler: NO_DATA_FOUND
+2025-08-12 18:43:22,465 - root - DEBUG - [test1.py:2323] - Ended main BEGIN block at line 125
+2025-08-12 18:43:22,465 - root - DEBUG - [test1.py:2205] - Parsed complete nested BEGIN block structure in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2198] - Found nested BEGIN block at line 729 in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2282] - Parsing BEGIN-END block starting at line 729
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2330] - Found EXCEPTION section at line 739
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2341] - Parsed exception handler: NO_DATA_FOUND
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2323] - Ended main BEGIN block at line 742
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2205] - Parsed complete nested BEGIN block structure in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2198] - Found nested BEGIN block at line 763 in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2282] - Parsing BEGIN-END block starting at line 763
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2323] - Ended main BEGIN block at line 781
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2205] - Parsed complete nested BEGIN block structure in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:2264] - Nested BEGIN block parsing complete
+2025-08-12 18:43:22,466 - root - INFO - [common.py:103] - ✅ Completed BEGIN blocks in main section parsing
+2025-08-12 18:43:22,466 - root - INFO - [common.py:96] - 🔄 Starting FOR loops in main section parsing
+2025-08-12 18:43:22,466 - root - DEBUG - [test1.py:985] - Starting FOR loop parsing
+2025-08-12 18:43:22,467 - root - DEBUG - [test1.py:1006] - Found FOR loop at line 767 in main_section_lines.begin_end_statements.begin_end_statements
+2025-08-12 18:43:22,467 - root - DEBUG - [test1.py:1089] - Parsing FOR loop structure starting at line 767: FOR I1 IN (
+2025-08-12 18:43:22,467 - root - DEBUG - [test1.py:1159] - Found END LOOP at line 780
+2025-08-12 18:43:22,467 - root - DEBUG - [test1.py:1185] - Successfully parsed FOR loop: I1 IN (SELECT A.THEME_NO, A.REGISTRAT)
+2025-08-12 18:43:22,467 - root - DEBUG - [test1.py:1012] - Parsed complete FOR loop structure in main_section_lines.begin_end_statements.begin_end_statements
+2025-08-12 18:43:22,467 - root - DEBUG - [test1.py:1071] - FOR loop parsing complete
+2025-08-12 18:43:22,467 - root - INFO - [common.py:103] - ✅ Completed FOR loops in main section parsing
+2025-08-12 18:43:22,467 - root - INFO - [common.py:96] - 🔄 Starting assignment statements in main section parsing
+2025-08-12 18:43:22,467 - root - DEBUG - [test1.py:1771] - Starting assignment statements parsing
+2025-08-12 18:43:22,467 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 145 in main_section_lines.begin_end_statements: V_ODG_NO := SUBSTR(:NEW.RESLIN
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_ODG_NO
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 146 in main_section_lines.begin_end_statements: V_RESGRP_CD := SUBSTR(:NEW.RES
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_RESGRP_CD
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 147 in main_section_lines.begin_end_statements: V_RESLIN_CD := SUBSTR(:NEW.RES
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_RESLIN_CD
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 148 in main_section_lines.begin_end_statements: V_RESLIN_DESC := SUBSTR(:NEW.R
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_RESLIN_DESC
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 157 in main_section_lines.begin_end_statements: V_STATUS_CD := NULL;
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_STATUS_CD
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 170 in main_section_lines.begin_end_statements: V_DBA_CD := NULL;
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_DBA_CD
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 173 in main_section_lines.begin_end_statements: V_MOLEC_IN_LIC_PRTNR := GMD_UT
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_MOLEC_IN_LIC_PRTNR
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 175 in main_section_lines.begin_end_statements: V_TRADEMARK_NO := :NEW.TRADEMA
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_TRADEMARK_NO
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 177 in main_section_lines.begin_end_statements: V_TRADEMARK_NO := :OLD.TRADEMA
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_TRADEMARK_NO
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 180 in main_section_lines.begin_end_statements: V_THEME_DESC_PROPOSAL := GMD_U
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_THEME_DESC_PROPOSAL
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 185 in main_section_lines.begin_end_statements: V_SHORT_NAME := COALESCE(:NEW.
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_SHORT_NAME
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 194 in main_section_lines.begin_end_statements: V_MOLECULE_ID := :NEW.MOLECULE
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_MOLECULE_ID
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 254 in main_section_lines.begin_end_statements: V_COUNTER := NULL;
+2025-08-12 18:43:22,468 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 278 in main_section_lines.begin_end_statements: V_COUNTER := NULL;
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 279 in main_section_lines.begin_end_statements: V_D_REGISTRAT_DATE := SYSDATE;
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_D_REGISTRAT_DATE
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 295 in main_section_lines.begin_end_statements: V_DESCRIPTION := GMD.GMD_UTIL_
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1845] - Parsed multi-line assignment statement: V_DESCRIPTION
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 312 in main_section_lines.begin_end_statements: V_DESCRIPTION := TRIM(V_DESCRI
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_DESCRIPTION
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 313 in main_section_lines.begin_end_statements: V_PORTF_PROJ_CD := 'Y';
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_PORTF_PROJ_CD
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 317 in main_section_lines.begin_end_statements: V_DESCRIPTION := :NEW.THEME_DE
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_DESCRIPTION
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 318 in main_section_lines.begin_end_statements: V_PORTF_PROJ_CD := 'N';
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_PORTF_PROJ_CD
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 321 in main_section_lines.begin_end_statements: V_COUNTER := NULL;
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 332 in main_section_lines.begin_end_statements: V_COUNTER := NULL;
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 333 in main_section_lines.begin_end_statements: V_VALID_TO := TO_DATE('09.09.9
+2025-08-12 18:43:22,469 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_VALID_TO
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 334 in main_section_lines.begin_end_statements: V_SHORT_NAME := NVL(:NEW.MANUA
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_SHORT_NAME
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 424 in main_section_lines.begin_end_statements: V_D_REGISTRAT_DATE := TO_DATE(
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_D_REGISTRAT_DATE
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 427 in main_section_lines.begin_end_statements: V_D_REGISTRAT_DATE := SYSDATE;
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_D_REGISTRAT_DATE
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 431 in main_section_lines.begin_end_statements: V_DESCRIPTION := GMD.GMD_UTIL_
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1845] - Parsed multi-line assignment statement: V_DESCRIPTION
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 444 in main_section_lines.begin_end_statements: V_DESCRIPTION := TRIM(V_DESCRI
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_DESCRIPTION
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 445 in main_section_lines.begin_end_statements: V_PORTF_PROJ_CD := 'Y';
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_PORTF_PROJ_CD
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 450 in main_section_lines.begin_end_statements: V_DESCRIPTION := :NEW.THEME_DE
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_DESCRIPTION
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 451 in main_section_lines.begin_end_statements: V_PORTF_PROJ_CD := :NEW.PORTF_
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_PORTF_PROJ_CD
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 462 in main_section_lines.begin_end_statements: V_COUNTER := NULL;
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 474 in main_section_lines.begin_end_statements: V_COUNTER := NULL;
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 508 in main_section_lines.begin_end_statements: V_COUNTER := NULL;
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 522 in main_section_lines.begin_end_statements: V_COUNTER := NULL;
+2025-08-12 18:43:22,470 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_COUNTER
+2025-08-12 18:43:22,471 - root - DEBUG - [test1.py:1893] - Assignment statements parsing complete
+2025-08-12 18:43:22,471 - root - INFO - [common.py:103] - ✅ Completed assignment statements in main section parsing
+2025-08-12 18:43:22,471 - root - INFO - [common.py:96] - 🔄 Starting SQL statements in main section parsing
+2025-08-12 18:43:22,471 - root - DEBUG - [test1.py:1940] - Starting SQL statements parsing
+2025-08-12 18:43:22,471 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 54 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,471 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,471 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 61 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,471 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,471 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 70 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 97 in main_section_lines.begin_end_statements: RAISE IN_PREP_NOT_PO
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 101 in main_section_lines.begin_end_statements: RAISE IN_PREP_NOT_CL
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 113 in main_section_lines.begin_end_statements.begin_end_statements: SELECT
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 124 in main_section_lines.begin_end_statements.exception_statements: RAISE INVALID_MOLECU
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 133 in main_section_lines.begin_end_statements: UPDATE V_THEME_MOLEC
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 150 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 161 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 182 in main_section_lines.begin_end_statements: RAISE THEME_DESC_PRO
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 188 in main_section_lines.begin_end_statements: RAISE ADMIN_UPDATE_O
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 197 in main_section_lines.begin_end_statements: RAISE PORTF_PROJ_MOL
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 199 in main_section_lines.begin_end_statements: INSERT INTO MDM_V_TH
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 214 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,472 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 227 in main_section_lines.begin_end_statements: INSERT INTO THEME_MO
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 244 in main_section_lines.begin_end_statements.then_statements: RAISE INVALID_THEME_
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 248 in main_section_lines.begin_end_statements.then_statements: RAISE INVALID_THEME_
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 251 in main_section_lines.begin_end_statements.else_statements: RAISE INVALID_THEME_
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 257 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 275 in main_section_lines.begin_end_statements: RAISE THEME_NO_CANNO
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 283 in main_section_lines.begin_end_statements: RAISE INSERTSMUSTBEO
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 288 in main_section_lines.begin_end_statements: RAISE THEMEDESCRIPTI
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 309 in main_section_lines.begin_end_statements: RAISE DESCRIPTION_TO
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 322 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 329 in main_section_lines.begin_end_statements: RAISE THEME_DESC_NOT
+2025-08-12 18:43:22,473 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 335 in main_section_lines.begin_end_statements: INSERT INTO GMD.THEM
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 391 in main_section_lines.begin_end_statements: INSERT INTO MDM_V_TH
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 410 in main_section_lines.begin_end_statements: RAISE ADMIN_UPDATE_O
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 414 in main_section_lines.begin_end_statements: RAISE THEME_NO_ONLY_
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 448 in main_section_lines.begin_end_statements: RAISE THEMEDESCRIPTI
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 456 in main_section_lines.begin_end_statements: RAISE DESCRIPTION_TO
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 463 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 471 in main_section_lines.begin_end_statements: RAISE THEME_DESC_NOT
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 478 in main_section_lines.begin_end_statements: UPDATE GMD.THEMES
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,474 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 511 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 519 in main_section_lines.begin_end_statements: RAISE ONLYONEOFFICIA
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 523 in main_section_lines.begin_end_statements: UPDATE GMD.THEMES
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 559 in main_section_lines.begin_end_statements.then_statements: INSERT INTO MDM_V_TH
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 573 in main_section_lines.begin_end_statements.then_statements: UPDATE MDM_V_THEME_M
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 582 in main_section_lines.begin_end_statements.then_statements: SELECT
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 591 in main_section_lines.begin_end_statements.then_statements: RAISE SEC_MOL_LIST_N
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 609 in main_section_lines.begin_end_statements: RAISE ADMIN_UPDATE_O
+2025-08-12 18:43:22,475 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 617 in main_section_lines.begin_end_statements: DELETE FROM GMD.THEM
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: delete_statement
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 622 in main_section_lines.begin_end_statements: RAISE DELETE_NO_MORE
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 632 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 644 in main_section_lines.begin_end_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 655 in main_section_lines.begin_end_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 665 in main_section_lines.begin_end_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 673 in main_section_lines.begin_end_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 690 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,476 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 700 in main_section_lines.begin_end_statements: UPDATE MDM_V_NEW_MED
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 715 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 730 in main_section_lines.begin_end_statements.begin_end_statements: SELECT
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 741 in main_section_lines.begin_end_statements.exception_statements: RAISE INVALID_MOLECU
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 745 in main_section_lines.begin_end_statements: INSERT INTO MDM_V_NE
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 776 in main_section_lines.begin_end_statements.begin_end_statements.loop_statements: DELETE FROM GMD.THEM
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: delete_statement
+2025-08-12 18:43:22,477 - root - DEBUG - [test1.py:2071] - SQL statements parsing complete
+2025-08-12 18:43:22,477 - root - INFO - [common.py:103] - ✅ Completed SQL statements in main section parsing
+2025-08-12 18:43:22,478 - root - INFO - [common.py:96] - 🔄 Starting final statement in main section parsing
+2025-08-12 18:43:22,478 - root - DEBUG - [test1.py:970] - Final statement parsing complete
+2025-08-12 18:43:22,478 - root - INFO - [common.py:103] - ✅ Completed final statement in main section parsing
+2025-08-12 18:43:22,479 - root - INFO - [common.py:103] - ✅ Completed SQL section parsing parsing
+2025-08-12 18:43:22,480 - root - INFO - [common.py:96] - 🔄 Starting rule validation parsing
+2025-08-12 18:43:22,480 - root - DEBUG - [test1.py:689] - Rule validation complete: found 0 violations
+2025-08-12 18:43:22,480 - root - INFO - [common.py:103] - ✅ Completed rule validation parsing
+2025-08-12 18:43:22,481 - root - DEBUG - [common.py:126] - ⏱️ OracleTriggerAnalyzer initialization completed in 0.027s
+2025-08-12 18:43:22,481 - root - DEBUG - [common.py:68] - Generating JSON analysis...
+2025-08-12 18:43:22,481 - root - INFO - [test1.py:3164] - JSON conversion complete: 29 vars, 2 consts, 18 excs, 63 comments
+2025-08-12 18:43:22,481 - root - DEBUG - [common.py:68] - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-12 18:43:22,488 - root - DEBUG - [common.py:68] - Wrote analysis JSON to files/format_json\trigger1_analysis.json
+2025-08-12 18:43:22,488 - root - INFO - [common.py:72] - Created trigger1_analysis.json
+2025-08-12 18:43:22,488 - root - DEBUG - [common.py:68] - Processing file: trigger2.sql
+2025-08-12 18:43:22,489 - root - DEBUG - [common.py:68] - Extracted trigger number: 2
+2025-08-12 18:43:22,489 - root - DEBUG - [common.py:68] - Read 18805 characters from files/oracle\trigger2.sql
+2025-08-12 18:43:22,489 - root - DEBUG - [common.py:68] - Initializing OracleTriggerAnalyzer with 18805 characters of SQL
+2025-08-12 18:43:22,490 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing: 0 lines processed
+2025-08-12 18:43:22,490 - root - INFO - [common.py:96] - 🔄 Starting SQL section parsing parsing
+2025-08-12 18:43:22,490 - root - INFO - [common.py:96] - 🔄 Starting structured lines conversion parsing
+2025-08-12 18:43:22,491 - root - DEBUG - [common.py:68] - Converting SQL content to structured lines
+2025-08-12 18:43:22,492 - root - DEBUG - [common.py:68] - Structured lines conversion complete: 422 total, 89 with semicolons, 43 empty lines skipped
+2025-08-12 18:43:22,492 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:205] - Block comment stripping complete: 6 comments extracted, 364 lines cleaned
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:277] - Removed block comments from main section
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:252] - Inline comment stripping complete: 67 comments extracted, 315 lines cleaned
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:281] - Removed inline comments from main section
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:293] - Found DECLARE at line 1
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:298] - Found BEGIN at line 18
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:304] - DECLARE section: lines 1-17
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:311] - Main section: lines 18
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:338] - Starting declaration parsing
+2025-08-12 18:43:22,493 - root - DEBUG - [test1.py:411] - Processed exception: ERR_MAP_EXISTS
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:411] - Processed exception: ERR_MOLEC_ID_MISSING
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:411] - Processed exception: ERR_NO_PORTF_MOLECULE_LEFT
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:411] - Processed exception: ERR_UPD_INV_MAP
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:411] - Processed exception: ERR_INS_INV_MAP
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:411] - Processed exception: ERR_INV_MOL_SEQUENCE
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:411] - Processed exception: UPDATE_UPD
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:381] - Processed variable: V_COUNT_T_MAPPINGS
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:381] - Processed variable: V_COUNT_T_MOL_MAP
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:381] - Processed variable: V_MOLECULE_SEQ_NO
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:381] - Processed variable: V_SEQ_NO_DUPLICATE_CNT
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:381] - Processed variable: INVALID_MAPPING_EXISTS
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:381] - Processed variable: V_MANUAL_SHORT_DESC
+2025-08-12 18:43:22,494 - root - DEBUG - [common.py:68] - Processing main section from lines 18
+2025-08-12 18:43:22,494 - root - INFO - [common.py:96] - 🔄 Starting First BEGIN blocks parsing
+2025-08-12 18:43:22,494 - root - DEBUG - [test1.py:744] - Starting top-level BEGIN blocks parsing
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:754] - Collected 301 lines from main section
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:771] - Found top-level BEGIN block at line 18 (indent 0)
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:832] - Parsing top-level BEGIN-END block starting at line 18 (indent 0)
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:864] - Found EXCEPTION at line 439
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:870] - Found END; at line 465
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_MAP_EXISTS
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20110', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_MOLEC_ID_MISSING
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20111', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_UPD_INV_MAP
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20112', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:43:22,495 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_INS_INV_MAP
+2025-08-12 18:43:22,496 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:43:22,496 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_INV_MOL_SEQUENCE
+2025-08-12 18:43:22,496 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20120', 'handler_string': 'MDM_THEME_MOLECULE_MAP_IOF'}
+2025-08-12 18:43:22,496 - root - DEBUG - [test1.py:2972] - Parsed exception section: 5 handlers
+2025-08-12 18:43:22,496 - root - DEBUG - [test1.py:889] - Successfully parsed top-level BEGIN-END block: 288 statements, 5 exception handlers
+2025-08-12 18:43:22,496 - root - DEBUG - [test1.py:795] - Successfully parsed top-level BEGIN-END block from line 18 to 465
+2025-08-12 18:43:22,496 - root - DEBUG - [test1.py:801] - Top-level BEGIN blocks parsing complete: 1 items in main_section_lines
+2025-08-12 18:43:22,496 - root - INFO - [common.py:103] - ✅ Completed First BEGIN blocks parsing
+2025-08-12 18:43:22,496 - root - INFO - [common.py:96] - 🔄 Starting CASE-WHEN statements in main section parsing
+2025-08-12 18:43:22,496 - root - DEBUG - [test1.py:2080] - Starting CASE WHEN ELSE parsing with indentation-based nesting
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2098] - Found CASE statement at line 125 in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2392] - Starting enhanced CASE statement parsing from index 83
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2410] - CASE statement - Type: simple, Expression: '', Indent: 12
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2429] - Found END CASE; at line 200 (indent 12)
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2466] - Found WHEN clause at line 126 (indent 16, case indent 12)
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2471] - Found ELSE clause at line 137 (indent 20, case indent 12)
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2466] - Found WHEN clause at line 156 (indent 16, case indent 12)
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2471] - Found ELSE clause at line 177 (indent 20, case indent 12)
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2471] - Found ELSE clause at line 196 (indent 16, case indent 12)
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2721] - Parsed WHEN clause: :NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2721] - Parsed WHEN clause: :NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2780] - Parsed ELSE clause with 1 statements
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2790] - Processing nested structures in enhanced CASE statement
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2500] - Completed enhanced CASE statement parsing: 2 when clauses, ELSE at line 196, end at line 200
+2025-08-12 18:43:22,497 - root - DEBUG - [test1.py:2104] - Parsed complete CASE statement structure in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,498 - root - DEBUG - [test1.py:2165] - CASE WHEN ELSE parsing complete
+2025-08-12 18:43:22,498 - root - INFO - [common.py:103] - ✅ Completed CASE-WHEN statements in main section parsing
+2025-08-12 18:43:22,498 - root - INFO - [common.py:96] - 🔄 Starting IF-ELSE statements in main section parsing
+2025-08-12 18:43:22,498 - root - DEBUG - [test1.py:1239] - Starting IF-ELSEIF-ELSE parsing with indentation-based nesting
+2025-08-12 18:43:22,498 - root - DEBUG - [test1.py:1305] - IF-ELSEIF-ELSE parsing complete
+2025-08-12 18:43:22,498 - root - INFO - [common.py:103] - ✅ Completed IF-ELSE statements in main section parsing
+2025-08-12 18:43:22,499 - root - INFO - [common.py:96] - 🔄 Starting BEGIN blocks in main section parsing
+2025-08-12 18:43:22,499 - root - DEBUG - [test1.py:2180] - Starting nested BEGIN block parsing
+2025-08-12 18:43:22,500 - root - DEBUG - [test1.py:2264] - Nested BEGIN block parsing complete
+2025-08-12 18:43:22,500 - root - INFO - [common.py:103] - ✅ Completed BEGIN blocks in main section parsing
+2025-08-12 18:43:22,500 - root - INFO - [common.py:96] - 🔄 Starting FOR loops in main section parsing
+2025-08-12 18:43:22,500 - root - DEBUG - [test1.py:985] - Starting FOR loop parsing
+2025-08-12 18:43:22,501 - root - DEBUG - [test1.py:1071] - FOR loop parsing complete
+2025-08-12 18:43:22,501 - root - INFO - [common.py:103] - ✅ Completed FOR loops in main section parsing
+2025-08-12 18:43:22,501 - root - INFO - [common.py:96] - 🔄 Starting assignment statements in main section parsing
+2025-08-12 18:43:22,501 - root - DEBUG - [test1.py:1771] - Starting assignment statements parsing
+2025-08-12 18:43:22,501 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 120 in main_section_lines.begin_end_statements: INVALID_MAPPING_EXISTS := TRUE
+2025-08-12 18:43:22,501 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: INVALID_MAPPING_EXISTS
+2025-08-12 18:43:22,502 - root - DEBUG - [test1.py:1893] - Assignment statements parsing complete
+2025-08-12 18:43:22,502 - root - INFO - [common.py:103] - ✅ Completed assignment statements in main section parsing
+2025-08-12 18:43:22,502 - root - INFO - [common.py:96] - 🔄 Starting SQL statements in main section parsing
+2025-08-12 18:43:22,502 - root - DEBUG - [test1.py:1940] - Starting SQL statements parsing
+2025-08-12 18:43:22,502 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 21 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,502 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 33 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 41 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 61 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 69 in main_section_lines.begin_end_statements: RAISE ERR_MOLEC_ID_M
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 91 in main_section_lines.begin_end_statements: RAISE ERR_UPD_INV_MA
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 99 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 108 in main_section_lines.begin_end_statements: RAISE ERR_MAP_EXISTS
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 111 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 130 in main_section_lines.begin_end_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,503 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 158 in main_section_lines.begin_end_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 170 in main_section_lines.begin_end_statements.then_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 199 in main_section_lines.begin_end_statements.else_statements: RAISE ERR_INS_INV_MA
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 205 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 222 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 231 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 242 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 257 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 267 in main_section_lines.begin_end_statements: INSERT INTO THEME_MO
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 302 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 310 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,504 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 323 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 333 in main_section_lines.begin_end_statements: INSERT INTO THEME_MO
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 355 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 366 in main_section_lines.begin_end_statements: UPDATE THEME_MOLECUL
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: update_statement
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 376 in main_section_lines.begin_end_statements: INSERT INTO THEME_MO
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: insert_statement
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 403 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 420 in main_section_lines.begin_end_statements: RAISE ERR_INV_MOL_SE
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,505 - root - DEBUG - [test1.py:2071] - SQL statements parsing complete
+2025-08-12 18:43:22,506 - root - INFO - [common.py:103] - ✅ Completed SQL statements in main section parsing
+2025-08-12 18:43:22,506 - root - INFO - [common.py:96] - 🔄 Starting final statement in main section parsing
+2025-08-12 18:43:22,506 - root - DEBUG - [test1.py:970] - Final statement parsing complete
+2025-08-12 18:43:22,506 - root - INFO - [common.py:103] - ✅ Completed final statement in main section parsing
+2025-08-12 18:43:22,507 - root - INFO - [common.py:103] - ✅ Completed SQL section parsing parsing
+2025-08-12 18:43:22,507 - root - INFO - [common.py:96] - 🔄 Starting rule validation parsing
+2025-08-12 18:43:22,507 - root - DEBUG - [test1.py:689] - Rule validation complete: found 0 violations
+2025-08-12 18:43:22,508 - root - INFO - [common.py:103] - ✅ Completed rule validation parsing
+2025-08-12 18:43:22,508 - root - DEBUG - [common.py:126] - ⏱️ OracleTriggerAnalyzer initialization completed in 0.018s
+2025-08-12 18:43:22,508 - root - DEBUG - [common.py:68] - Generating JSON analysis...
+2025-08-12 18:43:22,508 - root - INFO - [test1.py:3164] - JSON conversion complete: 6 vars, 0 consts, 7 excs, 73 comments
+2025-08-12 18:43:22,508 - root - DEBUG - [common.py:68] - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-12 18:43:22,513 - root - DEBUG - [common.py:68] - Wrote analysis JSON to files/format_json\trigger2_analysis.json
+2025-08-12 18:43:22,513 - root - INFO - [common.py:72] - Created trigger2_analysis.json
+2025-08-12 18:43:22,513 - root - DEBUG - [common.py:68] - Processing file: trigger3.sql
+2025-08-12 18:43:22,513 - root - DEBUG - [common.py:68] - Extracted trigger number: 3
+2025-08-12 18:43:22,513 - root - DEBUG - [common.py:68] - Read 12985 characters from files/oracle\trigger3.sql
+2025-08-12 18:43:22,513 - root - DEBUG - [common.py:68] - Initializing OracleTriggerAnalyzer with 12985 characters of SQL
+2025-08-12 18:43:22,513 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing: 0 lines processed
+2025-08-12 18:43:22,514 - root - INFO - [common.py:96] - 🔄 Starting SQL section parsing parsing
+2025-08-12 18:43:22,514 - root - INFO - [common.py:96] - 🔄 Starting structured lines conversion parsing
+2025-08-12 18:43:22,514 - root - DEBUG - [common.py:68] - Converting SQL content to structured lines
+2025-08-12 18:43:22,514 - root - DEBUG - [common.py:68] - Structured lines conversion complete: 244 total, 58 with semicolons, 21 empty lines skipped
+2025-08-12 18:43:22,515 - root - INFO - [common.py:103] - ✅ Completed structured lines conversion parsing
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:205] - Block comment stripping complete: 0 comments extracted, 244 lines cleaned
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:277] - Removed block comments from main section
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:252] - Inline comment stripping complete: 17 comments extracted, 227 lines cleaned
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:281] - Removed inline comments from main section
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:293] - Found DECLARE at line 1
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:298] - Found BEGIN at line 14
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:304] - DECLARE section: lines 1-13
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:311] - Main section: lines 14
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:338] - Starting declaration parsing
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:381] - Processed variable: V_TRIGGER_NAME
+2025-08-12 18:43:22,515 - root - DEBUG - [test1.py:381] - Processed variable: CNTR
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:411] - Processed exception: ERR_UPD
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:411] - Processed exception: ERR_INS
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:411] - Processed exception: ERR_CTRY_CHG
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:411] - Processed exception: ERR_NOT_ALLOWED_TO_INVALIDATE
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:381] - Processed variable: V_USERID
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:411] - Processed exception: TEST_ERR
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:381] - Processed variable: V_COUNTRY_CD
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:381] - Processed variable: V_COMPANY_TYPE_CD
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:411] - Processed exception: ERR_INS_LEGAL_ADDR
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:381] - Processed variable: V_VALID_FROM
+2025-08-12 18:43:22,516 - root - DEBUG - [common.py:68] - Processing main section from lines 14
+2025-08-12 18:43:22,516 - root - INFO - [common.py:96] - 🔄 Starting First BEGIN blocks parsing
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:744] - Starting top-level BEGIN blocks parsing
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:754] - Collected 214 lines from main section
+2025-08-12 18:43:22,516 - root - DEBUG - [test1.py:771] - Found top-level BEGIN block at line 14 (indent 0)
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:832] - Parsing top-level BEGIN-END block starting at line 14 (indent 0)
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:864] - Found EXCEPTION at line 252
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:870] - Found END; at line 265
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_UPD
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20111', 'handler_string': "'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD"}
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_INS
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20112', 'handler_string': 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.'}
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_CTRY_CHG
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'The company country modified but not the Valid From Date. Please update also the Valid From Date.'}
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2932] - Found exception handler: TEST_ERR
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': "'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR"}
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_INS_LEGAL_ADDR
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'The legal address cannot be inserted for this type of company'}
+2025-08-12 18:43:22,517 - root - DEBUG - [test1.py:2932] - Found exception handler: ERR_NOT_ALLOWED_TO_INVALIDATE
+2025-08-12 18:43:22,518 - root - DEBUG - [test1.py:2949] - Added RAISE_APPLICATION_ERROR function call: {'handler_code': '-20113', 'handler_string': 'It is not allowed to invalidate/delete this type of address'}
+2025-08-12 18:43:22,518 - root - DEBUG - [test1.py:2972] - Parsed exception section: 6 handlers
+2025-08-12 18:43:22,518 - root - DEBUG - [test1.py:889] - Successfully parsed top-level BEGIN-END block: 199 statements, 6 exception handlers
+2025-08-12 18:43:22,518 - root - DEBUG - [test1.py:795] - Successfully parsed top-level BEGIN-END block from line 14 to 265
+2025-08-12 18:43:22,518 - root - DEBUG - [test1.py:801] - Top-level BEGIN blocks parsing complete: 1 items in main_section_lines
+2025-08-12 18:43:22,518 - root - INFO - [common.py:103] - ✅ Completed First BEGIN blocks parsing
+2025-08-12 18:43:22,518 - root - INFO - [common.py:96] - 🔄 Starting CASE-WHEN statements in main section parsing
+2025-08-12 18:43:22,518 - root - DEBUG - [test1.py:2080] - Starting CASE WHEN ELSE parsing with indentation-based nesting
+2025-08-12 18:43:22,518 - root - DEBUG - [test1.py:2165] - CASE WHEN ELSE parsing complete
+2025-08-12 18:43:22,518 - root - INFO - [common.py:103] - ✅ Completed CASE-WHEN statements in main section parsing
+2025-08-12 18:43:22,519 - root - INFO - [common.py:96] - 🔄 Starting IF-ELSE statements in main section parsing
+2025-08-12 18:43:22,519 - root - DEBUG - [test1.py:1239] - Starting IF-ELSEIF-ELSE parsing with indentation-based nesting
+2025-08-12 18:43:22,519 - root - DEBUG - [test1.py:1305] - IF-ELSEIF-ELSE parsing complete
+2025-08-12 18:43:22,519 - root - INFO - [common.py:103] - ✅ Completed IF-ELSE statements in main section parsing
+2025-08-12 18:43:22,520 - root - INFO - [common.py:96] - 🔄 Starting BEGIN blocks in main section parsing
+2025-08-12 18:43:22,520 - root - DEBUG - [test1.py:2180] - Starting nested BEGIN block parsing
+2025-08-12 18:43:22,520 - root - DEBUG - [test1.py:2198] - Found nested BEGIN block at line 15 in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,520 - root - DEBUG - [test1.py:2282] - Parsing BEGIN-END block starting at line 15
+2025-08-12 18:43:22,521 - root - DEBUG - [test1.py:2330] - Found EXCEPTION section at line 17
+2025-08-12 18:43:22,521 - root - DEBUG - [test1.py:2341] - Parsed exception handler: OTHERS
+2025-08-12 18:43:22,521 - root - DEBUG - [test1.py:2323] - Ended main BEGIN block at line 20
+2025-08-12 18:43:22,521 - root - DEBUG - [test1.py:2205] - Parsed complete nested BEGIN block structure in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,521 - root - DEBUG - [test1.py:2264] - Nested BEGIN block parsing complete
+2025-08-12 18:43:22,521 - root - INFO - [common.py:103] - ✅ Completed BEGIN blocks in main section parsing
+2025-08-12 18:43:22,521 - root - INFO - [common.py:96] - 🔄 Starting FOR loops in main section parsing
+2025-08-12 18:43:22,522 - root - DEBUG - [test1.py:985] - Starting FOR loop parsing
+2025-08-12 18:43:22,522 - root - DEBUG - [test1.py:1006] - Found FOR loop at line 149 in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,522 - root - DEBUG - [test1.py:1089] - Parsing FOR loop structure starting at line 149: FOR V_REC IN (
+2025-08-12 18:43:22,522 - root - DEBUG - [test1.py:1159] - Found END LOOP at line 170
+2025-08-12 18:43:22,522 - root - DEBUG - [test1.py:1185] - Successfully parsed FOR loop: V_REC IN (SELECT COMPANY_CD FROM CFG_V_C)
+2025-08-12 18:43:22,522 - root - DEBUG - [test1.py:1012] - Parsed complete FOR loop structure in main_section_lines.begin_end_statements
+2025-08-12 18:43:22,522 - root - DEBUG - [test1.py:1071] - FOR loop parsing complete
+2025-08-12 18:43:22,522 - root - INFO - [common.py:103] - ✅ Completed FOR loops in main section parsing
+2025-08-12 18:43:22,522 - root - INFO - [common.py:96] - 🔄 Starting assignment statements in main section parsing
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1771] - Starting assignment statements parsing
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 16 in main_section_lines.begin_end_statements.begin_end_statements: V_USERID := TXO_UTIL.GET_USERI
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_USERID
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 19 in main_section_lines.begin_end_statements.exception_statements: V_USERID := USER;
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_USERID
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 22 in main_section_lines.begin_end_statements: CNTR := 0;
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: CNTR
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 102 in main_section_lines.begin_end_statements: CNTR := 0;
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: CNTR
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 129 in main_section_lines.begin_end_statements: V_VALID_FROM := TO_DATE(ADD_MO
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_VALID_FROM
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1788] - Found assignment statement at line 133 in main_section_lines.begin_end_statements: V_VALID_FROM := TO_DATE(ADD_MO
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1803] - Parsed single-line assignment statement: V_VALID_FROM
+2025-08-12 18:43:22,523 - root - DEBUG - [test1.py:1893] - Assignment statements parsing complete
+2025-08-12 18:43:22,523 - root - INFO - [common.py:103] - ✅ Completed assignment statements in main section parsing
+2025-08-12 18:43:22,523 - root - INFO - [common.py:96] - 🔄 Starting SQL statements in main section parsing
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1940] - Starting SQL statements parsing
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 23 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 32 in main_section_lines.begin_end_statements: RAISE ERR_INS;
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 37 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 44 in main_section_lines.begin_end_statements: RAISE ERR_INS_LEGAL_
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 49 in main_section_lines.begin_end_statements: RAISE ERR_CTRY_CHG;
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 105 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,524 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 118 in main_section_lines.begin_end_statements: SELECT
+2025-08-12 18:43:22,525 - root - DEBUG - [test1.py:2023] - Parsed multi-line SQL statement: select_statement
+2025-08-12 18:43:22,525 - root - DEBUG - [test1.py:1973] - Found SQL statement at line 247 in main_section_lines.begin_end_statements: RAISE ERR_NOT_ALLOWE
+2025-08-12 18:43:22,525 - root - DEBUG - [test1.py:1985] - Parsed single-line SQL statement: raise_statement
+2025-08-12 18:43:22,525 - root - DEBUG - [test1.py:2071] - SQL statements parsing complete
+2025-08-12 18:43:22,525 - root - INFO - [common.py:103] - ✅ Completed SQL statements in main section parsing
+2025-08-12 18:43:22,525 - root - INFO - [common.py:96] - 🔄 Starting final statement in main section parsing
+2025-08-12 18:43:22,525 - root - DEBUG - [test1.py:970] - Final statement parsing complete
+2025-08-12 18:43:22,525 - root - INFO - [common.py:103] - ✅ Completed final statement in main section parsing
+2025-08-12 18:43:22,526 - root - INFO - [common.py:103] - ✅ Completed SQL section parsing parsing
+2025-08-12 18:43:22,526 - root - INFO - [common.py:96] - 🔄 Starting rule validation parsing
+2025-08-12 18:43:22,527 - root - DEBUG - [test1.py:689] - Rule validation complete: found 0 violations
+2025-08-12 18:43:22,527 - root - INFO - [common.py:103] - ✅ Completed rule validation parsing
+2025-08-12 18:43:22,527 - root - DEBUG - [common.py:126] - ⏱️ OracleTriggerAnalyzer initialization completed in 0.014s
+2025-08-12 18:43:22,527 - root - DEBUG - [common.py:68] - Generating JSON analysis...
+2025-08-12 18:43:22,527 - root - INFO - [test1.py:3164] - JSON conversion complete: 6 vars, 0 consts, 6 excs, 17 comments
+2025-08-12 18:43:22,527 - root - DEBUG - [common.py:68] - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_strings', 'conversion_stats', 'metadata']
+2025-08-12 18:43:22,534 - root - DEBUG - [common.py:68] - Wrote analysis JSON to files/format_json\trigger3_analysis.json
+2025-08-12 18:43:22,534 - root - INFO - [common.py:72] - Created trigger3_analysis.json
+2025-08-12 18:43:22,534 - root - INFO - [common.py:72] - JSON conversion complete!

@@ -759,7 +759,7 @@ class OracleTriggerAnalyzer:
             item = self.main_section_lines[i]
             
             # Check if this is a line_info object with a BEGIN statement
-            if isinstance(item, dict) and "line" in item and "line_no" in item:
+            if isinstance(item, dict) and "line" in item:
                 line = item["line"].strip()
                 line_upper = line.upper()
                 
@@ -911,16 +911,9 @@ class OracleTriggerAnalyzer:
                 item = statements_list[i]
                 
                 # Handle line_info objects (from structured_lines)
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
-                    line = item["line"].strip()
-                    line_upper = line.upper()
-                    
-                    # Check for BEGIN block start
-                    if line_upper.startswith("BEGIN"):
-                        print("BEGIN statement found")
-                    # Check for CASE statement start
-                    elif line_upper.startswith("CASE"):
-                        print("CASE statement found")
+                if isinstance(item, dict) and "line" in item:
+                    pass
+                    # Do here.
                 
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
@@ -997,7 +990,7 @@ class OracleTriggerAnalyzer:
                 item = statements_list[i]
                 
                 # Handle line_info objects (from structured_lines)
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
+                if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
                     
@@ -1248,33 +1241,14 @@ class OracleTriggerAnalyzer:
                 item = statements_list[i]
                 
                 # Handle line_info objects (from structured_lines)
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
+                if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
-                    line_upper = line.upper()
-                    
-                    # Check for IF statement start
-                    if line_upper.startswith("IF "):
-                        logger.debug("Found IF statement at line %d in %s", item["line_no"], parent_context)
-                        if_result = self._parse_if_statement_enhanced(self._find_line_index(item["line_no"]))
-                        if if_result:
-                            if_block, end_idx = if_result
-                            # Replace the line_info with the parsed if_block
-                            statements_list[i] = if_block
-                            logger.debug("Parsed complete IF statement structure in %s", parent_context)
-                            # Remove any subsequent line_info objects that are part of the IF statement
-                            # (they will be included in the if_block)
-                            j = i + 1
-                            while j < len(statements_list):
-                                next_item = statements_list[j]
-                                if isinstance(next_item, dict) and "line_no" in next_item:
-                                    # Get the end line number from the if_block
-                                    end_line_no = if_block.get("end_if_line_no")
-                                    if end_line_no and next_item["line_no"] > end_line_no:
-                                        break
-                                    statements_list.pop(j)
-                                else:
-                                    j += 1
-                            continue
+                    # do here
+                    # Then check self.main_section_lines in type begin_block in sqls and nested type begin_block in sqls  select_statement so do one thing when you check all sqls body_lines, and if you find a string that starts with "SELECT", then find the next string that is_end_semicolon True and in the middle of body_lines convert to 
+                    # {
+                    # "indent": ...,
+                    # "line_no": ...,
+                    # },
                 
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
@@ -1799,7 +1773,7 @@ class OracleTriggerAnalyzer:
                 item = statements_list[i]
                 
                 # Handle line_info objects (from structured_lines)
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
+                if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     
                     # Check if this line contains an assignment operator (:=)
@@ -1814,7 +1788,9 @@ class OracleTriggerAnalyzer:
                                 assignment_statement = {
                                     "variable": assignment_parts["variable"],
                                     "value": assignment_parts["value"],
-                                    "type": "assignment_statement"
+                                    "type": "assignment_statement",
+                                    "statement_indent": item["indent"],
+                                    "statement_line_no": item["line_no"]
                                 }
                                 statements_list[i] = assignment_statement
                                 logger.debug("Parsed single-line assignment statement: %s", assignment_parts["variable"])
@@ -1846,7 +1822,9 @@ class OracleTriggerAnalyzer:
                                 assignment_statement = {
                                     "variable": assignment_parts["variable"],
                                     "value": assignment_parts["value"],
-                                    "type": "assignment_statement"
+                                    "type": "assignment_statement",
+                                    "statement_indent": item["indent"],
+                                    "statement_line_no": item["line_no"]
                                 }
                                 
                                 # Replace the first line with the complete statement
@@ -1973,7 +1951,7 @@ class OracleTriggerAnalyzer:
                 item = statements_list[i]
                 
                 # Handle line_info objects (from structured_lines)
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
+                if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
                     
@@ -1992,7 +1970,9 @@ class OracleTriggerAnalyzer:
                             # Single line SQL statement
                             sql_statement = {
                                 "sql": line,
-                                "type": sql_type
+                                "type": sql_type,
+                                "statement_indent": item["indent"],
+                                "statement_line_no": item["line_no"]
                             }
                             statements_list[i] = sql_statement
                             logger.debug("Parsed single-line SQL statement: %s", sql_type)
@@ -2020,7 +2000,9 @@ class OracleTriggerAnalyzer:
                             complete_sql = " ".join(sql_lines)
                             sql_statement = {
                                 "sql": complete_sql,
-                                "type": sql_type
+                                "type": sql_type,
+                                "statement_indent": item["indent"],
+                                "statement_line_no": item["line_no"]
                             }
                             
                             # Replace the first line with the complete statement
@@ -2100,7 +2082,7 @@ class OracleTriggerAnalyzer:
                 item = statements_list[i]
                 
                 # Handle line_info objects (from structured_lines)
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
+                if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
                     
@@ -2200,7 +2182,7 @@ class OracleTriggerAnalyzer:
                 item = statements_list[i]
                 
                 # Handle line_info objects (from structured_lines)
-                if isinstance(item, dict) and "line" in item and "line_no" in item:
+                if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
                     
