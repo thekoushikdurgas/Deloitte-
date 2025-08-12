@@ -1,8 +1,13 @@
 import json
 import os
 import re
+import time
 from typing import Any, Dict, List, Tuple
-from utilities.common import logger, setup_logging
+from utilities.common import (
+    logger, setup_logging, debug, info, warning, error, critical, alert,
+    log_parsing_start, log_parsing_complete, log_parsing_error, 
+    log_structure_found, log_nesting_level, log_performance
+)
 
 
 class OracleTriggerAnalyzer:
@@ -32,10 +37,9 @@ class OracleTriggerAnalyzer:
             4. Parse SQL into declare and main sections
             5. Validate formatting rules
         """
-        logger.debug(
-            "Initializing OracleTriggerAnalyzer with %d characters of SQL",
-            len(sql_content),
-        )
+        start_time = time.time()
+        debug("Initializing OracleTriggerAnalyzer with %d characters of SQL", len(sql_content))
+        
         self.sql_content: str = sql_content
         self.declare_section: List[int] = [0, 0]
         self.main_section: int = 0
@@ -48,15 +52,23 @@ class OracleTriggerAnalyzer:
         self.structured_lines: List[Dict[str, Any]] = []
         self.rest_strings_line: List[Dict] = []
 
+
+        log_parsing_complete("structured lines conversion", f"{len(self.structured_lines)} lines processed")
+
         # Step 2: Parse SQL into declare and main sections
-        logger.debug("Starting SQL section parsing")
+        log_parsing_start("SQL section parsing")
         self._parse_sql()
+        log_parsing_complete("SQL section parsing")
 
         # Step 3: Validate formatting rules
-        logger.debug("Starting rule validation")
+        log_parsing_start("rule validation")
         self.rule_errors = self._validate_rules()
         if self.rule_errors:
-            logger.debug("Found %d rule violation(s)", len(self.rule_errors))
+            warning("Found %d rule violation(s)", len(self.rule_errors))
+        log_parsing_complete("rule validation")
+        
+        duration = time.time() - start_time
+        log_performance("OracleTriggerAnalyzer initialization", duration)
 
     def _convert_to_structured_lines(self):
         """
@@ -76,13 +88,14 @@ class OracleTriggerAnalyzer:
         3. Maintain line numbers for error reporting
         4. Handle comment removal while preserving structure
         """
-        logger.debug("Converting SQL content to structured lines")
+        debug("Converting SQL content to structured lines")
         raw_lines = self.sql_content.splitlines()
         self.structured_lines = []
 
         # Track statistics for debugging
         semicolon_lines = 0
         empty_lines = 0
+        # total_lines = len(raw_lines)
 
         for i, line in enumerate(raw_lines, start=1):
             # Calculate indentation level (number of leading spaces)
@@ -110,12 +123,8 @@ class OracleTriggerAnalyzer:
                 }
             )
 
-        logger.debug(
-            "Structured lines conversion complete: %d total, %d with semicolons, %d empty lines skipped",
-            len(self.structured_lines),
-            semicolon_lines,
-            empty_lines,
-                )
+        debug("Structured lines conversion complete: %d total, %d with semicolons, %d empty lines skipped",
+              len(self.structured_lines), semicolon_lines, empty_lines)
  
     def _strip_block_comments(self):
         """
@@ -258,7 +267,10 @@ class OracleTriggerAnalyzer:
 
         Pattern: DECLARE ... BEGIN ... END
         """
+        # Step 1: Convert to structured lines
+        log_parsing_start("structured lines conversion")
         self._convert_to_structured_lines()
+        log_parsing_complete("structured lines conversion")
 
         # Step 2: Remove block comments (/* ... */)
         self._strip_block_comments()
@@ -684,28 +696,202 @@ class OracleTriggerAnalyzer:
         This method populates self.main_section_lines with the lines from
         the main section of the Oracle PL/SQL trigger.
         """
-        logger.debug(
-            "Processing main section from lines %d",
-            self.main_section
-        )
-
-        logger.debug(
-            "Main section processing complete: %d lines extracted",
-            len(self.main_section_lines),
-        )
+        debug("Processing main section from lines %d", self.main_section)
+        
         # Step 3: Parse BEGIN blocks from the main section
-        logger.debug("Parsing BEGIN blocks for JSON conversion")
-        self._parse_begin_end()
+        log_parsing_start("First BEGIN blocks")
+        self._parse_begin_blocks()
+        log_parsing_complete("First BEGIN blocks")
+        
+        log_parsing_start("CASE-WHEN statements in main section")
         self._parse_case_when()
-        self._parse_for_loop()
+        log_parsing_complete("CASE-WHEN statements in main section")
+        
+        
+        log_parsing_start("IF-ELSE statements in main section")
         self._parse_if_else()
-        # self._parse_final_statement()
+        log_parsing_complete("IF-ELSE statements in main section")
+        
+        log_parsing_start("BEGIN blocks in main section")
+        self._parse_begin_end()
+        log_parsing_complete("BEGIN blocks in main section")
+        
+        log_parsing_start("FOR loops in main section")
+        self._parse_for_loop()
+        log_parsing_complete("FOR loops in main section")
+        
+        log_parsing_start("assignment statements in main section")
         self._parse_assignment_statement()
+        log_parsing_complete("assignment statements in main section")
+        
+        log_parsing_start("SQL statements in main section")
         self._parse_sql_statements()
+        log_parsing_complete("SQL statements in main section")
+        
+        log_parsing_start("final statement in main section")
+        self._parse_final_statement()
+        log_parsing_complete("final statement in main section")
         
         # to check how many rest strings are in main section
         self.rest_strings_line = self.rest_strings()
+        
+    def _parse_begin_blocks(self):
+        """
+        Parse top-level BEGIN blocks from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Uses the structured line format.
+        """
+        logger.debug("Starting top-level BEGIN blocks parsing")
+        
+        # Initialize main_section_lines with lines from the main section
+        self.main_section_lines = []
+        
+        # Collect all lines from the main section (after BEGIN)
+        for line_info in self.structured_lines:
+            if self.main_section <= line_info["line_no"]:
+                self.main_section_lines.append(line_info)
+        
+        logger.debug("Collected %d lines from main section", len(self.main_section_lines))
+        
+        # Now parse only top-level BEGIN-END blocks
+        i = 0
+        while i < len(self.main_section_lines):
+            item = self.main_section_lines[i]
+            
+            # Check if this is a line_info object with a BEGIN statement
+            if isinstance(item, dict) and "line" in item and "line_no" in item:
+                line = item["line"].strip()
+                line_upper = line.upper()
+                
+                # Check for top-level BEGIN block (indent should be minimal for top-level)
+                if line_upper == "BEGIN":
+                    begin_line_no = item["line_no"]
+                    begin_indent = item.get("indent", 0)
+                    
+                    logger.debug("Found top-level BEGIN block at line %d (indent %d)", begin_line_no, begin_indent)
+                    
+                    # Parse the complete BEGIN-END block structure
+                    begin_end_result = self._parse_top_level_begin_end_structure(i)
+                    if begin_end_result:
+                        begin_end_block, end_idx = begin_end_result
+                        
+                        # Replace the BEGIN line with the complete block structure
+                        self.main_section_lines[i] = begin_end_block
+                        
+                        # Remove all the lines that were part of this BEGIN-END block
+                        # (they are now included in the begin_end_block structure)
+                        j = i + 1
+                        while j < len(self.main_section_lines):
+                            next_item = self.main_section_lines[j]
+                            if isinstance(next_item, dict) and "line_no" in next_item:
+                                # Check if this line is beyond the end of our BEGIN-END block
+                                if next_item["line_no"] > end_idx:
+                                    break
+                                # Remove this line as it's part of the BEGIN-END block
+                                self.main_section_lines.pop(j)
+                            else:
+                                j += 1
+                        
+                        logger.debug("Successfully parsed top-level BEGIN-END block from line %d to %d", 
+                                   begin_line_no, end_idx)
+                        continue  # Don't increment i since we replaced the current item
+            
+            i += 1
+        
+        logger.debug("Top-level BEGIN blocks parsing complete: %d items in main_section_lines", 
+                   len(self.main_section_lines))
 
+    def _parse_top_level_begin_end_structure(self, start_idx):
+        """
+        Parse a complete top-level BEGIN-END block structure starting from the given index.
+        Returns (begin_end_block, end_line_no) or None if parsing fails.
+        
+        Args:
+            start_idx (int): Index in main_section_lines where the BEGIN statement starts
+            
+        Returns:
+            tuple: (begin_end_block, end_line_no) if successful, None otherwise
+        """
+        if start_idx < 0 or start_idx >= len(self.main_section_lines):
+            return None
+            
+        start_item = self.main_section_lines[start_idx]
+        if not (isinstance(start_item, dict) and "line" in start_item):
+            return None
+            
+        start_line = start_item["line"].strip()
+        start_line_upper = start_line.upper()
+        
+        # Verify this is a BEGIN statement
+        if start_line_upper != "BEGIN":
+            return None
+            
+        begin_line_no = start_item["line_no"]
+        begin_indent = start_item.get("indent", 0)
+        
+        logger.debug("Parsing top-level BEGIN-END block starting at line %d (indent %d)", 
+                   begin_line_no, begin_indent)
+        
+        # Initialize the block structure
+        begin_end_block = {
+            "type": "begin_end",
+            "begin_line_no": begin_line_no,
+            "begin_indent": begin_indent,
+            "begin_end_statements": [],
+            "exception_handlers": [],
+            "exception_line_no": 0,
+            "end_line_no": 0
+        }
+        
+        # Find the matching END; at the same indentation level
+        end_line_no = None
+        exception_line_no = None
+        
+        i = start_idx + 1
+        while i < len(self.main_section_lines):
+            item = self.main_section_lines[i]
+            
+            if isinstance(item, dict) and "line" in item:
+                line = item["line"].strip()
+                line_upper = line.upper()
+                current_indent = item.get("indent", 0)
+                current_line_no = item["line_no"]
+                
+                # Check for EXCEPTION at the same indentation level
+                if line_upper == "EXCEPTION" and current_indent == begin_indent:
+                    exception_line_no = current_line_no
+                    begin_end_block["exception_line_no"] = exception_line_no
+                    logger.debug("Found EXCEPTION at line %d", exception_line_no)
+                
+                # Check for END; at the same indentation level
+                elif line_upper == "END;" and current_indent == begin_indent:
+                    end_line_no = current_line_no
+                    begin_end_block["end_line_no"] = end_line_no
+                    logger.debug("Found END; at line %d", end_line_no)
+                    break
+                
+                # Add regular statements to begin_end_statements (before EXCEPTION)
+                elif line and not line.startswith("--") and current_indent > begin_indent:
+                    if not exception_line_no or current_line_no < exception_line_no:
+                        begin_end_block["begin_end_statements"].append(item)
+            
+            i += 1
+        
+        if end_line_no is None:
+            logger.warning("Could not find matching END; for top-level BEGIN block at line %d", begin_line_no)
+            return None
+        
+        # Process exception handlers if EXCEPTION section exists
+        if exception_line_no:
+            begin_end_block["exception_handlers"] = self._parse_exception_section(
+                exception_line_no, end_line_no)
+        
+        logger.debug("Successfully parsed top-level BEGIN-END block: %d statements, %d exception handlers", 
+                   len(begin_end_block["begin_end_statements"]), 
+                   len(begin_end_block["exception_handlers"]))
+        
+        return begin_end_block, end_line_no
+    
     def _parse_final_statement(self):
         """
         Parse the final statement of the main section of SQL.
@@ -1045,23 +1231,553 @@ class OracleTriggerAnalyzer:
 
     def _parse_if_else(self):
         """
-        Parse IF ELSE statements from the main section of SQL.
-        Extracts the structure and processes inner blocks recursively.
+        Parse IF-ELSEIF-ELSE statements from the main section of SQL with proper nested structure based on indentation.
+        First detects IF and END IF; line numbers, then finds all ELSEIF and ELSE statements at the same indentation level.
+        Maintains the hierarchical structure of IF-ELSEIF-ELSE blocks by checking indentation levels.
         Updates self.main_section_lines with parsed blocks.
-        
-        This method recursively processes all statement lists (begin_end_statements,
-        exception_statements, then_statements, else_statements, etc.) to find and
-        parse IF-ELSE blocks, including nested blocks.
-        
-        The parsed blocks are structured as:
-        {
-            "type": "if_else",
-            "condition": "...",
-            "then_statements": [...],
-        }
         """
-        logger.debug("Starting IF ELSE parsing")
+        logger.debug("Starting IF-ELSEIF-ELSE parsing with indentation-based nesting")
         
+        def process_if_else_in_list(statements_list, parent_context=""):
+            """Recursively process IF-ELSE statements in a list of statements"""
+            if not statements_list:
+                return
+            
+            i = 0
+            while i < len(statements_list):
+                item = statements_list[i]
+                
+                # Handle line_info objects (from structured_lines)
+                if isinstance(item, dict) and "line" in item and "line_no" in item:
+                    line = item["line"].strip()
+                    line_upper = line.upper()
+                    
+                    # Check for IF statement start
+                    if line_upper.startswith("IF "):
+                        logger.debug("Found IF statement at line %d in %s", item["line_no"], parent_context)
+                        if_result = self._parse_if_statement_enhanced(self._find_line_index(item["line_no"]))
+                        if if_result:
+                            if_block, end_idx = if_result
+                            # Replace the line_info with the parsed if_block
+                            statements_list[i] = if_block
+                            logger.debug("Parsed complete IF statement structure in %s", parent_context)
+                            # Remove any subsequent line_info objects that are part of the IF statement
+                            # (they will be included in the if_block)
+                            j = i + 1
+                            while j < len(statements_list):
+                                next_item = statements_list[j]
+                                if isinstance(next_item, dict) and "line_no" in next_item:
+                                    # Get the end line number from the if_block
+                                    end_line_no = if_block.get("end_if_line_no")
+                                    if end_line_no and next_item["line_no"] > end_line_no:
+                                        break
+                                    statements_list.pop(j)
+                                else:
+                                    j += 1
+                            continue
+                
+                # Handle nested structures (begin_end blocks, exception handlers, etc.)
+                elif isinstance(item, dict) and "type" in item:
+                    if item["type"] == "begin_end":
+                        # Process IF statements in begin_end_statements
+                        if "begin_end_statements" in item:
+                            process_if_else_in_list(item["begin_end_statements"], f"{parent_context}.begin_end_statements")
+                        
+                        # Process IF statements in exception_handlers
+                        if "exception_handlers" in item:
+                            for handler in item["exception_handlers"]:
+                                if "exception_statements" in handler:
+                                    process_if_else_in_list(handler["exception_statements"], f"{parent_context}.exception_statements")
+                    
+                    elif item["type"] == "if_else":
+                        # Process IF statements in then_statements, else_if, and else_statements
+                        if "then_statements" in item:
+                            process_if_else_in_list(item["then_statements"], f"{parent_context}.then_statements")
+                        
+                        if "else_if" in item:
+                            for elsif_block in item["else_if"]:
+                                if "then_statements" in elsif_block:
+                                    process_if_else_in_list(elsif_block["then_statements"], f"{parent_context}.else_if.then_statements")
+                        
+                        if "else_statements" in item:
+                            process_if_else_in_list(item["else_statements"], f"{parent_context}.else_statements")
+                    
+                    elif item["type"] == "case_when":
+                        # Process IF statements in when_clauses (then_statements and else_statements)
+                        if "when_clauses" in item:
+                            for clause in item["when_clauses"]:
+                                if "when_value" in clause and "then_statements" in clause:
+                                    process_if_else_in_list(clause["then_statements"], f"{parent_context}.then_statements")
+                                elif "else_statements" in clause:
+                                    process_if_else_in_list(clause["else_statements"], f"{parent_context}.else_statements")
+                    
+                    elif item["type"] == "for_loop":
+                        # Process IF statements in loop_statements
+                        if "loop_statements" in item:
+                            process_if_else_in_list(item["loop_statements"], f"{parent_context}.loop_statements")
+                
+                i += 1
+        
+        # Process the main_section_lines
+        process_if_else_in_list(self.main_section_lines, "main_section_lines")
+        
+        logger.debug("IF-ELSEIF-ELSE parsing complete")
+    
+    def _parse_if_statement_enhanced(self, start_idx):
+        """
+        Parse an IF statement from structured_lines with enhanced line number detection and indentation-based nesting.
+        First detects IF and END IF; line numbers, then finds all ELSEIF and ELSE statements at the same indentation level.
+        
+        Args:
+            start_idx (int): Index in structured_lines where the IF statement starts
+            
+        Returns:
+            tuple: (if_block, end_idx) if successful, None otherwise
+        """
+        logger.debug("Starting enhanced IF statement parsing from index %d", start_idx)
+        
+        # Check if we have a valid IF statement
+        if start_idx >= len(self.structured_lines):
+            logger.debug("Invalid start index for IF statement")
+            return None
+            
+        if_line_info = self.structured_lines[start_idx]
+        if_line = if_line_info["line"].strip()
+        if_indent = if_line_info["indent"]
+        if_line_no = if_line_info["line_no"]
+        
+        # Extract the IF condition
+        if_condition = if_line[3:].strip()  # Remove "IF " prefix
+        if if_condition.upper().endswith(" THEN"):
+            if_condition = if_condition[:-5].strip()  # Remove " THEN" suffix
+        
+        logger.debug("IF statement - Condition: '%s', Indent: %d", if_condition, if_indent)
+        
+        # Step 1: Find the matching END IF; at the same indentation level
+        end_if_line_no = None
+        end_if_idx = -1
+        
+        i = start_idx + 1
+        while i < len(self.structured_lines):
+            line_info = self.structured_lines[i]
+            line = line_info["line"].strip()
+            line_upper = line.upper()
+            indent = line_info["indent"]
+            
+            # Check for END IF; at the same indentation level
+            if line_upper == "END IF;" and indent == if_indent:
+                end_if_line_no = line_info["line_no"]
+                end_if_idx = i
+                logger.debug("Found END IF; at line %d (indent %d)", end_if_line_no, indent)
+                break
+            
+            # Handle nested IF statements - skip to their END IF;
+            elif line_upper.startswith("IF ") and indent > if_indent:
+                nested_indent = indent
+                j = i + 1
+                while j < len(self.structured_lines):
+                    nested_line_info = self.structured_lines[j]
+                    nested_line = nested_line_info["line"].strip()
+                    nested_line_upper = nested_line.upper()
+                    nested_indent_level = nested_line_info["indent"]
+                    
+                    if nested_line_upper == "END IF;" and nested_indent_level == nested_indent:
+                        i = j  # Skip to the end of nested IF
+                        break
+                    j += 1
+            
+            i += 1
+        
+        if end_if_line_no is None:
+            logger.warning("Could not find matching END IF; for IF statement at line %d", if_line_no)
+            return None
+        
+        # Step 2: Find all ELSEIF and ELSE statements between IF and END IF; at the same indentation level
+        else_if_line_nos = []
+        else_line_no = None
+        
+        for k in range(start_idx + 1, end_if_idx):
+            line_info = self.structured_lines[k]
+            line = line_info["line"].strip()
+            line_upper = line.upper()
+            indent = line_info["indent"]
+            
+            # Check for ELSEIF statements at the same indentation level as IF
+            if line_upper.startswith("ELSIF ") and indent == if_indent:
+                else_if_line_nos.append(line_info["line_no"])
+                logger.debug("Found ELSIF clause at line %d (indent %d)", line_info["line_no"], indent)
+            
+            # Check for ELSE statement at the same indentation level as IF
+            elif line_upper == "ELSE" and indent == if_indent:
+                else_line_no = line_info["line_no"]
+                logger.debug("Found ELSE clause at line %d (indent %d)", line_info["line_no"], indent)
+        
+        # Step 3: Build the enhanced if statement structure
+        if_statement = {
+            "type": "if_else",
+            "condition": if_condition,
+            "then_statements": [],
+            "else_if": [],
+            "else_statements": [],
+            "if_line_no": if_line_no,
+            "if_indent": if_indent,
+            "else_if_line_nos": else_if_line_nos,
+            "else_line_no": else_line_no,
+            "end_if_line_no": end_if_line_no
+        }
+        
+        # Step 4: Process THEN statements (between IF and first ELSEIF/ELSE/END IF)
+        then_end_line_no = else_if_line_nos[0] if else_if_line_nos else (else_line_no if else_line_no else end_if_line_no)
+        then_statements = self._parse_then_statements(if_line_no, if_indent, then_end_line_no)
+        if_statement["then_statements"] = then_statements
+        
+        # Step 5: Process ELSEIF clauses
+        for i, else_if_line_no in enumerate(else_if_line_nos):
+            next_line_no = else_if_line_nos[i + 1] if i + 1 < len(else_if_line_nos) else (else_line_no if else_line_no else end_if_line_no)
+            else_if_clause = self._parse_else_if_clause(else_if_line_no, if_indent, next_line_no)
+            if else_if_clause:
+                if_statement["else_if"].append(else_if_clause)
+        
+        # Step 6: Process ELSE clause if exists
+        if else_line_no:
+            else_statements = self._parse_else_statements(else_line_no, if_indent, end_if_line_no)
+            if_statement["else_statements"] = else_statements
+        
+        # Step 7: Process nested structures in each section
+        self._process_nested_structures_in_if_else_enhanced(if_statement)
+        
+        logger.debug("Completed enhanced IF statement parsing: %d else_if clauses, ELSE at line %s, end at line %d", 
+                   len(else_if_line_nos), else_line_no or "None", end_if_line_no)
+                   
+        return if_statement, end_if_idx
+    
+    def _parse_if_else_structure(self, statements_list, start_idx, parent_context=""):
+        """
+        Parse a complete IF-ELSE structure from statements starting at start_idx.
+        
+        Returns a dictionary with:
+        - parsed_block: The structured IF-ELSE block
+        - end_index: The index of the END IF statement
+        
+        Handles IF-THEN-ELSIF-ELSE-END IF structures with proper nesting.
+        """
+        if start_idx >= len(statements_list):
+            log_parsing_error("IF-ELSE structure", f"Invalid start_idx {start_idx}", None)
+            return None
+            
+        start_item = statements_list[start_idx]
+        if not (isinstance(start_item, dict) and "line" in start_item):
+            log_parsing_error("IF-ELSE structure", "Start item is not a line_info object", None)
+            return None
+            
+        start_line = start_item["line"].strip()
+        start_indent = start_item.get("indent", 0)
+        start_line_no = start_item["line_no"]
+        
+        if not start_line.upper().startswith("IF "):
+            log_parsing_error("IF-ELSE structure", f"Start line is not an IF statement: {start_line}", None)
+            return None
+            
+        debug("Parsing IF-ELSE structure starting at line %d (indent %d): %s", 
+              start_line_no, start_indent, start_line[:50])
+        
+        # Extract IF condition
+        if_condition = start_line[3:].strip()  # Remove "IF " prefix
+        if if_condition.upper().endswith(" THEN"):
+            if_condition = if_condition[:-5].strip()  # Remove " THEN" suffix
+        
+        # Initialize structure
+        if_block = {
+            "type": "if_else",
+            "condition": if_condition,
+            "then_statements": [],
+            "else_if": [],
+            "else_statements": [],
+            "line_no": start_line_no,
+            "indent": start_indent
+        }
+        
+        current_section = "then"  # Track which section we're currently in
+        current_statements = if_block["then_statements"]
+        
+        # Find the matching END IF
+        i = start_idx + 1
+        nest_level = 0  # Track nested IF blocks
+        
+        while i < len(statements_list):
+            item = statements_list[i]
+            
+            if isinstance(item, dict) and "line" in item:
+                line = item["line"].strip()
+                indent = item.get("indent", 0)
+                line_no = item["line_no"]
+                
+                # Check for nested IF statements (increase nest level)
+                if line.upper().startswith("IF "):
+                    if indent > start_indent:
+                        nest_level += 1
+                        log_nesting_level(nest_level, f"nested IF at line {line_no}")
+                        current_statements.append(item)
+                    elif indent == start_indent:
+                        # Same level IF - we've gone too far
+                        debug("Found same-level IF at line %d, stopping parse", line_no)
+                        break
+                    else:
+                        # Lower indent IF - we've gone too far
+                        debug("Found lower-indent IF at line %d, stopping parse", line_no)
+                        break
+                
+                # Check for nested END IF (decrease nest level)
+                elif line.upper() == "END IF;":
+                    if nest_level > 0:
+                        nest_level -= 1
+                        log_nesting_level(nest_level, f"nested END IF at line {line_no}")
+                        current_statements.append(item)
+                    elif indent == start_indent:
+                        # This is our matching END IF
+                        debug("Found matching END IF at line %d for IF at line %d", 
+                              line_no, start_line_no)
+                        return {
+                            "parsed_block": if_block,
+                            "end_index": i
+                        }
+                    else:
+                        # Wrong indent level
+                        warning("Found END IF with wrong indent at line %d (expected %d, got %d)", 
+                               line_no, start_indent, indent)
+                        current_statements.append(item)
+                
+                # Check for ELSIF at the same level
+                elif line.upper().startswith("ELSIF ") and indent == start_indent and nest_level == 0:
+                    log_structure_found("ELSIF", line_no)
+                    
+                    # Extract ELSIF condition
+                    elsif_condition = line[6:].strip()  # Remove "ELSIF " prefix
+                    if elsif_condition.upper().endswith(" THEN"):
+                        elsif_condition = elsif_condition[:-5].strip()  # Remove " THEN" suffix
+                    
+                    # Add to else_if list
+                    elsif_block = {
+                        "condition": elsif_condition,
+                        "then_statements": [],
+                        "line_no": line_no
+                    }
+                    if_block["else_if"].append(elsif_block)
+                    
+                    # Switch to ELSIF statements
+                    current_section = "elsif"
+                    current_statements = elsif_block["then_statements"]
+                
+                # Check for ELSE at the same level
+                elif line.upper() == "ELSE" and indent == start_indent and nest_level == 0:
+                    log_structure_found("ELSE", line_no)
+                    
+                    # Switch to else statements
+                    current_section = "else"
+                    current_statements = if_block["else_statements"]
+                
+                else:
+                    # Regular statement - add to current section
+                    current_statements.append(item)
+            else:
+                # Non-line item - add to current section
+                current_statements.append(item)
+            
+            i += 1
+        
+        # If we get here, we didn't find a matching END IF
+        log_parsing_error("IF-ELSE structure", f"Could not find matching END IF for IF statement", start_line_no)
+        return None
+    
+    def _parse_then_statements(self, if_line_no, if_indent, then_end_line_no):
+        """
+        Parse THEN statements between IF and the next ELSEIF/ELSE/END IF.
+        
+        Args:
+            if_line_no (int): Line number where IF statement starts
+            if_indent (int): Indentation level of the parent IF statement
+            then_end_line_no (int): Line number where THEN section ends
+            
+        Returns:
+            list: Parsed THEN statements
+        """
+        then_statements = []
+        
+        # Collect statements between IF and next clause
+        for line_info in self.structured_lines:
+            line_no = line_info["line_no"]
+            if if_line_no < line_no < then_end_line_no:
+                line = line_info["line"].strip()
+                indent = line_info["indent"]
+                
+                # Only include statements that are more indented than the IF
+                if indent > if_indent and line and not line.startswith("--"):
+                    then_statements.append(line_info)
+        
+        return then_statements
+
+    def _parse_else_if_clause(self, else_if_line_no, if_indent, next_line_no):
+        """
+        Parse an ELSEIF clause starting at the given line number.
+        
+        Args:
+            else_if_line_no (int): Line number where ELSEIF clause starts
+            if_indent (int): Indentation level of the parent IF statement
+            next_line_no (int): Line number where this ELSEIF section ends
+            
+        Returns:
+            dict: Parsed ELSEIF clause structure
+        """
+        else_if_clause = {
+            "condition": "",
+            "then_statements": [],
+            "else_if_line_no": else_if_line_no
+        }
+        
+        # Find the ELSEIF line and extract the condition
+        else_if_line_info = None
+        for line_info in self.structured_lines:
+            if line_info["line_no"] == else_if_line_no:
+                else_if_line_info = line_info
+                break
+        
+        if not else_if_line_info:
+            logger.warning("Could not find ELSEIF line %d", else_if_line_no)
+            return None
+        
+        else_if_line = else_if_line_info["line"].strip()
+        else_if_line_upper = else_if_line.upper()
+        
+        # Extract the else_if condition
+        if else_if_line_upper.startswith("ELSIF "):
+            else_if_condition = else_if_line[6:].strip()  # Remove "ELSIF " prefix
+            if else_if_condition.upper().endswith(" THEN"):
+                else_if_condition = else_if_condition[:-5].strip()  # Remove " THEN" suffix
+            else_if_clause["condition"] = else_if_condition
+            logger.debug("Parsed ELSEIF clause: %s", else_if_condition)
+        
+        # Collect statements between ELSEIF and next clause
+        for line_info in self.structured_lines:
+            line_no = line_info["line_no"]
+            if else_if_line_no < line_no < next_line_no:
+                line = line_info["line"].strip()
+                indent = line_info["indent"]
+                
+                # Only include statements that are more indented than the IF
+                if indent > if_indent and line and not line.startswith("--"):
+                    else_if_clause["then_statements"].append(line_info)
+        
+        return else_if_clause
+
+    def _parse_else_statements(self, else_line_no, if_indent, end_if_line_no):
+        """
+        Parse ELSE statements starting at the given line number.
+        
+        Args:
+            else_line_no (int): Line number where ELSE clause starts
+            if_indent (int): Indentation level of the parent IF statement
+            end_if_line_no (int): Line number where END IF; is located
+            
+        Returns:
+            list: Parsed ELSE statements
+        """
+        else_statements = []
+        
+        # Collect statements between ELSE and END IF;
+        for line_info in self.structured_lines:
+            line_no = line_info["line_no"]
+            if else_line_no < line_no < end_if_line_no:
+                line = line_info["line"].strip()
+                indent = line_info["indent"]
+                
+                # Only include statements that are more indented than the IF
+                if indent > if_indent and line and not line.startswith("--"):
+                    else_statements.append(line_info)
+        
+        logger.debug("Parsed ELSE clause with %d statements", len(else_statements))
+        return else_statements
+
+    def _process_nested_structures_in_if_else_enhanced(self, if_statement):
+        """
+        Process any nested structures within the enhanced if statement.
+        
+        Args:
+            if_statement (dict): The enhanced if statement structure to process
+        """
+        logger.debug("Processing nested structures in enhanced IF statement")
+        
+        # Process then_statements
+        if if_statement.get("then_statements"):
+            processed_statements = self._process_statements_for_nested_structures(if_statement["then_statements"])
+            if_statement["then_statements"] = processed_statements
+        
+        # Process else_if statements
+        if if_statement.get("else_if"):
+            for else_if_block in if_statement["else_if"]:
+                if else_if_block.get("then_statements"):
+                    processed_statements = self._process_statements_for_nested_structures(else_if_block["then_statements"])
+                    else_if_block["then_statements"] = processed_statements
+        
+        # Process else_statements
+        if if_statement.get("else_statements"):
+            processed_statements = self._process_statements_for_nested_structures(if_statement["else_statements"])
+            if_statement["else_statements"] = processed_statements
+    
+    def _process_nested_structures_in_if_else(self, if_block):
+        """
+        Process nested structures within an IF-ELSE block recursively.
+        This includes nested BEGIN-END, CASE-WHEN, FOR loops, and other IF-ELSE blocks.
+        """
+        debug("Processing nested structures in IF-ELSE block")
+        
+        # Process then_statements
+        if if_block.get("then_statements"):
+            debug("Processing nested structures in then_statements")
+            self._process_statements_for_nested_structures(if_block["then_statements"])
+        
+        # Process else_if statements
+        if if_block.get("else_if"):
+            for elsif_block in if_block["else_if"]:
+                if elsif_block.get("then_statements"):
+                    debug("Processing nested structures in elsif then_statements")
+                    self._process_statements_for_nested_structures(elsif_block["then_statements"])
+        
+        # Process else_statements
+        if if_block.get("else_statements"):
+            debug("Processing nested structures in else_statements")
+            self._process_statements_for_nested_structures(if_block["else_statements"])
+    
+    def _process_nested_structures_recursively(self, parsed_structure):
+        """
+        Recursively process nested structures within a parsed structure.
+        This handles structures like if_else, case_when, begin_end, etc.
+        """
+        debug("Processing nested structures recursively in %s", parsed_structure.get("type", "unknown"))
+        
+        # Handle IF-ELSE structures
+        if parsed_structure.get("type") == "if_else":
+            self._process_nested_structures_in_if_else(parsed_structure)
+            
+        # Handle CASE-WHEN structures  
+        elif parsed_structure.get("type") == "case_when":
+            self._process_nested_structures_in_case(parsed_structure)
+            
+        # Handle BEGIN-END structures
+        elif parsed_structure.get("type") == "begin_end":
+            if parsed_structure.get("begin_end_statements"):
+                self._process_statements_for_nested_structures(parsed_structure["begin_end_statements"])
+            if parsed_structure.get("exception_statements"):
+                self._process_statements_for_nested_structures(parsed_structure["exception_statements"])
+        
+        # Handle FOR LOOP structures
+        elif parsed_structure.get("type") == "for_loop":
+            if parsed_structure.get("loop_statements"):
+                self._process_statements_for_nested_structures(parsed_structure["loop_statements"])
+        
+        # Handle other statement lists
+        for key in ["statements", "then_statements", "else_statements", "when_statements"]:
+            if key in parsed_structure and isinstance(parsed_structure[key], list):
+                self._process_statements_for_nested_structures(parsed_structure[key])
         
     def _parse_assignment_statement(self):
         """
@@ -1367,14 +2083,12 @@ class OracleTriggerAnalyzer:
     
     def _parse_case_when(self):
         """
-        Parse CASE WHEN statements from the main section of SQL.
-        Extracts the structure and processes inner blocks recursively.
+        Parse CASE WHEN ELSE statements from the main section of SQL with proper nested structure based on indentation.
+        First detects CASE and END CASE; line numbers, then finds all WHEN and ELSE statements at the same indentation level.
+        Maintains the hierarchical structure of CASE-WHEN-ELSE blocks by checking indentation levels.
         Updates self.main_section_lines with parsed blocks.
         """
-        logger.debug("Starting CASE WHEN parsing")
-        
-        # Process existing main_section_lines to find and parse CASE statements
-        # in various contexts: begin_end_statements, exception_statements, then_statements, else_statements
+        logger.debug("Starting CASE WHEN ELSE parsing with indentation-based nesting")
         
         def process_case_statements_in_list(statements_list, parent_context=""):
             """Recursively process CASE statements in a list of statements"""
@@ -1393,7 +2107,7 @@ class OracleTriggerAnalyzer:
                     # Check for CASE statement start
                     if line_upper == "CASE" or line_upper.startswith("CASE "):
                         logger.debug("Found CASE statement at line %d in %s", item["line_no"], parent_context)
-                        case_result = self._parse_case_statement(self._find_line_index(item["line_no"]))
+                        case_result = self._parse_case_statement_enhanced(self._find_line_index(item["line_no"]))
                         if case_result:
                             case_block, end_idx = case_result
                             # Replace the line_info with the parsed case_block
@@ -1405,7 +2119,9 @@ class OracleTriggerAnalyzer:
                             while j < len(statements_list):
                                 next_item = statements_list[j]
                                 if isinstance(next_item, dict) and "line_no" in next_item:
-                                    if next_item["line_no"] > end_idx:
+                                    # Get the end line number from the case_block
+                                    end_line_no = case_block.get("end_case_line_no")
+                                    if end_line_no and next_item["line_no"] > end_line_no:
                                         break
                                     statements_list.pop(j)
                                 else:
@@ -1457,7 +2173,7 @@ class OracleTriggerAnalyzer:
         # Process the main_section_lines
         process_case_statements_in_list(self.main_section_lines, "main_section_lines")
         
-        logger.debug("CASE WHEN parsing complete")
+        logger.debug("CASE WHEN ELSE parsing complete")
     
     def _find_line_index(self, line_no):
         """Find the index in structured_lines for a given line number"""
@@ -1468,11 +2184,11 @@ class OracleTriggerAnalyzer:
         
     def _parse_begin_end(self):
         """
-        Parse top-level BEGIN blocks from the main section of SQL.
-        Extracts the structure and processes inner blocks recursively.
-        Updates self.main_section_lines with parsed blocks.
+        Parse nested BEGIN blocks from the main section of SQL.
+        This method processes nested BEGIN-END blocks within the already parsed structure.
+        Updates self.main_section_lines with parsed nested blocks.
         """
-        logger.debug("Starting BEGIN block parsing")
+        logger.debug("Starting nested BEGIN block parsing")
 
         def process_begin_end_in_list(statements_list, parent_context=""):
             """Recursively process BEGIN blocks in a list of statements"""
@@ -1490,14 +2206,14 @@ class OracleTriggerAnalyzer:
                     
                     # Check for BEGIN block start
                     if line_upper == "BEGIN":
-                        logger.debug("Found BEGIN block at line %d in %s", item["line_no"], parent_context)
+                        logger.debug("Found nested BEGIN block at line %d in %s", item["line_no"], parent_context)
                         # Parse the BEGIN block structure
                         begin_end_result = self._parse_begin_end_structure(self._find_line_index(item["line_no"]))
                         if begin_end_result:
                             begin_end_block, end_idx = begin_end_result
                             # Replace the line_info with the parsed begin_end_block
                             statements_list[i] = begin_end_block
-                            logger.debug("Parsed complete BEGIN block structure in %s", parent_context)
+                            logger.debug("Parsed complete nested BEGIN block structure in %s", parent_context)
                             # Remove any subsequent line_info objects that are part of the BEGIN block
                             # (they will be included in the begin_end_block)
                             j = i + 1
@@ -1553,123 +2269,10 @@ class OracleTriggerAnalyzer:
                 
                 i += 1
 
-        current_block = None
-        block_stack = []
-        self.main_section_lines = []
-        
-        i = 0
-        while i < len(self.structured_lines):
-            line_info = self.structured_lines[i]
-            
-            if self.main_section <= line_info["line_no"]:
-                line = line_info["line"].strip()
-                line_upper = line.upper()
-                
-                # Check for BEGIN block start
-                if line_upper == "BEGIN":
-                    # Start a new block
-                    current_block = {
-                        "begin_end_statements": [],
-                        "type": "begin_end",
-                        "exception_handlers": []
-                    }
-                    block_stack.append(current_block)
-                    logger.debug("Found BEGIN block at line %d", line_info["line_no"])
-                
-                # Check for END block
-                elif line_upper == "END;":
-                    if block_stack:
-                        # Complete the current block
-                        completed_block = block_stack.pop()
-                        
-                        # Process the block's begin_end_statements to identify case statements
-                        self._process_block_sqls(completed_block)
-                        
-                        # If this is a top-level block, add to results
-                        if not block_stack:
-                            self.main_section_lines.append(completed_block)
-                            logger.debug("Completed top-level BEGIN block")
-                        else:
-                            # This is a nested block, add to parent's begin_end_statements
-                            block_stack[-1]["begin_end_statements"].append(completed_block)
-                            logger.debug("Completed nested BEGIN block")
-                
-                # Check for EXCEPTION section
-                elif line_upper == "EXCEPTION":
-                    if block_stack:
-                        # Start exception handling section
-                        current_block = block_stack[-1]
-                        current_block["exception_handlers"] = []
-                        logger.debug("Found EXCEPTION section at line %d", line_info["line_no"])
-                
-                # Check for exception handlers
-                elif line_upper.startswith("WHEN ") and " THEN" in line_upper:
-                    if block_stack and "exception_handlers" in block_stack[-1]:
-                        # Parse exception handler
-                        exception_handler = self._parse_exception_handler(line)
-                        if exception_handler:
-                            # Initialize exception_statements array for the exception handler
-                            exception_handler["exception_statements"] = []
-                            block_stack[-1]["exception_handlers"].append(exception_handler)
-                            logger.debug("Parsed exception handler: %s", exception_handler["exception_name"])
-                
-                # Check for RAISE statements in exception handlers
-                elif line_upper.startswith("RAISE") and block_stack:
-                    if block_stack[-1]["exception_handlers"]:
-                        # Add RAISE statement to the last exception handler's exception_statements
-                        last_handler = block_stack[-1]["exception_handlers"][-1]
-                        if "exception_statements" not in last_handler:
-                            last_handler["exception_statements"] = []
-                        
-                        # Check if it's RAISE_APPLICATION_ERROR
-                        if "RAISE_APPLICATION_ERROR" in line_upper:
-                            rae_info = self._parse_raise_application_error(line)
-                            if rae_info:
-                                # Create function_calling structure for RAISE_APPLICATION_ERROR
-                                function_call = {
-                                    "type": "function_calling",
-                                    "function_name": "raise_application_error",
-                                    "parameter": {
-                                        "handler_code": rae_info["handler_code"],
-                                        "handler_string": rae_info["handler_string"]
-                                    }
-                                }
-                                last_handler["exception_statements"].append(function_call)
-                                logger.debug("Added RAISE_APPLICATION_ERROR function call: %s", rae_info)
-                        else:
-                            # Regular RAISE statement
-                            raise_statement = {
-                                "sql": line,
-                                "type": "raise_statement"
-                            }
-                            last_handler["exception_statements"].append(raise_statement)
-                            logger.debug("Added RAISE statement: %s", line)
-                
-                # Add regular SQL statements to current block or exception handlers
-                elif block_stack and line and not line.startswith("--"):
-                    # Check if we're in an exception handler
-                    if block_stack[-1]["exception_handlers"]:
-                        last_handler = block_stack[-1]["exception_handlers"][-1]
-                        if "exception_statements" not in last_handler:
-                            last_handler["exception_statements"] = []
-                        
-                        # Add SQL statement to exception handler
-                        sql_statement = {
-                            "sql": line,
-                            "type": "sql_statement"
-                        }
-                        last_handler["exception_statements"].append(sql_statement)
-                        logger.debug("Added SQL statement to exception handler: %s", line)
-                    else:
-                        # Add to the current block's begin_end_statements
-                        block_stack[-1]["begin_end_statements"].append(line_info)
-            
-            i += 1
-        
-        # Process the main_section_lines recursively
+        # Process the main_section_lines recursively for nested BEGIN structures
         process_begin_end_in_list(self.main_section_lines, "main_section_lines")
         
-        logger.debug("BEGIN block parsing complete: updated main_section_lines with %d blocks", len(self.main_section_lines))
+        logger.debug("Nested BEGIN block parsing complete")
         
     def _parse_begin_end_structure(self, start_idx):
         """
@@ -1785,6 +2388,130 @@ class OracleTriggerAnalyzer:
         
         # No additional processing needed here as we now process CASE statements 
         # during initial parsing
+    
+    def _parse_case_statement_enhanced(self, start_idx):
+        """
+        Parse a CASE statement from structured_lines with enhanced line number detection and indentation-based nesting.
+        First detects CASE and END CASE; line numbers, then finds all WHEN and ELSE statements at the same indentation level.
+        
+        Args:
+            start_idx (int): Index in structured_lines where the CASE statement starts
+            
+        Returns:
+            tuple: (case_block, end_idx) if successful, None otherwise
+        """
+        logger.debug("Starting enhanced CASE statement parsing from index %d", start_idx)
+        
+        # Check if we have a valid CASE statement
+        if start_idx >= len(self.structured_lines):
+            logger.debug("Invalid start index for CASE statement")
+            return None
+            
+        case_line_info = self.structured_lines[start_idx]
+        case_line = case_line_info["line"].strip()
+        case_indent = case_line_info["indent"]
+        case_line_no = case_line_info["line_no"]
+        
+        # Determine if this is a CASE with expression or a simple CASE
+        case_expression = ""
+        if case_line.upper() != "CASE":
+            # Extract expression part after "CASE "
+            case_expression = case_line[5:].strip()
+        
+        logger.debug("CASE statement - Type: %s, Expression: '%s', Indent: %d", 
+                    "simple" if not case_expression else "with expression",
+                    case_expression, case_indent)
+        
+        # Step 1: Find the matching END CASE; at the same indentation level
+        end_case_line_no = None
+        end_case_idx = -1
+        
+        i = start_idx + 1
+        while i < len(self.structured_lines):
+            line_info = self.structured_lines[i]
+            line = line_info["line"].strip()
+            line_upper = line.upper()
+            indent = line_info["indent"]
+            
+            # Check for END CASE; at the same indentation level
+            if line_upper == "END CASE;" and indent == case_indent:
+                end_case_line_no = line_info["line_no"]
+                end_case_idx = i
+                logger.debug("Found END CASE; at line %d (indent %d)", end_case_line_no, indent)
+                break
+            
+            # Handle nested CASE statements - skip to their END CASE;
+            elif line_upper == "CASE" and indent > case_indent:
+                nested_indent = indent
+                j = i + 1
+                while j < len(self.structured_lines):
+                    nested_line_info = self.structured_lines[j]
+                    nested_line = nested_line_info["line"].strip()
+                    nested_line_upper = nested_line.upper()
+                    nested_indent_level = nested_line_info["indent"]
+                    
+                    if nested_line_upper == "END CASE;" and nested_indent_level == nested_indent:
+                        i = j  # Skip to the end of nested CASE
+                        break
+                    j += 1
+            
+            i += 1
+        
+        if end_case_line_no is None:
+            logger.warning("Could not find matching END CASE; for CASE statement at line %d", case_line_no)
+            return None
+        
+        # Step 2: Find all WHEN and ELSE statements between CASE and END CASE; at the same or higher indentation level
+        when_line_nos = []
+        else_line_no = None
+        
+        for k in range(start_idx + 1, end_case_idx):
+            line_info = self.structured_lines[k]
+            line = line_info["line"].strip()
+            line_upper = line.upper()
+            indent = line_info["indent"]
+            
+            # Check for WHEN statements at the same or higher indentation level than CASE
+            if line_upper.startswith("WHEN ") and " THEN" in line_upper and indent >= case_indent:
+                when_line_nos.append(line_info["line_no"])
+                logger.debug("Found WHEN clause at line %d (indent %d, case indent %d)", line_info["line_no"], indent, case_indent)
+            
+            # Check for ELSE statement at the same or higher indentation level than CASE
+            elif line_upper == "ELSE" and indent >= case_indent:
+                else_line_no = line_info["line_no"]
+                logger.debug("Found ELSE clause at line %d (indent %d, case indent %d)", line_info["line_no"], indent, case_indent)
+        
+        # Step 3: Build the enhanced case statement structure
+        case_statement = {
+            "type": "case_when",
+            "case_expression": case_expression,
+            "when_clauses": [],
+            "case_line_no": case_line_no,
+            "case_indent": case_indent,
+            "when_line_nos": when_line_nos,
+            "else_line_no": else_line_no,
+            "end_case_line_no": end_case_line_no
+        }
+        
+        # Step 4: Process WHEN clauses
+        for when_line_no in when_line_nos:
+            when_clause = self._parse_when_clause(when_line_no, case_indent, end_case_line_no)
+            if when_clause:
+                case_statement["when_clauses"].append(when_clause)
+        
+        # Step 5: Process ELSE clause if exists
+        if else_line_no:
+            else_clause = self._parse_else_clause(else_line_no, case_indent, end_case_line_no)
+            if else_clause:
+                case_statement["when_clauses"].append(else_clause)
+        
+        # Step 6: Process nested structures in each clause
+        self._process_nested_structures_in_case_enhanced(case_statement)
+        
+        logger.debug("Completed enhanced CASE statement parsing: %d when clauses, ELSE at line %s, end at line %d", 
+                   len(when_line_nos), else_line_no or "None", end_case_line_no)
+                   
+        return case_statement, end_case_idx
     
     def _parse_case_statement(self, start_idx):
         """
@@ -1966,6 +2693,126 @@ class OracleTriggerAnalyzer:
                    
         return case_statement, end_idx
         
+    def _parse_when_clause(self, when_line_no, case_indent, end_case_line_no):
+        """
+        Parse a WHEN clause starting at the given line number.
+        
+        Args:
+            when_line_no (int): Line number where WHEN clause starts
+            case_indent (int): Indentation level of the parent CASE statement
+            end_case_line_no (int): Line number where END CASE; is located
+            
+        Returns:
+            dict: Parsed WHEN clause structure
+        """
+        when_clause = {
+            "when_value": "",
+            "then_statements": [],
+            "when_line_no": when_line_no
+        }
+        
+        # Find the WHEN line and extract the condition
+        when_line_info = None
+        for line_info in self.structured_lines:
+            if line_info["line_no"] == when_line_no:
+                when_line_info = line_info
+                break
+        
+        if not when_line_info:
+            logger.warning("Could not find WHEN line %d", when_line_no)
+            return None
+        
+        when_line = when_line_info["line"].strip()
+        when_line_upper = when_line.upper()
+        
+        # Extract the when value/condition
+        if when_line_upper.startswith("WHEN ") and " THEN" in when_line_upper:
+            when_value = when_line[5:].split(" THEN", 1)[0].strip()
+            when_clause["when_value"] = when_value
+            logger.debug("Parsed WHEN clause: %s", when_value)
+        
+        # Find the next WHEN or ELSE or END CASE; to determine the end of this clause
+        next_clause_line_no = end_case_line_no
+        
+        for line_info in self.structured_lines:
+            line_no = line_info["line_no"]
+            if when_line_no < line_no < end_case_line_no:
+                line = line_info["line"].strip()
+                line_upper = line.upper()
+                indent = line_info["indent"]
+                
+                # Check for next WHEN or ELSE at the same or higher indentation level
+                if ((line_upper.startswith("WHEN ") and " THEN" in line_upper and indent >= case_indent) or
+                    (line_upper == "ELSE" and indent >= case_indent)):
+                    next_clause_line_no = line_no
+                    break
+        
+        # Collect statements between WHEN and next clause
+        for line_info in self.structured_lines:
+            line_no = line_info["line_no"]
+            if when_line_no < line_no < next_clause_line_no:
+                line = line_info["line"].strip()
+                indent = line_info["indent"]
+                
+                # Only include statements that are more indented than the CASE
+                if indent > case_indent and line and not line.startswith("--"):
+                    when_clause["then_statements"].append(line_info)
+        
+        return when_clause
+
+    def _parse_else_clause(self, else_line_no, case_indent, end_case_line_no):
+        """
+        Parse an ELSE clause starting at the given line number.
+        
+        Args:
+            else_line_no (int): Line number where ELSE clause starts
+            case_indent (int): Indentation level of the parent CASE statement
+            end_case_line_no (int): Line number where END CASE; is located
+            
+        Returns:
+            dict: Parsed ELSE clause structure
+        """
+        else_clause = {
+            "else_statements": [],
+            "else_line_no": else_line_no
+        }
+        
+        # Collect statements between ELSE and END CASE;
+        for line_info in self.structured_lines:
+            line_no = line_info["line_no"]
+            if else_line_no < line_no < end_case_line_no:
+                line = line_info["line"].strip()
+                indent = line_info["indent"]
+                
+                # Only include statements that are more indented than the CASE
+                if indent > case_indent and line and not line.startswith("--"):
+                    else_clause["else_statements"].append(line_info)
+        
+        logger.debug("Parsed ELSE clause with %d statements", len(else_clause["else_statements"]))
+        return else_clause
+
+    def _process_nested_structures_in_case_enhanced(self, case_statement):
+        """
+        Process any nested structures within the enhanced case statement.
+        
+        Args:
+            case_statement (dict): The enhanced case statement structure to process
+        """
+        logger.debug("Processing nested structures in enhanced CASE statement")
+        
+        # Process each when clause
+        for clause in case_statement["when_clauses"]:
+            if "when_value" in clause and "then_statements" in clause:
+                # Process WHEN clause statements
+                statements = clause["then_statements"]
+                processed_statements = self._process_statements_for_nested_structures(statements)
+                clause["then_statements"] = processed_statements
+            elif "else_statements" in clause:
+                # Process ELSE clause statements
+                statements = clause["else_statements"]
+                processed_statements = self._process_statements_for_nested_structures(statements)
+                clause["else_statements"] = processed_statements
+        
     def _process_nested_structures_in_case(self, case_statement):
         """
         Process any nested structures (like nested CASE statements or BEGIN blocks)
@@ -1995,7 +2842,7 @@ class OracleTriggerAnalyzer:
         such as CASE statements or BEGIN blocks.
         
         Args:
-            statements (list): List of statement line_info objects
+            statements (list): List of statement line_info objects and parsed structures
             
         Returns:
             list: Processed list of statements with nested structures converted to proper format
@@ -2005,7 +2852,22 @@ class OracleTriggerAnalyzer:
         
         while i < len(statements):
             stmt_info = statements[i]
-            stmt = stmt_info["line"].strip()
+            
+            # Check if this is a line_info object or already parsed structure
+            if isinstance(stmt_info, dict) and "line" in stmt_info:
+                stmt = stmt_info["line"].strip()
+            elif isinstance(stmt_info, dict) and "type" in stmt_info:
+                # This is already a parsed structure (e.g., if_else, case_when, etc.)
+                # Process it recursively for nested structures
+                self._process_nested_structures_recursively(stmt_info)
+                processed.append(stmt_info)
+                i += 1
+                continue
+            else:
+                # Unknown structure, keep as is
+                processed.append(stmt_info)
+                i += 1
+                continue
             
             # Check for nested CASE statements
             if stmt.upper().startswith("CASE"):
@@ -2044,6 +2906,82 @@ class OracleTriggerAnalyzer:
             i += 1
             
         return processed
+    
+    def _parse_exception_section(self, exception_start_line_no: int, end_line_no: int) -> List[Dict[str, Any]]:
+        """
+        Parse exception handling section from EXCEPTION to END.
+        
+        Args:
+            exception_start_line_no (int): Line number where EXCEPTION starts
+            end_line_no (int): Line number where END; is located
+            
+        Returns:
+            List[Dict[str, Any]]: List of exception handlers with their statements
+        """
+        exception_handlers = []
+        current_handler = None
+        
+        for line_info in self.structured_lines:
+            line_no = line_info["line_no"]
+            
+            # Only process lines within the exception section
+            if exception_start_line_no < line_no < end_line_no:
+                line = line_info["line"].strip()
+                line_upper = line.upper()
+                
+                # Check for exception handler (WHEN ... THEN)
+                if line_upper.startswith("WHEN ") and " THEN" in line_upper:
+                    # Save previous handler if exists
+                    if current_handler:
+                        exception_handlers.append(current_handler)
+                    
+                    # Parse new exception handler
+                    exception_handler = self._parse_exception_handler(line)
+                    if exception_handler:
+                        current_handler = exception_handler
+                        current_handler["exception_statements"] = []
+                        logger.debug("Found exception handler: %s", exception_handler["exception_name"])
+                
+                # Check for RAISE statements in exception handlers
+                elif line_upper.startswith("RAISE") and current_handler:
+                    if "RAISE_APPLICATION_ERROR" in line_upper:
+                        rae_info = self._parse_raise_application_error(line)
+                        if rae_info:
+                            # Create function_calling structure for RAISE_APPLICATION_ERROR
+                            function_call = {
+                                "type": "function_calling",
+                                "function_name": "raise_application_error",
+                                "parameter": {
+                                    "handler_code": rae_info["handler_code"],
+                                    "handler_string": rae_info["handler_string"]
+                                }
+                            }
+                            current_handler["exception_statements"].append(function_call)
+                            logger.debug("Added RAISE_APPLICATION_ERROR function call: %s", rae_info)
+                    else:
+                        # Regular RAISE statement
+                        raise_statement = {
+                            "sql": line,
+                            "type": "raise_statement"
+                        }
+                        current_handler["exception_statements"].append(raise_statement)
+                        logger.debug("Added RAISE statement: %s", line)
+                
+                # Add regular SQL statements to current exception handler
+                elif current_handler and line and not line.startswith("--"):
+                    sql_statement = {
+                        "sql": line,
+                        "type": "sql_statement"
+                    }
+                    current_handler["exception_statements"].append(sql_statement)
+                    logger.debug("Added SQL statement to exception handler: %s", line)
+        
+        # Add the last handler if exists
+        if current_handler:
+            exception_handlers.append(current_handler)
+        
+        logger.debug("Parsed exception section: %d handlers", len(exception_handlers))
+        return exception_handlers
     
     def _parse_exception_handler(self, line: str) -> Dict[str, Any]:
         """
@@ -2163,7 +3101,7 @@ class OracleTriggerAnalyzer:
             """Recursively extract rest strings from any item"""
             if isinstance(item, dict):
                 # Check for "line_no" field which contains rest string content
-                if "line_no" in item:
+                if "is_end_semicolon" in item:
                     rest_strings_list.append(item)
                 
                 # Recursively process all values in the dictionary
@@ -2254,7 +3192,7 @@ def ensure_dir(directory: str) -> None:
     """Ensure that the specified directory exists."""
     if not os.path.exists(directory):
         os.makedirs(directory)
-        logger.debug(f"Created directory: {directory}")
+        debug("Created directory: %s", directory)
 
 
 def process_files(
@@ -2265,7 +3203,7 @@ def process_files(
     processor_func,
 ) -> None:
     """Process files from source_dir to target_dir using the provided processor function."""
-    logger.info(f"Processing files from '{source_dir}' to '{target_dir}'")
+    info("Processing files from '%s' to '%s'", source_dir, target_dir)
 
     # Ensure directories exist
     ensure_dir(target_dir)
@@ -2274,25 +3212,23 @@ def process_files(
     try:
         files = [f for f in os.listdir(source_dir) if f.endswith(file_pattern)]
     except FileNotFoundError:
-        logger.error(f"Source directory not found: {source_dir}")
+        error("Source directory not found: %s", source_dir)
         return
 
-    logger.debug(f"Found {len(files)} files matching pattern: {files}")
+    debug("Found %d files matching pattern: %s", len(files), files)
 
     # Process each file
     for file_name in files:
-        logger.debug(f"Processing file: {file_name}")
+        debug("Processing file: %s", file_name)
         try:
             # Extract trigger number from filename using regex
             match = re.search(r"trigger(\d+)", file_name)
             if not match:
-                logger.debug(
-                    f"Filename '{file_name}' does not match expected pattern; skipping"
-                )
+                debug("Filename '%s' does not match expected pattern; skipping", file_name)
                 continue
 
             trigger_num = match.group(1)
-            logger.debug(f"Extracted trigger number: {trigger_num}")
+            debug("Extracted trigger number: %s", trigger_num)
 
             # Process the file
             src_path = os.path.join(source_dir, file_name)
@@ -2302,9 +3238,10 @@ def process_files(
             # Run the processor function
             processor_func(src_path, out_path, trigger_num)
 
-            logger.info(f"Created {output_filename}")
+            info("Created %s", output_filename)
         except Exception as exc:
-            logger.error(f"Failed to process {file_name}: {exc}", exc_info=True)
+            error("Failed to process %s: %s", file_name, str(exc))
+            raise
 
 
 def sql_to_json_processor(src_path: str, out_path: str, _trigger_num: str) -> None:
@@ -2312,18 +3249,18 @@ def sql_to_json_processor(src_path: str, out_path: str, _trigger_num: str) -> No
     # Read the SQL file content
     with open(src_path, "r", encoding="utf-8") as f:
         sql_content: str = f.read()
-    logger.debug(f"Read {len(sql_content)} characters from {src_path}")
+    debug("Read %d characters from %s", len(sql_content), src_path)
 
     # Analyze the SQL content
     analyzer = OracleTriggerAnalyzer(sql_content)
-    logger.debug("Generating JSON analysis...")
+    debug("Generating JSON analysis...")
     json_content: Dict[str, Any] = analyzer.to_json()
-    logger.debug(f"Generated JSON with keys: {list(json_content.keys())}")
+    debug("Generated JSON with keys: %s", list(json_content.keys()))
 
     # Write to JSON file
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(json_content, f, indent=2)
-    logger.debug(f"Wrote analysis JSON to {out_path}")
+    debug("Wrote analysis JSON to %s", out_path)
 
 
 def read_oracle_triggers_to_json() -> None:
@@ -2340,9 +3277,7 @@ def read_oracle_triggers_to_json() -> None:
 if __name__ == "__main__":
     # Set up logging for the main script
     main_logger, log_path = setup_logging()
-    logger.info(
-        f"Starting batch conversion: SQL -> JSON -> SQL (Logging to {log_path})"
-    )
+    info("Starting batch conversion: SQL -> JSON -> SQL (Logging to %s)", log_path)
 
     read_oracle_triggers_to_json()
-    logger.info("JSON conversion complete!")
+    info("JSON conversion complete!")
