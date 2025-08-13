@@ -1,0 +1,301 @@
+{
+  "declarations": {
+    "variables": [
+      {
+        "name": "V_TRIGGER_NAME",
+        "data_type": "VARCHAR2(100)",
+        "default_value": "'MDM_V_NEW_MEDICINE_PROPOSALS_IOF'"
+      },
+      {
+        "name": "V_EVOLVED_THEME_NO",
+        "data_type": "V_NEW_MEDICINE_PROPOSALS.EVOLVED_THEME_NO%TYPE",
+        "default_value": null
+      },
+      {
+        "name": "V_PROPOSAL_ID",
+        "data_type": "NUMBER",
+        "default_value": null
+      },
+      {
+        "name": "C_PROPOSAL_STATUS_ACTIVE",
+        "data_type": "VARCHAR2(1)",
+        "default_value": "'A'"
+      },
+      {
+        "name": "C_PROPOSAL_STATUS_EVOLVED",
+        "data_type": "VARCHAR2(1)",
+        "default_value": "'E'"
+      },
+      {
+        "name": "C_PROPOSAL_STATUS_TERMINATED",
+        "data_type": "VARCHAR2(1)",
+        "default_value": "'T'"
+      }
+    ],
+    "constants": [],
+    "exceptions": [
+      {
+        "name": "V_NO_UPDATE_TO_EVOLVED",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "V_NO_UPDATE_TERMINATED_TO_ACTIVE",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "V_NO_UPDATE_EVOLVED_TO_TERMINATED",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "V_EXPLORATORY_THEMENO_NOT_NULL",
+        "type": "EXCEPTION"
+      }
+    ]
+  },
+  "main": [
+    {
+      "type": "begin_end",
+      "begin_line_no": 12,
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "variable": "V_EVOLVED_THEME_NO",
+          "value": ":NEW.EVOLVED_THEME_NO",
+          "type": "assignment_statement",
+          "statement_indent": 4,
+          "statement_line_no": 13
+        },
+        {
+          "type": "if_else",
+          "condition": "(:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME)",
+          "then_statements": [
+            {
+              "sql_statement": "RAISE V_NO_UPDATE_TO_EVOLVED;",
+              "type": "raise_statement",
+              "statement_indent": 8,
+              "statement_line_no": 19
+            }
+          ],
+          "else_if": [],
+          "else_statements": [],
+          "if_line_no": 18,
+          "if_indent": 4,
+          "else_if_line_nos": [],
+          "else_line_no": null,
+          "end_if_line_no": 20
+        },
+        {
+          "type": "if_else",
+          "condition": "(:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED)",
+          "then_statements": [
+            {
+              "sql_statement": "RAISE V_NO_UPDATE_EVOLVED_TO_TERMINATED;",
+              "type": "raise_statement",
+              "statement_indent": 8,
+              "statement_line_no": 25
+            }
+          ],
+          "else_if": [],
+          "else_statements": [],
+          "if_line_no": 24,
+          "if_indent": 4,
+          "else_if_line_nos": [],
+          "else_line_no": null,
+          "end_if_line_no": 26
+        },
+        {
+          "type": "if_else",
+          "condition": "(:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL)",
+          "then_statements": [
+            {
+              "variable": "V_EVOLVED_THEME_NO",
+              "value": "NULL",
+              "type": "assignment_statement",
+              "statement_indent": 8,
+              "statement_line_no": 31
+            }
+          ],
+          "else_if": [],
+          "else_statements": [],
+          "if_line_no": 30,
+          "if_indent": 4,
+          "else_if_line_nos": [],
+          "else_line_no": null,
+          "end_if_line_no": 32
+        },
+        {
+          "type": "if_else",
+          "condition": "(:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL)",
+          "then_statements": [
+            {
+              "sql_statement": "RAISE V_EXPLORATORY_THEMENO_NOT_NULL;",
+              "type": "raise_statement",
+              "statement_indent": 8,
+              "statement_line_no": 37
+            }
+          ],
+          "else_if": [],
+          "else_statements": [],
+          "if_line_no": 36,
+          "if_indent": 4,
+          "else_if_line_nos": [],
+          "else_line_no": null,
+          "end_if_line_no": 38
+        },
+        {
+          "type": "if_else",
+          "condition": "(INSERTING)",
+          "then_statements": [
+            {
+              "variable": "V_PROPOSAL_ID",
+              "value": "PREDMD.SEQ_NMP_PROPOSAL_ID.NEXTVAL",
+              "type": "assignment_statement",
+              "statement_indent": 8,
+              "statement_line_no": 41
+            },
+            {
+              "sql_statement": "INSERT INTO V_NEW_MEDICINE_PROPOSALS( PROPOSAL_ID, EXPLORATORY_THEME_NO, PROPOSAL_NAME, PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID, FIREWALL_ID ) VALUES ( V_PROPOSAL_ID, :NEW.EXPLORATORY_THEME_NO, :NEW.PROPOSAL_NAME, :NEW.PROPOSAL_STATUS_CD, :NEW.EVOLVED_THEME_NO, :NEW.MOLECULE_TYPE_ID, :NEW.PHARMACOLOGICAL_TYPE_ID, :NEW.FIREWALL_ID );",
+              "type": "insert_statement",
+              "statement_indent": 8,
+              "statement_line_no": 42
+            },
+            {
+              "type": "if_else",
+              "condition": ":NEW.PARTNER_ID IS NOT NULL",
+              "then_statements": [
+                {
+                  "statement": "MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA(V_PROPOSAL_ID, :NEW.PARTNER_ID);",
+                  "type": "unknown_statement",
+                  "indent": 12,
+                  "line_no": 62
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 61,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 63
+            }
+          ],
+          "else_if": [
+            {
+              "condition": "(UPDATING)",
+              "then_statements": [
+                {
+                  "sql_statement": "UPDATE V_NEW_MEDICINE_PROPOSALS SET EXPLORATORY_THEME_NO = :NEW.EXPLORATORY_THEME_NO, PROPOSAL_NAME = :NEW.PROPOSAL_NAME, PROPOSAL_STATUS_CD = :NEW.PROPOSAL_STATUS_CD, EVOLVED_THEME_NO = V_EVOLVED_THEME_NO, MOLECULE_TYPE_ID = :NEW.MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID = :NEW.PHARMACOLOGICAL_TYPE_ID, FIREWALL_ID = :NEW.FIREWALL_ID WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID;",
+                  "type": "update_statement",
+                  "statement_indent": 8,
+                  "statement_line_no": 65
+                },
+                {
+                  "type": "if_else",
+                  "condition": "NVL(:OLD.PARTNER_ID, 'NULL') <> NVL(:NEW.PARTNER_ID, 'NULL')",
+                  "then_statements": [
+                    {
+                      "statement": "MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA(:NEW.PROPOSAL_ID, :NEW.PARTNER_ID);",
+                      "type": "unknown_statement",
+                      "indent": 12,
+                      "line_no": 77
+                    }
+                  ],
+                  "else_if": [],
+                  "else_statements": [],
+                  "if_line_no": 76,
+                  "if_indent": 8,
+                  "else_if_line_nos": [],
+                  "else_line_no": null,
+                  "end_if_line_no": 78
+                }
+              ],
+              "else_if_line_no": 64
+            }
+          ],
+          "else_statements": [],
+          "if_line_no": 40,
+          "if_indent": 4,
+          "else_if_line_nos": [
+            64
+          ],
+          "else_line_no": null,
+          "end_if_line_no": 79
+        }
+      ],
+      "exception_handlers": [
+        {
+          "exception_name": "DUP_VAL_ON_INDEX",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20600",
+                "handler_string": "V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "V_NO_UPDATE_EVOLVED_TO_TERMINATED",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20800",
+                "handler_string": "V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "V_NO_UPDATE_TO_EVOLVED",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20900",
+                "handler_string": "V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "V_EXPLORATORY_THEMENO_NOT_NULL",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20940",
+                "handler_string": "V_TRIGGER_NAME"
+              }
+            }
+          ]
+        }
+      ],
+      "exception_line_no": 80,
+      "end_line_no": 89
+    }
+  ],
+  "sql_comments": [
+    "-- status update to evolved is only allowed from the themes screen",
+    "-- when the Former Proposal System Id in themes is set then",
+    "-- the evolved_theme_no is set and the proposal_status_cd is set to 'E'",
+    "-- Evolved to Terminated not allowed",
+    "-- Evolved to Active",
+    "-- not allowed to create NMP with exploratory_theme_no = null"
+  ],
+  "conversion_stats": {
+    "declaration_count": 10,
+    "comment_count": 6,
+    "rest_string_count": 2,
+    "sql_convert_count": 22
+  },
+  "metadata": {
+    "parse_timestamp": "2025-08-13T06:35:43.634232",
+    "parser_version": "1.0"
+  }
+}

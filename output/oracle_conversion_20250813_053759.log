@@ -1,0 +1,678 @@
+2025-08-13 05:37:59,845 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.IN_PREP_IND = 'Y'
+2025-08-13 05:37:59,845 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PORTF_PROJ_CD <> 'Y'
+2025-08-13 05:37:59,845 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,845 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,845 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,845 - root - DEBUG - [test.py:51] - on_insert--Insert--V_MOLECULE_RG_NO IS NULL
+2025-08-13 05:37:59,845 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COMPARATOR_IND = 'Y'
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.STATUS_DESC IS NOT NULL
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.DBA_DESC_CONCAT IS NOT NULL
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:53] - on_insert--Delete--UPDATING
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:53] - on_insert--Delete--DELETING
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--LENGTH(:NEW.THEME_NO)
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--4
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--5
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'N'
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y'
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,847 - root - DEBUG - [test.py:51] - on_insert--Insert--(:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.THEME_NO <> :OLD.THEME_NO
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--V_SEC_MOL_CNT > 0
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--(:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE)
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:53] - on_insert--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--V_EVOLVED_NMP_CNT = 0
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--V_EVOLVED_NMP_CNT > 0
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y'
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)
+2025-08-13 05:37:59,848 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.IN_PREP_IND = 'Y'
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PORTF_PROJ_CD <> 'Y'
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--V_MOLECULE_RG_NO IS NULL
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--V_COMPARATOR_IND = 'Y'
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.STATUS_DESC IS NOT NULL
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.DBA_DESC_CONCAT IS NOT NULL
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:47] - on_update--Insert--UPDATING
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:53] - on_update--Delete--DELETING
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,849 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--LENGTH(:NEW.THEME_NO)
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--4
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--5
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'N'
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y'
+2025-08-13 05:37:59,850 - root - DEBUG - [test.py:51] - on_update--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--(:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.THEME_NO <> :OLD.THEME_NO
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--V_SEC_MOL_CNT > 0
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--(:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE)
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--V_EVOLVED_NMP_CNT = 0
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,851 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_update--Insert--V_EVOLVED_NMP_CNT > 0
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y'
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.IN_PREP_IND = 'Y'
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PORTF_PROJ_CD <> 'Y'
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--V_MOLECULE_RG_NO IS NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COMPARATOR_IND = 'Y'
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.STATUS_DESC IS NOT NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.DBA_DESC_CONCAT IS NOT NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:53] - on_delete--Delete--UPDATING
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:49] - on_delete--Insert--DELETING
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--LENGTH(:NEW.THEME_NO)
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--4
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--5
+2025-08-13 05:37:59,852 - root - DEBUG - [test.py:51] - on_delete--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'N'
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y'
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--(:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.THEME_NO <> :OLD.THEME_NO
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--V_SEC_MOL_CNT > 0
+2025-08-13 05:37:59,853 - root - DEBUG - [test.py:51] - on_delete--Insert--(:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE)
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--V_EVOLVED_NMP_CNT = 0
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--V_EVOLVED_NMP_CNT > 0
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y'
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)
+2025-08-13 05:37:59,854 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,855 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.IN_PREP_IND = 'Y'
+2025-08-13 05:37:59,855 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PORTF_PROJ_CD <> 'Y'
+2025-08-13 05:37:59,855 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--V_MOLECULE_RG_NO IS NULL
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COMPARATOR_IND = 'Y'
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.STATUS_DESC IS NOT NULL
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.DBA_DESC_CONCAT IS NOT NULL
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:53] - on_insert--Delete--UPDATING
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:53] - on_insert--Delete--DELETING
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--LENGTH(:NEW.THEME_NO)
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--4
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--5
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'N'
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y'
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,856 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--(:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.THEME_NO <> :OLD.THEME_NO
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,857 - root - DEBUG - [test.py:51] - on_insert--Insert--V_SEC_MOL_CNT > 0
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--(:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE)
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:53] - on_insert--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--V_EVOLVED_NMP_CNT = 0
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--V_EVOLVED_NMP_CNT > 0
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y'
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.IN_PREP_IND = 'Y'
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PORTF_PROJ_CD <> 'Y'
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--V_MOLECULE_RG_NO IS NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--V_COMPARATOR_IND = 'Y'
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.STATUS_DESC IS NOT NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.DBA_DESC_CONCAT IS NOT NULL
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:47] - on_update--Insert--UPDATING
+2025-08-13 05:37:59,858 - root - DEBUG - [test.py:53] - on_update--Delete--DELETING
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--LENGTH(:NEW.THEME_NO)
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--4
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--5
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'N'
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y'
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,859 - root - DEBUG - [test.py:51] - on_update--Insert--(:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.THEME_NO <> :OLD.THEME_NO
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,860 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--V_SEC_MOL_CNT > 0
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--(:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE)
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--V_EVOLVED_NMP_CNT = 0
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--V_EVOLVED_NMP_CNT > 0
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y'
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.IN_PREP_IND = 'Y'
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PORTF_PROJ_CD <> 'Y'
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--V_MOLECULE_RG_NO IS NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COMPARATOR_IND = 'Y'
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.STATUS_DESC IS NOT NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.DBA_DESC_CONCAT IS NOT NULL
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,861 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:53] - on_delete--Delete--UPDATING
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:49] - on_delete--Insert--DELETING
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--LENGTH(:NEW.THEME_NO)
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--4
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--5
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'N'
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y'
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--(:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.THEME_NO <> :OLD.THEME_NO
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD
+2025-08-13 05:37:59,862 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--LENGTH(V_DESCRIPTION) > 90
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.OFFICIAL_IND = 'N'
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNTER > 0
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--V_SEC_MOL_CNT > 0
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--(:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--TRUNC(TO_DATE(:OLD.REGISTRAT_DATE, 'DD-MM-YYYY')) = TRUNC(SYSDATE)
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--V_EVOLVED_NMP_CNT = 0
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--V_EVOLVED_NMP_CNT > 0
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y'
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NOT NULL
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)
+2025-08-13 05:37:59,863 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:53] - on_insert--Delete--DELETING
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:53] - on_insert--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:53] - on_insert--Delete--UPDATING
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,866 - root - DEBUG - [test.py:53] - on_insert--Delete--UPDATING
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--(:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_insert--Insert--V_SEQ_NO_DUPLICATE_CNT > 0
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:53] - on_update--Delete--DELETING
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:47] - on_update--Insert--UPDATING
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:47] - on_update--Insert--UPDATING
+2025-08-13 05:37:59,867 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--(:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_update--Insert--V_SEQ_NO_DUPLICATE_CNT > 0
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:49] - on_delete--Insert--DELETING
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:53] - on_delete--Delete--UPDATING
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:53] - on_delete--Delete--UPDATING
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,868 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,869 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,869 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,869 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,869 - root - DEBUG - [test.py:51] - on_delete--Insert--(:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,869 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,869 - root - DEBUG - [test.py:51] - on_delete--Insert--V_SEQ_NO_DUPLICATE_CNT > 0
+2025-08-13 05:37:59,869 - root - DEBUG - [test.py:53] - on_insert--Delete--DELETING
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:53] - on_insert--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:53] - on_insert--Delete--UPDATING
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:53] - on_insert--Delete--UPDATING
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,870 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_insert--Insert--(:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_insert--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_insert--Insert--V_SEQ_NO_DUPLICATE_CNT > 0
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:53] - on_update--Delete--DELETING
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:47] - on_update--Insert--UPDATING
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:47] - on_update--Insert--UPDATING
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,871 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_update--Insert--(:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_update--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_update--Insert--V_SEQ_NO_DUPLICATE_CNT > 0
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:49] - on_delete--Insert--DELETING
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NULL
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:53] - on_delete--Delete--UPDATING
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COUNT_T_MOL_MAP > 0
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:53] - on_delete--Delete--UPDATING
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID IS NOT NULL
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,872 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,873 - root - DEBUG - [test.py:51] - on_delete--Insert--(:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO
+2025-08-13 05:37:59,873 - root - DEBUG - [test.py:51] - on_delete--Insert--INVALID_MAPPING_EXISTS
+2025-08-13 05:37:59,873 - root - DEBUG - [test.py:51] - on_delete--Insert--V_SEQ_NO_DUPLICATE_CNT > 0
+2025-08-13 05:37:59,874 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING
+2025-08-13 05:37:59,874 - root - DEBUG - [test.py:51] - on_insert--Insert--CNTR > 0
+2025-08-13 05:37:59,874 - root - DEBUG - [test.py:53] - on_insert--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,874 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')
+2025-08-13 05:37:59,874 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')
+2025-08-13 05:37:59,874 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_insert--Insert--CNTR = 0
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_insert--Insert--TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COMPANY_TYPE_CD = 'L'
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_insert--Insert--CNTR = 0
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:53] - on_insert--Delete--DELETING
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--CNTR > 0
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--CNTR = 0
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--V_COMPANY_TYPE_CD = 'L'
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--CNTR = 0
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:53] - on_update--Delete--DELETING
+2025-08-13 05:37:59,875 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--CNTR > 0
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--CNTR = 0
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COMPANY_TYPE_CD = 'L'
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--CNTR = 0
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:49] - on_delete--Insert--DELETING
+2025-08-13 05:37:59,876 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--CNTR > 0
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:53] - on_insert--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--CNTR = 0
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--V_COMPANY_TYPE_CD = 'L'
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--CNTR = 0
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:53] - on_insert--Delete--DELETING
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_update--Insert--CNTR > 0
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_update--Insert--V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_update--Insert--CNTR = 0
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0
+2025-08-13 05:37:59,877 - root - DEBUG - [test.py:51] - on_update--Insert--TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_update--Insert--V_COMPANY_TYPE_CD = 'L'
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_update--Insert--CNTR = 0
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:53] - on_update--Delete--DELETING
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--CNTR > 0
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING OR UPDATING
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--CNTR = 0
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--V_COMPANY_TYPE_CD = 'L'
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--CNTR = 0
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:49] - on_delete--Insert--DELETING
+2025-08-13 05:37:59,878 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:45] - on_insert--Insert--TG_OP = 'INSERT'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:53] - on_insert--Delete--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:53] - on_insert--Delete--TG_OP = 'DELETE'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:53] - on_update--Delete--TG_OP = 'INSERT'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:47] - on_update--Insert--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:53] - on_update--Delete--TG_OP = 'DELETE'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:53] - on_delete--Delete--TG_OP = 'INSERT'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:53] - on_delete--Delete--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:49] - on_delete--Insert--TG_OP = 'DELETE'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:45] - on_insert--Insert--TG_OP = 'INSERT'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:53] - on_insert--Delete--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,880 - root - DEBUG - [test.py:53] - on_insert--Delete--TG_OP = 'DELETE'
+2025-08-13 05:37:59,881 - root - DEBUG - [test.py:53] - on_update--Delete--TG_OP = 'INSERT'
+2025-08-13 05:37:59,881 - root - DEBUG - [test.py:47] - on_update--Insert--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,881 - root - DEBUG - [test.py:53] - on_update--Delete--TG_OP = 'DELETE'
+2025-08-13 05:37:59,881 - root - DEBUG - [test.py:53] - on_delete--Delete--TG_OP = 'INSERT'
+2025-08-13 05:37:59,881 - root - DEBUG - [test.py:53] - on_delete--Delete--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,881 - root - DEBUG - [test.py:49] - on_delete--Insert--TG_OP = 'DELETE'
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:53] - on_insert--Delete--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_insert--Insert--COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_insert--Insert--
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_insert--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_insert--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:47] - on_update--Insert--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_update--Insert--COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_update--Insert--
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_update--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_update--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:53] - on_delete--Delete--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_delete--Insert--COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_delete--Insert--
+2025-08-13 05:37:59,882 - root - DEBUG - [test.py:51] - on_delete--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_delete--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:53] - on_insert--Delete--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_insert--Insert--COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_insert--Insert--
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_insert--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_insert--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:47] - on_update--Insert--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_update--Insert--COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_update--Insert--
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_update--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_update--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:53] - on_delete--Delete--TG_OP = 'UPDATE'
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_delete--Insert--COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_delete--Insert--
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_delete--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')
+2025-08-13 05:37:59,883 - root - DEBUG - [test.py:51] - on_delete--Insert--NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')
+2025-08-13 05:37:59,884 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME
+2025-08-13 05:37:59,884 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED
+2025-08-13 05:37:59,884 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,884 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,884 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING
+2025-08-13 05:37:59,884 - root - DEBUG - [test.py:53] - on_insert--Delete--UPDATING
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PARTNER_ID IS NOT NULL
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:OLD.PARTNER_ID, 'NULL') <> NVL(:NEW.PARTNER_ID, 'NULL')
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:47] - on_update--Insert--UPDATING
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PARTNER_ID IS NOT NULL
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:OLD.PARTNER_ID, 'NULL') <> NVL(:NEW.PARTNER_ID, 'NULL')
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,885 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:53] - on_delete--Delete--UPDATING
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PARTNER_ID IS NOT NULL
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:OLD.PARTNER_ID, 'NULL') <> NVL(:NEW.PARTNER_ID, 'NULL')
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:45] - on_insert--Insert--INSERTING
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:53] - on_insert--Delete--UPDATING
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_insert--Insert--:NEW.PARTNER_ID IS NOT NULL
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_insert--Insert--NVL(:OLD.PARTNER_ID, 'NULL') <> NVL(:NEW.PARTNER_ID, 'NULL')
+2025-08-13 05:37:59,886 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:53] - on_update--Delete--INSERTING
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:47] - on_update--Insert--UPDATING
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_update--Insert--:NEW.PARTNER_ID IS NOT NULL
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_update--Insert--NVL(:OLD.PARTNER_ID, 'NULL') <> NVL(:NEW.PARTNER_ID, 'NULL')
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:53] - on_delete--Delete--INSERTING
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:53] - on_delete--Delete--UPDATING
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_delete--Insert--:NEW.PARTNER_ID IS NOT NULL
+2025-08-13 05:37:59,887 - root - DEBUG - [test.py:51] - on_delete--Insert--NVL(:OLD.PARTNER_ID, 'NULL') <> NVL(:NEW.PARTNER_ID, 'NULL')
