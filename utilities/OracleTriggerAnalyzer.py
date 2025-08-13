@@ -3824,7 +3824,7 @@ class OracleTriggerAnalyzer:
             },
             "main": self.main_section_lines,
             "sql_comments": self.sql_comments,
-            # "rest_strings": self.rest_strings_line,
+            "rest_strings": self.rest_strings_line,
             # "strng_convert_json": self.strng_convert_json,
         }
 

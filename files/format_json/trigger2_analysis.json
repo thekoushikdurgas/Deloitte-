@@ -736,6 +736,20 @@
     "---------------------------------------- INSERTING or UPDATING",
     "-- Sanity check => each seq_no may appear only once for valid Mappings"
   ],
+  "rest_strings": [
+    {
+      "statement": "MDMAPPL.MDM_UTIL_THEMES.REFRESH_THEME_DESC ( P_THEME_NO => :OLD.THEME_NO, P_MOLECULE_ID => :OLD.MOLECULE_ID, P_DATE => SYSDATE, P_MANUAL_SHORT_DESC => V_MANUAL_SHORT_DESC );",
+      "type": "unknown_statement",
+      "indent": 8,
+      "line_no": 52
+    },
+    {
+      "statement": "MDMAPPL.MDM_UTIL_THEMES.REFRESH_THEME_DESC ( P_THEME_NO => :NEW.THEME_NO, P_MOLECULE_ID => 0, P_DATE => SYSDATE, P_MANUAL_SHORT_DESC => V_MANUAL_SHORT_DESC );",
+      "type": "unknown_statement",
+      "indent": 8,
+      "line_no": 395
+    }
+  ],
   "conversion_stats": {
     "declaration_count": 13,
     "comment_count": 73,
@@ -743,7 +757,7 @@
     "sql_convert_count": 80
   },
   "metadata": {
-    "parse_timestamp": "2025-08-13T06:35:43.542686",
+    "parse_timestamp": "2025-08-13T13:12:15.677426",
     "parser_version": "1.0"
   }
 }

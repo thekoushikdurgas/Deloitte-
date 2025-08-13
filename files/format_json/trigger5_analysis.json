@@ -126,6 +126,38 @@
     }
   ],
   "sql_comments": [],
+  "rest_strings": [
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 20,
+      "line_no": 23
+    },
+    {
+      "statement": "CALL GMD.GMD_UTIL_THEMES$UPD_THEME_DESC_JOB_PROC( P_PRODUCT_FAMILY_CD => NEW.PRODUCT_FAMILY_CD::TEXT, P_REGISTRAR => V_USERID::TEXT, P_TRG_TABLE => 'PRODUCT_FAMILIES'::TEXT, P_TRG_UPD_DATE => V_TRG_UPD_DATE_STR::TEXT );",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 26
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 20,
+      "line_no": 23
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 20,
+      "line_no": 23
+    },
+    {
+      "statement": "RETURN NULL;",
+      "type": "unknown_statement",
+      "indent": 4,
+      "line_no": 35
+    }
+  ],
   "conversion_stats": {
     "declaration_count": 2,
     "comment_count": 0,
@@ -133,7 +165,7 @@
     "sql_convert_count": 19
   },
   "metadata": {
-    "parse_timestamp": "2025-08-13T06:35:43.609869",
+    "parse_timestamp": "2025-08-13T13:12:15.726591",
     "parser_version": "1.0"
   }
 }

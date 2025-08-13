@@ -288,6 +288,20 @@
     "-- Evolved to Active",
     "-- not allowed to create NMP with exploratory_theme_no = null"
   ],
+  "rest_strings": [
+    {
+      "statement": "MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA(V_PROPOSAL_ID, :NEW.PARTNER_ID);",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 62
+    },
+    {
+      "statement": "MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA(:NEW.PROPOSAL_ID, :NEW.PARTNER_ID);",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 77
+    }
+  ],
   "conversion_stats": {
     "declaration_count": 10,
     "comment_count": 6,
@@ -295,7 +309,7 @@
     "sql_convert_count": 22
   },
   "metadata": {
-    "parse_timestamp": "2025-08-13T06:35:43.634232",
+    "parse_timestamp": "2025-08-13T13:12:15.741018",
     "parser_version": "1.0"
   }
 }

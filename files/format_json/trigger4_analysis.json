@@ -131,6 +131,20 @@
     }
   ],
   "sql_comments": [],
+  "rest_strings": [
+    {
+      "statement": "PERFORM MDMTOOL.\"mdmt_util_history$write_history\"( V_ACTION, V_TABLE_NAME, V_SCHEMA_NAME, COL_NAMES, COL_NEW_VALUES, COL_OLD_VALUES );",
+      "type": "unknown_statement",
+      "indent": 4,
+      "line_no": 21
+    },
+    {
+      "statement": "RETURN NULL;",
+      "type": "unknown_statement",
+      "indent": 4,
+      "line_no": 22
+    }
+  ],
   "conversion_stats": {
     "declaration_count": 6,
     "comment_count": 0,
@@ -138,7 +152,7 @@
     "sql_convert_count": 10
   },
   "metadata": {
-    "parse_timestamp": "2025-08-13T06:35:43.591512",
+    "parse_timestamp": "2025-08-13T13:12:15.711265",
     "parser_version": "1.0"
   }
 }

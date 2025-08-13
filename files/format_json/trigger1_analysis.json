@@ -1911,6 +1911,32 @@
     "-- set variable",
     "-- is_from_theme_validity_check := TRUE;"
   ],
+  "rest_strings": [
+    {
+      "statement": "TXO_UTIL.SET_WARNING('No Molecule assigned to In-Prep Theme ' || :NEW.THEME_NO || '!');",
+      "type": "unknown_statement",
+      "indent": 9,
+      "line_no": 105
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 129
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 605
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 605
+    }
+  ],
   "conversion_stats": {
     "declaration_count": 49,
     "comment_count": 63,
@@ -1918,7 +1944,7 @@
     "sql_convert_count": 183
   },
   "metadata": {
-    "parse_timestamp": "2025-08-13T06:35:43.489408",
+    "parse_timestamp": "2025-08-13T13:12:15.642465",
     "parser_version": "1.0"
   }
 }
