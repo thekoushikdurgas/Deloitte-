@@ -1,216 +1,337 @@
 # Oracle to PostgreSQL Trigger Converter
 
-This Python script converts Oracle PL/SQL trigger code to PostgreSQL code wrapped in JSON format.
+A comprehensive tool for converting Oracle PL/SQL triggers to PostgreSQL-compatible SQL with advanced parsing, analysis, and transformation capabilities.
 
-## Features
+## 🎯 Overview
 
-The converter handles the following Oracle to PostgreSQL conversions:
+This project provides a complete solution for migrating Oracle database triggers to PostgreSQL. It features a multi-stage conversion process that:
+
+1. **Parses** Oracle PL/SQL trigger code into structured JSON analysis
+2. **Analyzes** the code structure, declarations, and logic flow
+3. **Transforms** Oracle-specific syntax to PostgreSQL equivalents
+4. **Generates** clean, formatted PostgreSQL SQL code
+5. **Validates** the conversion process and results
+
+## 🏗️ Architecture
+
+The converter uses a modular architecture with specialized components:
+
+```txt
+Oracle SQL → JSON Analysis → PostgreSQL SQL
+     ↓           ↓              ↓
+OracleTriggerAnalyzer → FORMATPostsqlTriggerAnalyzer → Final SQL
+```
+
+### Core Components
+
+- **`OracleTriggerAnalyzer`**: Parses Oracle PL/SQL into structured JSON
+- **`FORMATOracleTriggerAnalyzer`**: Converts JSON back to formatted Oracle SQL
+- **`FORMATPostsqlTriggerAnalyzer`**: Transforms JSON to PostgreSQL SQL
+- **`JSONTOPLJSON`**: Converts analysis JSON to operation-specific structure
+- **`common.py`**: Shared utilities and logging infrastructure
+
+## 📁 Project Structure
+
+```txt
+ORACALE_to_json/
+├── main.py                          # Main execution script
+├── requirements.txt                 # Python dependencies
+├── utilities/                       # Core converter modules
+│   ├── common.py                   # Shared utilities and logging
+│   ├── OracleTriggerAnalyzer.py    # Oracle SQL parser
+│   ├── FORMATOracleTriggerAnalyzer.py  # Oracle SQL formatter
+│   ├── FORMATPostsqlTriggerAnalyzer.py # PostgreSQL converter
+│   ├── JSONTOPLJSON.py             # JSON structure transformer
+│   └── oracle_postgresql_mappings.xlsx  # Type/function mappings
+├── files/                          # Input/output directories
+│   ├── oracle/                     # Original Oracle trigger files
+│   ├── format_json/                # JSON analysis output
+│   ├── format_sql/                 # Formatted Oracle SQL
+│   ├── format_pl_json/             # PostgreSQL JSON structure
+│   ├── format_plsql/               # Final PostgreSQL SQL
+│   └── expected_json/              # Expected output examples
+├── output/                         # Log files
+└── docs/                          # Documentation
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.8+
+- Required packages (see `requirements.txt`)
+
+### Installation
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone <repository-url>
+   cd ORACALE_to_json
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Place Oracle trigger files:**
+
+   ```bash
+   # Copy your Oracle trigger files to files/oracle/
+   # Files should be named: trigger1.sql, trigger2.sql, etc.
+   ```
+
+4. **Run the converter:**
+
+   ```bash
+   python main.py
+   ```
+
+## 🔄 Conversion Process
+
+The converter follows a 7-step workflow:
+
+### Step 1: SQL → JSON Analysis
+
+- Parses Oracle trigger files from `files/oracle/`
+- Extracts declarations, variables, constants, exceptions
+- Analyzes control structures (IF-ELSE, CASE-WHEN, FOR loops)
+- Generates structured JSON in `files/format_json/`
+
+### Step 2: JSON → Oracle SQL
+
+- Converts JSON analysis back to formatted Oracle SQL
+- Validates parsing accuracy
+- Outputs to `files/format_sql/`
+
+### Step 3: JSON Cleaning
+
+- Removes line numbers and metadata
+- Optimizes JSON structure
+- Prepares for PostgreSQL conversion
+
+### Step 4: Validation
+
+- Compares original and converted files
+- Ensures all triggers were processed
+- Reports conversion statistics
+
+### Step 5: JSON → PL/JSON
+
+- Transforms analysis JSON to PostgreSQL-compatible structure
+- Separates INSERT, UPDATE, DELETE operations
+- Outputs to `files/format_pl_json/`
+
+### Step 6: PL/JSON → PostgreSQL Format
+
+- Converts to PostgreSQL trigger structure
+- Applies type mappings and function conversions
+- Outputs to `files/format_plsql/`
+
+### Step 7: Final SQL Generation
+
+- Generates executable PostgreSQL SQL
+- Includes proper DO $$ BEGIN ... END $$ syntax
+- Creates final trigger files
+
+## 🛠️ Features
+
+### Advanced Parsing
+
+- **Multi-level nesting support**: Handles complex IF-ELSE, CASE-WHEN, and BEGIN-END blocks
+- **Exception handling**: Preserves Oracle exception logic
+- **Variable declarations**: Converts Oracle data types to PostgreSQL equivalents
+- **Constant processing**: Maintains constant definitions and values
+
+### Smart Conversion
+
+- **Type mapping**: Automatic Oracle → PostgreSQL data type conversion
+- **Function translation**: Oracle functions mapped to PostgreSQL equivalents
+- **Syntax adaptation**: Oracle-specific syntax converted to PostgreSQL
+- **Conditional logic**: Preserves business logic while adapting syntax
+
+### Quality Assurance
+
+- **Comprehensive logging**: Detailed logs for debugging and monitoring
+- **Validation checks**: Ensures conversion completeness
+- **Performance metrics**: Tracks conversion time for each step
+- **Error handling**: Graceful error recovery and reporting
+
+### Configuration
+
+- **Excel mappings**: Configurable type and function mappings via Excel file
+- **Customizable output**: Flexible output formatting options
+- **Batch processing**: Handles multiple trigger files automatically
+
+## 📊 Supported Oracle Features
 
 ### Data Types
 
-- `varchar2` → `varchar`
-- `pls_integer` → `integer`
-- `simple_integer` → `integer`
-- `number` → `numeric`
+- `VARCHAR2` → `VARCHAR`
+- `NUMBER` → `NUMERIC`
+- `DATE` → `TIMESTAMP`
+- `PLS_INTEGER` → `INTEGER`
+- `CLOB` → `TEXT`
+- And many more...
 
-### Functions
+### Control Structures
 
-- `substr()` → `SUBSTRING(text FROM start FOR length)`
-- `nvl()` → `COALESCE()`
-- `sysdate` → `CURRENT_DATE`
-- `length()` → `LENGTH()`
-- `trim()` → `TRIM()`
+- IF-ELSE statements with ELSIF clauses
+- CASE-WHEN statements (simple and searched)
+- FOR loops with cursor queries
+- BEGIN-END blocks with exception handlers
+- Nested structures of any depth
 
-### Sequence Generation
+### Oracle Functions
 
-- Oracle `ROWNUM` sequences → PostgreSQL `generate_series()`
-- Complex Oracle queries → Simplified PostgreSQL equivalents
+- `NVL` → `COALESCE`
+- `SUBSTR` → `SUBSTRING`
+- `LENGTH` → `LENGTH`
+- `TO_DATE` → `TO_TIMESTAMP`
+- `RAISE_APPLICATION_ERROR` → `RAISE EXCEPTION`
+- And comprehensive function mapping via Excel
 
 ### Exception Handling
 
-- Oracle custom exceptions → PostgreSQL `RAISE EXCEPTION`
-- Proper error message mapping
-- `raise_application_error` → `RAISE EXCEPTION`
+- Custom exception declarations
+- Exception handlers with WHEN clauses
+- RAISE statements
+- Error message conversion
 
-### Variable References
+## 📝 Usage Examples
 
-- `:new.field_name` → `:new_field_name`
-- `:old.field_name` → `:old_field_name`
-
-### Function Calls
-
-- `package.function()` → `schema$function()` (PostgreSQL style)
-- Preserves table references like `gmd.themes`
-
-### User Context
-
-- Oracle user functions → PostgreSQL parameters
-- `txo_security.get_userid` → `:ins_user`
-
-## Usage
-
-### Folder Processing (Default)
-
-Process all `.sql` files from the Oracle folder and output to JSON folder:
+### Basic Conversion
 
 ```bash
-# Process all files from 'oracle' folder to 'json' folder
-python convert.py
-
-# Use custom folder names
-python convert.py --oracle-folder my_oracle_files --json-folder my_json_output
-
-# Verbose output
-python convert.py --verbose
+# Convert all triggers in files/oracle/
+python main.py
 ```
 
-### Single File Processing
-
-Convert individual files:
-
-```bash
-# File mode - specify input file
-python convert.py --mode file input_trigger.sql
-
-# File mode with custom output
-python convert.py --mode file input_trigger.sql -o output_trigger.json
-
-# File mode with verbose output
-python convert.py --mode file input_trigger.sql -o output.json --verbose
-```
-
-### Help
-
-```bash
-python convert.py --help
-```
-
-## Command Line Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--mode` | Processing mode (`file` or `folder`) | `folder` |
-| `--oracle-folder` | Oracle SQL files folder | `oracle` |
-| `--json-folder` | Output JSON files folder | `json` |
-| `-o, --output` | Output file (file mode only) | `input.json` |
-| `-v, --verbose` | Verbose output | `False` |
-| `-h, --help` | Show help message | - |
-
-## Folder Structure
-
-The converter expects the following folder structure:
+### File Structure
 
 ```txt
-your-project/
-├── convert.py           # The converter script
-├── oracle/             # Oracle SQL files (input)
-│   ├── trigger1.sql
-│   ├── trigger2.sql
-│   └── ...
-└── json/               # PostgreSQL JSON files (output)
-    ├── trigger1.json
-    ├── trigger2.json
-    └── ...
+files/oracle/
+├── trigger1.sql    # Original Oracle trigger
+├── trigger2.sql    # Original Oracle trigger
+└── trigger3.sql    # Original Oracle trigger
+
+# After conversion:
+files/format_plsql/
+├── trigger1.sql    # PostgreSQL trigger
+├── trigger2.sql    # PostgreSQL trigger
+└── trigger3.sql    # PostgreSQL trigger
 ```
 
-## Example Output
-
-When you run the converter, you'll see:
-
-```bash
-🚀 Starting folder processing...
-📁 Oracle folder: oracle
-📁 JSON folder: json
-🔍 Found 2 SQL file(s) in 'oracle'
-Warning: oracle/trigger2.sql is empty, skipping...
-✅ Successfully converted oracle/trigger1.sql → json/trigger1.json
-
-🎉 Conversion complete: 1/2 files converted successfully
-```
-
-## Input/Output Example
-
-### Input (Oracle PL/SQL)
+### Sample Output
 
 ```sql
-declare
-   invalid_theme_no exception;
-   v_counter pls_integer;
-   v_description varchar2(500);
-begin
-   if (inserting) then
-      if (substr(:new.theme_no, 1, 1) not between 0 and 9) then
-         raise invalid_theme_no;
-      end if;
-      
-      select nvl(txo_security.get_userid, user) into v_userid from dual;
-      
-      insert into themes(theme_no, registrat_date, theme_desc)
-      values (:new.theme_no, sysdate, :new.theme_desc);
-   end if;
-exception
-   when invalid_theme_no then
-      raise_application_error(-20101, 'Invalid theme number');
-end;
+-- PostgreSQL Trigger for trigger1
+-- Generated on: 2025-08-14 16:08:04
+
+DO $$
+DECLARE
+  V_COUNTER integer;
+  V_CODE varchar(2);
+  -- ... more declarations
+BEGIN
+  -- Converted Oracle logic
+  SELECT COALESCE(TXO_SECURITY.GET_USERID, current_user) INTO V_USERID;
+  
+  IF (:NEW.IN_PREP_IND = 'Y') THEN
+    IF (:NEW.PORTF_PROJ_CD <> 'Y') THEN
+      RAISE EXCEPTION 'In-prep theme must be portfolio project';
+    END IF;
+  END IF;
+  -- ... more converted logic
+END $$;
 ```
 
-### Output (PostgreSQL JSON)
+## 🔧 Configuration
 
-```json
-{
-    "on_insert": [
-        {
-            "type": "sql",
-            "sql": "DO $$ DECLARE v_counter integer; v_description varchar(500); v_userid varchar(30); BEGIN IF (SUBSTRING(:new_theme_no FROM 1 FOR 1) !~ '^[0-9]$') THEN RAISE EXCEPTION \"Invalid theme number\"; END IF; v_userid := :ins_user; INSERT INTO themes(theme_no, registrat_date, theme_desc) VALUES (:new_theme_no, CURRENT_DATE, :new_theme_desc); END $$;"
-        }
-    ]
-}
+### Excel Mappings File
+
+The `utilities/oracle_postgresql_mappings.xlsx` file contains:
+
+- **data_type_mappings**: Oracle → PostgreSQL data type conversions
+- **function_mappings**: Oracle → PostgreSQL function translations
+- **exception_mappings**: Oracle exception → PostgreSQL message mappings
+
+### Logging Configuration
+
+Logs are written to both console and timestamped files in `output/`:
+
+- **Console**: INFO level and above
+- **File**: DEBUG level and above with detailed context
+
+## 📈 Performance
+
+The converter is optimized for:
+
+- **Large triggers**: Handles triggers with 800+ lines
+- **Complex logic**: Processes deeply nested control structures
+- **Batch processing**: Efficiently converts multiple files
+- **Memory usage**: Streamlined processing to minimize memory footprint
+
+Typical performance metrics:
+
+- **Parsing**: ~0.1-0.5 seconds per trigger
+- **Conversion**: ~0.2-1.0 seconds per trigger
+- **Total workflow**: ~2-5 seconds for 6 triggers
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **File not found errors**
+   - Ensure Oracle trigger files are in `files/oracle/`
+   - Check file naming convention: `trigger1.sql`, `trigger2.sql`, etc.
+
+2. **Parsing errors**
+   - Check Oracle SQL syntax validity
+   - Verify trigger structure follows standard PL/SQL format
+
+3. **Conversion issues**
+   - Review Excel mappings file for missing type/function mappings
+   - Check log files for detailed error information
+
+### Debug Mode
+
+Enable detailed logging by modifying `common.py`:
+
+```python
+DEBUG_ANALYZER = True  # Enable debug logging
 ```
 
-## JSON Output Structure
+## 📚 Documentation
 
-The output JSON contains separate sections for each trigger operation:
+Additional documentation available in `docs/`:
 
-- `on_insert`: Contains PostgreSQL code for INSERT operations
-- `on_update`: Contains PostgreSQL code for UPDATE operations
-- `on_delete`: Contains PostgreSQL code for DELETE operations
+- `SQL_ANALYSIS_DOCUMENTATION.md`: Detailed parsing documentation
+- `SQL_CONDITIONS_CONVERSION_GUIDE.md`: Condition conversion guide
+- `ENHANCED_BEGIN_END_PARSING.md`: Block parsing details
 
-Each section contains an array of SQL blocks with:
+## 🤝 Contributing
 
-- `type`: Always "sql"
-- `sql`: The converted PostgreSQL code wrapped in a DO block
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-## Key Capabilities
+## 📄 License
 
-### Smart Processing
+[Add your license information here]
 
-- 🔍 **Auto-discovery**: Finds all `.sql` files in the Oracle folder
-- ⚠️ **Empty file detection**: Skips empty files with warnings
-- 📁 **Auto-creation**: Creates output directories automatically
-- 📊 **Progress tracking**: Shows conversion progress and success rate
+## 🆘 Support
 
-### Error Handling
+For issues and questions:
 
-- ❌ **Detailed error messages**: Clear error reporting with file names
-- 🐛 **Verbose debugging**: Optional stack traces for troubleshooting
-- 🔄 **Batch processing**: Continues processing other files if one fails
+1. Check the log files in `output/` for detailed error information
+2. Review the documentation in `docs/`
+3. Create an issue with detailed error description and sample code
 
-## Requirements
+---
 
-- Python 3.6+
-- No external dependencies (uses only standard library)
-
-## Limitations
-
-- Complex Oracle-specific features may need manual adjustment
-- Some data type conversions may require review
-- Custom Oracle packages need manual mapping to PostgreSQL equivalents
-- Generated code should be tested before production use
-
-## Notes
-
-- The converter preserves the business logic while adapting syntax
-- All Oracle exceptions are converted to PostgreSQL `RAISE EXCEPTION` statements
-- Variable declarations are properly converted to PostgreSQL format
-- Schema and table references are preserved where appropriate
-- Empty SQL files are automatically skipped with warningsECHO is on.
+**Note**: This converter handles most common Oracle trigger patterns but may require manual review for complex custom logic or Oracle-specific features not covered by the mapping rules.

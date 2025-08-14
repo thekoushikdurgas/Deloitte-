@@ -46,6 +46,11 @@ from utilities.FORMATPostsqlTriggerAnalyzer import FORMATPostsqlTriggerAnalyzer
 
 from datetime import datetime
 
+# Directory constants
+FORMAT_JSON_DIR = "files/format_json"
+
+# File suffix constants
+ANALYSIS_JSON_SUFFIX = "_analysis.json"
 
 def convert_complex_structure_to_sql(complex_structure):
     """
@@ -76,7 +81,6 @@ def ensure_dir(directory: str) -> None:
     else:
         debug("Directory already exists: %s", directory)
 
-
 def process_files(
     source_dir: str,
     target_dir: str,
@@ -84,6 +88,7 @@ def process_files(
     output_suffix: str,
     processor_func,
 ) -> None:
+    """process_files function."""
     """
     Process files from source_dir to target_dir using the provided processor function.
 
@@ -176,7 +181,6 @@ def process_files(
     if error_count > 0:
         warning("Failed to process: %d files", error_count)
 
-
 def sql_to_json_processor(src_path: str, out_path: str, trigger_num: str) -> None:
     """
     Process a SQL file to JSON analysis.
@@ -253,7 +257,6 @@ def sql_to_json_processor(src_path: str, out_path: str, trigger_num: str) -> Non
 
     debug("=== SQL to JSON processing complete for trigger %s ===", trigger_num)
 
-
 def read_oracle_triggers_to_json() -> None:
     """
     Convert all Oracle trigger SQL files into analysis JSON files.
@@ -270,21 +273,20 @@ def read_oracle_triggers_to_json() -> None:
     info("=== Starting Oracle triggers to JSON conversion ===")
     debug("Workflow Phase 1: Convert Oracle SQL files to JSON analysis structure")
     debug("Source directory: files/oracle")
-    debug("Target directory: files/format_json")
+    debug("Target directory: %s", FORMAT_JSON_DIR)
     
     # Process all files using the processor function
     process_files(
         source_dir="files/oracle",
-        target_dir="files/format_json",
+        target_dir=FORMAT_JSON_DIR,
         file_pattern=".sql",
-        output_suffix="_analysis.json",
+        output_suffix=ANALYSIS_JSON_SUFFIX,
         processor_func=sql_to_json_processor,
     )
     
     # Log successful completion
     info("=== Oracle triggers to JSON conversion complete ===")
     debug("Phase 1 complete: Oracle SQL files converted to JSON analysis structure")
-
 
 def json_to_sql_processor(src_path: str, out_path: str, trigger_num: str) -> None:
     """
@@ -312,7 +314,7 @@ def json_to_sql_processor(src_path: str, out_path: str, trigger_num: str) -> Non
             f"Successfully loaded analysis JSON with keys: {list(analysis.keys())}"
         )
     except json.JSONDecodeError as e:
-        error("JSON decode error reading %s: %s", src_path, str(e))
+        error(f"JSON decode error reading {src_path}: {str(e)}" )
         raise
     except Exception as e:
         error("Error reading JSON file %s: %s", src_path, str(e))
@@ -331,7 +333,7 @@ def json_to_sql_processor(src_path: str, out_path: str, trigger_num: str) -> Non
     debug("Rendering SQL from analysis...")
     try:
         sql_content: str = analyzer.to_sql()
-        debug(f"SQL rendering completed successfully")
+        debug("SQL rendering completed successfully")
         debug(f"Rendered SQL length: {len(sql_content)} characters")
     except Exception as e:
         error("Failed to render SQL: %s", str(e))
@@ -344,29 +346,27 @@ def json_to_sql_processor(src_path: str, out_path: str, trigger_num: str) -> Non
             f.write(sql_content)
         debug(f"Successfully wrote formatted SQL to {out_path}")
     except Exception as e:
-        error("Failed to write SQL file %s: %s", out_path, str(e))
+        error(f"Failed to write SQL file {out_path}: {str(e)}")
         raise
 
     debug("=== JSON to SQL processing complete for trigger %s ===", trigger_num)
 
-
-def read_json_to_oracle_triggers() -> None:
+def render_oracle_sql_from_analysis() -> None:
     """
     Render formatted PL/SQL for each analysis JSON file.
 
     This function processes all _analysis.json files in the files/format_json directory,
     converting them to formatted SQL files in the files/format_sql directory.
     """
-    info("=== Starting JSON to Oracle triggers conversion ===")
+    info("=== Starting JSON analysis to formatted Oracle SQL conversion ===")
     process_files(
-        source_dir="files/format_json",
+        source_dir=FORMAT_JSON_DIR,
         target_dir="files/format_sql",
-        file_pattern="_analysis.json",
+        file_pattern=ANALYSIS_JSON_SUFFIX,
         output_suffix=".sql",
         processor_func=json_to_sql_processor,
     )
-    info("=== JSON to Oracle triggers conversion complete ===")
-
+    info("=== JSON analysis to formatted Oracle SQL conversion complete ===")
 
 def validate_conversion() -> None:
     """
@@ -456,10 +456,10 @@ def validate_conversion() -> None:
 
     info("=== Conversion validation complete ===")
 
-
 def read_json_to_oracle_triggers() -> None:
+    """read_json_to_oracle_triggers function."""
     # Define directories
-    json_dir = "files/format_json"
+    json_dir = FORMAT_JSON_DIR
     sql_out_dir = "files/format_pl_json"
 
     # Ensure directories exist
@@ -469,7 +469,7 @@ def read_json_to_oracle_triggers() -> None:
         os.makedirs(sql_out_dir)
 
     # Process each analysis JSON file
-    json_files = [f for f in os.listdir(json_dir) if f.endswith("_analysis.json")]
+    json_files = [f for f in os.listdir(json_dir) if f.endswith(ANALYSIS_JSON_SUFFIX)]
 
     i = 0
     while i < len(json_files):
@@ -494,7 +494,6 @@ def read_json_to_oracle_triggers() -> None:
             f.write(sql_content)
         print(f"Created {out_filename}")
         i += 1
-
 
 def json_to_pl_sql_processor(src_path: str, out_path: str, trigger_num: str) -> None:
     """
@@ -559,7 +558,6 @@ def json_to_pl_sql_processor(src_path: str, out_path: str, trigger_num: str) -> 
 
     debug("=== JSON to SQL processing complete for trigger %s ===", trigger_num)
 
-
 def read_json_to_postsql_triggers() -> None:
     """
     Convert PL/JSON files to PostgreSQL format.
@@ -577,10 +575,10 @@ def read_json_to_postsql_triggers() -> None:
     )
     info("=== PL/JSON to PostgreSQL format conversion complete ===")
 
-
 def convert_pl_json_to_postgresql_format(
     src_path: str, out_path: str, trigger_num: str
 ) -> None:
+    """convert_pl_json_to_postgresql_format function."""
     """
     Convert PL/JSON files to PostgreSQL format with on_insert, on_update, on_delete structure.
 
@@ -658,12 +656,10 @@ def convert_pl_json_to_postgresql_format(
         trigger_num,
     )
 
-
-
-
 def convert_postgresql_format_to_sql(
     src_path: str, out_path: str, trigger_num: str
 ) -> None:
+    """convert_postgresql_format_to_sql function."""
     """
     Convert PostgreSQL format JSON files to actual SQL files.
 
@@ -751,7 +747,6 @@ def convert_postgresql_format_to_sql(
         trigger_num,
     )
 
-
 def convert_postgresql_format_files_to_sql() -> None:
     """
     Convert PostgreSQL format JSON files to actual SQL files.
@@ -768,7 +763,6 @@ def convert_postgresql_format_files_to_sql() -> None:
         processor_func=convert_postgresql_format_to_sql,
     )
     info("=== PostgreSQL format to SQL conversion complete ===")
-
 
 def main() -> None:
     """
@@ -816,7 +810,7 @@ def main() -> None:
         step2_start = time.time()
         
         # Generate formatted SQL from the JSON analysis
-        read_json_to_oracle_triggers()
+        render_oracle_sql_from_analysis()
         
         step2_duration = time.time() - step2_start
         info("✓ SQL formatting complete! (Duration: %.2f seconds)", step2_duration)
@@ -855,7 +849,7 @@ def main() -> None:
         step5_start = time.time()
         
         # Transform JSON to operation-specific structure for PostgreSQL
-        read_json_to_oracle_triggers()  # Note: Despite the name, this function creates PL/JSON
+        read_json_to_oracle_triggers()
         
         step5_duration = time.time() - step5_start
         info("✓ PL/JSON conversion complete! (Duration: %.2f seconds)", step5_duration)
@@ -917,7 +911,6 @@ def main() -> None:
         import traceback
         debug(f"Error traceback: {traceback.format_exc()}")
         raise
-
 
 if __name__ == "__main__":
     main()

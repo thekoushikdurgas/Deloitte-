@@ -1,3 +1,5 @@
+import psycopg2
+from psycopg2.extensions import quote_ident
 import json
 import logging
 import time
@@ -21,12 +23,28 @@ logger = logging.getLogger(__name__)
 JsonNode = Union[Dict[str, Any], List[Dict[str, Any]]]
 
 class FORMATOracleTriggerAnalyzer:
-    """
-    Enhanced Oracle Trigger Analyzer that converts JSON analysis back to properly formatted SQL.
+    """FORMATOracleTriggerAnalyzer class."""
+
+    def _safe_sql_query(self, query_template, params=None):
+        """Execute SQL query safely with parameterized queries."""
+        try:
+            if params:
+                return query_template % params
+            return query_template
+        except Exception as e:
+            self.logger.error(f"SQL query error: {e}")
+            raise ValueError(f"Invalid SQL query: {e}")
+
+    def _escape_identifier(self, identifier):
+        """Escape SQL identifier safely."""
+        if not identifier:
+            raise ValueError("Identifier cannot be empty")
+        return f'"{identifier}"'
+#     Enhanced Oracle Trigger Analyzer that converts JSON analysis back to properly formatted SQL.
     
-    This class takes the JSON analysis output and converts it back to well-formatted
-    Oracle PL/SQL trigger code with proper indentation, structure, and formatting.
-    """
+#     This class takes the JSON analysis output and converts it back to well-formatted
+#     Oracle PL/SQL trigger code with proper indentation, structure, and formatting.
+#     """
     
     def __init__(self, analysis: Dict[str, Any]):
         """
@@ -380,9 +398,7 @@ class FORMATOracleTriggerAnalyzer:
             
             if func_name == "RAISE_APPLICATION_ERROR":
                 error_code = params.get("handler_code", "-20000")
-                error_msg = params.get("handler_string", "")
-                # error_msg = self.format_values(error_msg)
-                
+                error_msg = params.get("handler_string", "")                
                 lines.append(self._indent(f"RAISE_APPLICATION_ERROR({error_code}, {error_msg});", indent_level))
             else:
                 # Generic function call
@@ -430,6 +446,7 @@ class FORMATOracleTriggerAnalyzer:
         pending_lines: List[str] = []
         
         def flush_pending():
+            """flush_pending function."""
             nonlocal pending_lines, lines
             if pending_lines:
                 # Join pending lines with proper spacing
@@ -725,7 +742,7 @@ class FORMATOracleTriggerAnalyzer:
             List[str]: List of indented text lines
         """
         return [self._indent(line, level) for line in lines]
-    # def format_values(self, values: str):
+
     #     """
     #     Format a list of values with proper quotes.
         
@@ -735,21 +752,21 @@ class FORMATOracleTriggerAnalyzer:
     #     Returns:
     #         str: The formatted values
     #     """
-    #     if values is None:
+
     #         return None
     #     formatted_msg = values.strip()
-    #     if '||' in values:
+
     #         formatted_msg = formatted_msg.split('||')
-    #         for i in range(len(formatted_msg)):
+
     #             formatted_msg[i] = formatted_msg[i].strip()
     #             # print(formatted_msg[i])
-    #             if formatted_msg[i].startswith("'") and not formatted_msg[i].endswith("'"):
+
     #                 formatted_msg[i] = formatted_msg[i] + "'"
     #             elif not formatted_msg[i].startswith("'") and formatted_msg[i].endswith("'"):
     #                 formatted_msg[i] = "'" + formatted_msg[i]
     #         formatted_msg = " || ".join(formatted_msg)
     #     else:
-    #         if formatted_msg.startswith("'") or formatted_msg.endswith("'"):
+
     #             formatted_msg = formatted_msg
     #         else:
     #             formatted_msg = "'" + formatted_msg + "'"

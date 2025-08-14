@@ -19,9 +19,9 @@ from utilities.common import (
 )
 import copy
 
-
 class JSONTOPLJSON:
     def __init__(self, json_data):
+        """__init__ function."""
         self.json_data = json_data
         self.sql_content = {
             "declarations": {},
@@ -177,7 +177,7 @@ class JSONTOPLJSON:
         }
         
         # Log which operation keywords were found in this condition
-        debug(f"Operation keywords found in condition:")
+        debug("Operation keywords found in condition:")
         debug(f"  - INSERT keywords: {condition_dict['on_insert']}")
         debug(f"  - UPDATE keywords: {condition_dict['on_update']}")
         debug(f"  - DELETE keywords: {condition_dict['on_delete']}")
@@ -194,7 +194,7 @@ class JSONTOPLJSON:
             
         # Case 2: Condition doesn't mention any specific operation - keep for all operations
         elif not any(condition_dict.values()):
-            debug(f"KEEP: Condition doesn't contain any operation keywords")
+            debug("KEEP: Condition doesn't contain any operation keywords")
             return False
             
         # Case 3: Condition mentions other operations but not this one - keep for this operation
@@ -203,9 +203,11 @@ class JSONTOPLJSON:
             return True
 
     def parse_pl_json_on_insert(self):
+        """parse_pl_json_on_insert function."""
         def process_on_insert_json(
             statements, json_path="", condition_type="on_insert"
         ):
+            """process_on_insert_json function."""
             item = statements
             # Handle nested structures (begin_end blocks, exception handlers, etc.)
             if isinstance(item, dict) and "type" in item:
@@ -277,7 +279,6 @@ class JSONTOPLJSON:
                                             item1, json_path, condition_type
                                         )
                                     )
-                                # else_if_item["condition"] = self.modify_condition(else_if_item["condition"])
                                 after_parse_else_if.append(else_if_item)
                         item["else_if"] = after_parse_else_if
 
@@ -294,14 +295,13 @@ class JSONTOPLJSON:
                         )
 
                 elif item["type"] == "case_when":
-                    # if self.process_condition(item["case_expression"], condition_type):
+
                     #     logger.debug(f"delete path: {json_path}.case_when")
                     #     # return None
                     # Process IF statements in when_clauses (then_statements and else_statements)
                     if "when_clauses" in item:
                         for clause_index, clause in enumerate(item["when_clauses"]):
-                            # if "then_statements" in clause:
-                            #     if self.process_condition(
+
                             #         clause["when_value"], condition_type
                             #     ):
                             #         logger.debug(f"delete path: {json_path}.when_value")
@@ -333,7 +333,6 @@ class JSONTOPLJSON:
                             )
             return item
 
-        # main_json = self.json_data.get("main", [])
         for u, main_item in enumerate(self.after_parse_on_insert):
             for r, begin_end_item in enumerate(main_item["begin_end_statements"]):
                 json_path = f"main.begin_end_statements.{r}.begin_end_statements"
@@ -342,9 +341,11 @@ class JSONTOPLJSON:
                 )
 
     def parse_pl_json_on_update(self):
+        """parse_pl_json_on_update function."""
         def process_on_update_json(
             statements, json_path="", condition_type="on_update"
         ):
+            """process_on_update_json function."""
             item = statements
             # Handle nested structures (begin_end blocks, exception handlers, etc.)
             if isinstance(item, dict) and "type" in item:
@@ -430,14 +431,14 @@ class JSONTOPLJSON:
                         )
 
                 elif item["type"] == "case_when":
-                    # if self.process_condition(item["case_expression"], condition_type):
+
                     #     logger.debug(f"delete path: {json_path}.case_when")
                     #     # return None
                     # Process IF statements in when_clauses (then_statements and else_statements)
                     if "when_clauses" in item:
                         for clause_index, clause in enumerate(item["when_clauses"]):
                             if "then_statements" in clause:
-                                # if self.process_condition(
+
                                 #     clause["when_value"], condition_type
                                 # ):
                                 #     logger.debug(f"delete path: {json_path}.when_value")
@@ -469,7 +470,6 @@ class JSONTOPLJSON:
                             )
             return item
 
-        # main_json = self.json_data.get("main", [])
         for u, main_item in enumerate(self.after_parse_on_update):
             for r, begin_end_item in enumerate(main_item["begin_end_statements"]):
                 json_path = f"main.begin_end_statements.{r}.begin_end_statements"
@@ -478,9 +478,11 @@ class JSONTOPLJSON:
                 )
 
     def parse_pl_json_on_delete(self):
+        """parse_pl_json_on_delete function."""
         def process_on_delete_json(
             statements, json_path="", condition_type="on_delete"
         ):
+            """process_on_delete_json function."""
             item = statements
             # Handle nested structures (begin_end blocks, exception handlers, etc.)
             if isinstance(item, dict) and "type" in item:
@@ -538,7 +540,6 @@ class JSONTOPLJSON:
                                             item1, json_path, condition_type
                                         )
                                     )
-                                # else_if_item["condition"] = self.modify_condition(else_if_item["condition"])
                                 after_parse_else_if.append(else_if_item)
                         item["else_if"] = after_parse_else_if
                     if "then_statements" in item:
@@ -567,14 +568,14 @@ class JSONTOPLJSON:
                         )
 
                 elif item["type"] == "case_when":
-                    # if self.process_condition(item["case_expression"], condition_type):
+
                     # logger.debug(f"delete path: {json_path}.case_when")
                     # return None
                     # Process IF statements in when_clauses (then_statements and else_statements)
                     if "when_clauses" in item:
                         for clause_index, clause in enumerate(item["when_clauses"]):
                             if "then_statements" in clause:
-                                # if self.process_condition(clause["when_value"], condition_type):
+
                                 # logger.debug(f"delete path: {json_path}.when_value")
                                 # return None
                                 for i, item1 in enumerate(clause["then_statements"]):
@@ -635,7 +636,7 @@ class JSONTOPLJSON:
         self.declarations = copy.deepcopy(self.json_data.get("declarations", {}))
         
         # Log the structure we're working with
-        debug(f"JSON data structure:")
+        debug("JSON data structure:")
         debug(f"  - Main blocks: {len(self.json_data.get('main', []))} items")
         debug(f"  - Declarations: {len(self.declarations.get('variables', []))} variables, "
               f"{len(self.declarations.get('constants', []))} constants, "
