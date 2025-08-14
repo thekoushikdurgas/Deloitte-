@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from typing import Optional, Any
 
+
 # Configure logging
 def setup_logging(log_dir="output", log_level="INFO"):
     """
@@ -179,3 +180,4 @@ def clean_json_files() -> None:
             
         except Exception as e:
             print(f"Error processing {json_file}: {str(e)}")
+            

@@ -557,10 +557,18 @@ class JSONTOPLJSON:
         self.parse_pl_json_on_delete()
 
         converted = {
-            "declarations": self.declarations,
-            "on_insert": self.after_parse_on_insert,
-            "on_update": self.after_parse_on_update,
-            "on_delete": self.after_parse_on_delete,
+            "on_insert": {
+                "declarations": self.declarations,
+                "main": self.after_parse_on_insert
+            },
+            "on_update": {
+                "declarations": self.declarations,
+                "main": self.after_parse_on_update
+            },
+            "on_delete": {
+                "declarations": self.declarations,
+                "main": self.after_parse_on_delete
+            }
         }
 
         # Store pretty JSON string for writer

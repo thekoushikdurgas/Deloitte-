@@ -44,7 +44,23 @@ from utilities.FORMATOracleTriggerAnalyzer import FORMATOracleTriggerAnalyzer
 from utilities.JSONTOPLJSON import JSONTOPLJSON
 from utilities.FORMATPostsqlTriggerAnalyzer import FORMATPostsqlTriggerAnalyzer
 
+from datetime import datetime
 
+
+def convert_complex_structure_to_sql(complex_structure):
+    """
+    Convert the complex PL/JSON structure to a proper PostgreSQL SQL string.
+
+    Args:
+        complex_structure: The complex structure from PL/JSON
+
+    Returns:
+        str: The PostgreSQL SQL string
+    """
+
+    analyzer = FORMATPostsqlTriggerAnalyzer(complex_structure)
+    sql_content = analyzer.to_sql()
+    return sql_content
 def ensure_dir(directory: str) -> None:
     """
     Ensure that the specified directory exists, creating it if necessary.
@@ -532,20 +548,212 @@ def json_to_pl_sql_processor(src_path: str, out_path: str, trigger_num: str) -> 
 
 def read_json_to_postsql_triggers() -> None:
     """
-    Render formatted PL/SQL for each analysis JSON file.
+    Convert PL/JSON files to PostgreSQL format.
 
-    This function processes all _analysis.json files in the files/format_json directory,
-    converting them to formatted SQL files in the files/format_sql directory.
+    This function processes all .json files in the files/format_pl_json directory,
+    converting them to PostgreSQL format files in the files/format_plsql directory.
     """
-    info("=== Starting JSON to Postsql triggers conversion ===")
+    info("=== Starting PL/JSON to PostgreSQL format conversion ===")
     process_files(
-        source_dir="files/format_json",
+        source_dir="files/format_pl_json",
         target_dir="files/format_plsql",
-        file_pattern="_analysis.json",
-        output_suffix=".sql",
-        processor_func=json_to_pl_sql_processor,
+        file_pattern=".json",
+        output_suffix="_postgresql.json",
+        processor_func=convert_pl_json_to_postgresql_format,
     )
-    info("=== JSON to Postsql triggers conversion complete ===")
+    info("=== PL/JSON to PostgreSQL format conversion complete ===")
+
+
+def convert_pl_json_to_postgresql_format(
+    src_path: str, out_path: str, trigger_num: str
+) -> None:
+    """
+    Convert PL/JSON files to PostgreSQL format with on_insert, on_update, on_delete structure.
+
+    This function:
+    1. Reads the PL/JSON file from format_pl_json directory
+    2. Converts it to the expected PostgreSQL format with on_insert, on_update, on_delete sections
+    3. Writes the converted format to format_plsql directory
+
+    Args:
+        src_path (str): Path to the source PL/JSON file
+        out_path (str): Path to the output PostgreSQL format file
+        trigger_num (str): Trigger number extracted from filename
+    """
+    debug("=== Converting PL/JSON to PostgreSQL format for trigger %s ===", trigger_num)
+
+    # Step 1: Read the PL/JSON file
+    debug("Reading PL/JSON file: %s", src_path)
+    try:
+        with open(src_path, "r", encoding="utf-8") as f:
+            pl_json_data = json.load(f)
+        debug(
+            "Successfully loaded PL/JSON data with keys: %s", list(pl_json_data.keys())
+        )
+    except json.JSONDecodeError as e:
+        error("JSON decode error reading %s: %s", src_path, str(e))
+        raise
+    except Exception as e:
+        error("Error reading PL/JSON file %s: %s", src_path, str(e))
+        raise
+
+    # Step 2: Convert to PostgreSQL format
+    debug("Converting to PostgreSQL format...")
+    try:
+        # Create the expected PostgreSQL format structure
+        postgresql_format = {"on_insert": [], "on_update": [], "on_delete": []}
+
+        # Convert the PL/JSON structure to PostgreSQL format
+        # The PL/JSON files have on_insert, on_update, on_delete arrays with complex objects
+        # We need to convert these to simple SQL strings
+
+        # Handle on_insert
+        if "on_insert" in pl_json_data and pl_json_data["on_insert"]:
+            # Convert the complex structure to a simple SQL string
+            sql_content = convert_complex_structure_to_sql(pl_json_data["on_insert"])
+            postgresql_format["on_insert"].append({"type": "sql", "sql": sql_content})
+
+        # Handle on_update
+        if "on_update" in pl_json_data and pl_json_data["on_update"]:
+            sql_content = convert_complex_structure_to_sql(pl_json_data["on_update"])
+            postgresql_format["on_update"].append({"type": "sql", "sql": sql_content})
+
+        # Handle on_delete
+        if "on_delete" in pl_json_data and pl_json_data["on_delete"]:
+            sql_content = convert_complex_structure_to_sql(pl_json_data["on_delete"])
+            postgresql_format["on_delete"].append({"type": "sql", "sql": sql_content})
+
+        debug("PostgreSQL format conversion completed")
+
+    except Exception as e:
+        error("Failed to convert to PostgreSQL format: %s", str(e))
+        raise
+
+    # Step 3: Write to PostgreSQL format file
+    debug("Writing PostgreSQL format to: %s", out_path)
+    try:
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(postgresql_format, f, indent=4)
+        debug("Successfully wrote PostgreSQL format to %s", out_path)
+    except Exception as e:
+        error("Failed to write PostgreSQL format file %s: %s", out_path, str(e))
+        raise
+
+    debug(
+        "=== PL/JSON to PostgreSQL format conversion complete for trigger %s ===",
+        trigger_num,
+    )
+
+
+
+
+def convert_postgresql_format_to_sql(
+    src_path: str, out_path: str, trigger_num: str
+) -> None:
+    """
+    Convert PostgreSQL format JSON files to actual SQL files.
+
+    This function:
+    1. Reads the PostgreSQL format JSON file
+    2. Extracts the SQL content from on_insert, on_update, on_delete sections
+    3. Writes the SQL content to a .sql file
+
+    Args:
+        src_path (str): Path to the source PostgreSQL format JSON file
+        out_path (str): Path to the output SQL file
+        trigger_num (str): Trigger number extracted from filename
+    """
+    debug("=== Converting PostgreSQL format to SQL for trigger %s ===", trigger_num)
+
+    # Step 1: Read the PostgreSQL format JSON file
+    debug("Reading PostgreSQL format file: %s", src_path)
+    try:
+        with open(src_path, "r", encoding="utf-8") as f:
+            postgresql_data = json.load(f)
+        debug(
+            "Successfully loaded PostgreSQL format data with keys: %s",
+            list(postgresql_data.keys()),
+        )
+    except json.JSONDecodeError as e:
+        error("JSON decode error reading %s: %s", src_path, str(e))
+        raise
+    except Exception as e:
+        error("Error reading PostgreSQL format file %s: %s", src_path, str(e))
+        raise
+
+    # Step 2: Extract SQL content
+    debug("Extracting SQL content...")
+    try:
+        sql_lines = []
+        sql_lines.append(f"-- PostgreSQL Trigger for trigger{trigger_num}")
+        sql_lines.append(
+            f"-- Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+        sql_lines.append("")
+
+        # Add on_insert SQL
+        if "on_insert" in postgresql_data and postgresql_data["on_insert"]:
+            sql_lines.append("-- ON INSERT")
+            for item in postgresql_data["on_insert"]:
+                if item.get("type") == "sql":
+                    sql_lines.append(item["sql"])
+            sql_lines.append("")
+
+        # Add on_update SQL
+        if "on_update" in postgresql_data and postgresql_data["on_update"]:
+            sql_lines.append("-- ON UPDATE")
+            for item in postgresql_data["on_update"]:
+                if item.get("type") == "sql":
+                    sql_lines.append(item["sql"])
+            sql_lines.append("")
+
+        # Add on_delete SQL
+        if "on_delete" in postgresql_data and postgresql_data["on_delete"]:
+            sql_lines.append("-- ON DELETE")
+            for item in postgresql_data["on_delete"]:
+                if item.get("type") == "sql":
+                    sql_lines.append(item["sql"])
+            sql_lines.append("")
+
+        sql_content = "\n".join(sql_lines)
+        debug("SQL content extraction completed")
+
+    except Exception as e:
+        error("Failed to extract SQL content: %s", str(e))
+        raise
+
+    # Step 3: Write to SQL file
+    debug("Writing SQL to: %s", out_path)
+    try:
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(sql_content)
+        debug("Successfully wrote SQL to %s", out_path)
+    except Exception as e:
+        error("Failed to write SQL file %s: %s", out_path, str(e))
+        raise
+
+    debug(
+        "=== PostgreSQL format to SQL conversion complete for trigger %s ===",
+        trigger_num,
+    )
+
+
+def convert_postgresql_format_files_to_sql() -> None:
+    """
+    Convert PostgreSQL format JSON files to actual SQL files.
+
+    This function processes all _postgresql.json files in the files/format_plsql directory,
+    converting them to actual SQL files in the same directory.
+    """
+    info("=== Starting PostgreSQL format to SQL conversion ===")
+    process_files(
+        source_dir="files/format_plsql",
+        target_dir="files/format_plsql",
+        file_pattern="_postgresql.json",
+        output_suffix=".sql",
+        processor_func=convert_postgresql_format_to_sql,
+    )
+    info("=== PostgreSQL format to SQL conversion complete ===")
 
 
 def main() -> None:
@@ -608,6 +816,13 @@ def main() -> None:
         read_json_to_postsql_triggers()
         step5_duration = time.time() - step5_start
         info("✓ PL/SQL conversion complete! (Duration: %.2f seconds)", step5_duration)
+
+        # Step 6: Convert PostgreSQL format JSON to SQL
+        info("Step 6: Converting PostgreSQL format JSON to SQL...")
+        step6_start = time.time()
+        convert_postgresql_format_files_to_sql()
+        step6_duration = time.time() - step6_start
+        info("✓ PostgreSQL format to SQL conversion complete! (Duration: %.2f seconds)", step6_duration)
 
         # Final summary
         total_duration = time.time() - start_time

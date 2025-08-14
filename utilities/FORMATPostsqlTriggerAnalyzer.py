@@ -60,15 +60,15 @@ class FORMATPostsqlTriggerAnalyzer:
         lines: List[str] = []
         
         # Add header comment
-        lines.append("-- Generated from JSON analysis for PostgreSQL")
-        lines.append(f"-- Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        lines.append("")
+        # lines.append("-- Generated from JSON analysis for PostgreSQL")
+        # lines.append(f"-- Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        # lines.append("")
         
         # Render declarations
         logger.debug("Rendering declarations...")
         decl_lines = self._render_declarations(self.analysis["declarations"])
         lines.extend(decl_lines)
-        lines.append("")
+        # lines.append("")
         
         # Render main execution block
         logger.debug("Rendering main execution block...")
@@ -76,10 +76,11 @@ class FORMATPostsqlTriggerAnalyzer:
         lines.extend(main_lines)
         
         # Add footer
-        lines.append("")
-        lines.append("-- End of generated SQL")
+        # lines.append("")
+        # lines.append("-- End of generated SQL")
         
-        self.sql_content = "\n".join(lines)
+        # self.sql_content = self.sql_content.replace("\n","")
+        self.sql_content = "DO $$\n" +"\n".join(lines) + "\nEND $$;"
         logger.info(f"SQL conversion complete: {len(self.sql_content)} characters")
         return self.sql_content
         
