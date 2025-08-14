@@ -1,7 +1,17 @@
 import json
 import logging
+import time
 from typing import Dict, List, Any, Union
 from datetime import datetime
+from utilities.common import (
+    debug,
+    info,
+    warning,
+    error,
+    log_parsing_start,
+    log_parsing_complete,
+    log_performance
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -39,93 +49,147 @@ class FORMATOracleTriggerAnalyzer:
 
     def to_sql(self) -> str:
         """
-        Convert the analysis to formatted SQL.
+        Convert the JSON analysis to formatted Oracle SQL code.
+        
+        This method orchestrates the entire SQL generation process:
+        1. Creates header comments with timestamp
+        2. Renders the declarations section (variables, constants, exceptions)
+        3. Renders the main execution block with proper structure
+        4. Adds footer comments
+        
+        The code is formatted with proper indentation and structure according to
+        Oracle PL/SQL best practices.
         
         Returns:
-            str: Formatted SQL code
+            str: Formatted Oracle SQL code ready for execution
         """
-        logger.info("Starting SQL conversion...")
+        start_time = time.time()
+        log_parsing_start("Oracle SQL generation", "Converting JSON analysis to formatted SQL")
+        debug(f"Analysis contains {len(self.analysis.get('declarations', {}).get('variables', []))} variables, "
+              f"{len(self.analysis.get('declarations', {}).get('constants', []))} constants, "
+              f"{len(self.analysis.get('declarations', {}).get('exceptions', []))} exceptions")
+        
         lines: List[str] = []
         
-        # Add header comment
+        # Step 1: Add header comment
+        debug("Adding header comments with timestamp")
         lines.append("-- Generated from JSON analysis")
         lines.append(f"-- Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         lines.append("")
         
-        # Render declarations
-        logger.debug("Rendering declarations...")
+        # Step 2: Render declarations
+        debug("Starting declarations section rendering")
+        declaration_start = time.time()
         decl_lines = self._render_declarations(self.analysis["declarations"])
+        debug(f"Generated {len(decl_lines)} lines of declarations")
         lines.extend(decl_lines)
         lines.append("")
+        log_performance("Declarations rendering", time.time() - declaration_start)
         
-        # Render main execution block
-        logger.debug("Rendering main execution block...")
+        # Step 3: Render main execution block
+        debug("Starting main execution block rendering")
+        main_start = time.time()
         main_lines = self._render_main_block(self.analysis["main"][0], 0, wrap_begin_end=True)
+        debug(f"Generated {len(main_lines)} lines in main execution block")
         lines.extend(main_lines)
+        log_performance("Main block rendering", time.time() - main_start)
         
-        # Add footer
+        # Step 4: Add footer
+        debug("Adding footer comments")
         lines.append("")
         lines.append("-- End of generated SQL")
         
+        # Combine all lines into the final SQL string
         result = "\n".join(lines)
-        logger.info(f"SQL conversion complete: {len(result)} characters")
+        debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
+        
+        duration = time.time() - start_time
+        log_parsing_complete("Oracle SQL generation", f"{len(lines)} lines generated in {duration:.3f}s")
         return result
 
     def _render_declarations(self, decl: Dict[str, Any]) -> List[str]:
         """
-        Render variable, constant, and exception declarations.
+        Render variable, constant, and exception declarations section in PL/SQL format.
+        
+        This method generates the DECLARE section of a PL/SQL block, including:
+        1. Variables with their data types and optional default values
+        2. Constants with their data types and values
+        3. Custom exception declarations
+        
+        Each declaration is properly indented and formatted according to Oracle
+        PL/SQL style guidelines.
         
         Args:
-            decl (Dict[str, Any]): Declarations section
+            decl (Dict[str, Any]): The declarations section from the JSON analysis
             
         Returns:
-            List[str]: List of formatted declaration lines
+            List[str]: List of formatted declaration lines ready to be included in the SQL output
         """
-        logger.debug("=== Rendering declarations ===")
+        debug("=== Starting declarations section rendering ===")
         lines: List[str] = []
         
         # Start DECLARE block
         lines.append("DECLARE")
+        debug("Added DECLARE statement")
         
-        # Variables
+        # Step 1: Process and format variables
         variables = decl.get("variables", []) or []
         if variables:
-            logger.debug(f"Rendering {len(variables)} variables")
-            for var in variables:
+            debug(f"Processing {len(variables)} variables")
+            for i, var in enumerate(variables):
                 name = var.get("name", "")
                 data_type = var.get("data_type", "")
                 default_value = var.get("default_value")
-                # default_value = self.format_values(default_value)
                 
                 if name and data_type:
+                    # Format with or without default value
                     if default_value is not None and str(default_value).upper() != "NULL":
-                        lines.append(f"  {name} {data_type} := {default_value};")
+                        decl_line = f"  {name} {data_type} := {default_value};"
+                        debug(f"Variable {i+1}/{len(variables)}: {name} ({data_type}) with default value")
                     else:
-                        lines.append(f"  {name} {data_type};")
+                        decl_line = f"  {name} {data_type};"
+                        debug(f"Variable {i+1}/{len(variables)}: {name} ({data_type}) without default")
+                    
+                    lines.append(decl_line)
+                else:
+                    warning(f"Skipped incomplete variable declaration: name='{name}', type='{data_type}'")
+        else:
+            debug("No variables to process")
         
-        # Constants
+        # Step 2: Process and format constants
         constants = decl.get("constants", []) or []
         if constants:
-            logger.debug(f"Rendering {len(constants)} constants")
-            for const in constants:
+            debug(f"Processing {len(constants)} constants")
+            for i, const in enumerate(constants):
                 name = const.get("name", "")
                 data_type = const.get("data_type", "")
                 value = const.get("value", "")
-                # value = self.format_values(value)
                 
                 if name and data_type and value is not None:
-                    lines.append(f"  {name} CONSTANT {data_type} := {value};")
+                    decl_line = f"  {name} CONSTANT {data_type} := {value};"
+                    debug(f"Constant {i+1}/{len(constants)}: {name} ({data_type}) = {value}")
+                    lines.append(decl_line)
+                else:
+                    warning(f"Skipped incomplete constant declaration: name='{name}', type='{data_type}', value='{value}'")
+        else:
+            debug("No constants to process")
         
-        # Exceptions
+        # Step 3: Process and format custom exceptions
         exceptions = decl.get("exceptions", []) or []
         if exceptions:
-            logger.debug(f"Rendering {len(exceptions)} exceptions")
-            for exc in exceptions:
+            debug(f"Processing {len(exceptions)} custom exceptions")
+            for i, exc in enumerate(exceptions):
                 name = exc.get("name", "")
                 if name:
-                    lines.append(f"  {name} EXCEPTION;")
+                    decl_line = f"  {name} EXCEPTION;"
+                    debug(f"Exception {i+1}/{len(exceptions)}: {name}")
+                    lines.append(decl_line)
+                else:
+                    warning(f"Skipped empty exception name at index {i}")
+        else:
+            debug("No custom exceptions to process")
         
-        logger.debug("=== Declarations complete ===")
+        debug(f"=== Declarations section complete: {len(lines)} lines ===")
         return lines
 
     def _render_main_block(self, node: Dict[str, Any], indent_level: int, wrap_begin_end: bool = False) -> List[str]:
@@ -430,46 +494,86 @@ class FORMATOracleTriggerAnalyzer:
 
     def _render_if_else(self, node: Dict[str, Any], indent_level: int) -> List[str]:
         """
-        Render an IF-ELSE structure.
+        Render an IF-ELSE control structure with proper formatting and indentation.
+        
+        This method handles the complete formatting of IF-ELSIF-ELSE blocks, including:
+        1. The main IF condition and THEN statements
+        2. Any number of ELSIF clauses with their conditions and statements
+        3. Optional ELSE clause with its statements
+        4. Proper END IF terminator
+        
+        All components are indented according to their nesting level to produce
+        readable and maintainable PL/SQL code.
         
         Args:
-            node (Dict[str, Any]): IF-ELSE node data
-            indent_level (int): Current indentation level
+            node (Dict[str, Any]): The IF-ELSE structure data from the JSON analysis
+            indent_level (int): The current indentation level for proper nesting
             
         Returns:
-            List[str]: List of formatted IF-ELSE lines
+            List[str]: List of formatted SQL lines representing the complete IF-ELSE structure
         """
-        logger.debug(f"=== Rendering IF-ELSE structure (indent={indent_level}) ===")
+        start_time = time.time()
+        debug(f"=== Starting IF-ELSE structure rendering at indent level {indent_level} ===")
         lines: List[str] = []
         
+        # Extract structure components
         condition = node.get("condition", "")
         then_statements = node.get("then_statements", []) or []
         else_if_clauses = node.get("else_if", []) or []
         else_statements = node.get("else_statements", []) or []
         
-        # Main IF condition
-        lines.append(self._indent(f"IF {condition} THEN", indent_level))
+        debug(f"IF condition: '{condition}'")
+        debug(f"Structure contains: {len(then_statements)} THEN statements, " + 
+              f"{len(else_if_clauses)} ELSIF clauses, " + 
+              f"{'an' if else_statements else 'no'} ELSE clause")
         
-        # THEN statements
-        lines.extend(self._render_statement_list(then_statements, indent_level + 1))
+        # Step 1: Format and add the main IF condition
+        if_line = self._indent(f"IF {condition} THEN", indent_level)
+        lines.append(if_line)
+        debug(f"Added main IF condition line: '{if_line.strip()}'")
         
-        # ELSIF clauses
-        for else_if in else_if_clauses:
-            else_if_condition = else_if.get("condition", "")
-            else_if_statements = else_if.get("then_statements", []) or []
-            
-            lines.append(self._indent(f"ELSIF {else_if_condition} THEN", indent_level))
-            lines.extend(self._render_statement_list(else_if_statements, indent_level + 1))
+        # Step 2: Render THEN statements with increased indentation
+        debug(f"Rendering {len(then_statements)} THEN statements")
+        then_start = time.time()
+        then_lines = self._render_statement_list(then_statements, indent_level + 1)
+        lines.extend(then_lines)
+        debug(f"Added {len(then_lines)} lines for THEN statements in {time.time() - then_start:.3f}s")
         
-        # ELSE clause
+        # Step 3: Handle ELSIF clauses (if any)
+        if else_if_clauses:
+            debug(f"Processing {len(else_if_clauses)} ELSIF clauses")
+            for i, else_if in enumerate(else_if_clauses):
+                else_if_condition = else_if.get("condition", "")
+                else_if_statements = else_if.get("then_statements", []) or []
+                
+                # Add ELSIF line
+                elsif_line = self._indent(f"ELSIF {else_if_condition} THEN", indent_level)
+                lines.append(elsif_line)
+                debug(f"Added ELSIF {i+1}/{len(else_if_clauses)} condition: '{else_if_condition}'")
+                
+                # Render ELSIF statements
+                elsif_start = time.time()
+                elsif_lines = self._render_statement_list(else_if_statements, indent_level + 1)
+                lines.extend(elsif_lines)
+                debug(f"Added {len(elsif_lines)} lines for ELSIF {i+1} clause in {time.time() - elsif_start:.3f}s")
+        
+        # Step 4: Handle ELSE clause (if present)
         if else_statements:
+            debug("Processing ELSE clause")
             lines.append(self._indent("ELSE", indent_level))
-            lines.extend(self._render_statement_list(else_statements, indent_level + 1))
+            
+            # Render ELSE statements
+            else_start = time.time()
+            else_lines = self._render_statement_list(else_statements, indent_level + 1)
+            lines.extend(else_lines)
+            debug(f"Added {len(else_lines)} lines for ELSE clause in {time.time() - else_start:.3f}s")
         
-        # END IF
+        # Step 5: Add END IF terminator
         lines.append(self._indent("END IF;", indent_level))
+        debug("Added END IF terminator")
         
-        logger.debug("=== IF-ELSE structure complete ===")
+        duration = time.time() - start_time
+        debug(f"=== IF-ELSE structure complete: {len(lines)} lines in {duration:.3f}s ===")
         return lines
 
     def _render_case_when(self, node: Dict[str, Any], indent_level: int) -> List[str]:
@@ -575,16 +679,39 @@ class FORMATOracleTriggerAnalyzer:
     # -----------------------------
     def _indent(self, text: str, level: int) -> str:
         """
-        Add indentation to a text line.
+        Add proper indentation to a text line based on nesting level.
+        
+        This utility method applies consistent indentation to each line of SQL code
+        based on its nesting level in the code structure. The indentation unit
+        is defined at the class level (typically 2 or 4 spaces).
+        
+        Proper indentation is crucial for:
+        - Code readability
+        - Visualizing code structure
+        - Maintaining consistent formatting
+        - Highlighting the logical flow
         
         Args:
-            text (str): The text to indent
-            level (int): Indentation level (number of indent units)
+            text (str): The text content to indent
+            level (int): Indentation level (number of indent units to apply)
             
         Returns:
-            str: Indented text
+            str: The properly indented text with the correct amount of spaces
         """
-        return f"{self.indent_unit * max(level, 0)}{text}"
+        # Ensure level is non-negative
+        indent_level = max(level, 0)
+        
+        # Apply indentation by multiplying the indent unit by the level
+        indentation = self.indent_unit * indent_level
+        
+        # Combine indentation with the text
+        indented_text = f"{indentation}{text}"
+        
+        # For very deep nesting, log a warning (could indicate over-complex code)
+        if level > 5:
+            debug(f"Deep nesting detected (level {level}): '{text[:30]}...'")
+            
+        return indented_text
 
     def _indent_lines(self, lines: List[str], level: int) -> List[str]:
         """

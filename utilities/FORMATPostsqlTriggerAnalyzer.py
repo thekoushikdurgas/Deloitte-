@@ -2,6 +2,7 @@ import os
 import json
 import re
 import copy
+import pandas as pd
 from datetime import datetime
 
 from typing import Any, Dict, List, Tuple, Union
@@ -21,6 +22,7 @@ from utilities.common import (
     log_nesting_level,
     log_performance,
 )
+
 class FORMATPostsqlTriggerAnalyzer:
     """
     Enhanced PostgreSQL Trigger Analyzer that converts JSON analysis back to properly formatted SQL.
@@ -40,6 +42,11 @@ class FORMATPostsqlTriggerAnalyzer:
         self.indent_unit = "  "  # 2 spaces for indentation
         self.sql_content = ""
         
+        # Load mappings from Excel file
+        self.func_mapping = self._load_function_mappings()
+        self.type_mapping = self._load_type_mappings()
+        self.exception_mapping = self._load_exception_mappings()
+        
         # Validate analysis structure
         if not isinstance(json_data, dict):
             raise ValueError("Analysis must be a dictionary")
@@ -49,6 +56,205 @@ class FORMATPostsqlTriggerAnalyzer:
             
         logger.info("FORMATPostsqlTriggerAnalyzer initialized successfully")
     
+    def _load_function_mappings(self) -> Dict[str, str]:
+        """
+        Load function mappings from the Excel file.
+        
+        Returns:
+            Dict[str, str]: Mapping of Oracle functions to PostgreSQL equivalents
+        """
+        try:
+            excel_path = os.path.join(os.path.dirname(__file__), "oracle_postgresql_mappings.xlsx")
+            if not os.path.exists(excel_path):
+                logger.warning(f"Excel file not found at {excel_path}, using default mappings")
+                return self._get_default_function_mappings()
+            
+            # Read the function mappings sheet
+            df = pd.read_excel(excel_path, sheet_name="function_mappings")
+            
+            # Create mapping dictionary
+            func_mapping = {}
+            for _, row in df.iterrows():
+                oracle_func = str(row.get('Oracle_Function', '')).strip().lower()
+                postgresql_func = str(row.get('PostgreSQL_Function', '')).strip()
+                
+                if oracle_func and postgresql_func and oracle_func != 'nan' and postgresql_func != 'nan':
+                    func_mapping[oracle_func] = postgresql_func
+            
+            logger.info(f"Loaded {len(func_mapping)} function mappings from Excel file")
+            return func_mapping
+            
+        except Exception as e:
+            logger.warning(f"Failed to load function mappings from Excel: {e}, using default mappings")
+            return self._get_default_function_mappings()
+    
+    def _load_type_mappings(self) -> Dict[str, str]:
+        """
+        Load data type mappings from Excel file.
+        
+        This function:
+        1. Looks for the Excel mappings file in the same directory
+        2. Reads the data_type_mappings sheet for Oracle to PostgreSQL type conversions
+        3. Creates a dictionary mapping Oracle types (keys) to PostgreSQL types (values)
+        4. Falls back to default mappings if file not found or errors occur
+        
+        Returns:
+            Dict[str, str]: Mapping of Oracle data types to PostgreSQL data types
+        """
+        debug("Starting to load data type mappings from Excel...")
+        
+        try:
+            # Step 1: Locate the Excel file
+            excel_path = os.path.join(os.path.dirname(__file__), "oracle_postgresql_mappings.xlsx")
+            debug(f"Looking for mappings file at: {excel_path}")
+            
+            if not os.path.exists(excel_path):
+                logger.warning(f"Excel file not found at {excel_path}, using default mappings")
+                default_mappings = self._get_default_type_mappings()
+                debug(f"Using {len(default_mappings)} default type mappings")
+                return default_mappings
+            
+            # Step 2: Read the Excel data
+            debug(f"Reading 'data_type_mappings' sheet from Excel file")
+            df = pd.read_excel(excel_path, sheet_name="data_type_mappings")
+            debug(f"Excel sheet loaded with {len(df)} rows")
+            
+            # Step 3: Create mapping dictionary
+            type_mapping = {}
+            for idx, row in df.iterrows():
+                oracle_type = str(row.get('Oracle_Type', '')).strip().upper()
+                postgresql_type = str(row.get('PostgreSQL_Type', '')).strip()
+                
+                # Skip invalid mappings
+                if oracle_type and postgresql_type and oracle_type != 'NAN' and postgresql_type != 'NAN':
+                    type_mapping[oracle_type] = postgresql_type
+                    debug(f"Mapping: {oracle_type} → {postgresql_type}")
+            
+            logger.info(f"Loaded {len(type_mapping)} type mappings from Excel file")
+            return type_mapping
+            
+        except FileNotFoundError as e:
+            logger.error(f"Excel file not found: {e}")
+            default_mappings = self._get_default_type_mappings()
+            debug(f"Using {len(default_mappings)} default type mappings due to file not found")
+            return default_mappings
+        except pd.errors.EmptyDataError:
+            logger.error("Excel file exists but contains no data")
+            default_mappings = self._get_default_type_mappings()
+            debug(f"Using {len(default_mappings)} default type mappings due to empty data")
+            return default_mappings  
+        except Exception as e:
+            logger.warning(f"Failed to load type mappings from Excel: {e}, using default mappings")
+            default_mappings = self._get_default_type_mappings()
+            debug(f"Using {len(default_mappings)} default type mappings due to: {str(e)}")
+            return self._get_default_type_mappings()
+    
+    def _get_default_function_mappings(self) -> Dict[str, str]:
+        """
+        Get default function mappings as fallback.
+        
+        Returns:
+            Dict[str, str]: Default function mappings
+        """
+        return {
+            "substr": "SUBSTRING",
+            "instr": "POSITION",
+            "length": "LENGTH",
+            "trim": "TRIM",
+            "ltrim": "LTRIM",
+            "rtrim": "RTRIM",
+            "upper": "UPPER",
+            "lower": "LOWER",
+            "replace": "REPLACE",
+            "translate": "TRANSLATE",
+            "lpad": "LPAD",
+            "rpad": "RPAD",
+            "chr": "CHR",
+            "ascii": "ASCII",
+            "concat": "CONCAT",
+            "nvl": "COALESCE",
+            "sysdate": "CURRENT_TIMESTAMP",
+            "current_date": "CURRENT_DATE",
+            "current_timestamp": "CURRENT_TIMESTAMP",
+            "trunc": "DATE_TRUNC",
+            "round": "ROUND",
+            "to_date": "TO_TIMESTAMP",
+            "to_char": "TO_CHAR",
+            "extract": "EXTRACT",
+            "abs": "ABS",
+            "power": "POWER",
+            "sqrt": "SQRT",
+            "exp": "EXP",
+            "ln": "LN",
+            "log": "LOG",
+            "sin": "SIN",
+            "cos": "COS",
+            "tan": "TAN",
+            "to_number": "CAST",
+            "count": "COUNT",
+            "sum": "SUM",
+            "avg": "AVG",
+            "min": "MIN",
+            "max": "MAX",
+            "cast": "CAST",
+            "user": "current_user",
+            "sys_context": "current_setting",
+            "sys_guid": "gen_random_uuid",
+            "nextval": "nextval",
+            "currval": "currval",
+            "raise_application_error": "RAISE EXCEPTION"
+        }
+    
+    def _get_default_type_mappings(self) -> Dict[str, str]:
+        """
+        Get default type mappings as fallback.
+        
+        Returns:
+            Dict[str, str]: Default type mappings
+        """
+        return {
+            "VARCHAR2": "VARCHAR",
+            "NVARCHAR2": "VARCHAR",
+            "NCHAR": "CHAR",
+            "LONG": "TEXT",
+            "RAWID": "VARCHAR",
+            "UROWID": "VARCHAR",
+            "NUMBER": "NUMERIC",
+            "FLOAT": "REAL",
+            "BINARY_FLOAT": "REAL",
+            "BINARY_DOUBLE": "DOUBLE PRECISION",
+            "PLS_INTEGER": "INTEGER",
+            "SIMPLE_INTEGER": "INTEGER",
+            "BINARY_INTEGER": "INTEGER",
+            "POSITIVE": "INTEGER",
+            "NATURAL": "INTEGER",
+            "SIGNTYPE": "SMALLINT",
+            "SMALLINT": "SMALLINT",
+            "INTEGER": "INTEGER",
+            "INT": "INTEGER",
+            "DECIMAL": "DECIMAL",
+            "NUMERIC": "NUMERIC",
+            "REAL": "REAL",
+            "DATE": "TIMESTAMP",
+            "TIMESTAMP WITH TIME ZONE": "TIMESTAMP WITH TIME ZONE",
+            "TIMESTAMP WITH LOCAL TIME ZONE": "TIMESTAMP",
+            "INTERVAL YEAR TO MONTH": "INTERVAL",
+            "INTERVAL DAY TO SECOND": "INTERVAL",
+            "CLOB": "TEXT",
+            "NCLOB": "TEXT",
+            "BLOB": "BYTEA",
+            "BFILE": "TEXT",
+            "XMLTYPE": "XML",
+            "RAW": "BYTEA",
+            "LONG RAW": "BYTEA",
+            "ROWID": "VARCHAR(18)",
+            "BOOLEAN": "BOOLEAN",
+            "NATURALN": "INTEGER",
+            "POSITIVEN": "INTEGER",
+            "SIMPLE_DOUBLE": "DOUBLE PRECISION",
+            "SIMPLE_FLOAT": "REAL"
+        }
+        
     def to_sql(self) -> str:
         """
         Convert the analysis to formatted PostgreSQL SQL.
@@ -143,77 +349,111 @@ class FORMATPostsqlTriggerAnalyzer:
         
     def _convert_data_type(self, oracle_type: str) -> str:
         """
-        Convert Oracle data type to PostgreSQL data type.
+        Convert Oracle data type to PostgreSQL data type using mapping rules.
+        
+        This function handles several data type conversion scenarios:
+        1. %TYPE references (column references in Oracle)
+        2. Base type conversions from the mapping dictionary
+        3. Preserving size parameters for appropriate types
+        4. Special handling for complex types like TIMESTAMP WITH TIME ZONE
         
         Args:
-            oracle_type (str): Oracle data type
+            oracle_type (str): Oracle data type (e.g., VARCHAR2(100), NUMBER(10,2), etc.)
             
         Returns:
             str: Corresponding PostgreSQL data type
         """
-        # Handle %TYPE references - PostgreSQL uses different syntax
+        debug(f"Converting data type: '{oracle_type}'")
+        
+        # Handle empty or None type
+        if not oracle_type:
+            debug("Empty data type provided, defaulting to TEXT")
+            return "TEXT"
+            
+        # Step 1: Handle %TYPE references - PostgreSQL uses different syntax
         if "%TYPE" in oracle_type:
             # In PostgreSQL we would use variable_name%TYPE but for simplicity,
-            # we'll just use TEXT which is a common PostgreSQL type
+            # we'll use TEXT which is a common PostgreSQL type for these cases
+            referenced_var = oracle_type.split("%")[0].strip()
+            debug(f"Converting %TYPE reference '{oracle_type}' → TEXT (referenced variable: {referenced_var})")
             return "TEXT"
         
-        # Comprehensive Oracle to PostgreSQL type mappings based on the Excel file
-        type_mapping = {
-            "VARCHAR2": "VARCHAR",
-            "NVARCHAR2": "VARCHAR",
-            "NCHAR": "CHAR",
-            "LONG": "TEXT",
-            "RAWID": "VARCHAR",
-            "UROWID": "VARCHAR",
-            "NUMBER": "NUMERIC",
-            "FLOAT": "REAL",
-            "BINARY_FLOAT": "REAL",
-            "BINARY_DOUBLE": "DOUBLE PRECISION",
-            "PLS_INTEGER": "INTEGER",
-            "SIMPLE_INTEGER": "INTEGER",
-            "BINARY_INTEGER": "INTEGER",
-            "POSITIVE": "INTEGER",
-            "NATURAL": "INTEGER",
-            "SIGNTYPE": "SMALLINT",
-            "SMALLINT": "SMALLINT",
-            "INTEGER": "INTEGER",
-            "INT": "INTEGER",
-            "DECIMAL": "DECIMAL",
-            "NUMERIC": "NUMERIC",
-            "REAL": "REAL",
-            "DATE": "TIMESTAMP",
-            "TIMESTAMP WITH TIME ZONE": "TIMESTAMP WITH TIME ZONE",
-            "TIMESTAMP WITH LOCAL TIME ZONE": "TIMESTAMP",
-            "INTERVAL YEAR TO MONTH": "INTERVAL",
-            "INTERVAL DAY TO SECOND": "INTERVAL",
-            "CLOB": "TEXT",
-            "NCLOB": "TEXT",
-            "BLOB": "BYTEA",
-            "BFILE": "TEXT",
-            "XMLTYPE": "XML",
-            "RAW": "BYTEA",
-            "LONG RAW": "BYTEA",
-            "ROWID": "VARCHAR(18)",
-            "BOOLEAN": "BOOLEAN",
-            "NATURALN": "INTEGER",
-            "POSITIVEN": "INTEGER",
-            "SIMPLE_DOUBLE": "DOUBLE PRECISION",
-            "SIMPLE_FLOAT": "REAL"
-        }
+        # Step 2: Extract base type (without size parameters)
+        if "(" in oracle_type:
+            base_type = oracle_type.split("(")[0].strip().upper()
+            size_params = oracle_type[oracle_type.find("("):]
+            debug(f"Extracted base type: '{base_type}', size parameters: '{size_params}'")
+        else:
+            base_type = oracle_type.strip().upper()
+            size_params = ""
+            debug(f"Using type without size parameters: '{base_type}'")
         
-        # Extract base type (without size parameters)
-        base_type = oracle_type.split("(")[0].upper() if "(" in oracle_type else oracle_type.upper()
+        # Step 3: Convert to PostgreSQL type if mapping exists, otherwise keep as is
+        if base_type in self.type_mapping:
+            pg_type = self.type_mapping[base_type]
+            debug(f"Found mapping: {base_type} → {pg_type}")
+        else:
+            pg_type = oracle_type
+            debug(f"No mapping found for '{base_type}', keeping original")
         
-        # Convert to PostgreSQL type if mapping exists, otherwise keep as is
-        pg_type = type_mapping.get(base_type, oracle_type)
-        
-        # If original had size parameters, preserve them except for specific types
-        # that don't use size parameters in PostgreSQL
+        # Step 4: Handle size parameters
+        # Types that don't use size parameters in PostgreSQL
         no_size_types = ["DATE", "TIMESTAMP", "TEXT", "BYTEA", "XML", "BOOLEAN", "INTERVAL"]
-        if "(" in oracle_type and base_type not in no_size_types:
-            pg_type = pg_type + oracle_type[oracle_type.find("("):]
-            
+        
+        if size_params and base_type not in no_size_types:
+            # Preserve the size parameters for compatible types
+            pg_type = pg_type + size_params
+            debug(f"Preserving size parameters: '{pg_type}'")
+        elif size_params:
+            debug(f"Removing size parameters for type '{base_type}', final type: '{pg_type}'")
+        
+        # Step 5: Special handling for complex types or edge cases
+        # For example, handle NUMBER with precision differently
+        if base_type == "NUMBER" and "," in size_params:
+            # Extract precision and scale
+            try:
+                precision_scale = size_params.strip("()").split(",")
+                if len(precision_scale) == 2:
+                    precision, scale = precision_scale
+                    debug(f"NUMBER type with precision {precision} and scale {scale}")
+                    # Could apply special rules based on precision/scale here
+            except Exception as e:
+                debug(f"Failed to parse NUMBER precision/scale: {e}")
+        
+        debug(f"Final converted type: '{pg_type}'")
         return pg_type
+    
+    def _load_exception_mappings(self) -> Dict[str, str]:
+        """
+        Load exception mappings from the Excel file.
+        
+        Returns:
+            Dict[str, str]: Mapping of Oracle exceptions to PostgreSQL messages
+        """
+        try:
+            excel_path = os.path.join(os.path.dirname(__file__), "oracle_postgresql_mappings.xlsx")
+            if not os.path.exists(excel_path):
+                logger.warning(f"Excel file not found at {excel_path}, using default exception mappings")
+                return {}
+            
+            # Read the exception mappings sheet
+            df = pd.read_excel(excel_path, sheet_name="exception_mappings")
+            
+            # Create mapping dictionary
+            exception_mapping = {}
+            for _, row in df.iterrows():
+                oracle_exception = str(row.get('Oracle_Exception', '')).strip().upper()
+                postgresql_message = str(row.get('PostgreSQL_Message', '')).strip()
+                
+                if oracle_exception and postgresql_message and oracle_exception != 'NAN' and postgresql_message != 'NAN':
+                    exception_mapping[oracle_exception] = postgresql_message
+            
+            logger.info(f"Loaded {len(exception_mapping)} exception mappings from Excel file")
+            return exception_mapping
+            
+        except Exception as e:
+            logger.warning(f"Failed to load exception mappings from Excel: {e}, using default exception mappings")
+            return {}
         
     def _render_main_block(self, node: Dict[str, Any], indent_level: int) -> List[str]:
         """
@@ -547,58 +787,8 @@ class FORMATPostsqlTriggerAnalyzer:
         func_name = node.get("function_name", "").lower()
         params = node.get("parameter", {})
         
-        # Function name conversion using mapping from Excel
-        func_mapping = {
-            "substr": "SUBSTRING",
-            "instr": "POSITION",
-            "length": "LENGTH",
-            "trim": "TRIM",
-            "ltrim": "LTRIM",
-            "rtrim": "RTRIM",
-            "upper": "UPPER",
-            "lower": "LOWER",
-            "replace": "REPLACE",
-            "translate": "TRANSLATE",
-            "lpad": "LPAD",
-            "rpad": "RPAD",
-            "chr": "CHR",
-            "ascii": "ASCII",
-            "concat": "CONCAT",
-            "nvl": "COALESCE",
-            "sysdate": "CURRENT_TIMESTAMP",
-            "current_date": "CURRENT_DATE",
-            "current_timestamp": "CURRENT_TIMESTAMP",
-            "trunc": "DATE_TRUNC",
-            "round": "ROUND",
-            "to_date": "TO_TIMESTAMP",
-            "to_char": "TO_CHAR",
-            "extract": "EXTRACT",
-            "abs": "ABS",
-            "power": "POWER",
-            "sqrt": "SQRT",
-            "exp": "EXP",
-            "ln": "LN",
-            "log": "LOG",
-            "sin": "SIN",
-            "cos": "COS",
-            "tan": "TAN",
-            "to_number": "CAST",
-            "count": "COUNT",
-            "sum": "SUM",
-            "avg": "AVG",
-            "min": "MIN",
-            "max": "MAX",
-            "cast": "CAST",
-            "user": "current_user",
-            "sys_context": "current_setting",
-            "sys_guid": "gen_random_uuid",
-            "nextval": "nextval",
-            "currval": "currval",
-            "raise_application_error": "RAISE EXCEPTION"
-        }
-        
         # Convert the function name to PostgreSQL equivalent if available
-        pg_func = func_mapping.get(func_name, func_name)
+        pg_func = self.func_mapping.get(func_name, func_name)
         
         # Special handling for raise_application_error in Oracle
         # In PostgreSQL, we use RAISE EXCEPTION
@@ -635,8 +825,14 @@ class FORMATPostsqlTriggerAnalyzer:
         # DUAL table is not needed in PostgreSQL
         pg_sql = re.sub(r'\bFROM\s+DUAL\b', '', pg_sql, flags=re.IGNORECASE)
         
-        # Oracle's NVL -> PostgreSQL's COALESCE
-        pg_sql = re.sub(r'\bNVL\s*\(', 'COALESCE(', pg_sql, flags=re.IGNORECASE)
+        # Apply function mappings from Excel file
+        for oracle_func, postgresql_func in self.func_mapping.items():
+            # Handle function calls with parentheses
+            pg_sql = re.sub(rf'\b{oracle_func}\s*\(', f'{postgresql_func}(', pg_sql, flags=re.IGNORECASE)
+            # Handle standalone function names
+            pg_sql = re.sub(rf'\b{oracle_func}\b', postgresql_func, pg_sql, flags=re.IGNORECASE)
+        
+        # Oracle's NVL2 -> PostgreSQL's CASE WHEN (not in function mappings)
         pg_sql = re.sub(r'\bNVL2\s*\(', 'CASE WHEN ', pg_sql, flags=re.IGNORECASE)
         
         # Oracle's DECODE -> PostgreSQL's CASE
@@ -647,24 +843,6 @@ class FORMATPostsqlTriggerAnalyzer:
         
         # Oracle's CONNECT BY hierarchy -> PostgreSQL recursive CTE
         pg_sql = re.sub(r'\bCONNECT\s+BY\b', '/* CONNECT BY - replace with recursive CTE */', pg_sql, flags=re.IGNORECASE)
-        
-        # Oracle's EXTRACT(field FROM date) is similar in PostgreSQL
-        # But some functions need conversion:
-        
-        # Oracle's TO_DATE -> PostgreSQL's TO_TIMESTAMP
-        pg_sql = re.sub(r'\bTO_DATE\s*\(', 'TO_TIMESTAMP(', pg_sql, flags=re.IGNORECASE)
-        
-        # Oracle's TRUNC for dates -> PostgreSQL's DATE_TRUNC
-        pg_sql = re.sub(r'\bTRUNC\s*\(([^\)]+)\)', r'DATE_TRUNC(\1)', pg_sql, flags=re.IGNORECASE)
-        
-        # Oracle's SYSDATE -> PostgreSQL's CURRENT_TIMESTAMP
-        pg_sql = re.sub(r'\bSYSDATE\b', 'CURRENT_TIMESTAMP', pg_sql, flags=re.IGNORECASE)
-        
-        # Oracle's SYS_CONTEXT -> PostgreSQL's current_setting
-        pg_sql = re.sub(r'\bSYS_CONTEXT\s*\(', 'current_setting(', pg_sql, flags=re.IGNORECASE)
-        
-        # Oracle's USER -> PostgreSQL's current_user
-        pg_sql = re.sub(r'\bUSER\b', 'current_user', pg_sql, flags=re.IGNORECASE)
         
         # Oracle's EMPTY_CLOB() -> PostgreSQL NULL (no direct equivalent)
         pg_sql = re.sub(r'\bEMPTY_CLOB\s*\(\)', 'NULL', pg_sql, flags=re.IGNORECASE)
@@ -698,36 +876,8 @@ class FORMATPostsqlTriggerAnalyzer:
         if match:
             exception_name = match.group(1)
             
-            # Exception name to message mapping from Excel
-            exception_mapping = {
-                "INVALID_THEME_NO": "This is not a valid Theme No",
-                "DELETE_NO_MORE_POSSIBLE": "Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted",
-                "THEME_NO_ONLY_INSERT": "Theme No cannot be updated",
-                "DESCRIPTION_TOO_LONG": "The automatically generated Theme Description is too long",
-                "THEME_DESC_PROPOSAL_TOO_LONG": "The automatically generated Short Description Proposal is too long",
-                "THEME_DESC_ALT_TOO_LONG": "The automatically generated Downstream Theme Description is too long",
-                "THEME_NO_CANNOT_BE_INSERTED": "This Theme No already exists",
-                "ONLYONEOFFICIALCHANGEPERDAY": "Official Change for this Theme No and Day already exists",
-                "INSERTSMUSTBEOFFICIAL": "New Themes can only be inserted by Official Changes",
-                "THEMEDESCRIPTIONMANDATORY": "If Pharma Rx Portfolio Project is set to \"No\", then the Theme Description must be filled",
-                "THEME_DESC_NOT_UNIQUE": "This Theme Description already exists",
-                "IN_PREP_NOT_PORTF_PROJ": "MDM_V_THEMES_IOF: In-prep theme must be portfolio project",
-                "IN_PREP_NOT_CLOSED": "MDM_V_THEMES_IOF: In-prep status validation failed",
-                "INVALID_MOLECULE_ID": "This is not a valid Molecule ID",
-                "SEC_MOL_LIST_NOT_EMPTY": "MDM_V_THEMES_IOF: Secondary molecule list not empty",
-                "ADMIN_UPDATE_ONLY": "MDM_V_THEMES_IOF: Admin access required for this operation",
-                "PORTF_PROJ_MOL_CRE_ERR": "MDM_V_THEMES_IOF: Portfolio project molecule creation error",
-                "DEBUGGING": "Debug in Themes IOF standard",
-                "ERR_MAP_EXISTS": "MDM_THEME_MOLECULE_MAP_IOF: Mapping already exists",
-                "ERR_MOLEC_ID_MISSING": "MDM_THEME_MOLECULE_MAP_IOF: Molecule ID is missing",
-                "ERR_NO_PORTF_MOLECULE_LEFT": "MDM_THEME_MOLECULE_MAP_IOF: No portfolio molecule left",
-                "ERR_UPD_INV_MAP": "MDM_THEME_MOLECULE_MAP_IOF: Invalid mapping update",
-                "ERR_INS_INV_MAP": "MDM_THEME_MOLECULE_MAP_IOF: Invalid mapping insert",
-                "ERR_INV_MOL_SEQUENCE": "MDM_THEME_MOLECULE_MAP_IOF: Invalid molecule sequence"
-            }
-            
-            # Get specific message or use exception name as message
-            message = exception_mapping.get(exception_name.upper(), exception_name)
+            # Get specific message from loaded exception mappings or use exception name as message
+            message = self.exception_mapping.get(exception_name.upper(), exception_name)
             return f"RAISE EXCEPTION '{message}';"
         
         return sql
@@ -768,11 +918,12 @@ class FORMATPostsqlTriggerAnalyzer:
             
         pg_condition = condition
         
-        # Replace Oracle's NVL with PostgreSQL's COALESCE
-        pg_condition = re.sub(r'\bNVL\s*\(', 'COALESCE(', pg_condition, flags=re.IGNORECASE)
-        
-        # Replace Oracle's SYSDATE with PostgreSQL's CURRENT_TIMESTAMP
-        pg_condition = re.sub(r'\bSYSDATE\b', 'CURRENT_TIMESTAMP', pg_condition, flags=re.IGNORECASE)
+        # Apply function mappings from Excel file
+        for oracle_func, postgresql_func in self.func_mapping.items():
+            # Handle function calls with parentheses
+            pg_condition = re.sub(rf'\b{oracle_func}\s*\(', f'{postgresql_func}(', pg_condition, flags=re.IGNORECASE)
+            # Handle standalone function names
+            pg_condition = re.sub(rf'\b{oracle_func}\b', postgresql_func, pg_condition, flags=re.IGNORECASE)
         
         return pg_condition
         

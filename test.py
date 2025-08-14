@@ -1,11 +1,28 @@
-import os
-import json
-import re
-import copy
-from datetime import datetime
+#!/usr/bin/env python3
+"""
+Entry point for converting Oracle trigger SQL files to structured JSON analysis
+and rendering them back into formatted PL/SQL.
 
-from typing import Any, Dict, List, Tuple, Union
+High-level flow:
+- Read all `*.sql` files from `files/oracle`.
+- For each file, build an `OracleTriggerAnalyzer` to parse and analyze SQL into JSON.
+- Write the analysis JSON into `files/format_json/trigger{N}_analysis.json`.
+- Read each `*_analysis.json` and render it back to PL/SQL with
+  `FORMATOracleTriggerAnalyzer`, writing to `files/format_sql/trigger{N}.sql`.
+
+Logging:
+- All operations are logged to both console and a timestamped log file in 'output/'.
+- The log file name format is 'oracle_conversion_YYYYMMDD_HHMMSS.log'.
+- Log levels: DEBUG for detailed operations, INFO for main steps, ERROR for failures.
+"""
+
+import json
+import os
+import re
+import time
+from typing import Any, Dict, List, Tuple
 from utilities.common import (
+    clean_json_files,
     logger,
     setup_logging,
     debug,
@@ -22,20 +39,35 @@ from utilities.common import (
     log_performance,
 )
 
-class FORMATPostsqlTriggerAnalyzer:
-    def __init__(self, json_data):
-        self.json_data = json_data
+from utilities.OracleTriggerAnalyzer import OracleTriggerAnalyzer
+from utilities.FORMATOracleTriggerAnalyzer import FORMATOracleTriggerAnalyzer
+from utilities.JSONTOPLJSON import JSONTOPLJSON
+from utilities.FORMATPostsqlTriggerAnalyzer import FORMATPostsqlTriggerAnalyzer
 
-    def to_sql(self) -> str:
-        return self.json_data
+from datetime import datetime
 
+
+def convert_complex_structure_to_sql(complex_structure):
+    """
+    Convert the complex PL/JSON structure to a proper PostgreSQL SQL string.
+
+    Args:
+        complex_structure: The complex structure from PL/JSON
+
+    Returns:
+        str: The PostgreSQL SQL string
+    """
+
+    analyzer = FORMATPostsqlTriggerAnalyzer(complex_structure)
+    sql_content = analyzer.to_sql()
+    return sql_content
 def ensure_dir(directory: str) -> None:
     """
     Ensure that the specified directory exists, creating it if necessary.
-    
+
     Args:
         directory (str): The directory path to ensure exists
-        
+
     This function creates the directory and all parent directories if they don't exist.
     """
     if not os.path.exists(directory):
@@ -54,14 +86,14 @@ def process_files(
 ) -> None:
     """
     Process files from source_dir to target_dir using the provided processor function.
-    
+
     This function:
     1. Ensures the target directory exists
     2. Finds all files matching the pattern in the source directory
     3. Extracts trigger numbers from filenames
     4. Processes each file using the provided processor function
     5. Handles errors gracefully with detailed logging
-    
+
     Args:
         source_dir (str): Source directory containing files to process
         target_dir (str): Target directory for processed files
@@ -95,16 +127,18 @@ def process_files(
     # Process each file
     processed_count = 0
     error_count = 0
-    
+
     i = 1
     while i <= len(files):
-        file_name = files[i-1]
+        file_name = files[i - 1]
         debug("=== Processing file %d/%d: %s ===", i, len(files), file_name)
         try:
             # Extract trigger number from filename using regex
             match = re.search(r"trigger(\d+)", file_name)
             if not match:
-                debug("Filename '%s' does not match expected pattern; skipping", file_name)
+                debug(
+                    "Filename '%s' does not match expected pattern; skipping", file_name
+                )
                 i += 1
                 continue
 
@@ -124,7 +158,7 @@ def process_files(
 
             info("✓ Created %s", output_filename)
             processed_count += 1
-            
+
         except FileNotFoundError as e:
             error("File not found: %s - %s", file_name, str(e))
             error_count += 1
@@ -143,45 +177,142 @@ def process_files(
         warning("Failed to process: %d files", error_count)
 
 
-def json_to_pl_sql_processor(src_path: str, out_path: str, trigger_num: str) -> None:
+def sql_to_json_processor(src_path: str, out_path: str, trigger_num: str) -> None:
+    """
+    Process a SQL file to JSON analysis.
+
+    This function:
+    1. Reads the SQL file content
+    2. Creates an OracleTriggerAnalyzer instance
+    3. Generates JSON analysis
+    4. Writes the analysis to the output file
+
+    Args:
+        src_path (str): Path to the source SQL file
+        out_path (str): Path to the output JSON file
+        trigger_num (str): Trigger number extracted from filename
+    """
+    debug("=== SQL to JSON processing for trigger %s ===", trigger_num)
+
+    # Step 1: Read the SQL file content
+    debug("Reading SQL file: %s", src_path)
+    try:
+        with open(src_path, "r", encoding="utf-8") as f:
+            sql_content: str = f.read()
+        debug("Successfully read %d characters from %s", len(sql_content), src_path)
+    except UnicodeDecodeError as e:
+        error("Unicode decode error reading %s: %s", src_path, str(e))
+        raise
+    except Exception as e:
+        error("Error reading file %s: %s", src_path, str(e))
+        raise
+
+    # Step 2: Analyze the SQL content
+    debug("Creating OracleTriggerAnalyzer instance...")
+    try:
+        analyzer = OracleTriggerAnalyzer(sql_content)
+        debug("OracleTriggerAnalyzer created successfully")
+    except Exception as e:
+        error("Failed to create OracleTriggerAnalyzer: %s", str(e))
+        raise
+
+    # Step 3: Generate JSON analysis
+    debug("Generating JSON analysis...")
+    try:
+        json_content: Dict[str, Any] = analyzer.to_json()
+        debug("JSON analysis generated successfully")
+        debug("Generated JSON with keys: %s", list(json_content.keys()))
+
+        # Log some statistics about the analysis
+        declarations = json_content.get("declarations", {})
+        variables = len(declarations.get("variables", []))
+        constants = len(declarations.get("constants", []))
+        exceptions = len(declarations.get("exceptions", []))
+        comments = len(json_content.get("sql_comments", []))
+        debug(
+            "Analysis statistics: %d vars, %d consts, %d excs, %d comments",
+            variables,
+            constants,
+            exceptions,
+            comments,
+        )
+
+    except Exception as e:
+        error("Failed to generate JSON analysis: %s", str(e))
+        raise
+
+    # Step 4: Write to JSON file
+    debug("Writing analysis JSON to: %s", out_path)
+    try:
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(json_content, f, indent=2)
+        debug("Successfully wrote analysis JSON to %s", out_path)
+    except Exception as e:
+        error("Failed to write JSON file %s: %s", out_path, str(e))
+        raise
+
+    debug("=== SQL to JSON processing complete for trigger %s ===", trigger_num)
+
+
+def read_oracle_triggers_to_json() -> None:
+    """
+    Convert all Oracle trigger SQL files into analysis JSON files.
+
+    This function processes all .sql files in the files/oracle directory,
+    converting them to structured JSON analysis files in the files/format_json directory.
+    """
+    info("=== Starting Oracle triggers to JSON conversion ===")
+    process_files(
+        source_dir="files/oracle",
+        target_dir="files/format_json",
+        file_pattern=".sql",
+        output_suffix="_analysis.json",
+        processor_func=sql_to_json_processor,
+    )
+    info("=== Oracle triggers to JSON conversion complete ===")
+
+
+def json_to_sql_processor(src_path: str, out_path: str, trigger_num: str) -> None:
     """
     Process a JSON analysis file to formatted SQL.
-    
+
     This function:
     1. Reads the JSON analysis file
-    2. Creates a FORMATPostsqlTriggerAnalyzer instance
+    2. Creates a FORMATOracleTriggerAnalyzer instance
     3. Renders the SQL content
     4. Writes the formatted SQL to the output file
-    
+
     Args:
         src_path (str): Path to the source JSON analysis file
         out_path (str): Path to the output SQL file
         trigger_num (str): Trigger number extracted from filename
     """
     debug("=== JSON to SQL processing for trigger %s ===", trigger_num)
-    
+
     # Step 1: Read the JSON file
     debug("Reading JSON analysis file: %s", src_path)
     try:
         with open(src_path, "r", encoding="utf-8") as f:
             analysis = json.load(f)
-        logger.debug(f"Successfully loaded analysis JSON with keys: {list(analysis.keys())}")
+        logger.debug(
+            f"Successfully loaded analysis JSON with keys: {list(analysis.keys())}"
+        )
     except json.JSONDecodeError as e:
         error("JSON decode error reading %s: %s", src_path, str(e))
         raise
     except Exception as e:
         error("Error reading JSON file %s: %s", src_path, str(e))
         raise
-    
+
     # Step 2: Render the SQL
-    debug("Creating FORMATPostsqlTriggerAnalyzer instance...")
+    debug("Creating FORMATOracleTriggerAnalyzer instance...")
     try:
-        analyzer = FORMATPostsqlTriggerAnalyzer(analysis)
-        debug("FORMATPostsqlTriggerAnalyzer created successfully")
+        analyzer = FORMATOracleTriggerAnalyzer(analysis)
+        debug("FORMATOracleTriggerAnalyzer created successfully")
     except Exception as e:
-        error("Failed to create FORMATPostsqlTriggerAnalyzer: %s", str(e))
+        error("Failed to create FORMATOracleTriggerAnalyzer: %s", str(e))
         raise
-    
+
     # Step 3: Generate SQL content
     debug("Rendering SQL from analysis...")
     try:
@@ -191,7 +322,7 @@ def json_to_pl_sql_processor(src_path: str, out_path: str, trigger_num: str) -> 
     except Exception as e:
         error("Failed to render SQL: %s", str(e))
         raise
-    
+
     # Step 4: Write to SQL file
     debug("Writing formatted SQL to: %s", out_path)
     try:
@@ -203,32 +334,513 @@ def json_to_pl_sql_processor(src_path: str, out_path: str, trigger_num: str) -> 
         raise
 
     debug("=== JSON to SQL processing complete for trigger %s ===", trigger_num)
-    
-    
-    
-def read_json_to_postsql_triggers() -> None:
+
+
+def read_json_to_oracle_triggers() -> None:
     """
     Render formatted PL/SQL for each analysis JSON file.
-    
+
     This function processes all _analysis.json files in the files/format_json directory,
     converting them to formatted SQL files in the files/format_sql directory.
     """
-    info("=== Starting JSON to Postsql triggers conversion ===")
+    info("=== Starting JSON to Oracle triggers conversion ===")
     process_files(
         source_dir="files/format_json",
-        target_dir="files/format_plsql",
+        target_dir="files/format_sql",
         file_pattern="_analysis.json",
         output_suffix=".sql",
-        processor_func=json_to_pl_sql_processor
+        processor_func=json_to_sql_processor,
     )
-    info("=== JSON to Postsql triggers conversion complete ===")
-    
+    info("=== JSON to Oracle triggers conversion complete ===")
+
+
+def validate_conversion() -> None:
+    """
+    Validate the conversion by comparing original and converted files.
+
+    This function:
+    1. Checks that all original files have corresponding converted files
+    2. Compares file counts between source and target directories
+    3. Reports any missing or mismatched files
+    4. Provides detailed validation statistics
+    """
+    info("=== Starting conversion validation ===")
+
+    # Get all original SQL files
+    oracle_dir = "files/oracle"
+    format_sql_dir = "files/format_sql"
+
+    debug("Checking original files in: %s", oracle_dir)
+    try:
+        original_files = [f for f in os.listdir(oracle_dir) if f.endswith(".sql")]
+        debug("Found %d original SQL files", len(original_files))
+    except FileNotFoundError:
+        error("Oracle directory not found: %s", oracle_dir)
+        return
+    except PermissionError:
+        error("Permission denied accessing oracle directory: %s", oracle_dir)
+        return
+
+    debug("Checking converted files in: %s", format_sql_dir)
+    try:
+        converted_files = [f for f in os.listdir(format_sql_dir) if f.endswith(".sql")]
+        debug("Found %d converted SQL files", len(converted_files))
+    except FileNotFoundError:
+        error("Converted SQL directory not found: %s", format_sql_dir)
+        return
+    except PermissionError:
+        error("Permission denied accessing converted SQL directory: %s", format_sql_dir)
+        return
+
+    info(
+        "Validation summary: %d original files and %d converted files",
+        len(original_files),
+        len(converted_files),
+    )
+
+    # Compare file counts
+    if len(original_files) != len(converted_files):
+        warning(
+            "File count mismatch: %d original vs %d converted",
+            len(original_files),
+            len(converted_files),
+        )
+    else:
+        info("✓ File count validation passed")
+
+    # Check each converted file exists
+    missing_files = []
+    found_files = []
+
+    i = 0
+    while i < len(original_files):
+        original_file = original_files[i]
+        trigger_match = re.search(r"trigger(\d+)", original_file)
+        if trigger_match:
+            trigger_num = trigger_match.group(1)
+            expected_converted = f"trigger{trigger_num}.sql"
+            if expected_converted not in converted_files:
+                warning(
+                    "Missing converted file for %s: expected %s",
+                    original_file,
+                    expected_converted,
+                )
+                missing_files.append(expected_converted)
+            else:
+                debug("✓ Found converted file: %s", expected_converted)
+                found_files.append(expected_converted)
+        i += 1
+
+    # Report validation results
+    if missing_files:
+        warning("Missing %d converted files: %s", len(missing_files), missing_files)
+    else:
+        info("✓ All expected converted files found")
+
+    if found_files:
+        info("Successfully validated %d converted files", len(found_files))
+
+    info("=== Conversion validation complete ===")
+
+
+def read_json_to_oracle_triggers() -> None:
+    # Define directories
+    json_dir = "files/format_json"
+    sql_out_dir = "files/format_pl_json"
+
+    # Ensure directories exist
+    if not os.path.exists(json_dir):
+        os.makedirs(json_dir)
+    if not os.path.exists(sql_out_dir):
+        os.makedirs(sql_out_dir)
+
+    # Process each analysis JSON file
+    json_files = [f for f in os.listdir(json_dir) if f.endswith("_analysis.json")]
+
+    i = 0
+    while i < len(json_files):
+        json_file = json_files[i]
+        match = re.search(r"trigger(\d+)_analysis\.json$", json_file)
+        if not match:
+            # Skip non-trigger analysis files
+            i += 1
+            continue
+        trigger_num = match.group(1)
+        json_path = os.path.join(json_dir, json_file)
+        with open(json_path, "r", encoding="utf-8") as f:
+            analysis = json.load(f)
+
+        analyzer = JSONTOPLJSON(analysis)
+        sql_content = analyzer.to_sql()
+
+        # Save as JSON with the new structure
+        out_filename = f"trigger{trigger_num}.json"
+        out_path = os.path.join(sql_out_dir, out_filename)
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(sql_content)
+        print(f"Created {out_filename}")
+        i += 1
+
+
+def json_to_pl_sql_processor(src_path: str, out_path: str, trigger_num: str) -> None:
+    """
+    Process a JSON analysis file to formatted SQL.
+
+    This function:
+    1. Reads the JSON analysis file
+    2. Creates a FORMATPostsqlTriggerAnalyzer instance
+    3. Renders the SQL content
+    4. Writes the formatted SQL to the output file
+
+    Args:
+        src_path (str): Path to the source JSON analysis file
+        out_path (str): Path to the output SQL file
+        trigger_num (str): Trigger number extracted from filename
+    """
+    debug("=== JSON to SQL processing for trigger %s ===", trigger_num)
+
+    # Step 1: Read the JSON file
+    debug("Reading JSON analysis file: %s", src_path)
+    try:
+        with open(src_path, "r", encoding="utf-8") as f:
+            analysis = json.load(f)
+        logger.debug(
+            f"Successfully loaded analysis JSON with keys: {list(analysis.keys())}"
+        )
+    except json.JSONDecodeError as e:
+        error("JSON decode error reading %s: %s", src_path, str(e))
+        raise
+    except Exception as e:
+        error("Error reading JSON file %s: %s", src_path, str(e))
+        raise
+
+    # Step 2: Render the SQL
+    debug("Creating FORMATPostsqlTriggerAnalyzer instance...")
+    try:
+        analyzer = FORMATPostsqlTriggerAnalyzer(analysis)
+        debug("FORMATPostsqlTriggerAnalyzer created successfully")
+    except Exception as e:
+        error("Failed to create FORMATPostsqlTriggerAnalyzer: %s", str(e))
+        raise
+
+    # Step 3: Generate SQL content
+    debug("Rendering SQL from analysis...")
+    try:
+        sql_content: str = analyzer.to_sql()
+        debug(f"SQL rendering completed successfully")
+        debug(f"Rendered SQL length: {len(sql_content)} characters")
+    except Exception as e:
+        error("Failed to render SQL: %s", str(e))
+        raise
+
+    # Step 4: Write to SQL file
+    debug("Writing formatted SQL to: %s", out_path)
+    try:
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(sql_content)
+        debug(f"Successfully wrote formatted SQL to {out_path}")
+    except Exception as e:
+        error("Failed to write SQL file %s: %s", out_path, str(e))
+        raise
+
+    debug("=== JSON to SQL processing complete for trigger %s ===", trigger_num)
+
+
+def read_json_to_postsql_triggers() -> None:
+    """
+    Convert PL/JSON files to PostgreSQL format.
+
+    This function processes all .json files in the files/format_pl_json directory,
+    converting them to PostgreSQL format files in the files/format_plsql directory.
+    """
+    info("=== Starting PL/JSON to PostgreSQL format conversion ===")
+    process_files(
+        source_dir="files/format_pl_json",
+        target_dir="files/format_plsql",
+        file_pattern=".json",
+        output_suffix="_postgresql.json",
+        processor_func=convert_pl_json_to_postgresql_format,
+    )
+    info("=== PL/JSON to PostgreSQL format conversion complete ===")
+
+
+def convert_pl_json_to_postgresql_format(
+    src_path: str, out_path: str, trigger_num: str
+) -> None:
+    """
+    Convert PL/JSON files to PostgreSQL format with on_insert, on_update, on_delete structure.
+
+    This function:
+    1. Reads the PL/JSON file from format_pl_json directory
+    2. Converts it to the expected PostgreSQL format with on_insert, on_update, on_delete sections
+    3. Writes the converted format to format_plsql directory
+
+    Args:
+        src_path (str): Path to the source PL/JSON file
+        out_path (str): Path to the output PostgreSQL format file
+        trigger_num (str): Trigger number extracted from filename
+    """
+    debug("=== Converting PL/JSON to PostgreSQL format for trigger %s ===", trigger_num)
+
+    # Step 1: Read the PL/JSON file
+    debug("Reading PL/JSON file: %s", src_path)
+    try:
+        with open(src_path, "r", encoding="utf-8") as f:
+            pl_json_data = json.load(f)
+        debug(
+            "Successfully loaded PL/JSON data with keys: %s", list(pl_json_data.keys())
+        )
+    except json.JSONDecodeError as e:
+        error("JSON decode error reading %s: %s", src_path, str(e))
+        raise
+    except Exception as e:
+        error("Error reading PL/JSON file %s: %s", src_path, str(e))
+        raise
+
+    # Step 2: Convert to PostgreSQL format
+    debug("Converting to PostgreSQL format...")
+    try:
+        # Create the expected PostgreSQL format structure
+        postgresql_format = {"on_insert": [], "on_update": [], "on_delete": []}
+
+        # Convert the PL/JSON structure to PostgreSQL format
+        # The PL/JSON files have on_insert, on_update, on_delete arrays with complex objects
+        # We need to convert these to simple SQL strings
+
+        # Handle on_insert
+        if "on_insert" in pl_json_data and pl_json_data["on_insert"]:
+            # Convert the complex structure to a simple SQL string
+            sql_content = convert_complex_structure_to_sql(pl_json_data["on_insert"])
+            postgresql_format["on_insert"].append({"type": "sql", "sql": sql_content})
+
+        # Handle on_update
+        if "on_update" in pl_json_data and pl_json_data["on_update"]:
+            sql_content = convert_complex_structure_to_sql(pl_json_data["on_update"])
+            postgresql_format["on_update"].append({"type": "sql", "sql": sql_content})
+
+        # Handle on_delete
+        if "on_delete" in pl_json_data and pl_json_data["on_delete"]:
+            sql_content = convert_complex_structure_to_sql(pl_json_data["on_delete"])
+            postgresql_format["on_delete"].append({"type": "sql", "sql": sql_content})
+
+        debug("PostgreSQL format conversion completed")
+
+    except Exception as e:
+        error("Failed to convert to PostgreSQL format: %s", str(e))
+        raise
+
+    # Step 3: Write to PostgreSQL format file
+    debug("Writing PostgreSQL format to: %s", out_path)
+    try:
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(postgresql_format, f, indent=4)
+        debug("Successfully wrote PostgreSQL format to %s", out_path)
+    except Exception as e:
+        error("Failed to write PostgreSQL format file %s: %s", out_path, str(e))
+        raise
+
+    debug(
+        "=== PL/JSON to PostgreSQL format conversion complete for trigger %s ===",
+        trigger_num,
+    )
+
+
+
+
+def convert_postgresql_format_to_sql(
+    src_path: str, out_path: str, trigger_num: str
+) -> None:
+    """
+    Convert PostgreSQL format JSON files to actual SQL files.
+
+    This function:
+    1. Reads the PostgreSQL format JSON file
+    2. Extracts the SQL content from on_insert, on_update, on_delete sections
+    3. Writes the SQL content to a .sql file
+
+    Args:
+        src_path (str): Path to the source PostgreSQL format JSON file
+        out_path (str): Path to the output SQL file
+        trigger_num (str): Trigger number extracted from filename
+    """
+    debug("=== Converting PostgreSQL format to SQL for trigger %s ===", trigger_num)
+
+    # Step 1: Read the PostgreSQL format JSON file
+    debug("Reading PostgreSQL format file: %s", src_path)
+    try:
+        with open(src_path, "r", encoding="utf-8") as f:
+            postgresql_data = json.load(f)
+        debug(
+            "Successfully loaded PostgreSQL format data with keys: %s",
+            list(postgresql_data.keys()),
+        )
+    except json.JSONDecodeError as e:
+        error("JSON decode error reading %s: %s", src_path, str(e))
+        raise
+    except Exception as e:
+        error("Error reading PostgreSQL format file %s: %s", src_path, str(e))
+        raise
+
+    # Step 2: Extract SQL content
+    debug("Extracting SQL content...")
+    try:
+        sql_lines = []
+        sql_lines.append(f"-- PostgreSQL Trigger for trigger{trigger_num}")
+        sql_lines.append(
+            f"-- Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+        sql_lines.append("")
+
+        # Add on_insert SQL
+        if "on_insert" in postgresql_data and postgresql_data["on_insert"]:
+            sql_lines.append("-- ON INSERT")
+            for item in postgresql_data["on_insert"]:
+                if item.get("type") == "sql":
+                    sql_lines.append(item["sql"])
+            sql_lines.append("")
+
+        # Add on_update SQL
+        if "on_update" in postgresql_data and postgresql_data["on_update"]:
+            sql_lines.append("-- ON UPDATE")
+            for item in postgresql_data["on_update"]:
+                if item.get("type") == "sql":
+                    sql_lines.append(item["sql"])
+            sql_lines.append("")
+
+        # Add on_delete SQL
+        if "on_delete" in postgresql_data and postgresql_data["on_delete"]:
+            sql_lines.append("-- ON DELETE")
+            for item in postgresql_data["on_delete"]:
+                if item.get("type") == "sql":
+                    sql_lines.append(item["sql"])
+            sql_lines.append("")
+
+        sql_content = "\n".join(sql_lines)
+        debug("SQL content extraction completed")
+
+    except Exception as e:
+        error("Failed to extract SQL content: %s", str(e))
+        raise
+
+    # Step 3: Write to SQL file
+    debug("Writing SQL to: %s", out_path)
+    try:
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(sql_content)
+        debug("Successfully wrote SQL to %s", out_path)
+    except Exception as e:
+        error("Failed to write SQL file %s: %s", out_path, str(e))
+        raise
+
+    debug(
+        "=== PostgreSQL format to SQL conversion complete for trigger %s ===",
+        trigger_num,
+    )
+
+
+def convert_postgresql_format_files_to_sql() -> None:
+    """
+    Convert PostgreSQL format JSON files to actual SQL files.
+
+    This function processes all _postgresql.json files in the files/format_plsql directory,
+    converting them to actual SQL files in the same directory.
+    """
+    info("=== Starting PostgreSQL format to SQL conversion ===")
+    process_files(
+        source_dir="files/format_plsql",
+        target_dir="files/format_plsql",
+        file_pattern="_postgresql.json",
+        output_suffix=".sql",
+        processor_func=convert_postgresql_format_to_sql,
+    )
+    info("=== PostgreSQL format to SQL conversion complete ===")
+
+
+def main() -> None:
+    """
+    Main execution function for the Oracle trigger conversion process.
+
+    This function orchestrates the entire conversion workflow:
+    1. SQL to JSON conversion
+    2. JSON to SQL conversion
+    3. Validation of results
+
+    The function includes comprehensive error handling and logging.
+    """
+    start_time = time.time()
+
+    try:
+        # Set up logging for the main script
+        info("=== Starting Oracle Trigger Conversion Process ===")
+        main_logger, log_path = setup_logging()
+        info("Logging to: %s", log_path)
+
+        # Step 1: Convert SQL to JSON
+        info("Step 1: Converting Oracle SQL files to JSON analysis...")
+        step1_start = time.time()
+        read_oracle_triggers_to_json()
+        step1_duration = time.time() - step1_start
+        info("✓ JSON conversion complete! (Duration: %.2f seconds)", step1_duration)
+
+        # Step 2: Convert JSON back to SQL
+        info("Step 2: Converting JSON analysis back to formatted SQL...")
+        step2_start = time.time()
+        read_json_to_oracle_triggers()
+        step2_duration = time.time() - step2_start
+        info("✓ SQL formatting complete! (Duration: %.2f seconds)", step2_duration)
+
+        # Step 3: Clean JSON
+        info("Step 3: Cleaning JSON...")
+        step3_start = time.time()
+        clean_json_files()
+        step3_duration = time.time() - step3_start
+        info("✓ JSON cleaning complete! (Duration: %.2f seconds)", step3_duration)
+
+        # Step 3: Validate conversion
+        info("Step 3: Validating conversion results...")
+        step3_start = time.time()
+        validate_conversion()
+        step3_duration = time.time() - step3_start
+        info("✓ Validation complete! (Duration: %.2f seconds)", step3_duration)
+
+        # Step 4: Convert JSON to PL/JSON
+        info("Step 4: Converting JSON to PL/JSON...")
+        step4_start = time.time()
+        read_json_to_oracle_triggers()
+        step4_duration = time.time() - step4_start
+        info("✓ PL/JSON conversion complete! (Duration: %.2f seconds)", step4_duration)
+
+        # Step 5: Convert JSON to PL/SQL
+        info("Step 5: Converting JSON to PL/SQL...")
+        step5_start = time.time()
+        read_json_to_postsql_triggers()
+        step5_duration = time.time() - step5_start
+        info("✓ PL/SQL conversion complete! (Duration: %.2f seconds)", step5_duration)
+
+        # Step 6: Convert PostgreSQL format JSON to SQL
+        info("Step 6: Converting PostgreSQL format JSON to SQL...")
+        step6_start = time.time()
+        convert_postgresql_format_files_to_sql()
+        step6_duration = time.time() - step6_start
+        info("✓ PostgreSQL format to SQL conversion complete! (Duration: %.2f seconds)", step6_duration)
+
+        # Final summary
+        total_duration = time.time() - start_time
+        info("=== Batch conversion finished successfully ===")
+        info("Total execution time: %.2f seconds", total_duration)
+        info("Step breakdown:")
+        info("  - SQL to JSON: %.2f seconds", step1_duration)
+        info("  - JSON to SQL: %.2f seconds", step2_duration)
+        info("  - Validation: %.2f seconds", step3_duration)
+
+    except KeyboardInterrupt:
+        critical("Process interrupted by user")
+        raise
+    except Exception as e:
+        critical("Fatal error during conversion: %s", str(e))
+        critical("Process failed after %.2f seconds", time.time() - start_time)
+        raise
+
 
 if __name__ == "__main__":
-    # Clean JSON files by removing line_no keys
-    read_json_to_postsql_triggers()
-    print("JSON cleaning complete!")
-    
-    # Original functionality (commented out for now)
-    # read_json_to_postsql_triggers()
-    # print("PostSQL JSON conversion complete!")
+    main()

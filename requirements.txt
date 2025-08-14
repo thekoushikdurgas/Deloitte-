@@ -3,4 +3,6 @@ sqlglot>=19.0.0
 antlr4-python3-runtime>=4.13.1
 oracledb>=1.4.2
 ply>=3.11
-lark>=1.1.7 
+lark>=1.1.7
+pandas>=1.5.0
+openpyxl>=3.0.0 

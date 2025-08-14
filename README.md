@@ -54,7 +54,7 @@ The converter handles the following Oracle to PostgreSQL conversions:
 Process all `.sql` files from the Oracle folder and output to JSON folder:
 
 ```bash
-# Process all files from 'orcale' folder to 'json' folder
+# Process all files from 'oracle' folder to 'json' folder
 python convert.py
 
 # Use custom folder names
@@ -89,8 +89,8 @@ python convert.py --help
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `--mode { file ,folder}` | Processing mode | `folder` |
-| `--oracle-folder` | Oracle SQL files folder | `orcale` |
+| `--mode` | Processing mode (`file` or `folder`) | `folder` |
+| `--oracle-folder` | Oracle SQL files folder | `oracle` |
 | `--json-folder` | Output JSON files folder | `json` |
 | `-o, --output` | Output file (file mode only) | `input.json` |
 | `-v, --verbose` | Verbose output | `False` |
@@ -103,7 +103,7 @@ The converter expects the following folder structure:
 ```txt
 your-project/
 ├── convert.py           # The converter script
-├── orcale/             # Oracle SQL files (input)
+├── oracle/             # Oracle SQL files (input)
 │   ├── trigger1.sql
 │   ├── trigger2.sql
 │   └── ...
@@ -119,11 +119,11 @@ When you run the converter, you'll see:
 
 ```bash
 🚀 Starting folder processing...
-📁 Oracle folder: orcale
+📁 Oracle folder: oracle
 📁 JSON folder: json
-🔍 Found 2 SQL file(s) in 'orcale'
-Warning: orcale/trigger2.sql is empty, skipping...
-✅ Successfully converted orcale/trigger1.sql → json/trigger1.json
+🔍 Found 2 SQL file(s) in 'oracle'
+Warning: oracle/trigger2.sql is empty, skipping...
+✅ Successfully converted oracle/trigger1.sql → json/trigger1.json
 
 🎉 Conversion complete: 1/2 files converted successfully
 ```
@@ -161,7 +161,7 @@ end;
     "on_insert": [
         {
             "type": "sql",
-            "sql": "DO $$ DECLARE v_counter integer; v_description varchar(500); v_userid varchar(30); BEGIN IF (SUBSTRING(:new_theme_no FROM 1 FOR 1) !~ '^[0-9]$') THEN RAISE EXCEPTION 'MDM_V_THEMES_IOF: Invalid theme number'; END IF; v_userid := :ins_user; INSERT INTO themes(theme_no, registrat_date, theme_desc) VALUES (:new_theme_no, CURRENT_DATE, :new_theme_desc); END $$;"
+            "sql": "DO $$ DECLARE v_counter integer; v_description varchar(500); v_userid varchar(30); BEGIN IF (SUBSTRING(:new_theme_no FROM 1 FOR 1) !~ '^[0-9]$') THEN RAISE EXCEPTION \"Invalid theme number\"; END IF; v_userid := :ins_user; INSERT INTO themes(theme_no, registrat_date, theme_desc) VALUES (:new_theme_no, CURRENT_DATE, :new_theme_desc); END $$;"
         }
     ]
 }
@@ -172,7 +172,7 @@ end;
 The output JSON contains separate sections for each trigger operation:
 
 - `on_insert`: Contains PostgreSQL code for INSERT operations
-- `on_update`: Contains PostgreSQL code for UPDATE operations  
+- `on_update`: Contains PostgreSQL code for UPDATE operations
 - `on_delete`: Contains PostgreSQL code for DELETE operations
 
 Each section contains an array of SQL blocks with:
@@ -180,7 +180,7 @@ Each section contains an array of SQL blocks with:
 - `type`: Always "sql"
 - `sql`: The converted PostgreSQL code wrapped in a DO block
 
-## Features:-
+## Key Capabilities
 
 ### Smart Processing
 
@@ -213,4 +213,4 @@ Each section contains an array of SQL blocks with:
 - All Oracle exceptions are converted to PostgreSQL `RAISE EXCEPTION` statements
 - Variable declarations are properly converted to PostgreSQL format
 - Schema and table references are preserved where appropriate
-- Empty SQL files are automatically skipped with warnings
+- Empty SQL files are automatically skipped with warningsECHO is on.

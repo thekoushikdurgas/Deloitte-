@@ -38,16 +38,31 @@ class JSONTOPLJSON:
 
     def modify_condition(self, condition):
         """
-        condition: condition string
-        return: condition string
-        Modify the condition string to remove INSERTING, UPDATING, DELETING, INSERT, UPDATE, DELETE keywords,
-        and PostgreSQL TG_OP conditions. If the condition is empty after processing, return TRUE
+        Modify and clean Oracle trigger condition string for PostgreSQL compatibility.
+        
+        This function:
+        1. Removes Oracle-specific keywords (INSERTING, UPDATING, DELETING)
+        2. Removes PostgreSQL TG_OP condition patterns
+        3. Cleans up resulting syntax (extra spaces, operators, parentheses)
+        4. Returns 'TRUE' if the condition is empty after processing
+        
+        Args:
+            condition (str): Original condition string from Oracle trigger
+            
+        Returns:
+            str: Modified condition suitable for PostgreSQL or 'TRUE' if empty
         """
+        debug(f"Starting condition modification: '{condition}'")
+        
+        # Handle empty or None condition
         if not condition:
+            debug("Empty condition provided, returning 'TRUE'")
             return "TRUE"
         
         condition = condition.strip()
+        debug(f"Stripped condition: '{condition}'")
         
+        # Step 1: Define keywords and patterns to remove
         # Keywords to remove (case-insensitive)
         keywords_to_remove = [
             "INSERTING", "UPDATING", "DELETING", 
@@ -64,72 +79,127 @@ class JSONTOPLJSON:
         # Create a copy of the condition to work with
         modified_condition = condition
         
-        # Remove Oracle trigger keywords (case-insensitive)
+        # Step 2: Remove Oracle trigger keywords (case-insensitive)
+        import re
         for keyword in keywords_to_remove:
-            import re
             pattern = re.compile(re.escape(keyword), re.IGNORECASE)
+            before_sub = modified_condition
             modified_condition = pattern.sub("", modified_condition)
+            if before_sub != modified_condition:
+                debug(f"Removed keyword '{keyword}': '{before_sub}' → '{modified_condition}'")
         
-        # Remove PostgreSQL TG_OP patterns (case-insensitive)
+        # Step 3: Remove PostgreSQL TG_OP patterns (case-insensitive)
         for pattern in tg_op_patterns:
-            import re
+            before_sub = modified_condition
             modified_condition = re.sub(pattern, "", modified_condition, flags=re.IGNORECASE)
+            if before_sub != modified_condition:
+                debug(f"Removed TG_OP pattern '{pattern}': '{before_sub}' → '{modified_condition}'")
         
-        # Clean up extra whitespace and operators
-        modified_condition = re.sub(r'\s+', ' ', modified_condition)  # Replace multiple spaces with single space
-        modified_condition = re.sub(r'\s*AND\s*AND\s*', ' AND ', modified_condition, flags=re.IGNORECASE)  # Fix double AND
-        modified_condition = re.sub(r'\s*OR\s*OR\s*', ' OR ', modified_condition, flags=re.IGNORECASE)  # Fix double OR
-        modified_condition = re.sub(r'^\s*AND\s*', '', modified_condition, flags=re.IGNORECASE)  # Remove leading AND
-        modified_condition = re.sub(r'^\s*OR\s*', '', modified_condition, flags=re.IGNORECASE)  # Remove leading OR
-        modified_condition = re.sub(r'\s*AND\s*$', '', modified_condition, flags=re.IGNORECASE)  # Remove trailing AND
-        modified_condition = re.sub(r'\s*OR\s*$', '', modified_condition, flags=re.IGNORECASE)  # Remove trailing OR
+        # Step 4: Clean up syntax issues resulting from removals
         
-        # Handle parentheses cleanup
-        modified_condition = re.sub(r'^\s*\(\s*$', '', modified_condition)  # Remove single opening parenthesis
-        modified_condition = re.sub(r'^\s*\)\s*$', '', modified_condition)  # Remove single closing parenthesis
-        modified_condition = re.sub(r'^\s*\(\s*\)\s*$', '', modified_condition)  # Remove empty parentheses
+        # Replace multiple spaces with single space
+        before_sub = modified_condition
+        modified_condition = re.sub(r'\s+', ' ', modified_condition)
+        if before_sub != modified_condition:
+            debug(f"Normalized spaces: '{before_sub}' → '{modified_condition}'")
+            
+        # Fix double operators
+        before_sub = modified_condition
+        modified_condition = re.sub(r'\s*AND\s*AND\s*', ' AND ', modified_condition, flags=re.IGNORECASE)
+        modified_condition = re.sub(r'\s*OR\s*OR\s*', ' OR ', modified_condition, flags=re.IGNORECASE)
+        if before_sub != modified_condition:
+            debug(f"Fixed double operators: '{before_sub}' → '{modified_condition}'")
+        
+        # Remove leading and trailing operators
+        before_sub = modified_condition
+        modified_condition = re.sub(r'^\s*AND\s*', '', modified_condition, flags=re.IGNORECASE)
+        modified_condition = re.sub(r'^\s*OR\s*', '', modified_condition, flags=re.IGNORECASE)
+        modified_condition = re.sub(r'\s*AND\s*$', '', modified_condition, flags=re.IGNORECASE)
+        modified_condition = re.sub(r'\s*OR\s*$', '', modified_condition, flags=re.IGNORECASE)
+        if before_sub != modified_condition:
+            debug(f"Removed leading/trailing operators: '{before_sub}' → '{modified_condition}'")
+        
+        # Clean up parentheses
+        before_sub = modified_condition
+        modified_condition = re.sub(r'^\s*\(\s*$', '', modified_condition)  # Single opening parenthesis
+        modified_condition = re.sub(r'^\s*\)\s*$', '', modified_condition)  # Single closing parenthesis
+        modified_condition = re.sub(r'^\s*\(\s*\)\s*$', '', modified_condition)  # Empty parentheses
+        if before_sub != modified_condition:
+            debug(f"Cleaned up parentheses: '{before_sub}' → '{modified_condition}'")
         
         # Strip whitespace
         modified_condition = modified_condition.strip()
         
         # If condition is empty after processing, return TRUE
         if not modified_condition:
+            debug("Condition is empty after processing, returning 'TRUE'")
             return "TRUE"
         
+        debug(f"Final modified condition: '{modified_condition}'")
         return modified_condition
 
     def process_condition(self, condition, condition_type):
         """
-        condition_type: on_insert, on_update, on_delete
-        condition: condition string
-        return: True if condition is met, False otherwise
+        Analyze a trigger condition to determine if it's applicable for a given operation type.
+        
+        This function:
+        1. Determines if a condition contains operation-specific keywords
+        2. Evaluates whether the condition applies to the current operation type
+        3. Makes decisions about retaining or removing code blocks based on condition applicability
+        
+        Args:
+            condition (str): The SQL condition to analyze
+            condition_type (str): The operation type to check for (on_insert, on_update, or on_delete)
+            
+        Returns:
+            bool: True if the condition contains operation-specific logic that should be removed,
+                 False if the condition should be retained for this operation type
         """
+        # Skip empty conditions
+        if not condition:
+            debug(f"Empty condition provided for {condition_type}, returning False")
+            return False
+            
+        # Clean up condition for analysis
         condition = condition.strip()
+        debug(f"Processing condition for {condition_type}: '{condition}'")
+        
+        # Remove surrounding parentheses if present for cleaner analysis
         if condition.startswith("(") and condition.endswith(")"):
             condition = condition[1:-1]
+            debug(f"Removed outer parentheses: '{condition}'")
+        
+        # Check for operation-specific keywords in the condition
         condition_dict = {
-            "on_insert": condition.find("INSERTING") != -1
-            or condition.find("INSERT") != -1,
-            "on_update": condition.find("UPDATING") != -1
-            or condition.find("UPDATE") != -1,
-            "on_delete": condition.find("DELETING") != -1
-            or condition.find("DELETE") != -1,
+            "on_insert": condition.find("INSERTING") != -1 or condition.find("INSERT") != -1,
+            "on_update": condition.find("UPDATING") != -1 or condition.find("UPDATE") != -1,
+            "on_delete": condition.find("DELETING") != -1 or condition.find("DELETE") != -1,
         }
-        # Insert/Delete
-        logger.debug(f"condition: {condition}")
-        # Insert/Delete
+        
+        # Log which operation keywords were found in this condition
+        debug(f"Operation keywords found in condition:")
+        debug(f"  - INSERT keywords: {condition_dict['on_insert']}")
+        debug(f"  - UPDATE keywords: {condition_dict['on_update']}")
+        debug(f"  - DELETE keywords: {condition_dict['on_delete']}")
+        
+        # Decision logic:
+        # 1. If condition mentions current operation type, remove it (return False)
+        # 2. If condition doesn't mention any operation type, keep it for all (return False) 
+        # 3. If condition mentions other operations but not this one, keep it (return True)
+        
+        # Case 1: Condition mentions current operation - remove from current operation's code
         if condition_dict[condition_type]:
-            # logger.debug(f"{condition_type}--Insert--{condition}")
+            debug(f"REMOVE: Condition contains {condition_type} keywords")
             return False
-        elif (
-            not condition_dict["on_insert"]
-            and not condition_dict["on_update"]
-            and not condition_dict["on_delete"]
-        ):
-            # logger.debug(f"{condition_type}--Insert--{condition}")
+            
+        # Case 2: Condition doesn't mention any specific operation - keep for all operations
+        elif not any(condition_dict.values()):
+            debug(f"KEEP: Condition doesn't contain any operation keywords")
             return False
+            
+        # Case 3: Condition mentions other operations but not this one - keep for this operation
         else:
-            # logger.debug(f"{condition_type}--Delete--{condition}")
+            debug(f"KEEP: Condition mentions other operations but not {condition_type}")
             return True
 
     def parse_pl_json_on_insert(self):
@@ -543,19 +613,46 @@ class JSONTOPLJSON:
 
     def to_sql(self):
         """
-        Clean the json data by removing the if_else statements that are not met
-        Transform analysis JSON into target structure and split by operation
+        Clean the JSON data by removing conditional statements that don't apply to specific operations,
+        then transform the analysis JSON into an operation-specific target structure.
+        
+        This function:
+        1. Makes deep copies of the original JSON data for each operation type
+        2. Processes each copy to filter out operation-specific code blocks
+        3. Combines the processed data into the final structure with on_insert, on_update, and on_delete sections
+        4. Returns the formatted JSON string
+        
+        Returns:
+            str: JSON string containing the operation-specific trigger code
         """
-
+        debug("=== Starting to_sql() conversion process ===")
+        
+        # Step 1: Create deep copies of the JSON data for each operation type to process independently
+        debug("Creating deep copies of JSON data for each operation type")
         self.after_parse_on_insert = copy.deepcopy(self.json_data.get("main", []))
         self.after_parse_on_update = copy.deepcopy(self.json_data.get("main", []))
         self.after_parse_on_delete = copy.deepcopy(self.json_data.get("main", []))
         self.declarations = copy.deepcopy(self.json_data.get("declarations", {}))
+        
+        # Log the structure we're working with
+        debug(f"JSON data structure:")
+        debug(f"  - Main blocks: {len(self.json_data.get('main', []))} items")
+        debug(f"  - Declarations: {len(self.declarations.get('variables', []))} variables, "
+              f"{len(self.declarations.get('constants', []))} constants, "
+              f"{len(self.declarations.get('exceptions', []))} exceptions")
 
+        # Step 2: Process each operation type to filter relevant code
+        debug("=== Processing INSERT operations ===")
         self.parse_pl_json_on_insert()
+        
+        debug("=== Processing UPDATE operations ===")
         self.parse_pl_json_on_update()
+        
+        debug("=== Processing DELETE operations ===")
         self.parse_pl_json_on_delete()
 
+        # Step 3: Combine into final structure
+        debug("Building final converted structure")
         converted = {
             "on_insert": {
                 "declarations": self.declarations,
@@ -571,6 +668,12 @@ class JSONTOPLJSON:
             }
         }
 
-        # Store pretty JSON string for writer
+        # Step 4: Convert to JSON string
+        debug("Converting to JSON string")
         self.sql_content = json.dumps(converted, ensure_ascii=False, indent=2)
+        
+        # Log the result size
+        debug(f"Generated JSON string with {len(self.sql_content)} characters")
+        debug("=== to_sql() conversion complete ===")
+        
         return self.sql_content

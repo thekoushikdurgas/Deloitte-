@@ -260,8 +260,19 @@ def read_oracle_triggers_to_json() -> None:
 
     This function processes all .sql files in the files/oracle directory,
     converting them to structured JSON analysis files in the files/format_json directory.
+    
+    The conversion workflow:
+    1. Locate all Oracle SQL trigger files in the source directory
+    2. For each file, extract the trigger number from the filename
+    3. Parse the SQL content using OracleTriggerAnalyzer
+    4. Save the resulting structured JSON to the target directory
     """
     info("=== Starting Oracle triggers to JSON conversion ===")
+    debug("Workflow Phase 1: Convert Oracle SQL files to JSON analysis structure")
+    debug("Source directory: files/oracle")
+    debug("Target directory: files/format_json")
+    
+    # Process all files using the processor function
     process_files(
         source_dir="files/oracle",
         target_dir="files/format_json",
@@ -269,7 +280,10 @@ def read_oracle_triggers_to_json() -> None:
         output_suffix="_analysis.json",
         processor_func=sql_to_json_processor,
     )
+    
+    # Log successful completion
     info("=== Oracle triggers to JSON conversion complete ===")
+    debug("Phase 1 complete: Oracle SQL files converted to JSON analysis structure")
 
 
 def json_to_sql_processor(src_path: str, out_path: str, trigger_num: str) -> None:
@@ -760,85 +774,148 @@ def main() -> None:
     """
     Main execution function for the Oracle trigger conversion process.
 
-    This function orchestrates the entire conversion workflow:
-    1. SQL to JSON conversion
-    2. JSON to SQL conversion
-    3. Validation of results
+    This function orchestrates the entire conversion workflow through these major steps:
+    1. SQL to JSON conversion: Parse Oracle trigger files into structured JSON
+    2. JSON to SQL conversion: Convert JSON analysis back to formatted Oracle SQL
+    3. JSON cleaning: Clean up the JSON files (remove line numbers, etc.)
+    4. Validation: Verify all conversions completed successfully
+    5. JSON to PL/JSON: Transform JSON to PostgreSQL-compatible structure
+    6. PL/JSON to PostgreSQL: Convert PL/JSON to PostgreSQL SQL
+    7. Final output generation: Create the final SQL files
 
-    The function includes comprehensive error handling and logging.
+    Each step is timed and logged for performance monitoring and debugging.
+    The function includes comprehensive error handling with detailed logging.
     """
     start_time = time.time()
+    debug("Starting main conversion workflow")
 
     try:
         # Set up logging for the main script
         info("=== Starting Oracle Trigger Conversion Process ===")
         main_logger, log_path = setup_logging()
         info("Logging to: %s", log_path)
+        debug("Logging system initialized")
 
         # Step 1: Convert SQL to JSON
+        # --------------------------
         info("Step 1: Converting Oracle SQL files to JSON analysis...")
+        debug("Starting Step 1: Oracle SQL → JSON conversion")
         step1_start = time.time()
+        
+        # Parse Oracle trigger files into structured JSON representation
         read_oracle_triggers_to_json()
+        
         step1_duration = time.time() - step1_start
         info("✓ JSON conversion complete! (Duration: %.2f seconds)", step1_duration)
+        debug(f"Step 1 completed in {step1_duration:.2f} seconds")
 
         # Step 2: Convert JSON back to SQL
+        # -------------------------------
         info("Step 2: Converting JSON analysis back to formatted SQL...")
+        debug("Starting Step 2: JSON analysis → formatted Oracle SQL")
         step2_start = time.time()
+        
+        # Generate formatted SQL from the JSON analysis
         read_json_to_oracle_triggers()
+        
         step2_duration = time.time() - step2_start
         info("✓ SQL formatting complete! (Duration: %.2f seconds)", step2_duration)
+        debug(f"Step 2 completed in {step2_duration:.2f} seconds")
 
-        # Step 3: Clean JSON
-        info("Step 3: Cleaning JSON...")
+        # Step 3: Clean JSON files
+        # -----------------------
+        info("Step 3: Cleaning JSON files...")
+        debug("Starting Step 3: Cleaning and optimizing JSON files")
         step3_start = time.time()
+        
+        # Remove line numbers and other metadata from JSON files
         clean_json_files()
+        
         step3_duration = time.time() - step3_start
         info("✓ JSON cleaning complete! (Duration: %.2f seconds)", step3_duration)
+        debug(f"Step 3 completed in {step3_duration:.2f} seconds")
 
-        # Step 3: Validate conversion
-        info("Step 3: Validating conversion results...")
-        step3_start = time.time()
-        validate_conversion()
-        step3_duration = time.time() - step3_start
-        info("✓ Validation complete! (Duration: %.2f seconds)", step3_duration)
-
-        # Step 4: Convert JSON to PL/JSON
-        info("Step 4: Converting JSON to PL/JSON...")
+        # Step 4: Validate conversion results
+        # ---------------------------------
+        info("Step 4: Validating conversion results...")
+        debug("Starting Step 4: Validating conversion completeness")
         step4_start = time.time()
-        read_json_to_oracle_triggers()
+        
+        # Check that all files were converted successfully
+        validate_conversion()
+        
         step4_duration = time.time() - step4_start
-        info("✓ PL/JSON conversion complete! (Duration: %.2f seconds)", step4_duration)
+        info("✓ Validation complete! (Duration: %.2f seconds)", step4_duration)
+        debug(f"Step 4 completed in {step4_duration:.2f} seconds")
 
-        # Step 5: Convert JSON to PL/SQL
-        info("Step 5: Converting JSON to PL/SQL...")
+        # Step 5: Convert JSON to PL/JSON
+        # ------------------------------
+        info("Step 5: Converting JSON to PL/JSON...")
+        debug("Starting Step 5: JSON → PostgreSQL-compatible PL/JSON")
         step5_start = time.time()
-        read_json_to_postsql_triggers()
+        
+        # Transform JSON to operation-specific structure for PostgreSQL
+        read_json_to_oracle_triggers()  # Note: Despite the name, this function creates PL/JSON
+        
         step5_duration = time.time() - step5_start
-        info("✓ PL/SQL conversion complete! (Duration: %.2f seconds)", step5_duration)
+        info("✓ PL/JSON conversion complete! (Duration: %.2f seconds)", step5_duration)
+        debug(f"Step 5 completed in {step5_duration:.2f} seconds")
 
-        # Step 6: Convert PostgreSQL format JSON to SQL
-        info("Step 6: Converting PostgreSQL format JSON to SQL...")
+        # Step 6: Convert PL/JSON to PostgreSQL format
+        # ------------------------------------------
+        info("Step 6: Converting PL/JSON to PostgreSQL format...")
+        debug("Starting Step 6: PL/JSON → PostgreSQL format JSON")
         step6_start = time.time()
-        convert_postgresql_format_files_to_sql()
+        
+        # Convert PL/JSON to PostgreSQL trigger structure
+        read_json_to_postsql_triggers()
+        
         step6_duration = time.time() - step6_start
-        info("✓ PostgreSQL format to SQL conversion complete! (Duration: %.2f seconds)", step6_duration)
+        info("✓ PostgreSQL format conversion complete! (Duration: %.2f seconds)", step6_duration)
+        debug(f"Step 6 completed in {step6_duration:.2f} seconds")
+
+        # Step 7: Generate final PostgreSQL SQL files
+        # -----------------------------------------
+        info("Step 7: Converting PostgreSQL format JSON to final SQL...")
+        debug("Starting Step 7: PostgreSQL JSON → SQL output files")
+        step7_start = time.time()
+        
+        # Generate the final PostgreSQL SQL files
+        convert_postgresql_format_files_to_sql()
+        
+        step7_duration = time.time() - step7_start
+        info("✓ Final SQL generation complete! (Duration: %.2f seconds)", step7_duration)
+        debug(f"Step 7 completed in {step7_duration:.2f} seconds")
 
         # Final summary
+        # ------------
         total_duration = time.time() - start_time
         info("=== Batch conversion finished successfully ===")
         info("Total execution time: %.2f seconds", total_duration)
-        info("Step breakdown:")
-        info("  - SQL to JSON: %.2f seconds", step1_duration)
-        info("  - JSON to SQL: %.2f seconds", step2_duration)
-        info("  - Validation: %.2f seconds", step3_duration)
+        
+        # Detailed performance breakdown
+        info("Performance breakdown by step:")
+        info("  - Step 1 (SQL → JSON):              %.2f seconds (%.1f%%)", step1_duration, step1_duration/total_duration*100)
+        info("  - Step 2 (JSON → Oracle SQL):       %.2f seconds (%.1f%%)", step2_duration, step2_duration/total_duration*100)
+        info("  - Step 3 (JSON cleaning):           %.2f seconds (%.1f%%)", step3_duration, step3_duration/total_duration*100)
+        info("  - Step 4 (Validation):              %.2f seconds (%.1f%%)", step4_duration, step4_duration/total_duration*100)
+        info("  - Step 5 (JSON → PL/JSON):          %.2f seconds (%.1f%%)", step5_duration, step5_duration/total_duration*100)
+        info("  - Step 6 (PL/JSON → PostgreSQL):    %.2f seconds (%.1f%%)", step6_duration, step6_duration/total_duration*100)
+        info("  - Step 7 (PostgreSQL JSON → SQL):   %.2f seconds (%.1f%%)", step7_duration, step7_duration/total_duration*100)
+        
+        debug("Main conversion workflow completed successfully")
 
     except KeyboardInterrupt:
         critical("Process interrupted by user")
+        debug("Keyboard interrupt received - workflow aborted")
         raise
+        
     except Exception as e:
         critical("Fatal error during conversion: %s", str(e))
         critical("Process failed after %.2f seconds", time.time() - start_time)
+        debug(f"Fatal error details: {type(e).__name__}: {str(e)}")
+        import traceback
+        debug(f"Error traceback: {traceback.format_exc()}")
         raise
 
 

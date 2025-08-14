@@ -1,5 +1,5 @@
 -- PostgreSQL Trigger for trigger4
--- Generated on: 2025-08-14 13:21:31
+-- Generated on: 2025-08-14 14:27:20
 
 -- ON INSERT
 DO $$
