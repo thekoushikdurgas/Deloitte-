@@ -1,7 +1,8 @@
+import json
 import os
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
 
 # Configure logging
 def setup_logging(log_dir="output", log_level="INFO"):
@@ -124,3 +125,57 @@ def log_nesting_level(level: int, context: str) -> None:
 def log_performance(operation: str, duration: float) -> None:
     """Log performance metrics."""
     logger.debug(f"⏱️ {operation} completed in {duration:.3f}s")
+
+def clean_json_remove_line_no(data: Any) -> Any:
+    """
+    Recursively remove all keys containing 'line_no' from JSON data structure
+    """
+    if isinstance(data, dict):
+        # Create a new dict without keys containing 'line_no'
+        cleaned_dict = {}
+        for key, value in data.items():
+            if 'line_no' not in key.lower():
+                cleaned_dict[key] = clean_json_remove_line_no(value)
+        return cleaned_dict
+    elif isinstance(data, list):
+        # Process each item in the list
+        return [clean_json_remove_line_no(item) for item in data]
+    else:
+        # Return primitive values as-is
+        return data
+
+
+def clean_json_files() -> None:
+    """
+    Clean JSON files by removing line_no keys and save in the same folder
+    """
+    # Define directory
+    json_dir = "files/format_json"
+    
+    # Ensure directory exists
+    if not os.path.exists(json_dir):
+        print(f"Directory {json_dir} does not exist!")
+        return
+
+    # Process all JSON files in the directory
+    json_files = [f for f in os.listdir(json_dir) if f.endswith(".json")]
+
+    for json_file in json_files:
+        json_path = os.path.join(json_dir, json_file)
+        
+        try:
+            # Read the JSON file
+            with open(json_path, "r", encoding="utf-8") as f:
+                json_data = json.load(f)
+            
+            # Clean the JSON data by removing line_no keys
+            cleaned_data = clean_json_remove_line_no(json_data)
+            
+            # Save the cleaned JSON back to the same file
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(cleaned_data, f, indent=2, ensure_ascii=False)
+            
+            print(f"Cleaned {json_file}")
+            
+        except Exception as e:
+            print(f"Error processing {json_file}: {str(e)}")
