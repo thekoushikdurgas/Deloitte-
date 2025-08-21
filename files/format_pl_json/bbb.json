@@ -112,7 +112,7 @@
             "then_statements": [
               {
                 "type": "if_else",
-                "condition": "(CNTR > 0)",
+                "condition": "CNTR > 0",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_INS;",
@@ -140,7 +140,7 @@
           },
           {
             "type": "if_else",
-            "condition": "( OR )",
+            "condition": "TRUE",
             "then_statements": [
               {
                 "sql_statement": "SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);",
@@ -150,7 +150,7 @@
               },
               {
                 "type": "if_else",
-                "condition": "(V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L'))",
+                "condition": "V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_INS_LEGAL_ADDR;",
@@ -169,11 +169,11 @@
               },
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')",
                 "then_statements": [
                   {
                     "type": "if_else",
-                    "condition": "(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)",
+                    "condition": "NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID",
                     "then_statements": [
                       {
                         "sql_statement": "RAISE ERR_CTRY_CHG;",
@@ -192,7 +192,7 @@
                   },
                   {
                     "type": "if_else",
-                    "condition": "(CNTR = 0)",
+                    "condition": "CNTR = 0",
                     "then_statements": [
                       {
                         "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
@@ -205,7 +205,7 @@
                     "else_statements": [
                       {
                         "type": "if_else",
-                        "condition": "(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)",
+                        "condition": "NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID",
                         "then_statements": [
                           {
                             "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'CTRY_CHANGE' );",
@@ -228,7 +228,7 @@
                           },
                           {
                             "type": "if_else",
-                            "condition": "(:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0)",
+                            "condition": ":NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0",
                             "then_statements": [
                               {
                                 "sql_statement": "SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID;",
@@ -238,7 +238,7 @@
                               },
                               {
                                 "type": "if_else",
-                                "condition": "(TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01')",
+                                "condition": "TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'",
                                 "then_statements": [
                                   {
                                     "variable": "V_VALID_FROM",
@@ -272,7 +272,7 @@
                               },
                               {
                                 "type": "if_else",
-                                "condition": "(V_COMPANY_TYPE_CD = 'L')",
+                                "condition": "V_COMPANY_TYPE_CD = 'L'",
                                 "then_statements": [
                                   {
                                     "type": "for_loop",
@@ -339,11 +339,11 @@
               },
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')",
                 "then_statements": [
                   {
                     "type": "if_else",
-                    "condition": "(CNTR = 0)",
+                    "condition": "CNTR = 0",
                     "then_statements": [
                       {
                         "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
@@ -391,7 +391,7 @@
             "then_statements": [
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;",
@@ -505,7 +505,7 @@
           }
         ],
         "exception_line_no": 252,
-        "end_line_no": 265
+        "end_line_no": 273
       }
     ]
   },
@@ -622,7 +622,7 @@
             "then_statements": [
               {
                 "type": "if_else",
-                "condition": "(CNTR > 0)",
+                "condition": "CNTR > 0",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_INS;",
@@ -650,7 +650,7 @@
           },
           {
             "type": "if_else",
-            "condition": "( OR )",
+            "condition": "TRUE",
             "then_statements": [
               {
                 "sql_statement": "SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);",
@@ -660,7 +660,7 @@
               },
               {
                 "type": "if_else",
-                "condition": "(V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L'))",
+                "condition": "V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_INS_LEGAL_ADDR;",
@@ -679,11 +679,11 @@
               },
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')",
                 "then_statements": [
                   {
                     "type": "if_else",
-                    "condition": "(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)",
+                    "condition": "NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID",
                     "then_statements": [
                       {
                         "sql_statement": "RAISE ERR_CTRY_CHG;",
@@ -702,7 +702,7 @@
                   },
                   {
                     "type": "if_else",
-                    "condition": "(CNTR = 0)",
+                    "condition": "CNTR = 0",
                     "then_statements": [
                       {
                         "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
@@ -715,7 +715,7 @@
                     "else_statements": [
                       {
                         "type": "if_else",
-                        "condition": "(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)",
+                        "condition": "NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID",
                         "then_statements": [
                           {
                             "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'CTRY_CHANGE' );",
@@ -738,7 +738,7 @@
                           },
                           {
                             "type": "if_else",
-                            "condition": "(:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0)",
+                            "condition": ":NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0",
                             "then_statements": [
                               {
                                 "sql_statement": "SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID;",
@@ -748,7 +748,7 @@
                               },
                               {
                                 "type": "if_else",
-                                "condition": "(TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01')",
+                                "condition": "TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'",
                                 "then_statements": [
                                   {
                                     "variable": "V_VALID_FROM",
@@ -782,7 +782,7 @@
                               },
                               {
                                 "type": "if_else",
-                                "condition": "(V_COMPANY_TYPE_CD = 'L')",
+                                "condition": "V_COMPANY_TYPE_CD = 'L'",
                                 "then_statements": [
                                   {
                                     "type": "for_loop",
@@ -849,11 +849,11 @@
               },
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')",
                 "then_statements": [
                   {
                     "type": "if_else",
-                    "condition": "(CNTR = 0)",
+                    "condition": "CNTR = 0",
                     "then_statements": [
                       {
                         "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
@@ -901,7 +901,7 @@
             "then_statements": [
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;",
@@ -1015,7 +1015,7 @@
           }
         ],
         "exception_line_no": 252,
-        "end_line_no": 265
+        "end_line_no": 273
       }
     ]
   },
@@ -1132,7 +1132,7 @@
             "then_statements": [
               {
                 "type": "if_else",
-                "condition": "(CNTR > 0)",
+                "condition": "CNTR > 0",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_INS;",
@@ -1160,7 +1160,7 @@
           },
           {
             "type": "if_else",
-            "condition": "( OR )",
+            "condition": "TRUE",
             "then_statements": [
               {
                 "sql_statement": "SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);",
@@ -1170,7 +1170,7 @@
               },
               {
                 "type": "if_else",
-                "condition": "(V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L'))",
+                "condition": "V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_INS_LEGAL_ADDR;",
@@ -1189,11 +1189,11 @@
               },
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')",
                 "then_statements": [
                   {
                     "type": "if_else",
-                    "condition": "(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)",
+                    "condition": "NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID",
                     "then_statements": [
                       {
                         "sql_statement": "RAISE ERR_CTRY_CHG;",
@@ -1212,7 +1212,7 @@
                   },
                   {
                     "type": "if_else",
-                    "condition": "(CNTR = 0)",
+                    "condition": "CNTR = 0",
                     "then_statements": [
                       {
                         "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
@@ -1225,7 +1225,7 @@
                     "else_statements": [
                       {
                         "type": "if_else",
-                        "condition": "(NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID)",
+                        "condition": "NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID",
                         "then_statements": [
                           {
                             "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'CTRY_CHANGE' );",
@@ -1248,7 +1248,7 @@
                           },
                           {
                             "type": "if_else",
-                            "condition": "(:NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0)",
+                            "condition": ":NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0",
                             "then_statements": [
                               {
                                 "sql_statement": "SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID;",
@@ -1258,7 +1258,7 @@
                               },
                               {
                                 "type": "if_else",
-                                "condition": "(TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01')",
+                                "condition": "TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'",
                                 "then_statements": [
                                   {
                                     "variable": "V_VALID_FROM",
@@ -1292,7 +1292,7 @@
                               },
                               {
                                 "type": "if_else",
-                                "condition": "(V_COMPANY_TYPE_CD = 'L')",
+                                "condition": "V_COMPANY_TYPE_CD = 'L'",
                                 "then_statements": [
                                   {
                                     "type": "for_loop",
@@ -1359,11 +1359,11 @@
               },
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')",
                 "then_statements": [
                   {
                     "type": "if_else",
-                    "condition": "(CNTR = 0)",
+                    "condition": "CNTR = 0",
                     "then_statements": [
                       {
                         "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
@@ -1411,7 +1411,7 @@
             "then_statements": [
               {
                 "type": "if_else",
-                "condition": "(NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P'))",
+                "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')",
                 "then_statements": [
                   {
                     "sql_statement": "RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;",
@@ -1525,7 +1525,7 @@
           }
         ],
         "exception_line_no": 252,
-        "end_line_no": 265
+        "end_line_no": 273
       }
     ]
   }

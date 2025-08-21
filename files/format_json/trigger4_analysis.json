@@ -38,6 +38,7 @@
   "main": [
     {
       "type": "begin_end",
+      "begin_line_no": 9,
       "begin_indent": 0,
       "begin_end_statements": [
         {
@@ -48,7 +49,8 @@
               "variable": "V_ACTION",
               "value": "'I'",
               "type": "assignment_statement",
-              "statement_indent": 8
+              "statement_indent": 8,
+              "statement_line_no": 11
             }
           ],
           "else_if": [
@@ -59,9 +61,11 @@
                   "variable": "V_ACTION",
                   "value": "'U'",
                   "type": "assignment_statement",
-                  "statement_indent": 8
+                  "statement_indent": 8,
+                  "statement_line_no": 13
                 }
-              ]
+              ],
+              "else_if_line_no": 12
             },
             {
               "condition": "TG_OP = 'DELETE'",
@@ -70,44 +74,60 @@
                   "variable": "V_ACTION",
                   "value": "'D'",
                   "type": "assignment_statement",
-                  "statement_indent": 8
+                  "statement_indent": 8,
+                  "statement_line_no": 15
                 }
-              ]
+              ],
+              "else_if_line_no": 14
             }
           ],
           "else_statements": [],
-          "if_indent": 4
+          "if_line_no": 10,
+          "if_indent": 4,
+          "else_if_line_nos": [
+            12,
+            14
+          ],
+          "else_line_no": null,
+          "end_if_line_no": 16
         },
         {
           "variable": "COL_NAMES",
           "value": "ARRAY[ 'exploratory_theme_no', 'proposal_id', 'proposal_name', 'proposal_status_cd', 'evolved_theme_no', 'global_change_id', 'reason_for_change', 'ins_date', 'ins_user', 'upd_date', 'upd_user', 'molecule_type_id', 'pharmacological_type_id', 'firewall_id', 'mrhub_load_job_id', 'mrhub_load_date', 'mrhub_source_system_id' ]",
           "type": "assignment_statement",
-          "statement_indent": 4
+          "statement_indent": 4,
+          "statement_line_no": 18
         },
         {
           "variable": "COL_NEW_VALUES",
           "value": "ARRAY[ CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.EXPLORATORY_THEME_NO::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.PROPOSAL_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.PROPOSAL_NAME::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.PROPOSAL_STATUS_CD::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.EVOLVED_THEME_NO::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.GLOBAL_CHANGE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.REASON_FOR_CHANGE::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN TO_CHAR(NEW.INS_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.INS_USER::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN TO_CHAR(NEW.UPD_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.UPD_USER::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.MOLECULE_TYPE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.PHARMACOLOGICAL_TYPE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.FIREWALL_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.MRHUB_LOAD_JOB_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN TO_CHAR(NEW.MRHUB_LOAD_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.MRHUB_SOURCE_SYSTEM_ID::TEXT ELSE NULL END ]",
           "type": "assignment_statement",
-          "statement_indent": 4
+          "statement_indent": 4,
+          "statement_line_no": 19
         },
         {
           "variable": "COL_OLD_VALUES",
           "value": "ARRAY[ CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.EXPLORATORY_THEME_NO::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.PROPOSAL_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.PROPOSAL_NAME::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.PROPOSAL_STATUS_CD::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.EVOLVED_THEME_NO::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.GLOBAL_CHANGE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.REASON_FOR_CHANGE::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN TO_CHAR(OLD.INS_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.INS_USER::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN TO_CHAR(OLD.UPD_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.UPD_USER::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.MOLECULE_TYPE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.PHARMACOLOGICAL_TYPE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.FIREWALL_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.MRHUB_LOAD_JOB_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN TO_CHAR(OLD.MRHUB_LOAD_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.MRHUB_SOURCE_SYSTEM_ID::TEXT ELSE NULL END ]",
           "type": "assignment_statement",
-          "statement_indent": 4
+          "statement_indent": 4,
+          "statement_line_no": 20
         },
         {
           "statement": "PERFORM MDMTOOL.\"mdmt_util_history$write_history\"( V_ACTION, V_TABLE_NAME, V_SCHEMA_NAME, COL_NAMES, COL_NEW_VALUES, COL_OLD_VALUES );",
           "type": "unknown_statement",
-          "indent": 4
+          "indent": 4,
+          "line_no": 21
         },
         {
           "statement": "RETURN NULL;",
           "type": "unknown_statement",
-          "indent": 4
+          "indent": 4,
+          "line_no": 22
         }
       ],
-      "exception_handlers": []
+      "exception_handlers": [],
+      "exception_line_no": 0,
+      "end_line_no": 23
     }
   ],
   "sql_comments": [],
@@ -115,12 +135,148 @@
     {
       "statement": "PERFORM MDMTOOL.\"mdmt_util_history$write_history\"( V_ACTION, V_TABLE_NAME, V_SCHEMA_NAME, COL_NAMES, COL_NEW_VALUES, COL_OLD_VALUES );",
       "type": "unknown_statement",
-      "indent": 4
+      "indent": 4,
+      "line_no": 21
     },
     {
       "statement": "RETURN NULL;",
       "type": "unknown_statement",
-      "indent": 4
+      "indent": 4,
+      "line_no": 22
+    }
+  ],
+  "sql_lines": [
+    {
+      "indent": 0,
+      "line": "DECLARE",
+      "line_no": 1,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 4,
+      "line": "    V_ACTION       TEXT;",
+      "line_no": 2,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    COL_NAMES      TEXT[];",
+      "line_no": 3,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    COL_NEW_VALUES TEXT[];",
+      "line_no": 4,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    COL_OLD_VALUES TEXT[];",
+      "line_no": 5,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_TABLE_NAME   TEXT := LOWER(TG_TABLE_NAME)",
+      "line_no": 6,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 27,
+      "line": "                           || '_his';",
+      "line_no": 7,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_SCHEMA_NAME  TEXT := LOWER(TG_TABLE_SCHEMA);",
+      "line_no": 8,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 0,
+      "line": "BEGIN",
+      "line_no": 9,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 4,
+      "line": "    IF TG_OP = 'INSERT' THEN",
+      "line_no": 10,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        V_ACTION := 'I';",
+      "line_no": 11,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ELSIF TG_OP = 'UPDATE' THEN",
+      "line_no": 12,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        V_ACTION := 'U';",
+      "line_no": 13,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ELSIF TG_OP = 'DELETE' THEN",
+      "line_no": 14,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        V_ACTION := 'D';",
+      "line_no": 15,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    END IF;",
+      "line_no": 16,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    COL_NAMES := ARRAY[ 'exploratory_theme_no', 'proposal_id', 'proposal_name', 'proposal_status_cd', 'evolved_theme_no', 'global_change_id', 'reason_for_change', 'ins_date', 'ins_user', 'upd_date', 'upd_user', 'molecule_type_id', 'pharmacological_type_id', 'firewall_id', 'mrhub_load_job_id', 'mrhub_load_date', 'mrhub_source_system_id' ];",
+      "line_no": 18,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    COL_NEW_VALUES := ARRAY[ CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.EXPLORATORY_THEME_NO::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.PROPOSAL_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.PROPOSAL_NAME::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.PROPOSAL_STATUS_CD::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.EVOLVED_THEME_NO::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.GLOBAL_CHANGE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.REASON_FOR_CHANGE::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN TO_CHAR(NEW.INS_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.INS_USER::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN TO_CHAR(NEW.UPD_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.UPD_USER::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.MOLECULE_TYPE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.PHARMACOLOGICAL_TYPE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.FIREWALL_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.MRHUB_LOAD_JOB_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN TO_CHAR(NEW.MRHUB_LOAD_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN NEW.MRHUB_SOURCE_SYSTEM_ID::TEXT ELSE NULL END ];",
+      "line_no": 19,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    COL_OLD_VALUES := ARRAY[ CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.EXPLORATORY_THEME_NO::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.PROPOSAL_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.PROPOSAL_NAME::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.PROPOSAL_STATUS_CD::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.EVOLVED_THEME_NO::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.GLOBAL_CHANGE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.REASON_FOR_CHANGE::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN TO_CHAR(OLD.INS_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.INS_USER::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN TO_CHAR(OLD.UPD_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.UPD_USER::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.MOLECULE_TYPE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.PHARMACOLOGICAL_TYPE_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.FIREWALL_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.MRHUB_LOAD_JOB_ID::TEXT ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN TO_CHAR(OLD.MRHUB_LOAD_DATE, 'YYYY-MM-DD HH24:MI:SS') ELSE NULL END, CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN OLD.MRHUB_SOURCE_SYSTEM_ID::TEXT ELSE NULL END ];",
+      "line_no": 20,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    PERFORM MDMTOOL.\"mdmt_util_history$write_history\"( V_ACTION, V_TABLE_NAME, V_SCHEMA_NAME, COL_NAMES, COL_NEW_VALUES, COL_OLD_VALUES );",
+      "line_no": 21,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    RETURN NULL;",
+      "line_no": 22,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 0,
+      "line": "END;",
+      "line_no": 23,
+      "is_end_semicolon": true
     }
   ],
   "conversion_stats": {
@@ -130,7 +286,7 @@
     "sql_convert_count": 10
   },
   "metadata": {
-    "parse_timestamp": "2025-08-14T16:08:02.089507",
+    "parse_timestamp": "2025-08-22T00:31:33.553693",
     "parser_version": "1.0"
   }
 }

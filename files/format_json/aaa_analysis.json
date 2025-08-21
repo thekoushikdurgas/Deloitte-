@@ -1,0 +1,2735 @@
+{
+  "declarations": {
+    "variables": [
+      {
+        "name": "CNTR",
+        "data_type": "PLS_INTEGER",
+        "default_value": null
+      },
+      {
+        "name": "V_USERID",
+        "data_type": "VARCHAR2(100)",
+        "default_value": null
+      },
+      {
+        "name": "V_REPORTING_ENTITY_CD",
+        "data_type": "CFG_V_REPORTING_ENTITIES.REPORTING_ENTITY_CD%TYPE",
+        "default_value": null
+      },
+      {
+        "name": "V_LEGAL_COMPANY_CD",
+        "data_type": "CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE",
+        "default_value": null
+      },
+      {
+        "name": "V_OLD_LEGAL_COMPANY_CD",
+        "data_type": "CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE",
+        "default_value": "NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)"
+      },
+      {
+        "name": "V_REP_CBC_FLAG",
+        "data_type": "CFG_V_REPORTING_ENTITIES.CBC_FLAG%TYPE",
+        "default_value": null
+      },
+      {
+        "name": "V_ADDR_VALID_FROM_DATE",
+        "data_type": "CFG.CFG_V_COMPANY_ADDRESSES.VALID_FROM%TYPE",
+        "default_value": null
+      },
+      {
+        "name": "V_COUNTRY_CD",
+        "data_type": "CFG.CFG_V_COMPANY_ADDRESSES.COUNTRY_CD%TYPE",
+        "default_value": null
+      },
+      {
+        "name": "V_COMPANY_CODES_LIST",
+        "data_type": "VARCHAR2(200)",
+        "default_value": null
+      }
+    ],
+    "constants": [
+      {
+        "name": "V_TRIGGER_NAME",
+        "data_type": "VARCHAR2(30)",
+        "value": "'COMPANIES_MTN_IOF'"
+      }
+    ],
+    "exceptions": [
+      {
+        "name": "ERR_INS",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_DEL",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_UPD",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_VALID_FROM_DATE",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "RU_NOT_IN_CBC_SCOPE",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_NO_ADR",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_CPY_STILL_IN_SCOPE",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "CPY_IN_USE",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "INVALID_LEGAL_COMP",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_CPY_STILL_IN_MFR",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC",
+        "type": "EXCEPTION"
+      }
+    ]
+  },
+  "main": [
+    {
+      "type": "begin_end",
+      "begin_line_no": 23,
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "type": "begin_end",
+          "begin_end_statements": [
+            {
+              "variable": "V_USERID",
+              "value": "TXO_UTIL.GET_USERID",
+              "type": "assignment_statement",
+              "statement_indent": 8,
+              "statement_line_no": 25
+            }
+          ],
+          "exception_handlers": [
+            {
+              "exception_name": "OTHERS",
+              "exception_statements": [
+                {
+                  "variable": "V_USERID",
+                  "value": "USER",
+                  "type": "assignment_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 28
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "if_else",
+          "condition": "UPDATING AND :OLD.COMPANY_CD != :NEW.COMPANY_CD",
+          "then_statements": [
+            {
+              "sql_statement": "RAISE ERR_UPD;",
+              "type": "raise_statement",
+              "statement_indent": 8,
+              "statement_line_no": 32
+            }
+          ],
+          "else_if": [],
+          "else_statements": [],
+          "if_line_no": 31,
+          "if_indent": 4,
+          "else_if_line_nos": [],
+          "else_line_no": null,
+          "end_if_line_no": 33
+        },
+        {
+          "type": "if_else",
+          "condition": "INSERTING",
+          "then_statements": [
+            {
+              "variable": "CNTR",
+              "value": "0",
+              "type": "assignment_statement",
+              "statement_indent": 8,
+              "statement_line_no": 36
+            },
+            {
+              "sql_statement": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD;",
+              "type": "select_statement",
+              "statement_indent": 8,
+              "statement_line_no": 39
+            },
+            {
+              "type": "if_else",
+              "condition": "CNTR > 0",
+              "then_statements": [
+                {
+                  "sql_statement": "RAISE ERR_INS;",
+                  "type": "raise_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 46
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 45,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 47
+            }
+          ],
+          "else_if": [],
+          "else_statements": [],
+          "if_line_no": 35,
+          "if_indent": 4,
+          "else_if_line_nos": [],
+          "else_line_no": null,
+          "end_if_line_no": 48
+        },
+        {
+          "type": "if_else",
+          "condition": "INSERTING OR UPDATING",
+          "then_statements": [
+            {
+              "type": "if_else",
+              "condition": ":NEW.COMPANY_TYPE_CD IN ('L', 'A') AND :NEW.LEGAL_COMPANY_CD IS NULL",
+              "then_statements": [
+                {
+                  "variable": "V_LEGAL_COMPANY_CD",
+                  "value": ":NEW.COMPANY_CD",
+                  "type": "assignment_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 54
+                }
+              ],
+              "else_if": [],
+              "else_statements": [
+                {
+                  "variable": "V_LEGAL_COMPANY_CD",
+                  "value": ":NEW.LEGAL_COMPANY_CD",
+                  "type": "assignment_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 56
+                }
+              ],
+              "if_line_no": 53,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": 55,
+              "end_if_line_no": 57
+            },
+            {
+              "variable": "CNTR",
+              "value": "0",
+              "type": "assignment_statement",
+              "statement_indent": 8,
+              "statement_line_no": 61
+            },
+            {
+              "sql_statement": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_TYPE_CD IN ( 'L') AND VALID_IND = 'Y' AND COMPANY_CD = V_LEGAL_COMPANY_CD;",
+              "type": "select_statement",
+              "statement_indent": 8,
+              "statement_line_no": 62
+            },
+            {
+              "type": "if_else",
+              "condition": "CNTR = 0 AND (NVL(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) NOT IN ('D', 'A', 'L') OR (:NEW.COMPANY_TYPE_CD = 'D' AND V_LEGAL_COMPANY_CD <> :NEW.COMPANY_CD))",
+              "then_statements": [
+                {
+                  "sql_statement": "RAISE INVALID_LEGAL_COMP;",
+                  "type": "raise_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 76
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 72,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 77
+            },
+            {
+              "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANY ( I_COMPANY_CD => :NEW.COMPANY_CD, I_COMPANY_TYPE_CD => :NEW.COMPANY_TYPE_CD, I_MULTISEL_COMPANY_PURPOSE => :NEW.MULTISEL_COMPANY_PURPOSE, I_LEGAL_COMPANY_CD => V_LEGAL_COMPANY_CD, I_OFFICIAL_NAME => :NEW.OFFICIAL_NAME, I_SHORT_NAME => :NEW.SHORT_NAME, I_DISCLOSURE_NAME => :NEW.DISCLOSURE_NAME, I_FUNCTIONAL_CURRENCY_CD => :NEW.FUNCTIONAL_CURRENCY_CD, I_STATUTORY_CURRENCY_CD => :NEW.STATUTORY_CURRENCY_CD, I_URL => :NEW.URL, I_PHONEBOOK_URL => :NEW.PHONEBOOK_URL, I_EMERGENCY_PHONE_NO => :NEW.EMERGENCY_PHONE_NO, I_GENERAL_PHONE_NO => :NEW.GENERAL_PHONE_NO, I_GENERAL_FAX_NO => :NEW.GENERAL_FAX_NO, I_ANNUAL_REPORT_IND => :NEW.ANNUAL_REPORT_IND, I_FATCA_CD => :NEW.FATCA_CD, I_PHARMA_NUMBER_RANGE => :NEW.PHARMA_NUMBER_RANGE, I_LIQUIDATION_DATE => :NEW.LIQUIDATION_DATE, I_SAPINST_NO => :NEW.SAPINST_NO, I_SAP_COMPANY_CODE_NO => :NEW.SAP_COMPANY_CODE_NO, I_SAP_GO_LIVE_DATE => :NEW.SAP_GO_LIVE_DATE, I_SAP_GROUP_CODE => :NEW.SAP_GROUP_CODE, I_SAP_LOCAL_COA => :NEW.SAP_LOCAL_COA, I_SAP_CONTROLLING_AREA => :NEW.SAP_CONTROLLING_AREA, I_TOP_SYSTEM_IND => :NEW.TOP_SYSTEM_IND, I_TOP_GO_LIVE_DATE => :NEW.TOP_GO_LIVE_DATE, I_TOP_REMARKS => :NEW.TOP_REMARKS, I_LEGAL_REMARKS => :NEW.LEGAL_REMARKS, I_REMARKS => :NEW.REMARKS, I_LOCAL_STATUTORY_ACC => :NEW.LOCAL_STATUTORY_ACC, I_ICFR_COMPANY_LAYER => :NEW.ICFR_COMPANY_LAYER, I_TRADING_PARTNER => :NEW.TRADING_PARTNER, I_S4_ENTITY_ID => :NEW.S4_ENTITY_ID, I_RCA_DISPLAY_FLAG => :NEW.RCA_DISPLAY_FLAG, I_CBC_GBE_SCOPE => :NEW.CBC_GBE_SCOPE I_WEB_DISPLAY_IND => :NEW.WEB_DISPLAY_IND, I_HEADCOUNT_IND => :NEW.HEADCOUNT_IND, I_VALID_IND => :NEW.VALID_IND, I_CORE_REMARKS => :NEW.CORE_REMARKS, I_REVIEW_USERID => :NEW.REVIEW_USERID, I_REVIEW_EXP_DATE => :NEW.REVIEW_EXP_DATE, I_REQUESTER_USERID => :NEW.REQUESTER_USERID, I_REQUEST_DATE => :NEW.REQUEST_DATE, I_CHANGE_USER => V_USERID );",
+              "type": "unknown_statement",
+              "indent": 8,
+              "line_no": 79
+            },
+            {
+              "type": "case_when",
+              "case_expression": "",
+              "when_clauses": [
+                {
+                  "when_value": "NVL (:OLD.REPORTING_ENTITY_CD, '-') != NVL (:NEW.REPORTING_ENTITY_CD, '-') SYSDATE + 100) != SYSDATE + 100) SYSDATE + 100) != SYSDATE + 100) V_REPORTING_ENTITY_CD := :NEW.REPORTING_ENTITY_CD; WHEN ( :NEW.VALID_FROM_DATE IS NULL",
+                  "then_statements": [
+                    {
+                      "statement": "OR NVL (TO_DATE (:OLD.VALID_FROM_DATE, 'DD-MM-YYYY'), NVL (TO_DATE (:NEW.VALID_FROM_DATE, 'DD-MM-YYYY'), OR NVL (TO_DATE (:OLD.VALID_TO_DATE, 'DD-MM-YYYY'), NVL (TO_DATE (:NEW.VALID_TO_DATE, 'DD-MM-YYYY'), THEN",
+                      "type": "unknown_statement",
+                      "indent": 12,
+                      "line_no": 131
+                    }
+                  ],
+                  "when_line_no": 129
+                }
+              ],
+              "else_statements": [
+                {
+                  "statement": "NULL;",
+                  "type": "unknown_statement",
+                  "indent": 16,
+                  "line_no": 157
+                }
+              ],
+              "case_line_no": 128,
+              "case_indent": 8,
+              "when_line_nos": [
+                129
+              ],
+              "else_line_no": 156,
+              "end_case_line_no": 158
+            },
+            {
+              "type": "if_else",
+              "condition": "NVL(:NEW.VALID_IND, 'Y') = 'N' AND NVL(:OLD.VALID_IND, 'N') = 'Y'",
+              "then_statements": [
+                {
+                  "variable": "CNTR",
+                  "value": "0",
+                  "type": "assignment_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 161
+                },
+                {
+                  "sql_statement": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND COMPANY_CD <> :NEW.COMPANY_CD AND VALID_IND = 'Y';",
+                  "type": "select_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 164
+                },
+                {
+                  "type": "if_else",
+                  "condition": "CNTR > 0",
+                  "then_statements": [
+                    {
+                      "sql_statement": "SELECT LISTAGG(DISTINCT COMPANY_CD, ', ') WITHIN GROUP (ORDER BY COMPANY_CD) INTO V_COMPANY_CODES_LIST FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND COMPANY_CD <> :NEW.COMPANY_CD AND VALID_IND = 'Y';",
+                      "type": "select_statement",
+                      "statement_indent": 16,
+                      "statement_line_no": 173
+                    },
+                    {
+                      "sql_statement": "RAISE CPY_IN_USE;",
+                      "type": "raise_statement",
+                      "statement_indent": 16,
+                      "statement_line_no": 181
+                    }
+                  ],
+                  "else_if": [],
+                  "else_statements": [],
+                  "if_line_no": 172,
+                  "if_indent": 12,
+                  "else_if_line_nos": [],
+                  "else_line_no": null,
+                  "end_if_line_no": 182
+                },
+                {
+                  "sql_statement": "UPDATE CFG.CFG_COMPANY_ADDRESSES SET VALID_TO = TRUNC ( SYSDATE ) - 1 WHERE COMPANY_CD = :NEW.COMPANY_CD AND ( VALID_TO > TRUNC(SYSDATE) OR VALID_TO IS NULL);",
+                  "type": "update_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 186
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 160,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 195
+            },
+            {
+              "type": "if_else",
+              "condition": ":OLD.COMPANY_TYPE_CD IN ('L', 'B') AND :NEW.COMPANY_TYPE_CD = 'D'",
+              "then_statements": [
+                {
+                  "sql_statement": "UPDATE CFG.CFG_COMPANY_ADDRESSES SET VALID_TO = TRUNC ( SYSDATE ) - 1 WHERE COMPANY_CD = :NEW.COMPANY_CD AND ADDRESS_TYPE_CD NOT IN ('P', 'RES', 'L', 'INC') AND ( VALID_TO > TRUNC(SYSDATE) OR VALID_TO IS NULL);",
+                  "type": "update_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 200
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 199,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 210
+            },
+            {
+              "type": "if_else",
+              "condition": ":NEW.CBC_GBE_SCOPE = 'Y' AND :NEW.VALID_IND = 'N'",
+              "then_statements": [
+                {
+                  "sql_statement": "RAISE ERR_CPY_STILL_IN_SCOPE;",
+                  "type": "raise_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 215
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 214,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 216
+            },
+            {
+              "type": "if_else",
+              "condition": ":NEW.VALID_IND = 'N' AND NVL(:NEW.REPORTING_ENTITY_CD, :OLD.REPORTING_ENTITY_CD) IS NOT NULL AND NVL(:NEW.VALID_TO_DATE, :OLD.VALID_TO_DATE) IS NULL",
+              "then_statements": [
+                {
+                  "sql_statement": "RAISE ERR_CPY_STILL_IN_MFR;",
+                  "type": "raise_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 221
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 220,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 222
+            },
+            {
+              "type": "if_else",
+              "condition": ":NEW.COMPANY_TYPE_CD = 'A' AND :NEW.CBC_GBE_SCOPE = 'Y'",
+              "then_statements": [
+                {
+                  "sql_statement": "RAISE ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC;",
+                  "type": "raise_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 227
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 226,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 228
+            },
+            {
+              "type": "if_else",
+              "condition": "NVL(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) = 'L' OR NVL(:NEW.COMPANY_TYPE_CD, :NEW.COMPANY_TYPE_CD) = 'B'",
+              "then_statements": [
+                {
+                  "variable": "V_REPORTING_ENTITY_CD",
+                  "value": "NVL (:NEW.COMPANY_CD, :OLD.COMPANY_CD)",
+                  "type": "assignment_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 233
+                }
+              ],
+              "else_if": [],
+              "else_statements": [
+                {
+                  "variable": "V_REPORTING_ENTITY_CD",
+                  "value": "V_LEGAL_COMPANY_CD",
+                  "type": "assignment_statement",
+                  "statement_indent": 12,
+                  "statement_line_no": 235
+                }
+              ],
+              "if_line_no": 232,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": 234,
+              "end_if_line_no": 236
+            },
+            {
+              "type": "if_else",
+              "condition": "V_REPORTING_ENTITY_CD IS NOT NULL OR :NEW.COMPANY_TYPE_CD = 'D'",
+              "then_statements": [
+                {
+                  "type": "if_else",
+                  "condition": "(:NEW.CBC_GBE_SCOPE = 'Y' AND NVL (:OLD.CBC_GBE_SCOPE, 'N') = 'N') OR (NVL(:NEW.CBC_GBE_SCOPE, :OLD.CBC_GBE_SCOPE) = 'Y' SELECT FROM WHERE IF NVL (V_REP_CBC_FLAG, 'N') = 'N'",
+                  "then_statements": [
+                    {
+                      "statement": "CBC_FLAG INTO V_REP_CBC_FLAG CFG_V_REPORTING_ENTITIES REPORTING_ENTITY_CD = V_LEGAL_COMPANY_CD;",
+                      "type": "unknown_statement",
+                      "indent": 20,
+                      "line_no": 245
+                    },
+                    {
+                      "sql_statement": "RAISE RU_NOT_IN_CBC_SCOPE;",
+                      "type": "raise_statement",
+                      "statement_indent": 20,
+                      "statement_line_no": 253
+                    },
+                    {
+                      "statement": "END IF;",
+                      "type": "unknown_statement",
+                      "indent": 16,
+                      "line_no": 254
+                    },
+                    {
+                      "variable": "CNTR",
+                      "value": "0",
+                      "type": "assignment_statement",
+                      "statement_indent": 16,
+                      "statement_line_no": 256
+                    },
+                    {
+                      "sql_statement": "SELECT COUNT (*) INTO CNTR FROM CFG.CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = V_REPORTING_ENTITY_CD AND ADDRESS_TYPE_CD = 'RES';",
+                      "type": "select_statement",
+                      "statement_indent": 16,
+                      "statement_line_no": 259
+                    },
+                    {
+                      "type": "if_else",
+                      "condition": "CNTR = 0",
+                      "then_statements": [
+                        {
+                          "sql_statement": "RAISE ERR_NO_ADR;",
+                          "type": "raise_statement",
+                          "statement_indent": 20,
+                          "statement_line_no": 267
+                        }
+                      ],
+                      "else_if": [],
+                      "else_statements": [],
+                      "if_line_no": 266,
+                      "if_indent": 16,
+                      "else_if_line_nos": [],
+                      "else_line_no": null,
+                      "end_if_line_no": 268
+                    },
+                    {
+                      "sql_statement": "SELECT VALID_FROM, COUNTRY_CD INTO V_ADDR_VALID_FROM_DATE, V_COUNTRY_CD FROM CFG.CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = V_REPORTING_ENTITY_CD AND ADDRESS_TYPE_CD = 'RES';",
+                      "type": "select_statement",
+                      "statement_indent": 16,
+                      "statement_line_no": 270
+                    },
+                    {
+                      "type": "if_else",
+                      "condition": "V_LEGAL_COMPANY_CD <> NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)",
+                      "then_statements": [
+                        {
+                          "variable": "V_ADDR_VALID_FROM_DATE",
+                          "value": "TRUNC(SYSDATE)",
+                          "type": "assignment_statement",
+                          "statement_indent": 20,
+                          "statement_line_no": 282
+                        }
+                      ],
+                      "else_if": [],
+                      "else_statements": [],
+                      "if_line_no": 281,
+                      "if_indent": 16,
+                      "else_if_line_nos": [],
+                      "else_line_no": null,
+                      "end_if_line_no": 283
+                    },
+                    {
+                      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => V_REPORTING_ENTITY_CD, I_VALID_FROM_DATE => TRUNC (SYSDATE), I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'INSERT' );",
+                      "type": "unknown_statement",
+                      "indent": 16,
+                      "line_no": 285
+                    },
+                    {
+                      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_ADDR_VALID_FROM_DATE, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT' );",
+                      "type": "unknown_statement",
+                      "indent": 16,
+                      "line_no": 294
+                    }
+                  ],
+                  "else_if": [],
+                  "else_statements": [],
+                  "if_line_no": 241,
+                  "if_indent": 12,
+                  "else_if_line_nos": [],
+                  "else_line_no": null,
+                  "end_if_line_no": 304
+                },
+                {
+                  "type": "if_else",
+                  "condition": ":NEW.CBC_GBE_SCOPE = 'N' AND NVL (:OLD.CBC_GBE_SCOPE, 'Y') = 'Y'",
+                  "then_statements": [
+                    {
+                      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'UPDATE' );",
+                      "type": "unknown_statement",
+                      "indent": 16,
+                      "line_no": 307
+                    },
+                    {
+                      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'UPDATE' );",
+                      "type": "unknown_statement",
+                      "indent": 16,
+                      "line_no": 315
+                    }
+                  ],
+                  "else_if": [],
+                  "else_statements": [],
+                  "if_line_no": 306,
+                  "if_indent": 12,
+                  "else_if_line_nos": [],
+                  "else_line_no": null,
+                  "end_if_line_no": 323
+                }
+              ],
+              "else_if": [],
+              "else_statements": [],
+              "if_line_no": 240,
+              "if_indent": 8,
+              "else_if_line_nos": [],
+              "else_line_no": null,
+              "end_if_line_no": 324
+            },
+            {
+              "type": "case_when",
+              "case_expression": "",
+              "when_clauses": [
+                {
+                  "when_value": "(NVL (:OLD.OFFICIAL_NAME, '-') != NVL (:NEW.OFFICIAL_NAME, '-'))",
+                  "then_statements": [
+                    {
+                      "statement": "AND :OLD.OFFICIAL_NAME IS NOT NULL MDMAPPL.MDM_UTIL_COMPANIES.MODIFYCOMPANYNAME ( :NEW.COMPANY_CD, V_LEGAL_COMPANY_CD, :NEW.OFFICIAL_NAME, V_USERID);",
+                      "type": "unknown_statement",
+                      "indent": 12,
+                      "line_no": 331
+                    }
+                  ],
+                  "when_line_no": 329
+                }
+              ],
+              "else_statements": [
+                {
+                  "statement": "NULL;",
+                  "type": "unknown_statement",
+                  "indent": 16,
+                  "line_no": 339
+                }
+              ],
+              "case_line_no": 328,
+              "case_indent": 8,
+              "when_line_nos": [
+                329
+              ],
+              "else_line_no": 338,
+              "end_case_line_no": 340
+            }
+          ],
+          "else_if": [
+            {
+              "condition": "DELETING",
+              "then_statements": [
+                {
+                  "sql_statement": "RAISE ERR_DEL;",
+                  "type": "raise_statement",
+                  "statement_indent": 8,
+                  "statement_line_no": 342
+                }
+              ],
+              "else_if_line_no": 341
+            }
+          ],
+          "else_statements": [],
+          "if_line_no": 50,
+          "if_indent": 4,
+          "else_if_line_nos": [
+            341
+          ],
+          "else_line_no": null,
+          "end_if_line_no": 343
+        }
+      ],
+      "exception_handlers": [
+        {
+          "exception_name": "ERR_DEL",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20110",
+                "handler_string": "V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_UPD",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20111",
+                "handler_string": "V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_INS",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20114",
+                "handler_string": "V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_VALID_FROM_DATE",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20122",
+                "handler_string": "'Please insert : Rep. Code Assignm. Valid from Date'"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "RU_NOT_IN_CBC_SCOPE",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20123",
+                "handler_string": "'A company cannot be in CBC/GBE scope if the RU that reports it is not in CBC scope'"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_CPY_STILL_IN_SCOPE",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20124",
+                "handler_string": "'The CBC/GBE Scope must be set to No before deactivating the company'"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_NO_ADR",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20124",
+                "handler_string": "'No Physical Address found. Please insert the address before setting the CBC/GBE Scope to Yes'"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "CPY_IN_USE",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20125",
+                "handler_string": "'The Company cannot be invalidated because is still used as Legal Company for the following companies: ' || V_COMPANY_CODES_LIST"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "INVALID_LEGAL_COMP",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20126",
+                "handler_string": "V_LEGAL_COMPANY_CD || ' is not a valid Legal Company Code'"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20127",
+                "handler_string": "'An Associate Entity cannot be in CBC/GBE Scope!'"
+              }
+            }
+          ]
+        },
+        {
+          "exception_name": "ERR_CPY_STILL_IN_MFR",
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "raise_application_error",
+              "parameter": {
+                "handler_code": "-20127",
+                "handler_string": "'Please fill in Rep. Code Assignm. Valid to Date field before invalidating the company'"
+              }
+            }
+          ]
+        }
+      ],
+      "exception_line_no": 344,
+      "end_line_no": 369
+    }
+  ],
+  "sql_comments": [
+    "-- check if company_cd already exists",
+    "-- Fix CHG0388122 - [FIN] Companies Maintenance - Legal Entity CD",
+    "--check if the value inserted in legal company field is actually a valid legal company or a valid associate entity",
+    "--if count is 0 then no valid legal company => return error",
+    "--DE in CBC are allowed to use Legal Company Code",
+    "-- CHG1205462 added as part of GloBE",
+    "-- Reporting Entity mapping",
+    "--check if the company is used as legal company for another company",
+    "--Deactivate the addresses in case the company switches the status from Yes to No",
+    "--when switching from LE or BR to Dummy entity, deactivate all the addresses except L, P, RES and INC",
+    "--check the CBC/GBE scope flag before invalidating the Company",
+    "--checkf if the valid_to date for MFR mapping is filled in before trying to deactivate the company",
+    "--don't allow the user to set CBC scope flag to Yes for Associate Entity",
+    "--check for company type and assign the correct value",
+    "--check if the value for reporting_entity_cd is filled in; exception when company = Dummy entity, Legal Company Code is manadatory only when CBC/GBE Scope is YES",
+    "--check if corresponding reporting entity has cbc_flag on YES when CBC_GBE_SCOPE is set on YES",
+    "--check if the Phisical address exists - if not, throw error - used for JU mapping",
+    "--in case the legal company was updated with another one, the valid from of the new mapping will not be the valid from date of the RES address but today's date",
+    "--For Oficial NAME"
+  ],
+  "rest_strings": [
+    {
+      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANY ( I_COMPANY_CD => :NEW.COMPANY_CD, I_COMPANY_TYPE_CD => :NEW.COMPANY_TYPE_CD, I_MULTISEL_COMPANY_PURPOSE => :NEW.MULTISEL_COMPANY_PURPOSE, I_LEGAL_COMPANY_CD => V_LEGAL_COMPANY_CD, I_OFFICIAL_NAME => :NEW.OFFICIAL_NAME, I_SHORT_NAME => :NEW.SHORT_NAME, I_DISCLOSURE_NAME => :NEW.DISCLOSURE_NAME, I_FUNCTIONAL_CURRENCY_CD => :NEW.FUNCTIONAL_CURRENCY_CD, I_STATUTORY_CURRENCY_CD => :NEW.STATUTORY_CURRENCY_CD, I_URL => :NEW.URL, I_PHONEBOOK_URL => :NEW.PHONEBOOK_URL, I_EMERGENCY_PHONE_NO => :NEW.EMERGENCY_PHONE_NO, I_GENERAL_PHONE_NO => :NEW.GENERAL_PHONE_NO, I_GENERAL_FAX_NO => :NEW.GENERAL_FAX_NO, I_ANNUAL_REPORT_IND => :NEW.ANNUAL_REPORT_IND, I_FATCA_CD => :NEW.FATCA_CD, I_PHARMA_NUMBER_RANGE => :NEW.PHARMA_NUMBER_RANGE, I_LIQUIDATION_DATE => :NEW.LIQUIDATION_DATE, I_SAPINST_NO => :NEW.SAPINST_NO, I_SAP_COMPANY_CODE_NO => :NEW.SAP_COMPANY_CODE_NO, I_SAP_GO_LIVE_DATE => :NEW.SAP_GO_LIVE_DATE, I_SAP_GROUP_CODE => :NEW.SAP_GROUP_CODE, I_SAP_LOCAL_COA => :NEW.SAP_LOCAL_COA, I_SAP_CONTROLLING_AREA => :NEW.SAP_CONTROLLING_AREA, I_TOP_SYSTEM_IND => :NEW.TOP_SYSTEM_IND, I_TOP_GO_LIVE_DATE => :NEW.TOP_GO_LIVE_DATE, I_TOP_REMARKS => :NEW.TOP_REMARKS, I_LEGAL_REMARKS => :NEW.LEGAL_REMARKS, I_REMARKS => :NEW.REMARKS, I_LOCAL_STATUTORY_ACC => :NEW.LOCAL_STATUTORY_ACC, I_ICFR_COMPANY_LAYER => :NEW.ICFR_COMPANY_LAYER, I_TRADING_PARTNER => :NEW.TRADING_PARTNER, I_S4_ENTITY_ID => :NEW.S4_ENTITY_ID, I_RCA_DISPLAY_FLAG => :NEW.RCA_DISPLAY_FLAG, I_CBC_GBE_SCOPE => :NEW.CBC_GBE_SCOPE I_WEB_DISPLAY_IND => :NEW.WEB_DISPLAY_IND, I_HEADCOUNT_IND => :NEW.HEADCOUNT_IND, I_VALID_IND => :NEW.VALID_IND, I_CORE_REMARKS => :NEW.CORE_REMARKS, I_REVIEW_USERID => :NEW.REVIEW_USERID, I_REVIEW_EXP_DATE => :NEW.REVIEW_EXP_DATE, I_REQUESTER_USERID => :NEW.REQUESTER_USERID, I_REQUEST_DATE => :NEW.REQUEST_DATE, I_CHANGE_USER => V_USERID );",
+      "type": "unknown_statement",
+      "indent": 8,
+      "line_no": 79
+    },
+    {
+      "statement": "OR NVL (TO_DATE (:OLD.VALID_FROM_DATE, 'DD-MM-YYYY'), NVL (TO_DATE (:NEW.VALID_FROM_DATE, 'DD-MM-YYYY'), OR NVL (TO_DATE (:OLD.VALID_TO_DATE, 'DD-MM-YYYY'), NVL (TO_DATE (:NEW.VALID_TO_DATE, 'DD-MM-YYYY'), THEN",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 131
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 157
+    },
+    {
+      "statement": "CBC_FLAG INTO V_REP_CBC_FLAG CFG_V_REPORTING_ENTITIES REPORTING_ENTITY_CD = V_LEGAL_COMPANY_CD;",
+      "type": "unknown_statement",
+      "indent": 20,
+      "line_no": 245
+    },
+    {
+      "statement": "END IF;",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 254
+    },
+    {
+      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => V_REPORTING_ENTITY_CD, I_VALID_FROM_DATE => TRUNC (SYSDATE), I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'INSERT' );",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 285
+    },
+    {
+      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_ADDR_VALID_FROM_DATE, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT' );",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 294
+    },
+    {
+      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'UPDATE' );",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 307
+    },
+    {
+      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'UPDATE' );",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 315
+    },
+    {
+      "statement": "AND :OLD.OFFICIAL_NAME IS NOT NULL MDMAPPL.MDM_UTIL_COMPANIES.MODIFYCOMPANYNAME ( :NEW.COMPANY_CD, V_LEGAL_COMPANY_CD, :NEW.OFFICIAL_NAME, V_USERID);",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 331
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 339
+    },
+    {
+      "statement": "OR NVL (TO_DATE (:OLD.VALID_FROM_DATE, 'DD-MM-YYYY'), NVL (TO_DATE (:NEW.VALID_FROM_DATE, 'DD-MM-YYYY'), OR NVL (TO_DATE (:OLD.VALID_TO_DATE, 'DD-MM-YYYY'), NVL (TO_DATE (:NEW.VALID_TO_DATE, 'DD-MM-YYYY'), THEN",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 131
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 157
+    },
+    {
+      "statement": "AND :OLD.OFFICIAL_NAME IS NOT NULL MDMAPPL.MDM_UTIL_COMPANIES.MODIFYCOMPANYNAME ( :NEW.COMPANY_CD, V_LEGAL_COMPANY_CD, :NEW.OFFICIAL_NAME, V_USERID);",
+      "type": "unknown_statement",
+      "indent": 12,
+      "line_no": 331
+    },
+    {
+      "statement": "NULL;",
+      "type": "unknown_statement",
+      "indent": 16,
+      "line_no": 339
+    }
+  ],
+  "sql_lines": [
+    {
+      "indent": 0,
+      "line": "DECLARE",
+      "line_no": 1,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 4,
+      "line": "    V_TRIGGER_NAME                    CONSTANT VARCHAR2 (30) := 'COMPANIES_MTN_IOF';",
+      "line_no": 2,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    CNTR                              PLS_INTEGER;",
+      "line_no": 3,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ERR_INS EXCEPTION;",
+      "line_no": 4,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ERR_DEL EXCEPTION;",
+      "line_no": 5,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ERR_UPD EXCEPTION;",
+      "line_no": 6,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_USERID                          VARCHAR2 (100);",
+      "line_no": 7,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_REPORTING_ENTITY_CD             CFG_V_REPORTING_ENTITIES.REPORTING_ENTITY_CD%TYPE;",
+      "line_no": 8,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_LEGAL_COMPANY_CD                CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE;",
+      "line_no": 9,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_OLD_LEGAL_COMPANY_CD            CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE := NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD);",
+      "line_no": 10,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_REP_CBC_FLAG                    CFG_V_REPORTING_ENTITIES.CBC_FLAG%TYPE;",
+      "line_no": 11,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ERR_VALID_FROM_DATE EXCEPTION;",
+      "line_no": 12,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    RU_NOT_IN_CBC_SCOPE EXCEPTION;",
+      "line_no": 13,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ERR_NO_ADR EXCEPTION;",
+      "line_no": 14,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ERR_CPY_STILL_IN_SCOPE EXCEPTION;",
+      "line_no": 15,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    CPY_IN_USE EXCEPTION;",
+      "line_no": 16,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    INVALID_LEGAL_COMP EXCEPTION;",
+      "line_no": 17,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ERR_CPY_STILL_IN_MFR EXCEPTION;",
+      "line_no": 18,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC EXCEPTION;",
+      "line_no": 19,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_ADDR_VALID_FROM_DATE            CFG.CFG_V_COMPANY_ADDRESSES.VALID_FROM%TYPE;",
+      "line_no": 20,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_COUNTRY_CD                      CFG.CFG_V_COMPANY_ADDRESSES.COUNTRY_CD%TYPE;",
+      "line_no": 21,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    V_COMPANY_CODES_LIST              VARCHAR2(200);",
+      "line_no": 22,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 0,
+      "line": "BEGIN",
+      "line_no": 23,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 4,
+      "line": "    BEGIN",
+      "line_no": 24,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        V_USERID := TXO_UTIL.GET_USERID;",
+      "line_no": 25,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    EXCEPTION",
+      "line_no": 26,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        WHEN OTHERS THEN",
+      "line_no": 27,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            V_USERID := USER;",
+      "line_no": 28,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    END;",
+      "line_no": 29,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    IF UPDATING AND :OLD.COMPANY_CD != :NEW.COMPANY_CD THEN",
+      "line_no": 31,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE ERR_UPD;",
+      "line_no": 32,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    END IF;",
+      "line_no": 33,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    IF INSERTING THEN",
+      "line_no": 35,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        CNTR := 0;",
+      "line_no": 36,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        SELECT",
+      "line_no": 39,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            COUNT (*) INTO CNTR",
+      "line_no": 40,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        FROM",
+      "line_no": 41,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            CFG_V_COMPANIES",
+      "line_no": 42,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        WHERE",
+      "line_no": 43,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            COMPANY_CD = :NEW.COMPANY_CD;",
+      "line_no": 44,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF CNTR > 0 THEN",
+      "line_no": 45,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            RAISE ERR_INS;",
+      "line_no": 46,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 47,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    END IF;",
+      "line_no": 48,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    IF INSERTING OR UPDATING THEN",
+      "line_no": 50,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        IF :NEW.COMPANY_TYPE_CD IN ('L', 'A') AND :NEW.LEGAL_COMPANY_CD IS NULL THEN",
+      "line_no": 53,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            V_LEGAL_COMPANY_CD := :NEW.COMPANY_CD;",
+      "line_no": 54,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        ELSE",
+      "line_no": 55,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            V_LEGAL_COMPANY_CD := :NEW.LEGAL_COMPANY_CD;",
+      "line_no": 56,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 57,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        CNTR := 0;",
+      "line_no": 61,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        SELECT",
+      "line_no": 62,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            COUNT (*) INTO CNTR",
+      "line_no": 63,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        FROM",
+      "line_no": 64,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            CFG_V_COMPANIES",
+      "line_no": 65,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        WHERE",
+      "line_no": 66,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            COMPANY_TYPE_CD IN ( 'L')",
+      "line_no": 67,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            AND VALID_IND = 'Y'",
+      "line_no": 68,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            AND COMPANY_CD = V_LEGAL_COMPANY_CD;",
+      "line_no": 69,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF CNTR = 0 AND (NVL(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) NOT IN ('D', 'A', 'L') OR (:NEW.COMPANY_TYPE_CD = 'D' AND V_LEGAL_COMPANY_CD <> :NEW.COMPANY_CD)) THEN",
+      "line_no": 72,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        AND :NEW.CBC_GBE_SCOPE = 'Y'",
+      "line_no": 74,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            RAISE INVALID_LEGAL_COMP;",
+      "line_no": 76,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 77,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        MDM_UTIL_COMPANIES.MODIFYCOMPANY (",
+      "line_no": 79,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_COMPANY_CD => :NEW.COMPANY_CD,",
+      "line_no": 80,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_COMPANY_TYPE_CD => :NEW.COMPANY_TYPE_CD,",
+      "line_no": 81,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_MULTISEL_COMPANY_PURPOSE => :NEW.MULTISEL_COMPANY_PURPOSE,",
+      "line_no": 82,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_LEGAL_COMPANY_CD => V_LEGAL_COMPANY_CD,",
+      "line_no": 83,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_OFFICIAL_NAME => :NEW.OFFICIAL_NAME,",
+      "line_no": 84,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_SHORT_NAME => :NEW.SHORT_NAME,",
+      "line_no": 85,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_DISCLOSURE_NAME => :NEW.DISCLOSURE_NAME,",
+      "line_no": 86,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_FUNCTIONAL_CURRENCY_CD => :NEW.FUNCTIONAL_CURRENCY_CD,",
+      "line_no": 87,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_STATUTORY_CURRENCY_CD => :NEW.STATUTORY_CURRENCY_CD,",
+      "line_no": 88,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_URL => :NEW.URL,",
+      "line_no": 89,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_PHONEBOOK_URL => :NEW.PHONEBOOK_URL,",
+      "line_no": 90,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_EMERGENCY_PHONE_NO => :NEW.EMERGENCY_PHONE_NO,",
+      "line_no": 91,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_GENERAL_PHONE_NO => :NEW.GENERAL_PHONE_NO,",
+      "line_no": 92,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_GENERAL_FAX_NO => :NEW.GENERAL_FAX_NO,",
+      "line_no": 93,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_ANNUAL_REPORT_IND => :NEW.ANNUAL_REPORT_IND,",
+      "line_no": 94,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_FATCA_CD => :NEW.FATCA_CD,",
+      "line_no": 95,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_PHARMA_NUMBER_RANGE => :NEW.PHARMA_NUMBER_RANGE,",
+      "line_no": 96,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_LIQUIDATION_DATE => :NEW.LIQUIDATION_DATE,",
+      "line_no": 97,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_SAPINST_NO => :NEW.SAPINST_NO,",
+      "line_no": 98,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_SAP_COMPANY_CODE_NO => :NEW.SAP_COMPANY_CODE_NO,",
+      "line_no": 99,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_SAP_GO_LIVE_DATE => :NEW.SAP_GO_LIVE_DATE,",
+      "line_no": 100,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_SAP_GROUP_CODE => :NEW.SAP_GROUP_CODE,",
+      "line_no": 101,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_SAP_LOCAL_COA => :NEW.SAP_LOCAL_COA,",
+      "line_no": 102,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_SAP_CONTROLLING_AREA => :NEW.SAP_CONTROLLING_AREA,",
+      "line_no": 103,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_TOP_SYSTEM_IND => :NEW.TOP_SYSTEM_IND,",
+      "line_no": 104,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_TOP_GO_LIVE_DATE => :NEW.TOP_GO_LIVE_DATE,",
+      "line_no": 105,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_TOP_REMARKS => :NEW.TOP_REMARKS,",
+      "line_no": 106,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_LEGAL_REMARKS => :NEW.LEGAL_REMARKS,",
+      "line_no": 107,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_REMARKS => :NEW.REMARKS,",
+      "line_no": 108,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_LOCAL_STATUTORY_ACC => :NEW.LOCAL_STATUTORY_ACC,",
+      "line_no": 109,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_ICFR_COMPANY_LAYER => :NEW.ICFR_COMPANY_LAYER,",
+      "line_no": 110,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_TRADING_PARTNER => :NEW.TRADING_PARTNER,",
+      "line_no": 111,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_S4_ENTITY_ID => :NEW.S4_ENTITY_ID,",
+      "line_no": 112,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_RCA_DISPLAY_FLAG => :NEW.RCA_DISPLAY_FLAG,",
+      "line_no": 113,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_CBC_GBE_SCOPE => :NEW.CBC_GBE_SCOPE",
+      "line_no": 114,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 0,
+      "line": ",",
+      "line_no": 115,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_WEB_DISPLAY_IND => :NEW.WEB_DISPLAY_IND,",
+      "line_no": 116,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_HEADCOUNT_IND => :NEW.HEADCOUNT_IND,",
+      "line_no": 117,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_VALID_IND => :NEW.VALID_IND,",
+      "line_no": 118,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_CORE_REMARKS => :NEW.CORE_REMARKS,",
+      "line_no": 119,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_REVIEW_USERID => :NEW.REVIEW_USERID,",
+      "line_no": 120,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_REVIEW_EXP_DATE => :NEW.REVIEW_EXP_DATE,",
+      "line_no": 121,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_REQUESTER_USERID => :NEW.REQUESTER_USERID,",
+      "line_no": 122,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_REQUEST_DATE => :NEW.REQUEST_DATE,",
+      "line_no": 123,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            I_CHANGE_USER => V_USERID",
+      "line_no": 124,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        );",
+      "line_no": 125,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        CASE",
+      "line_no": 128,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            WHEN NVL (:OLD.REPORTING_ENTITY_CD, '-') != NVL (:NEW.REPORTING_ENTITY_CD, '-') SYSDATE + 100) != SYSDATE + 100) SYSDATE + 100) != SYSDATE + 100) V_REPORTING_ENTITY_CD := :NEW.REPORTING_ENTITY_CD; WHEN ( :NEW.VALID_FROM_DATE IS NULL THEN",
+      "line_no": 129,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            OR NVL (TO_DATE (:OLD.VALID_FROM_DATE, 'DD-MM-YYYY'),",
+      "line_no": 131,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            NVL (TO_DATE (:NEW.VALID_FROM_DATE, 'DD-MM-YYYY'),",
+      "line_no": 133,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            OR NVL (TO_DATE (:OLD.VALID_TO_DATE, 'DD-MM-YYYY'),",
+      "line_no": 135,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            NVL (TO_DATE (:NEW.VALID_TO_DATE, 'DD-MM-YYYY'),",
+      "line_no": 137,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            THEN",
+      "line_no": 139,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                CASE",
+      "line_no": 141,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    OR :NEW.VALID_FROM_DATE IS NULL)",
+      "line_no": 143,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        RAISE ERR_VALID_FROM_DATE;",
+      "line_no": 145,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    ELSE",
+      "line_no": 146,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        NULL;",
+      "line_no": 147,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                END CASE;",
+      "line_no": 148,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_MFR (",
+      "line_no": 149,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_COMPANY_CD => :NEW.COMPANY_CD,",
+      "line_no": 150,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_REPORTING_ENTITY_CD => :NEW.REPORTING_ENTITY_CD,",
+      "line_no": 151,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_FROM_DATE => :NEW.VALID_FROM_DATE,",
+      "line_no": 152,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_TO_DATE => :NEW.VALID_TO_DATE,",
+      "line_no": 153,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_CHANGE_USER => V_USERID",
+      "line_no": 154,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                );",
+      "line_no": 155,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            ELSE",
+      "line_no": 156,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                NULL;",
+      "line_no": 157,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END CASE;",
+      "line_no": 158,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF NVL(:NEW.VALID_IND, 'Y') = 'N' AND NVL(:OLD.VALID_IND, 'N') = 'Y' THEN",
+      "line_no": 160,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            CNTR := 0;",
+      "line_no": 161,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            SELECT",
+      "line_no": 164,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                COUNT (*) INTO CNTR",
+      "line_no": 165,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            FROM",
+      "line_no": 166,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                CFG_V_COMPANIES",
+      "line_no": 167,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            WHERE",
+      "line_no": 168,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                LEGAL_COMPANY_CD = :NEW.COMPANY_CD",
+      "line_no": 169,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                AND COMPANY_CD <> :NEW.COMPANY_CD",
+      "line_no": 170,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                AND VALID_IND = 'Y';",
+      "line_no": 171,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            IF CNTR > 0 THEN",
+      "line_no": 172,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                SELECT",
+      "line_no": 173,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    LISTAGG(DISTINCT COMPANY_CD, ', ') WITHIN GROUP (ORDER BY COMPANY_CD) INTO V_COMPANY_CODES_LIST",
+      "line_no": 174,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                FROM",
+      "line_no": 175,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    CFG_V_COMPANIES",
+      "line_no": 176,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                WHERE",
+      "line_no": 177,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    LEGAL_COMPANY_CD = :NEW.COMPANY_CD",
+      "line_no": 178,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    AND COMPANY_CD <> :NEW.COMPANY_CD",
+      "line_no": 179,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    AND VALID_IND = 'Y';",
+      "line_no": 180,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                RAISE CPY_IN_USE;",
+      "line_no": 181,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 182,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            UPDATE CFG.CFG_COMPANY_ADDRESSES",
+      "line_no": 186,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            SET",
+      "line_no": 187,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                VALID_TO = TRUNC (",
+      "line_no": 188,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    SYSDATE",
+      "line_no": 189,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                ) - 1",
+      "line_no": 190,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            WHERE",
+      "line_no": 191,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                COMPANY_CD = :NEW.COMPANY_CD",
+      "line_no": 192,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                AND ( VALID_TO > TRUNC(SYSDATE)",
+      "line_no": 193,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                OR VALID_TO IS NULL);",
+      "line_no": 194,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 195,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF :OLD.COMPANY_TYPE_CD IN ('L', 'B') AND :NEW.COMPANY_TYPE_CD = 'D' THEN",
+      "line_no": 199,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            UPDATE CFG.CFG_COMPANY_ADDRESSES",
+      "line_no": 200,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            SET",
+      "line_no": 201,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                VALID_TO = TRUNC (",
+      "line_no": 202,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    SYSDATE",
+      "line_no": 203,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                ) - 1",
+      "line_no": 204,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            WHERE",
+      "line_no": 205,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                COMPANY_CD = :NEW.COMPANY_CD",
+      "line_no": 206,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                AND ADDRESS_TYPE_CD NOT IN ('P', 'RES', 'L', 'INC')",
+      "line_no": 207,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                AND ( VALID_TO > TRUNC(SYSDATE)",
+      "line_no": 208,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                OR VALID_TO IS NULL);",
+      "line_no": 209,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 210,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF :NEW.CBC_GBE_SCOPE = 'Y' AND :NEW.VALID_IND = 'N' THEN",
+      "line_no": 214,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            RAISE ERR_CPY_STILL_IN_SCOPE;",
+      "line_no": 215,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 216,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF :NEW.VALID_IND = 'N' AND NVL(:NEW.REPORTING_ENTITY_CD, :OLD.REPORTING_ENTITY_CD) IS NOT NULL AND NVL(:NEW.VALID_TO_DATE, :OLD.VALID_TO_DATE) IS NULL THEN",
+      "line_no": 220,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            RAISE ERR_CPY_STILL_IN_MFR;",
+      "line_no": 221,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 222,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF :NEW.COMPANY_TYPE_CD = 'A' AND :NEW.CBC_GBE_SCOPE = 'Y' THEN",
+      "line_no": 226,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            RAISE ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC;",
+      "line_no": 227,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 228,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF NVL(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) = 'L' OR NVL(:NEW.COMPANY_TYPE_CD, :NEW.COMPANY_TYPE_CD) = 'B' THEN",
+      "line_no": 232,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            V_REPORTING_ENTITY_CD := NVL (:NEW.COMPANY_CD, :OLD.COMPANY_CD);",
+      "line_no": 233,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        ELSE",
+      "line_no": 234,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            V_REPORTING_ENTITY_CD := V_LEGAL_COMPANY_CD;",
+      "line_no": 235,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 236,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        IF V_REPORTING_ENTITY_CD IS NOT NULL OR :NEW.COMPANY_TYPE_CD = 'D' THEN",
+      "line_no": 240,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            IF (:NEW.CBC_GBE_SCOPE = 'Y' AND NVL (:OLD.CBC_GBE_SCOPE, 'N') = 'N') OR (NVL(:NEW.CBC_GBE_SCOPE, :OLD.CBC_GBE_SCOPE) = 'Y' SELECT FROM WHERE IF NVL (V_REP_CBC_FLAG, 'N') = 'N' THEN",
+      "line_no": 241,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            AND V_LEGAL_COMPANY_CD <> NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)) THEN",
+      "line_no": 243,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    CBC_FLAG INTO V_REP_CBC_FLAG",
+      "line_no": 245,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    CFG_V_REPORTING_ENTITIES",
+      "line_no": 247,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    REPORTING_ENTITY_CD = V_LEGAL_COMPANY_CD;",
+      "line_no": 249,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    RAISE RU_NOT_IN_CBC_SCOPE;",
+      "line_no": 253,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                END IF;",
+      "line_no": 254,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                CNTR := 0;",
+      "line_no": 256,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                SELECT",
+      "line_no": 259,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    COUNT (*) INTO CNTR",
+      "line_no": 260,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                FROM",
+      "line_no": 261,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    CFG.CFG_V_COMPANY_ADDRESSES",
+      "line_no": 262,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                WHERE",
+      "line_no": 263,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    COMPANY_CD = V_REPORTING_ENTITY_CD",
+      "line_no": 264,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    AND ADDRESS_TYPE_CD = 'RES';",
+      "line_no": 265,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                IF CNTR = 0 THEN",
+      "line_no": 266,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    RAISE ERR_NO_ADR;",
+      "line_no": 267,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                END IF;",
+      "line_no": 268,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                SELECT",
+      "line_no": 270,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    VALID_FROM,",
+      "line_no": 271,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    COUNTRY_CD INTO V_ADDR_VALID_FROM_DATE,",
+      "line_no": 272,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    V_COUNTRY_CD",
+      "line_no": 273,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                FROM",
+      "line_no": 274,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    CFG.CFG_V_COMPANY_ADDRESSES",
+      "line_no": 275,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                WHERE",
+      "line_no": 276,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    COMPANY_CD = V_REPORTING_ENTITY_CD",
+      "line_no": 277,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    AND ADDRESS_TYPE_CD = 'RES';",
+      "line_no": 278,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                IF V_LEGAL_COMPANY_CD <> NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD) THEN",
+      "line_no": 281,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    V_ADDR_VALID_FROM_DATE := TRUNC(SYSDATE);",
+      "line_no": 282,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                END IF;",
+      "line_no": 283,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
+      "line_no": 285,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_COMPANY_CD => :NEW.COMPANY_CD,",
+      "line_no": 286,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_REPORTING_ENTITY_CD => V_REPORTING_ENTITY_CD,",
+      "line_no": 287,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_FROM_DATE => TRUNC (SYSDATE),",
+      "line_no": 288,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_TO_DATE => NULL,",
+      "line_no": 289,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_CHANGE_USER => V_USERID,",
+      "line_no": 290,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_MAPPING_TYPE => 'CE',",
+      "line_no": 291,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_ACTION_TYPE => 'INSERT'",
+      "line_no": 292,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                );",
+      "line_no": 293,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
+      "line_no": 294,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_COMPANY_CD => :NEW.COMPANY_CD,",
+      "line_no": 295,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_REPORTING_ENTITY_CD => 'J-'",
+      "line_no": 296,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 45,
+      "line": "                                             || V_COUNTRY_CD,",
+      "line_no": 297,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_FROM_DATE => V_ADDR_VALID_FROM_DATE,",
+      "line_no": 298,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_TO_DATE => NULL,",
+      "line_no": 299,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_CHANGE_USER => V_USERID,",
+      "line_no": 300,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_MAPPING_TYPE => 'JU',",
+      "line_no": 301,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_ACTION_TYPE => 'INSERT'",
+      "line_no": 302,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                );",
+      "line_no": 303,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 304,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            IF :NEW.CBC_GBE_SCOPE = 'N' AND NVL (:OLD.CBC_GBE_SCOPE, 'Y') = 'Y' THEN",
+      "line_no": 306,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
+      "line_no": 307,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_COMPANY_CD => :NEW.COMPANY_CD,",
+      "line_no": 308,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_FROM_DATE => NULL,",
+      "line_no": 309,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_TO_DATE => TRUNC (SYSDATE),",
+      "line_no": 310,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_CHANGE_USER => V_USERID,",
+      "line_no": 311,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_MAPPING_TYPE => 'CE',",
+      "line_no": 312,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_ACTION_TYPE => 'UPDATE'",
+      "line_no": 313,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                );",
+      "line_no": 314,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
+      "line_no": 315,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_COMPANY_CD => :NEW.COMPANY_CD,",
+      "line_no": 316,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_FROM_DATE => NULL,",
+      "line_no": 317,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_VALID_TO_DATE => TRUNC (SYSDATE),",
+      "line_no": 318,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_CHANGE_USER => V_USERID,",
+      "line_no": 319,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_MAPPING_TYPE => 'JU',",
+      "line_no": 320,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    I_ACTION_TYPE => 'UPDATE'",
+      "line_no": 321,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                );",
+      "line_no": 322,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            END IF;",
+      "line_no": 323,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END IF;",
+      "line_no": 324,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        CASE",
+      "line_no": 328,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            WHEN (NVL (:OLD.OFFICIAL_NAME, '-') != NVL (:NEW.OFFICIAL_NAME, '-')) THEN",
+      "line_no": 329,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            AND :OLD.OFFICIAL_NAME IS NOT NULL",
+      "line_no": 331,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                MDMAPPL.MDM_UTIL_COMPANIES.MODIFYCOMPANYNAME (",
+      "line_no": 333,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                :NEW.COMPANY_CD,",
+      "line_no": 334,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                V_LEGAL_COMPANY_CD,",
+      "line_no": 335,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                :NEW.OFFICIAL_NAME,",
+      "line_no": 336,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                V_USERID);",
+      "line_no": 337,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            ELSE",
+      "line_no": 338,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                NULL;",
+      "line_no": 339,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        END CASE;",
+      "line_no": 340,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    ELSIF DELETING THEN",
+      "line_no": 341,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE ERR_DEL;",
+      "line_no": 342,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    END IF;",
+      "line_no": 343,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 0,
+      "line": "EXCEPTION",
+      "line_no": 344,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN ERR_DEL THEN",
+      "line_no": 345,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);",
+      "line_no": 346,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN ERR_UPD THEN",
+      "line_no": 347,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR (-20111, V_TRIGGER_NAME);",
+      "line_no": 348,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN ERR_INS THEN",
+      "line_no": 349,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR (-20114, V_TRIGGER_NAME);",
+      "line_no": 350,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN ERR_VALID_FROM_DATE THEN",
+      "line_no": 351,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR ( -20122, 'Please insert : Rep. Code Assignm. Valid from Date');",
+      "line_no": 352,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN RU_NOT_IN_CBC_SCOPE THEN",
+      "line_no": 353,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR ( -20123, 'A company cannot be in CBC/GBE scope if the RU that reports it is not in CBC scope');",
+      "line_no": 354,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN ERR_CPY_STILL_IN_SCOPE THEN",
+      "line_no": 355,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR ( -20124, 'The CBC/GBE Scope must be set to No before deactivating the company');",
+      "line_no": 356,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN ERR_NO_ADR THEN",
+      "line_no": 357,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR ( -20124, 'No Physical Address found. Please insert the address before setting the CBC/GBE Scope to Yes');",
+      "line_no": 358,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN CPY_IN_USE THEN",
+      "line_no": 359,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR ( -20125, 'The Company cannot be invalidated because is still used as Legal Company for the following companies: '",
+      "line_no": 360,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 42,
+      "line": "                                          || V_COMPANY_CODES_LIST);",
+      "line_no": 361,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN INVALID_LEGAL_COMP THEN",
+      "line_no": 362,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR ( -20126, V_LEGAL_COMPANY_CD",
+      "line_no": 363,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 42,
+      "line": "                                          || ' is not a valid Legal Company Code');",
+      "line_no": 364,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC THEN",
+      "line_no": 365,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR ( -20127, 'An Associate Entity cannot be in CBC/GBE Scope!');",
+      "line_no": 366,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 4,
+      "line": "    WHEN ERR_CPY_STILL_IN_MFR THEN",
+      "line_no": 367,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        RAISE_APPLICATION_ERROR ( -20127, 'Please fill in Rep. Code Assignm. Valid to Date field before invalidating the company');",
+      "line_no": 368,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 0,
+      "line": "END;",
+      "line_no": 369,
+      "is_end_semicolon": true
+    }
+  ],
+  "conversion_stats": {
+    "declaration_count": 21,
+    "comment_count": 19,
+    "rest_string_count": 15,
+    "sql_convert_count": 79
+  },
+  "metadata": {
+    "parse_timestamp": "2025-08-22T00:31:33.359451",
+    "parser_version": "1.0"
+  }
+}

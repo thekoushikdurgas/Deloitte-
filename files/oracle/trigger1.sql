@@ -97,12 +97,15 @@ BEGIN
          RAISE IN_PREP_NOT_PORTF_PROJ;
       END IF;
 
-      IF (:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0) THEN
+      IF (:NEW.STATUS_DESC <> 'CLOSED'
+      AND V_IS_ADMIN_CNT = 0) THEN
          RAISE IN_PREP_NOT_CLOSED;
       END IF;
 
       IF (:NEW.MOLECULE_ID IS NULL) THEN
-         TXO_UTIL.SET_WARNING('No Molecule assigned to In-Prep Theme ' || :NEW.THEME_NO || '!');
+         TXO_UTIL.SET_WARNING('No Molecule assigned to In-Prep Theme '
+                              || :NEW.THEME_NO
+                              || '!');
       END IF;
    END IF;
  
@@ -178,13 +181,15 @@ BEGIN
    END IF;
 
    V_THEME_DESC_PROPOSAL := GMD_UTIL_THEMES.GET_THEME_SHORT_NAME(P_THEME_NO_PORTF => :NEW.THEME_NO, P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => NULL, P_TRADEMARK_NO_PORTF => V_TRADEMARK_NO, P_TRUNC_DESC_LENGTH => 'N');
-   IF (:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30) THEN
+   IF (:NEW.MANUAL_SHORT_DESC IS NULL
+   AND LENGTH(V_THEME_DESC_PROPOSAL) > 30) THEN
       RAISE THEME_DESC_PROPOSAL_TOO_LONG;
    END IF;
 
    V_SHORT_NAME := COALESCE(:NEW.MANUAL_SHORT_DESC, V_THEME_DESC_PROPOSAL);
    IF (INSERTING) THEN
-      IF (:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0) THEN
+      IF (:NEW.IN_PREP_IND = 'N'
+      AND V_IS_ADMIN_CNT = 0) THEN
          RAISE ADMIN_UPDATE_ONLY;
       END IF;
  
@@ -192,7 +197,8 @@ BEGIN
       -- CMA 1685, automatic molecule creation
       -- CMA 1820, add RG_NO to inserted values
       V_MOLECULE_ID := :NEW.MOLECULE_ID;
-      IF (:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL) THEN
+      IF (:NEW.PORTF_PROJ_CD = 'Y'
+      AND :NEW.MOLECULE_ID IS NULL) THEN
          IF (NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL) THEN
             RAISE PORTF_PROJ_MOL_CRE_ERR;
          ELSE
@@ -240,11 +246,27 @@ BEGIN
 
       CASE LENGTH(:NEW.THEME_NO)
          WHEN 4 THEN
-            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) THEN
+            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0
+            AND 9
+            OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0
+            AND 9
+            OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0
+            AND 9
+            OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0
+            AND 9) THEN
                RAISE INVALID_THEME_NO;
             END IF;
          WHEN 5 THEN
-            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) THEN
+            IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0
+            AND 9
+            OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0
+            AND 9
+            OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0
+            AND 9
+            OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0
+            AND 9
+            OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0
+            AND 9) THEN
                RAISE INVALID_THEME_NO;
             END IF;
          ELSE
@@ -284,7 +306,8 @@ BEGIN
       END IF;
 
       IF (UPPER(:NEW.PORTF_PROJ_CD) = 'N') THEN
-         IF (:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0) THEN
+         IF (:NEW.THEME_DESC IS NULL
+         OR LENGTH(:NEW.THEME_DESC) = 0) THEN
             RAISE THEMEDESCRIPTIONMANDATORY;
          END IF;
       END IF;
@@ -385,7 +408,8 @@ BEGIN
          :NEW.PORTF_DA_GROUP_ID,
          :NEW.MANUAL_SHORT_DESC
       );
-      IF (:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL) THEN
+      IF (:OLD.MOLECULE_ID IS NULL
+      AND :NEW.MOLECULE_ID IS NOT NULL) THEN
  
          -- handle primary molecule mapping to this theme
          INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A(
@@ -406,7 +430,9 @@ BEGIN
    ELSIF (UPDATING) THEN
  
       -- check admin access (role 315)
-      IF (:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0 THEN
+      IF (:OLD.IN_PREP_IND = 'N'
+      OR (:OLD.IN_PREP_IND = 'Y'
+      AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0 THEN
          RAISE ADMIN_UPDATE_ONLY;
       END IF;
 
@@ -427,7 +453,9 @@ BEGIN
          V_D_REGISTRAT_DATE := SYSDATE;
       END IF;
 
-      IF (UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD) THEN
+      IF (UPPER(:NEW.PORTF_PROJ_CD) = 'Y'
+      AND(V_STATUS_CD <> 'C'
+      OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD) THEN
          V_DESCRIPTION := GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO(
             P_THEME_NO_PORTF => :NEW.THEME_NO,
             P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID,
@@ -444,7 +472,8 @@ BEGIN
          V_DESCRIPTION := TRIM(V_DESCRIPTION);
          V_PORTF_PROJ_CD := 'Y';
       ELSE
-         IF (:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0) THEN
+         IF (:NEW.THEME_DESC IS NULL
+         OR LENGTH(:NEW.THEME_DESC) = 0) THEN
             RAISE THEMEDESCRIPTIONMANDATORY;
          ELSE
             V_DESCRIPTION := :NEW.THEME_DESC;
@@ -605,7 +634,8 @@ BEGIN
             NULL;
       END CASE;
    ELSIF (DELETING) THEN
-      IF ((:OLD.IN_PREP_IND = 'N') AND V_IS_ADMIN_CNT = 0) THEN
+      IF ((:OLD.IN_PREP_IND = 'N')
+      AND V_IS_ADMIN_CNT = 0) THEN
          RAISE ADMIN_UPDATE_ONLY;
       END IF;
  
@@ -625,8 +655,10 @@ BEGIN
  
 
    --  Code for Inserting, Updating, Deleting
-   IF (INSERTING OR UPDATING) THEN
-      IF (:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL) THEN
+   IF (INSERTING
+   OR UPDATING) THEN
+      IF (:NEW.PROPOSAL_ID IS NOT NULL
+      AND :OLD.PROPOSAL_ID IS NULL) THEN
  
          -- check if the entered NMP is evolved
          SELECT
@@ -651,7 +683,8 @@ BEGIN
                PROPOSAL_ID = :NEW.PROPOSAL_ID;
          END IF;
       ELSE
-         IF (:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL) THEN
+         IF (:NEW.PROPOSAL_ID IS NULL
+         AND :OLD.PROPOSAL_ID IS NOT NULL) THEN
             UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN
             SET
                PROPOSAL_STATUS_CD = 'A',
@@ -659,7 +692,9 @@ BEGIN
             WHERE
                PROPOSAL_ID = :OLD.PROPOSAL_ID;
          ELSE
-            IF (:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID) THEN
+            IF (:NEW.PROPOSAL_ID IS NOT NULL
+            AND :OLD.PROPOSAL_ID IS NOT NULL
+            AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID) THEN
  
                -- set to Active the old New Medicine Proposal
                UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN
@@ -684,7 +719,8 @@ BEGIN
  
 
       -- short_name update
-      IF (NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')) THEN
+      IF (NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0)
+      AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')) THEN
  
          -- check if this is an evolved proposal
          SELECT
@@ -710,7 +746,9 @@ BEGIN
  
 
    -- handle New Medicine Proposals with theme_no starting with 71.. or 74
-   IF (INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y') THEN
+   IF (INSERTING
+   AND :NEW.THEME_NO IS NOT NULL
+   AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y') THEN
       IF (:NEW.PROPOSAL_ID IS NOT NULL) THEN
          SELECT
             COUNT(*) INTO V_EVOLVED_NMP_CNT
@@ -724,7 +762,9 @@ BEGIN
  
 
       -- automatic create NMP only if no prposal_id is selected or the selected one is evolved
-      IF (:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)) THEN
+      IF (:NEW.PROPOSAL_ID IS NULL
+      OR (:NEW.PROPOSAL_ID IS NOT NULL
+      AND V_EVOLVED_NMP_CNT = 0)) THEN
          IF (:NEW.MOLECULE_ID IS NOT NULL) THEN
             BEGIN
                SELECT
@@ -797,11 +837,17 @@ EXCEPTION
    WHEN THEME_NO_ONLY_INSERT THEN
       RAISE_APPLICATION_ERROR(-20400, 'Theme No cannot be updated');
    WHEN DESCRIPTION_TOO_LONG THEN
-      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Theme Description "' || V_DESCRIPTION || '" is too long');
+      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Theme Description "'
+                                      || V_DESCRIPTION
+                                      || '" is too long');
    WHEN THEME_DESC_PROPOSAL_TOO_LONG THEN
-      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Short Description Proposal "' || :OLD.THEME_DESC_PROPOSAL || '" is too long');
+      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Short Description Proposal "'
+                                      || :OLD.THEME_DESC_PROPOSAL
+                                      || '" is too long');
    WHEN THEME_DESC_ALT_TOO_LONG THEN
-      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Downstream Theme Description "' || :OLD.THEME_DESC_ALT || '" is too long');
+      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Downstream Theme Description "'
+                                      || :OLD.THEME_DESC_ALT
+                                      || '" is too long');
    WHEN THEME_NO_CANNOT_BE_INSERTED THEN
       RAISE_APPLICATION_ERROR(-20400, 'This Theme No already exists');
    WHEN ONLYONEOFFICIALCHANGEPERDAY THEN
@@ -809,11 +855,11 @@ EXCEPTION
    WHEN INSERTSMUSTBEOFFICIAL THEN
       RAISE_APPLICATION_ERROR(-20400, 'New Themes can only be inserted by Official Changes');
    WHEN THEMEDESCRIPTIONMANDATORY THEN
-      RAISE_APPLICATION_ERROR(-20400, 'If Pharma Rx Portfolio Project is set to "No", then the Theme Description must be filled');
+      RAISE_APPLICATION_ERROR(-20400, 'If Pharma Rx Portfolio Project is set to "No", then the Theme Description must be filled' );
    WHEN THEME_DESC_NOT_UNIQUE THEN
       RAISE_APPLICATION_ERROR(-20400, 'This Theme Description already exists');
    WHEN PORTF_PROJ_MOL_CRE_ERR THEN
-      RAISE_APPLICATION_ERROR(-20120, 'MDM_V_THEMES_IOF');
+      RAISE_APPLICATION_ERROR( -20120, 'MDM_V_THEMES_IOF');
    WHEN DEBUGGING THEN
-      RAISE_APPLICATION_ERROR(-20900, 'Debug in Themes IOF standard');
+      RAISE_APPLICATION_ERROR( -20900, 'Debug in Themes IOF standard' );
 END;

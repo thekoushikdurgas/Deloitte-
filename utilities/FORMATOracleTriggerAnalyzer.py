@@ -6,13 +6,14 @@ import time
 from typing import Dict, List, Any, Union
 from datetime import datetime
 from utilities.common import (
+    logger,
+    setup_logging,
     debug,
     info,
     warning,
     error,
-    log_parsing_start,
-    log_parsing_complete,
-    log_performance
+    critical,
+    alert,
 )
 
 # Configure logging
@@ -63,7 +64,7 @@ class FORMATOracleTriggerAnalyzer:
         if "declarations" not in analysis or "main" not in analysis:
             raise ValueError("Analysis must contain 'declarations' and 'main' sections")
             
-        logger.info("FORMATOracleTriggerAnalyzer initialized successfully")
+        logger.debug("FORMATOracleTriggerAnalyzer initialized successfully")
 
     def to_sql(self) -> str:
         """

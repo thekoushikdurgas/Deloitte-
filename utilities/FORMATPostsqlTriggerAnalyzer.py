@@ -15,12 +15,6 @@ from utilities.common import (
     error,
     critical,
     alert,
-    log_parsing_start,
-    log_parsing_complete,
-    log_parsing_error,
-    log_structure_found,
-    log_nesting_level,
-    log_performance,
 )
 
 class FORMATPostsqlTriggerAnalyzer:
@@ -54,7 +48,7 @@ class FORMATPostsqlTriggerAnalyzer:
         if "declarations" not in json_data or "main" not in json_data:
             raise ValueError("Analysis must contain 'declarations' and 'main' sections")
             
-        logger.info("FORMATPostsqlTriggerAnalyzer initialized successfully")
+        logger.debug("FORMATPostsqlTriggerAnalyzer initialized successfully")
     
     def _load_function_mappings(self) -> Dict[str, str]:
         """
@@ -81,7 +75,7 @@ class FORMATPostsqlTriggerAnalyzer:
                 if oracle_func and postgresql_func and oracle_func != 'nan' and postgresql_func != 'nan':
                     func_mapping[oracle_func] = postgresql_func
             
-            logger.info(f"Loaded {len(func_mapping)} function mappings from Excel file")
+            logger.debug(f"Loaded {len(func_mapping)} function mappings from Excel file")
             return func_mapping
             
         except Exception as e:
@@ -130,7 +124,7 @@ class FORMATPostsqlTriggerAnalyzer:
                     type_mapping[oracle_type] = postgresql_type
                     debug(f"Mapping: {oracle_type} → {postgresql_type}")
             
-            logger.info(f"Loaded {len(type_mapping)} type mappings from Excel file")
+            logger.debug(f"Loaded {len(type_mapping)} type mappings from Excel file")
             return type_mapping
             
         except FileNotFoundError as e:
@@ -262,7 +256,7 @@ class FORMATPostsqlTriggerAnalyzer:
         Returns:
             str: Formatted SQL code
         """
-        logger.info("Starting SQL conversion for PostgreSQL...")
+        logger.debug("Starting SQL conversion for PostgreSQL...")
         lines: List[str] = []
         
         # Add header comment
@@ -287,7 +281,7 @@ class FORMATPostsqlTriggerAnalyzer:
         
         # self.sql_content = self.sql_content.replace("\n","")
         self.sql_content = "DO $$\n" +"\n".join(lines) + "\nEND $$;"
-        logger.info(f"SQL conversion complete: {len(self.sql_content)} characters")
+        logger.debug(f"SQL conversion complete: {len(self.sql_content)} characters")
         return self.sql_content
         
     def _render_declarations(self, decl: Dict[str, Any]) -> List[str]:
@@ -448,7 +442,7 @@ class FORMATPostsqlTriggerAnalyzer:
                 if oracle_exception and postgresql_message and oracle_exception != 'NAN' and postgresql_message != 'NAN':
                     exception_mapping[oracle_exception] = postgresql_message
             
-            logger.info(f"Loaded {len(exception_mapping)} exception mappings from Excel file")
+            logger.debug(f"Loaded {len(exception_mapping)} exception mappings from Excel file")
             return exception_mapping
             
         except Exception as e:

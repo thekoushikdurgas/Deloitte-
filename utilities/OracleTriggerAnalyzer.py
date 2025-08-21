@@ -12,17 +12,13 @@ from utilities.common import (
     error,
     critical,
     alert,
-    log_parsing_start,
-    log_parsing_complete,
-    log_parsing_error,
-    log_structure_found,
-    log_nesting_level,
-    log_performance,
 )
+
 
 class OracleTriggerAnalyzer:
     """
     Parser and analyzer for Oracle PL/SQL trigger bodies.
+
 
     Architecture and flow:
     - Constructor receives raw SQL text and splits it into `DECLARE` and main sections.
@@ -33,12 +29,15 @@ class OracleTriggerAnalyzer:
     - Finally, `to_json()` emits a dict with `declarations`, `main`, and `sql_comments`.
     """
 
+
     def __init__(self, sql_content: str):
         """
         Initialize the OracleTriggerAnalyzer with SQL content.
 
+
         Args:
             sql_content (str): The raw SQL trigger content to analyze
+
 
         Process flow:
             1. Store the raw SQL content
@@ -53,9 +52,10 @@ class OracleTriggerAnalyzer:
             len(sql_content),
         )
 
+
         self.sql_content: str = sql_content
         self.declare_section: List[int] = [0, 0]
-        self.main_section: int = 0
+        self.main_section: List[int] = [0,0]
         self.main_section_lines: List[Dict] = []
         self.variables: List[Dict[str, Any]] = []
         self.constants: List[Dict[str, Any]] = []
@@ -66,29 +66,24 @@ class OracleTriggerAnalyzer:
         self.rest_strings_line: List[Dict] = []
         self.strng_convert_json: int = 0
 
-        log_parsing_complete(
-            "structured lines conversion",
-            f"{len(self.structured_lines)} lines processed",
-        )
 
-        # Step 2: Parse SQL into declare and main sections
-        log_parsing_start("SQL section parsing")
+        logger.debug(f"structured lines conversion {len(self.structured_lines)} lines processed",)
+
+
+        # Step 3: Parse SQL into declare and main sections
+        logger.debug("SQL section parsing")
         self._parse_sql()
-        log_parsing_complete("SQL section parsing")
+        logger.debug("SQL section parsing")
 
-        # Step 3: Validate formatting rules
-        log_parsing_start("rule validation")
-        self.rule_errors = self._validate_rules()
-        if self.rule_errors:
-            warning("Found %d rule violation(s)", len(self.rule_errors))
-        log_parsing_complete("rule validation")
 
         duration = time.time() - start_time
-        log_performance("OracleTriggerAnalyzer initialization", duration)
+        logger.debug(f"OracleTriggerAnalyzer initialization {duration} seconds")
+
 
     def _convert_to_structured_lines(self):
         """
         Convert raw SQL content into a structured line representation.
+
 
         Each line is represented as a dictionary with the following structure:
         {
@@ -97,6 +92,7 @@ class OracleTriggerAnalyzer:
             "line_no": int,          # The line number (1-based)
             "is_end_semicolon": bool # Whether the line ends with a semicolon
         }
+
 
         This structured format makes it easier to:
         1. Process lines based on their indentation level (nesting)
@@ -108,27 +104,32 @@ class OracleTriggerAnalyzer:
         raw_lines = self.sql_content.splitlines()
         self.structured_lines = []
 
+
         # Track statistics for debugging
         semicolon_lines = 0
         empty_lines = 0
-        # total_lines = len(raw_lines)
+
 
         for i, line in enumerate(raw_lines, start=1):
             # Calculate indentation level (number of leading spaces)
             indent_level = len(line) - len(line.lstrip())
 
+
             # Get content without leading whitespace
             content = line.rstrip()
+
 
             # Skip completely empty lines from structured representation
             if not content:
                 empty_lines += 1
                 continue
 
+
             # Check if line ends with semicolon
             is_end_semicolon = content.rstrip().endswith(";")
             if is_end_semicolon:
                 semicolon_lines += 1
+
 
             self.structured_lines.append(
                 {
@@ -139,6 +140,7 @@ class OracleTriggerAnalyzer:
                 }
             )
 
+
         debug(
             "Structured lines conversion complete: %d total, %d with semicolons, %d empty lines skipped",
             len(self.structured_lines),
@@ -146,13 +148,16 @@ class OracleTriggerAnalyzer:
             empty_lines,
         )
 
+
     def _strip_block_comments(self):
         """
         Strip block comments (/* ... */) from structured lines.
 
+
         This method processes each line to remove block comments while preserving
         the structure of the original content. It handles multi-line block comments
         that span across multiple structured lines.
+
 
         Performance optimization:
             - Fast path check for lines without any block comments
@@ -163,18 +168,21 @@ class OracleTriggerAnalyzer:
         in_block_comment = False
         current_comment = ""
 
+
         for line_info in self.structured_lines:
             line = line_info["line"]
-            # original_line = line
+
 
             # Fast path: if no block comment markers, keep line as is
             if "/*" not in line and "*/" not in line and not in_block_comment:
                 clean_lines.append(line_info)
                 continue
 
+
             # Process line with potential block comments
             clean_line = ""
             i = 0
+
 
             while i < len(line):
                 if not in_block_comment:
@@ -198,9 +206,11 @@ class OracleTriggerAnalyzer:
                         current_comment += line[i]
                         i += 1
 
+
             # If we're still in a block comment, add newline to current comment
             if in_block_comment:
                 current_comment += "\n"
+
 
             # Only add line if it has content after comment removal
             if clean_line.strip():
@@ -213,14 +223,17 @@ class OracleTriggerAnalyzer:
                     }
                 )
 
+
         # If we end with an unclosed block comment, add it to extracted comments
         if in_block_comment and current_comment:
             extracted_comments.append(current_comment)
             logger.debug("Unclosed block comment detected")
 
+
         # Update self.structured_lines and self.sql_comments
         self.structured_lines = clean_lines
         self.sql_comments.extend(extracted_comments)
+
 
         logger.debug(
             "Block comment stripping complete: %d comments extracted, %d lines cleaned",
@@ -228,20 +241,25 @@ class OracleTriggerAnalyzer:
             len(clean_lines),
         )
 
+
     def _strip_inline_comments_from_lines(self):
         """
         Remove inline comments (-- ...) from structured lines.
+
 
         This method updates self.structured_lines and adds extracted comments to self.sql_comments.
         """
         clean_lines = []
         extracted_comments = []
 
+
         for line_info in self.structured_lines:
             line = line_info["line"]
 
+
             # Find the position of the first inline comment
             comment_pos = line.find("--")
+
 
             if comment_pos == -1:
                 # No inline comment found, keep line as is
@@ -251,8 +269,10 @@ class OracleTriggerAnalyzer:
                 comment = line[comment_pos:].strip()
                 extracted_comments.append(comment)
 
+
                 # Keep the part before the comment
                 clean_part = line[:comment_pos].rstrip()
+
 
                 if clean_part:
                     # Only add line if there's content after comment removal
@@ -265,9 +285,11 @@ class OracleTriggerAnalyzer:
                         }
                     )
 
+
         # Update self.structured_lines and self.sql_comments
         self.structured_lines = clean_lines
         self.sql_comments.extend(extracted_comments)
+
 
         logger.debug(
             "Inline comment stripping complete: %d comments extracted, %d lines cleaned",
@@ -275,9 +297,11 @@ class OracleTriggerAnalyzer:
             len(clean_lines),
         )
 
+
     def _parse_sql(self) -> None:
         """
         Split SQL content into DECLARE and main (BEGIN...END) sections.
+
 
         This method:
         1. Builds the full SQL from structured lines
@@ -285,61 +309,81 @@ class OracleTriggerAnalyzer:
         3. Sets the main section with the BEGIN block
         4. Processes declarations into categories (variables, constants, exceptions)
 
+
         Pattern: DECLARE ... BEGIN ... END
         """
         # Step 1: Convert to structured lines
-        log_parsing_start("structured lines conversion")
+        logger.debug("structured lines conversion")
         self._convert_to_structured_lines()
-        log_parsing_complete("structured lines conversion")
+        logger.debug("structured lines conversion")
+
 
         # Step 2: Remove block comments (/* ... */)
         self._strip_block_comments()
         logger.debug("Removed block comments from main section")
 
+
         # Step 3: Remove inline comments (-- ...)
         self._strip_inline_comments_from_lines()
         logger.debug("Removed inline comments from main section")
 
-        # Find DECLARE and BEGIN sections
-        declare_start = -1
-        begin_start = -1
-
-        for i, line_info in enumerate(self.structured_lines):
-            line_content = line_info["line"].strip().upper()
-
-            # Find DECLARE section
-            if line_content == "DECLARE":
-                declare_start = line_info["line_no"]
-                logger.debug("Found DECLARE at line %d", declare_start)
-
-            # Find BEGIN section
-            elif line_content == "BEGIN" and begin_start == -1:
-                begin_start = line_info["line_no"]
-                logger.debug("Found BEGIN at line %d", begin_start)
-
-        # Set section boundaries
-        if declare_start != -1:
-            declare_end = begin_start - 1
-            self.declare_section = [declare_start, declare_end]
-            logger.debug("DECLARE section: lines %d-%d", declare_start, declare_end)
+        
+        # Step 4: Validate formatting rules
+        logger.debug("rule validation")
+        self.rule_errors = self._validate_rules()
+        if self.rule_errors:
+            warning("Found %d rule violation(s)", len(self.rule_errors))
         else:
-            self.declare_section = [0, 0]
-            logger.debug("No DECLARE section found")
+            # Find DECLARE and BEGIN sections
+            declare_start = -1
+            begin_start = -1
+            begin_end_start = -1
 
-        if begin_start != -1:
-            self.main_section = begin_start
-            logger.debug("Main section: lines %d", begin_start)
-        else:
-            self.main_section = 0
-            logger.debug("Could not identify main section (BEGIN/END)")
+            for i, line_info in enumerate(self.structured_lines):
+                line_content = line_info["line"].strip().upper()
 
-        # Process declarations if DECLARE section exists
-        if self.declare_section[0] > 0:
-            self._parse_declarations()
 
-        # Process main section if main section exists
-        if self.main_section > 0:
-            self._process_main_section()
+                # Find DECLARE section
+                if line_content.startswith("DECLARE"):
+                    declare_start = line_info["line_no"]
+                    logger.debug("Found DECLARE at line %d", declare_start)
+                # Find BEGIN section
+                elif line_content.startswith("BEGIN") and begin_start == -1:
+                    begin_start = line_info["line_no"]
+                    logger.debug("Found BEGIN at line %d", begin_start)
+
+                elif line_content.endswith("END;"):
+                    begin_end_start = line_info["line_no"]
+                    logger.debug("Found END at line %d", begin_end_start)
+
+
+            # Set section boundaries
+            if declare_start != -1:
+                declare_end = begin_start - 1
+                self.declare_section = [declare_start, declare_end]
+                logger.debug("DECLARE section: lines %d-%d", declare_start, declare_end)
+            else:
+                self.declare_section = [0, 0]
+                logger.debug("No DECLARE section found")
+
+
+            if begin_start != -1:
+                self.main_section = [begin_start,begin_end_start]
+                logger.debug("Main section: lines %d-%d", begin_start, begin_end_start)
+            else:
+                self.main_section = [0,0]
+                logger.debug("Could not identify main section (BEGIN/END)")
+
+
+            # Process declarations if DECLARE section exists
+            if self.declare_section[0] > 0:
+                self._parse_declarations()
+
+
+            # Process main section if main section exists
+            if self.main_section[0] > 0:
+                self._process_main_section()
+
 
     def _parse_declarations(self) -> None:
         """
@@ -347,6 +391,7 @@ class OracleTriggerAnalyzer:
         - Variables
         - Constants
         - Exceptions
+
 
         This method:
         1. Splits declaration section by semicolons
@@ -356,6 +401,7 @@ class OracleTriggerAnalyzer:
         5. Populates self.variables, self.constants, and self.exceptions
         """
         logger.debug("Starting declaration parsing")
+
 
         # Get all lines from the DECLARE section
         decl_lines = []
@@ -367,16 +413,20 @@ class OracleTriggerAnalyzer:
             ):
                 decl_lines.append(line_info["line"])
 
+
         # Join lines and split by semicolons
         full_declaration = " ".join(decl_lines)
         segments = [seg.strip() for seg in full_declaration.split(";") if seg.strip()]
 
+
         for segment in segments:
             segment_upper = segment.upper()
+
 
             # Skip empty segments and comments
             if not segment or segment.startswith("--") or segment.startswith("/*"):
                 continue
+
 
             # Determine declaration type and process accordingly
             if "CONSTANT" in segment_upper:
@@ -387,9 +437,11 @@ class OracleTriggerAnalyzer:
                 # Assume it's a variable declaration
                 self._process_variable_declaration(segment)
 
+
     def _process_variable_declaration(self, segment: str) -> None:
         """
         Process a variable declaration segment.
+
 
         Args:
             segment (str): The segment containing a variable declaration
@@ -402,9 +454,11 @@ class OracleTriggerAnalyzer:
         except Exception as e:
             logger.debug("Failed to process variable declaration '%s': %s", segment, e)
 
+
     def _process_constant_declaration(self, segment: str) -> None:
         """
         Process a constant declaration segment.
+
 
         Args:
             segment (str): The segment containing a constant declaration
@@ -417,9 +471,11 @@ class OracleTriggerAnalyzer:
         except Exception as e:
             logger.debug("Failed to process constant declaration '%s': %s", segment, e)
 
+
     def _process_exception_declaration(self, segment: str) -> None:
         """
         Process an exception declaration segment.
+
 
         Args:
             segment (str): The segment containing an exception declaration
@@ -432,18 +488,23 @@ class OracleTriggerAnalyzer:
         except Exception as e:
             logger.debug("Failed to process exception declaration '%s': %s", segment, e)
 
+
     def _parse_variable(self, line: str) -> Dict[str, Any]:
         """
         Parse a variable declaration line and extract name, data type, and default value.
 
+
         Handles variable declarations in the format:
         - variable_name data_type [NOT NULL] [:= default_value];
+
 
         Args:
             line (str): The line containing a variable declaration
 
+
         Returns:
             dict: Dictionary with variable name, data type, and default value (if present)
+
 
         Examples of supported formats:
         - v_count NUMBER;
@@ -453,6 +514,7 @@ class OracleTriggerAnalyzer:
         """
         # Remove trailing semicolon if present
         line = line.strip().rstrip(";")
+
 
         # Check for default value assignment
         default_value = None
@@ -464,13 +526,16 @@ class OracleTriggerAnalyzer:
         else:
             declaration_part = line
 
+
         # Split declaration into name and type
         words = declaration_part.split()
         if len(words) < 2:
             logger.debug("Invalid variable declaration format: %s", line)
             return None
 
+
         var_name = words[0]
+
 
         # Handle complex data types with parameters (e.g., VARCHAR2(100))
         # type_parts = words[1:]
@@ -488,24 +553,30 @@ class OracleTriggerAnalyzer:
                     data_type += " " + words[i]
             i += 1
 
+
         return {
             "name": var_name,
             "data_type": data_type.strip(),
             "default_value": default_value,
         }
 
+
     def _parse_constant(self, line: str) -> Dict[str, Any]:
         """
         Parse a constant declaration line and extract name, data type, and value.
 
+
         Handles constant declarations in the format:
         - constant_name CONSTANT data_type [:= value];
+
 
         Args:
             line (str): The line containing a constant declaration
 
+
         Returns:
             dict: Dictionary with constant name, data type, and value (if present)
+
 
         Examples of supported formats:
         - C_MAX_RECORDS CONSTANT NUMBER := 100;
@@ -514,6 +585,7 @@ class OracleTriggerAnalyzer:
         """
         # Remove trailing semicolon if present
         line = line.strip().rstrip(";")
+
 
         # Check for value assignment
         value = None
@@ -525,13 +597,16 @@ class OracleTriggerAnalyzer:
         else:
             declaration_part = line
 
+
         # Split declaration: constant_name CONSTANT data_type
         words = declaration_part.split()
         if len(words) < 3 or words[1].upper() != "CONSTANT":
             logger.debug("Invalid constant declaration format: %s", line)
             return None
 
+
         const_name = words[0]
+
 
         # Handle complex data types with parameters
         # type_parts = words[2:]
@@ -549,17 +624,22 @@ class OracleTriggerAnalyzer:
                     data_type += " " + words[i]
             i += 1
 
+
         return {"name": const_name, "data_type": data_type.strip(), "value": value}
+
 
     def _parse_exception(self, line: str) -> Dict[str, Any]:
         """
         Parse an exception declaration line.
 
+
         This extracts the exception name from declarations like:
         - my_exception exception;
 
+
         Args:
             line (str): The line containing an exception declaration
+
 
         Returns:
             dict: Dictionary with the exception name and type
@@ -567,211 +647,157 @@ class OracleTriggerAnalyzer:
         # Remove trailing semicolon if present
         line = line.strip().rstrip(";")
 
+
         # Split by whitespace
         words = line.split()
         if len(words) < 2 or words[-1].upper() != "EXCEPTION":
             logger.debug("Invalid exception declaration format: %s", line)
             return None
 
+
         # Exception name is everything before "EXCEPTION"
         exc_name = " ".join(words[:-1])
 
+
         return {"name": exc_name, "type": "EXCEPTION"}
+
 
     def _validate_rules(self) -> List[Dict[str, Any]]:
         """
         Validate Oracle PL/SQL formatting rules on the structured lines.
 
+
         This method checks for common formatting violations that would cause
         issues during conversion or interpretation. It returns a list of
         violations with line numbers and suggested fixes.
+
 
         Rules enforced:
         - IF and THEN must be on the same line
         - ELSIF and THEN must be on the same line
         - WHEN and THEN must be on the same line (for CASE statements)
-        - RAISE_APPLICATION_ERROR must have all parameters on the same line and end with a semicolon
+
 
         Returns:
             List[Dict[str, Any]]: List of rule violations with line numbers and solutions
         """
         errors = []
 
-        for i, line_info in enumerate(self.structured_lines):
+
+        i = 0
+        while i < len(self.structured_lines):
+            line_info = self.structured_lines[i]
             line = line_info["line"]
             line_no = line_info["line_no"]
             line_upper = line.strip().upper()
 
-            # Rule 1: IF and THEN must be on the same line
-            if line_upper.startswith("IF "):
-                # Check if this line ends with THEN
-                if not line_upper.endswith(" THEN"):
+
+            # Rule 1: IF and THEN must be on the same line  if this line ends with THEN
+            if line_upper.startswith("IF") and not line_upper.endswith("THEN"):
                     # Look for THEN on subsequent lines
+                    complete_line = line
                     j = i + 1
-                    found_then = False
-                    while j < len(self.structured_lines) and j < i + 10:  # Check next 10 lines
+                    while j < len(self.structured_lines):
                         next_line = self.structured_lines[j]["line"].strip()
                         next_line_upper = next_line.upper()
-                        
+                        self.structured_lines.pop(j)
+                        complete_line += " " + next_line
                         # Check if this line contains THEN
-                        if " THEN" in next_line_upper:
-                            found_then = True
-                            errors.append(
-                                {
-                                    "type": "if_then_split",
-                                    "message": "IF and THEN must be on the same line",
-                                    "line_no": line_no,
-                                    "line": line,
-                                    "solution": f"Combine lines {line_no} and {self.structured_lines[j]['line_no']}: IF ... THEN",
-                                }
-                            )
+                        if "THEN" in next_line_upper:
+                            self.structured_lines[i]["line"] = complete_line
                             break
-                        
-                        # Stop if we hit another statement at the same or lower indentation
-                        # that doesn't start with continuation keywords
-                        if (self.structured_lines[j]["indent"] <= line_info["indent"] and 
-                            not (next_line_upper.startswith("AND") or 
-                                 next_line_upper.startswith("OR") or 
-                                 next_line_upper.startswith("(") or 
-                                 next_line_upper.startswith(")") or 
-                                 next_line_upper == "")):
-                            break
-                        
                         j += 1
+
 
             # Rule 2: ELSIF and THEN must be on the same line
             elif line_upper.startswith("ELSIF") and not line_upper.endswith("THEN"):
-                if i + 1 < len(self.structured_lines):
-                    next_line_upper = (
-                        self.structured_lines[i + 1]["line"].strip().upper()
-                    )
-                    if next_line_upper == "THEN":
-                        errors.append(
-                            {
-                                "type": "elsif_then_split",
-                                "message": "ELSIF and THEN must be on the same line",
-                                "line_no": line_no,
-                                "line": line,
-                                "solution": f"Combine lines {line_no} and {line_no + 1}: ELSIF ... THEN",
-                            }
-                        )
+                # Look for THEN on subsequent lines
+                complete_line = line
+                j = i + 1
+                while j < len(self.structured_lines):
+                    next_line = self.structured_lines[j]["line"].strip()
+                    next_line_upper = next_line.upper()
+                    self.structured_lines.pop(j)
+                    complete_line += " " + next_line
+                    # Check if this line contains THEN
+                    if "THEN" in next_line_upper:
+                        self.structured_lines[i]["line"] = complete_line
+                        break
+                    j += 1
+
 
             # Rule 3: WHEN and THEN must be on the same line (for CASE statements)
             elif line_upper.startswith("WHEN") and not line_upper.endswith("THEN"):
-                if i + 1 < len(self.structured_lines):
-                    next_line_upper = (
-                        self.structured_lines[i + 1]["line"].strip().upper()
-                    )
-                    if next_line_upper == "THEN":
-                        errors.append(
-                            {
-                                "type": "when_then_split",
-                                "message": "WHEN and THEN must be on the same line",
-                                "line_no": line_no,
-                                "line": line,
-                                "solution": f"Combine lines {line_no} and {line_no + 1}: WHEN ... THEN",
-                            }
-                        )
+                # Look for THEN on subsequent lines
+                complete_line = line
+                j = i + 1
+                while j < len(self.structured_lines):
+                    next_line = self.structured_lines[j]["line"].strip()
+                    next_line_upper = next_line.upper()
+                    self.structured_lines.pop(j)
+                    complete_line += " " + next_line
+                    # Check if this line contains THEN
+                    if "THEN" in next_line_upper:
+                        self.structured_lines[i]["line"] = complete_line
+                        break
+                    j += 1
 
-            # Rule 4: RAISE_APPLICATION_ERROR must have all parameters on the same line and end with semicolon
-            elif "RAISE_APPLICATION_ERROR" in line_upper:
-                # Check if the statement is complete (ends with semicolon)
-                if not line.strip().endswith(";"):
-                    # Check if it continues on the next line
-                    if i + 1 < len(self.structured_lines):
-                        next_line = self.structured_lines[i + 1]["line"].strip()
-                        if not next_line.endswith(";"):
-                            errors.append(
-                                {
-                                    "type": "raise_application_error_incomplete",
-                                    "message": "RAISE_APPLICATION_ERROR statement must be complete and end with semicolon",
-                                    "line_no": line_no,
-                                    "line": line,
-                                    "solution": "Complete the RAISE_APPLICATION_ERROR statement on the same line or ensure it ends with semicolon",
-                                }
-                            )
-                    else:
-                        errors.append(
-                            {
-                                "type": "raise_application_error_incomplete",
-                                "message": "RAISE_APPLICATION_ERROR statement must end with semicolon",
-                                "line_no": line_no,
-                                "line": line,
-                                "solution": "Add semicolon to complete the statement",
-                            }
-                        )
-
-                # Check for proper parameter structure
-                if "RAISE_APPLICATION_ERROR" in line_upper:
-                    # Look for opening and closing parentheses
-                    open_paren = line.find("(")
-                    close_paren = line.rfind(")")
-
-                    if open_paren == -1 or close_paren == -1:
-                        errors.append(
-                            {
-                                "type": "raise_application_error_params",
-                                "message": "RAISE_APPLICATION_ERROR must have proper parentheses",
-                                "line_no": line_no,
-                                "line": line,
-                                "solution": "Ensure RAISE_APPLICATION_ERROR has proper parameter structure: RAISE_APPLICATION_ERROR(error_code, message)",
-                            }
-                        )
-                    elif open_paren > close_paren:
-                        errors.append(
-                            {
-                                "type": "raise_application_error_params",
-                                "message": "RAISE_APPLICATION_ERROR has mismatched parentheses",
-                                "line_no": line_no,
-                                "line": line,
-                                "solution": "Fix parentheses matching in RAISE_APPLICATION_ERROR statement",
-                            }
-                        )
+            i += 1
 
         logger.debug("Rule validation complete: found %d violations", len(errors))
         return errors
+
 
     def _process_main_section(self) -> None:
         """
         Process the main section (BEGIN...END) to extract structured lines.
 
+
         This method populates self.main_section_lines with the lines from
         the main section of the Oracle PL/SQL trigger.
         """
-        debug("Processing main section from lines %d", self.main_section)
+        debug("Processing main section from lines %d to %d", self.main_section[0], self.main_section[1])
+
 
         # Step 3: Parse BEGIN blocks from the main section
-        log_parsing_start("First BEGIN blocks")
+        logger.debug("First BEGIN blocks")
         self._parse_begin_blocks()
-        log_parsing_complete("First BEGIN blocks")
+        logger.debug("First BEGIN blocks")
         
-        log_parsing_start("CASE-WHEN statements in main section")
+        logger.debug("CASE-WHEN statements in main section")
         self._parse_case_when()
-        log_parsing_complete("CASE-WHEN statements in main section")
+        logger.debug("CASE-WHEN statements in main section")
 
-        log_parsing_start("IF-ELSE statements in main section")
+
+        logger.debug("IF-ELSE statements in main section")
         self._parse_if_else()
-        log_parsing_complete("IF-ELSE statements in main section")
+        logger.debug("IF-ELSE statements in main section")
 
-        log_parsing_start("BEGIN blocks in main section")
+
+        logger.debug("BEGIN blocks in main section")
         self._parse_begin_end()
-        log_parsing_complete("BEGIN blocks in main section")
+        logger.debug("BEGIN blocks in main section")
 
-        log_parsing_start("FOR loops in main section")
+
+        logger.debug("FOR loops in main section")
         self._parse_for_loop()
-        log_parsing_complete("FOR loops in main section")
+        logger.debug("FOR loops in main section")
 
-        log_parsing_start("assignment statements in main section")
+
+        logger.debug("assignment statements in main section")
         self._parse_assignment_statement()
-        log_parsing_complete("assignment statements in main section")
+        logger.debug("assignment statements in main section")
 
-        log_parsing_start("SQL statements in main section")
+
+        logger.debug("SQL statements in main section")
         self._parse_sql_statements()
-        log_parsing_complete("SQL statements in main section")
+        logger.debug("SQL statements in main section")
 
-        log_parsing_start("final statement in main section")
+
+        logger.debug("final statement in main section")
         self._parse_final_statement()
-        log_parsing_complete("final statement in main section")
+        logger.debug("final statement in main section")
+
 
         # to check how many rest strings are in main section
         self.rest_strings_line = self.rest_strings()
@@ -781,6 +807,7 @@ class OracleTriggerAnalyzer:
         self._remove_duplicate_case_when_structures()
         logger.debug("Finished removing duplicate case_when structures")
 
+
     def _parse_begin_blocks(self):
         """
         Parse top-level BEGIN blocks from the main section of SQL.
@@ -789,32 +816,39 @@ class OracleTriggerAnalyzer:
         """
         logger.debug("Starting top-level BEGIN blocks parsing")
 
+
         # Initialize main_section_lines with lines from the main section
         self.main_section_lines = []
 
+
         # Collect all lines from the main section (after BEGIN)
         for line_info in self.structured_lines:
-            if self.main_section <= line_info["line_no"]:
+            if self.main_section[0] <= line_info["line_no"] <= self.main_section[1]:
                 self.main_section_lines.append(line_info)
+
 
         logger.debug(
             "Collected %d lines from main section", len(self.main_section_lines)
         )
+
 
         # Now parse only top-level BEGIN-END blocks
         i = 0
         while i < len(self.main_section_lines):
             item = self.main_section_lines[i]
 
+
             # Check if this is a line_info object with a BEGIN statement
             if isinstance(item, dict) and "line" in item:
                 line = item["line"].strip()
                 line_upper = line.upper()
 
+
                 # Check for top-level BEGIN block (indent should be minimal for top-level)
                 if line_upper == "BEGIN":
                     begin_line_no = item["line_no"]
                     begin_indent = item.get("indent", 0)
+
 
                     logger.debug(
                         "Found top-level BEGIN block at line %d (indent %d)",
@@ -822,13 +856,16 @@ class OracleTriggerAnalyzer:
                         begin_indent,
                     )
 
+
                     # Parse the complete BEGIN-END block structure
                     begin_end_result = self._parse_top_level_begin_end_structure(i)
                     if begin_end_result:
                         begin_end_block, end_idx = begin_end_result
 
+
                         # Replace the BEGIN line with the complete block structure
                         self.main_section_lines[i] = begin_end_block
+
 
                         # Remove all the lines that were part of this BEGIN-END block
                         # (they are now included in the begin_end_block structure)
@@ -844,6 +881,7 @@ class OracleTriggerAnalyzer:
                             else:
                                 j += 1
 
+
                         logger.debug(
                             "Successfully parsed top-level BEGIN-END block from line %d to %d",
                             begin_line_no,
@@ -851,20 +889,25 @@ class OracleTriggerAnalyzer:
                         )
                         continue  # Don't increment i since we replaced the current item
 
+
             i += 1
+
 
         logger.debug(
             "Top-level BEGIN blocks parsing complete: %d items in main_section_lines",
             len(self.main_section_lines),
         )
 
+
     def _parse_top_level_begin_end_structure(self, start_idx):
         """
         Parse a complete top-level BEGIN-END block structure starting from the given index.
         Returns (begin_end_block, end_line_no) or None if parsing fails.
 
+
         Args:
             start_idx (int): Index in main_section_lines where the BEGIN statement starts
+
 
         Returns:
             tuple: (begin_end_block, end_line_no) if successful, None otherwise
@@ -872,25 +915,31 @@ class OracleTriggerAnalyzer:
         if start_idx < 0 or start_idx >= len(self.main_section_lines):
             return None
 
+
         start_item = self.main_section_lines[start_idx]
         if not (isinstance(start_item, dict) and "line" in start_item):
             return None
 
+
         start_line = start_item["line"].strip()
         start_line_upper = start_line.upper()
+
 
         # Verify this is a BEGIN statement
         if start_line_upper != "BEGIN":
             return None
 
+
         begin_line_no = start_item["line_no"]
         begin_indent = start_item.get("indent", 0)
+
 
         logger.debug(
             "Parsing top-level BEGIN-END block starting at line %d (indent %d)",
             begin_line_no,
             begin_indent,
         )
+
 
         # Initialize the block structure
         begin_end_block = {
@@ -903,13 +952,16 @@ class OracleTriggerAnalyzer:
             "end_line_no": 0,
         }
 
+
         # Find the matching END; at the same indentation level
         end_line_no = None
         exception_line_no = None
 
+
         i = start_idx + 1
         while i < len(self.main_section_lines):
             item = self.main_section_lines[i]
+
 
             if isinstance(item, dict) and "line" in item:
                 line = item["line"].strip()
@@ -917,11 +969,13 @@ class OracleTriggerAnalyzer:
                 current_indent = item.get("indent", 0)
                 current_line_no = item["line_no"]
 
+
                 # Check for EXCEPTION at the same indentation level
                 if line_upper == "EXCEPTION" and current_indent == begin_indent:
                     exception_line_no = current_line_no
                     begin_end_block["exception_line_no"] = exception_line_no
                     logger.debug(f"Found EXCEPTION at line {exception_line_no}")
+
 
                 # Check for END; at the same indentation level
                 elif line_upper == "END;" and current_indent == begin_indent:
@@ -930,6 +984,7 @@ class OracleTriggerAnalyzer:
                     logger.debug(f"Found END; at line {end_line_no}")
                     break
 
+
                 # Add regular statements to begin_end_statements (before EXCEPTION)
                 elif (
                     line and not line.startswith("--") and current_indent > begin_indent
@@ -937,7 +992,9 @@ class OracleTriggerAnalyzer:
                     if not exception_line_no or current_line_no < exception_line_no:
                         begin_end_block["begin_end_statements"].append(item)
 
+
             i += 1
+
 
         if end_line_no is None:
             logger.warning(
@@ -946,11 +1003,13 @@ class OracleTriggerAnalyzer:
             )
             return None
 
+
         # Process exception handlers if EXCEPTION section exists
         if exception_line_no:
             begin_end_block["exception_handlers"] = self._parse_exception_section(
                 exception_line_no, end_line_no
             )
+
 
         logger.debug(
             "Successfully parsed top-level BEGIN-END block: %d statements, %d exception handlers",
@@ -958,7 +1017,9 @@ class OracleTriggerAnalyzer:
             len(begin_end_block["exception_handlers"]),
         )
 
+
         return begin_end_block, end_line_no
+
 
     def _parse_final_statement(self):
         """
@@ -966,17 +1027,21 @@ class OracleTriggerAnalyzer:
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
 
+
         Detects the final statement of the main section of SQL.
         """
+
 
         def process_final_statements_in_list(statements_list, parent_context=""):
             """Recursively process final statements in a list of statements"""
             if not statements_list:
                 return
 
+
             i = 0
             while i < len(statements_list):
                 item = statements_list[i]
+
 
                 # Handle line_info objects (from structured_lines)
                 if isinstance(item, dict) and "line" in item:
@@ -1035,6 +1100,7 @@ class OracleTriggerAnalyzer:
                         statements_list[i] = final_statement
                         logger.debug("Parsed single-line final statement: %s", line[:30])
 
+
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
                     if item["type"] == "begin_end":
@@ -1045,6 +1111,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.begin_end_statements",
                             )
 
+
                         # Process final statements in exception_handlers
                         if "exception_handlers" in item:
                             for handler in item["exception_handlers"]:
@@ -1053,6 +1120,7 @@ class OracleTriggerAnalyzer:
                                         handler["exception_statements"],
                                         f"{parent_context}.exception_statements",
                                     )
+
 
                     elif item["type"] == "case_when":
                         # Process final statements in when_clauses (then_statements)
@@ -1067,12 +1135,14 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.then_statements",
                                     )
 
+
                         # Process final statements in top-level else_statements
                         if "else_statements" in item:
                             process_final_statements_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "if_else":
                         # Process final statements in then_statements, else_if, and else_statements
@@ -1082,6 +1152,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.then_statements",
                             )
 
+
                         if "else_if" in item:
                             for elsif_block in item["else_if"]:
                                 if "then_statements" in elsif_block:
@@ -1090,11 +1161,13 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.else_if.then_statements",
                                     )
 
+
                         if "else_statements" in item:
                             process_final_statements_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "for_loop":
                         # Process final statements in loop_statements
@@ -1104,12 +1177,16 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.loop_statements",
                             )
 
+
                 i += 1
+
 
         # Process the main_section_lines
         process_final_statements_in_list(self.main_section_lines, "main_section_lines")
 
+
         logger.debug("Final statement parsing complete")
+
 
     def _parse_for_loop(self):
         """
@@ -1117,31 +1194,38 @@ class OracleTriggerAnalyzer:
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
 
+
         Detects FOR loop patterns in the format:
         FOR loop_variable IN (cursor_query) LOOP
             statements...
         END LOOP;
 
+
         And converts them to a structured JSON representation.
         """
         logger.debug("Starting FOR loop parsing")
 
+
         # Process existing main_section_lines to find and parse FOR loops
         # in various contexts: begin_end_statements, exception_statements, then_statements, else_statements
+
 
         def process_for_loops_in_list(statements_list, parent_context=""):
             """Recursively process FOR loops in a list of statements"""
             if not statements_list:
                 return
 
+
             i = 0
             while i < len(statements_list):
                 item = statements_list[i]
+
 
                 # Handle line_info objects (from structured_lines)
                 if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
+
 
                     # Check for FOR loop start
                     if line_upper.startswith("FOR ") and " IN " in line_upper:
@@ -1177,6 +1261,7 @@ class OracleTriggerAnalyzer:
                                     j += 1
                             continue
 
+
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
                     if item["type"] == "begin_end":
@@ -1187,6 +1272,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.begin_end_statements",
                             )
 
+
                         # Process FOR loops in exception_handlers
                         if "exception_handlers" in item:
                             for handler in item["exception_handlers"]:
@@ -1195,6 +1281,7 @@ class OracleTriggerAnalyzer:
                                         handler["exception_statements"],
                                         f"{parent_context}.exception_statements",
                                     )
+
 
                     elif item["type"] == "case_when":
                         # Process FOR loops in when_clauses (then_statements)
@@ -1209,12 +1296,14 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.then_statements",
                                     )
 
+
                         # Process FOR loops in top-level else_statements
                         if "else_statements" in item:
                             process_for_loops_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "if_else":
                         # Process FOR loops in then_statements, else_if, and else_statements
@@ -1224,6 +1313,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.then_statements",
                             )
 
+
                         if "else_if" in item:
                             for elsif_block in item["else_if"]:
                                 if "then_statements" in elsif_block:
@@ -1232,11 +1322,13 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.else_if.then_statements",
                                     )
 
+
                         if "else_statements" in item:
                             process_for_loops_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "for_loop":
                         # Process nested FOR loops in loop_statements
@@ -1246,12 +1338,16 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.loop_statements",
                             )
 
+
                 i += 1
+
 
         # Process the main_section_lines
         process_for_loops_in_list(self.main_section_lines, "main_section_lines")
 
+
         logger.debug("FOR loop parsing complete")
+
 
     def _parse_for_loop_structure(self, start_idx):
         """
@@ -1261,13 +1357,16 @@ class OracleTriggerAnalyzer:
         if start_idx < 0 or start_idx >= len(self.structured_lines):
             return None
 
+
         start_line_info = self.structured_lines[start_idx]
         start_line = start_line_info["line"].strip()
         start_line_upper = start_line.upper()
 
+
         # Validate that this is a FOR loop start
         if not start_line_upper.startswith("FOR ") or " IN " not in start_line_upper:
             return None
+
 
         logger.debug(
             "Parsing FOR loop structure starting at line %d: %s",
@@ -1275,14 +1374,17 @@ class OracleTriggerAnalyzer:
             start_line[:50],
         )
 
+
         # Extract loop variable and cursor query
         loop_parts = self._parse_for_loop_header(start_line)
         if not loop_parts:
             logger.warning("Failed to parse FOR loop header: %s", start_line)
             return None
 
+
         loop_variable = loop_parts["loop_variable"]
         cursor_query = loop_parts["cursor_query"]
+
 
         # Handle multi-line FOR loops where the cursor query continues on subsequent lines
         if (
@@ -1296,11 +1398,13 @@ class OracleTriggerAnalyzer:
             loop_start_indent = start_line_info.get("indent", 0)
             found_loop = False
 
+
             while i < len(self.structured_lines):
                 line_info = self.structured_lines[i]
                 line = line_info["line"].strip()
                 line_upper = line.upper()
                 current_indent = line_info.get("indent", 0)
+
 
                 # Check if we've found the LOOP keyword
                 if " LOOP" in line_upper:
@@ -1311,9 +1415,11 @@ class OracleTriggerAnalyzer:
                     found_loop = True
                     break
 
+
                 # Add this line to the cursor query
                 cursor_lines.append(line)
                 i += 1
+
 
             if cursor_lines:
                 cursor_query = " ".join(cursor_lines).strip()
@@ -1321,10 +1427,12 @@ class OracleTriggerAnalyzer:
                 if cursor_query.startswith("(") and cursor_query.endswith(")"):
                     cursor_query = cursor_query[1:-1].strip()
 
+
         # Find the end of the FOR loop (END LOOP;)
         loop_start_indent = start_line_info.get("indent", 0)
         end_idx = start_idx
         loop_statements = []
+
 
         # First, find where the LOOP keyword is to know where the cursor query ends
         loop_keyword_idx = start_idx
@@ -1333,9 +1441,11 @@ class OracleTriggerAnalyzer:
             line = line_info["line"].strip()
             line_upper = line.upper()
 
+
             if " LOOP" in line_upper:
                 loop_keyword_idx = i
                 break
+
 
         # Look for END LOOP; with matching or lower indentation
         for i in range(loop_keyword_idx + 1, len(self.structured_lines)):
@@ -1344,15 +1454,18 @@ class OracleTriggerAnalyzer:
             line_upper = line.upper()
             current_indent = line_info.get("indent", 0)
 
+
             # Check if this is the END LOOP; statement
             if line_upper == "END LOOP;" and current_indent <= loop_start_indent:
                 end_idx = i
                 logger.debug(f"Found END LOOP at line %d", line_info["line_no"])
                 break
 
+
             # Collect statements within the loop body (after the LOOP keyword)
             if current_indent > loop_start_indent:
                 loop_statements.append(line_info)
+
 
         if end_idx == start_idx:
             logger.warning(
@@ -1360,6 +1473,7 @@ class OracleTriggerAnalyzer:
                 start_line_info["line_no"],
             )
             return None
+
 
         # Create the FOR loop structure
         # Ensure cursor_query has proper parentheses without duplication
@@ -1369,6 +1483,7 @@ class OracleTriggerAnalyzer:
         if not formatted_cursor_query.endswith(")"):
             formatted_cursor_query = f"{formatted_cursor_query})"
 
+
         for_loop_block = {
             "type": "for_loop",
             "loop_variable": loop_variable,
@@ -1376,10 +1491,12 @@ class OracleTriggerAnalyzer:
             "loop_statements": loop_statements,
         }
 
+
         logger.debug(
             "Successfully parsed FOR loop: %s IN (%s)", loop_variable, cursor_query[:30]
         )
         return for_loop_block, self.structured_lines[end_idx]["line_no"]
+
 
     def _parse_for_loop_header(self, line):
         """
@@ -1389,20 +1506,24 @@ class OracleTriggerAnalyzer:
         """
         line_upper = line.upper()
 
+
         # Find the FOR keyword
         for_start = line_upper.find("FOR ")
         if for_start == -1:
             return None
+
 
         # Find the IN keyword
         in_start = line_upper.find(" IN ")
         if in_start == -1:
             return None
 
+
         # Extract loop variable (between FOR and IN)
         loop_variable_start = for_start + 4  # Skip "FOR "
         loop_variable_end = in_start
         loop_variable = line[loop_variable_start:loop_variable_end].strip()
+
 
         # Check if LOOP is on the same line
         loop_start = line_upper.find(" LOOP")
@@ -1416,11 +1537,14 @@ class OracleTriggerAnalyzer:
             cursor_start = in_start + 4  # Skip " IN "
             cursor_query = line[cursor_start:].strip()
 
+
         # Remove outer parentheses from cursor query if present
         if cursor_query.startswith("(") and cursor_query.endswith(")"):
             cursor_query = cursor_query[1:-1].strip()
 
+
         return {"loop_variable": loop_variable, "cursor_query": cursor_query}
+
 
     def _parse_if_else(self):
         """
@@ -1431,22 +1555,26 @@ class OracleTriggerAnalyzer:
         """
         logger.debug("Starting IF-ELSIF-ELSE parsing with indentation-based nesting")
 
+
         def process_if_else_in_list(statements_list, parent_context=""):
             """Recursively process IF-ELSE statements in a list of statements"""
             if not statements_list:
                 return
 
+
             i = 0
             while i < len(statements_list):
                 item = statements_list[i]
+
 
                 # Handle line_info objects (from structured_lines)
                 if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
 
+
                     # Check for IF statement start
-                    if line_upper.startswith("IF "):
+                    if line_upper.startswith("IF"):
                         logger.debug(
                             "Found IF statement at line %d in %s",
                             item["line_no"],
@@ -1484,6 +1612,7 @@ class OracleTriggerAnalyzer:
                                     j += 1
                             continue
 
+
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
                     if item["type"] == "begin_end":
@@ -1494,6 +1623,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.begin_end_statements",
                             )
 
+
                         # Process IF statements in exception_handlers
                         if "exception_handlers" in item:
                             for handler in item["exception_handlers"]:
@@ -1503,6 +1633,7 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.exception_statements",
                                     )
 
+
                     elif item["type"] == "if_else":
                         # Process IF statements in then_statements, else_if, and else_statements
                         if "then_statements" in item:
@@ -1510,6 +1641,7 @@ class OracleTriggerAnalyzer:
                                 item["then_statements"],
                                 f"{parent_context}.then_statements",
                             )
+
 
                         if "else_if" in item:
                             for elsif_block in item["else_if"]:
@@ -1519,11 +1651,13 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.else_if.then_statements",
                                     )
 
+
                         if "else_statements" in item:
                             process_if_else_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "case_when":
                         # Process IF statements in when_clauses (then_statements)
@@ -1538,12 +1672,14 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.then_statements",
                                     )
 
+
                         # Process IF statements in top-level else_statements
                         if "else_statements" in item:
                             process_if_else_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "for_loop":
                         # Process IF statements in loop_statements
@@ -1553,38 +1689,47 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.loop_statements",
                             )
 
+
                 i += 1
+
 
         # Process the main_section_lines
         process_if_else_in_list(self.main_section_lines, "main_section_lines")
 
+
         logger.debug("IF-ELSIF-ELSE parsing complete")
+
 
     def _parse_if_statement_enhanced(self, start_idx):
         """
         Parse an IF statement from structured_lines with enhanced line number detection and indentation-based nesting.
         First detects IF and END IF; line numbers, then finds all ELSIF and ELSE statements at the same indentation level.
 
+
         Args:
             start_idx (int): Index in structured_lines where the IF statement starts
+
 
         Returns:
             tuple: (if_block, end_idx) if successful, None otherwise
         """
         logger.debug("Starting enhanced IF statement parsing from index %d", start_idx)
 
+
         # Check if we have a valid IF statement
         if start_idx >= len(self.structured_lines):
             logger.debug("Invalid start index for IF statement")
             return None
+
 
         if_line_info = self.structured_lines[start_idx]
         if_line = if_line_info["line"].strip()
         if_indent = if_line_info["indent"]
         if_line_no = if_line_info["line_no"]
 
+
         # Extract the IF condition (handle multi-line conditions)
-        if_condition_parts = [if_line[3:].strip()]  # Remove "IF " prefix
+        if_condition_parts = [if_line[3:].strip()]  # Remove "IF" prefix
         
         # Check if the first line ends with THEN
         if if_condition_parts[0].upper().endswith(" THEN"):
@@ -1622,13 +1767,16 @@ class OracleTriggerAnalyzer:
             # Join all condition parts
             if_condition = " ".join(if_condition_parts)
 
+
         logger.debug(
             "IF statement - Condition: '%s', Indent: %d", if_condition, if_indent
         )
 
+
         # Step 1: Find the matching END IF; at the same indentation level
         end_if_line_no = None
         end_if_idx = -1
+
 
         i = start_idx + 1
         while i < len(self.structured_lines):
@@ -1636,6 +1784,7 @@ class OracleTriggerAnalyzer:
             line = line_info["line"].strip()
             line_upper = line.upper()
             indent = line_info["indent"]
+
 
             # Check for END IF; at the same indentation level
             if line_upper == "END IF;" and indent == if_indent:
@@ -1646,8 +1795,9 @@ class OracleTriggerAnalyzer:
                 )
                 break
 
+
             # Handle nested IF statements - skip to their END IF;
-            elif line_upper.startswith("IF ") and indent > if_indent:
+            elif line_upper.startswith("IF") and indent > if_indent:
                 nested_indent = indent
                 j = i + 1
                 while j < len(self.structured_lines):
@@ -1655,6 +1805,7 @@ class OracleTriggerAnalyzer:
                     nested_line = nested_line_info["line"].strip()
                     nested_line_upper = nested_line.upper()
                     nested_indent_level = nested_line_info["indent"]
+
 
                     if (
                         nested_line_upper == "END IF;"
@@ -1664,7 +1815,9 @@ class OracleTriggerAnalyzer:
                         break
                     j += 1
 
+
             i += 1
+
 
         if end_if_line_no is None:
             logger.warning(
@@ -1673,15 +1826,18 @@ class OracleTriggerAnalyzer:
             )
             return None
 
+
         # Step 2: Find all ELSIF and ELSE statements between IF and END IF; at the same indentation level
         else_if_line_nos = []
         else_line_no = None
+
 
         for k in range(start_idx + 1, end_if_idx):
             line_info = self.structured_lines[k]
             line = line_info["line"].strip()
             line_upper = line.upper()
             indent = line_info["indent"]
+
 
             # Check for ELSIF statements at the same indentation level as IF
             if line_upper.startswith("ELSIF ") and indent == if_indent:
@@ -1692,6 +1848,7 @@ class OracleTriggerAnalyzer:
                     indent,
                 )
 
+
             # Check for ELSE statement at the same indentation level as IF
             elif line_upper == "ELSE" and indent == if_indent:
                 else_line_no = line_info["line_no"]
@@ -1700,6 +1857,7 @@ class OracleTriggerAnalyzer:
                     line_info["line_no"],
                     indent,
                 )
+
 
         # Step 3: Build the enhanced if statement structure
         if_statement = {
@@ -1715,6 +1873,7 @@ class OracleTriggerAnalyzer:
             "end_if_line_no": end_if_line_no,
         }
 
+
         # Step 4: Process THEN statements (between IF and first ELSIF/ELSE/END IF)
         then_end_line_no = (
             else_if_line_nos[0]
@@ -1725,6 +1884,7 @@ class OracleTriggerAnalyzer:
             if_line_no, if_indent, then_end_line_no
         )
         if_statement["then_statements"] = then_statements
+
 
         # Step 5: Process ELSIF clauses
         for i, else_if_line_no in enumerate(else_if_line_nos):
@@ -1739,6 +1899,7 @@ class OracleTriggerAnalyzer:
             if else_if_clause:
                 if_statement["else_if"].append(else_if_clause)
 
+
         # Step 6: Process ELSE clause if exists
         if else_line_no:
             else_statements = self._parse_else_statements(
@@ -1746,8 +1907,10 @@ class OracleTriggerAnalyzer:
             )
             if_statement["else_statements"] = else_statements
 
+
         # Step 7: Process nested structures in each section
         self._process_nested_structures_in_if_else_enhanced(if_statement)
+
 
         logger.debug(
             "Completed enhanced IF statement parsing: %d else_if clauses, ELSE at line %s, end at line %d",
@@ -1756,42 +1919,42 @@ class OracleTriggerAnalyzer:
             end_if_line_no,
         )
 
+
         return if_statement, end_if_idx
+
 
     def _parse_if_else_structure(self, statements_list, start_idx, parent_context=""):
         """
         Parse a complete IF-ELSE structure from statements starting at start_idx.
 
+
         Returns a dictionary with:
         - parsed_block: The structured IF-ELSE block
         - end_index: The index of the END IF statement
 
+
         Handles IF-THEN-ELSIF-ELSE-END IF structures with proper nesting.
         """
         if start_idx >= len(statements_list):
-            log_parsing_error(
-                "IF-ELSE structure", f"Invalid start_idx {start_idx}", None
-            )
+            logger.debug(f"IF-ELSE structure Invalid start_idx {start_idx}")
             return None
+
 
         start_item = statements_list[start_idx]
         if not (isinstance(start_item, dict) and "line" in start_item):
-            log_parsing_error(
-                "IF-ELSE structure", "Start item is not a line_info object", None
-            )
+            logger.debug("IF-ELSE structure Start item is not a line_info object")
             return None
+
 
         start_line = start_item["line"].strip()
         start_indent = start_item.get("indent", 0)
         start_line_no = start_item["line_no"]
 
-        if not start_line.upper().startswith("IF "):
-            log_parsing_error(
-                "IF-ELSE structure",
-                f"Start line is not an IF statement: {start_line}",
-                None,
-            )
+
+        if not start_line.upper().startswith("IF"):
+            logger.debug(f"IF-ELSE structure Start line is not an IF statement: {start_line}")
             return None
+
 
         debug(
             "Parsing IF-ELSE structure starting at line %d (indent %d): %s",
@@ -1800,10 +1963,12 @@ class OracleTriggerAnalyzer:
             start_line[:50],
         )
 
+
         # Extract IF condition
-        if_condition = start_line[3:].strip()  # Remove "IF " prefix
+        if_condition = start_line[3:].strip()  # Remove "IF" prefix
         if if_condition.upper().endswith(" THEN"):
             if_condition = if_condition[:-5].strip()  # Remove " THEN" suffix
+
 
         # Initialize structure
         if_block = {
@@ -1816,23 +1981,28 @@ class OracleTriggerAnalyzer:
             "indent": start_indent,
         }
 
+
         current_section = "then"  # Track which section we're currently in
         current_statements = if_block["then_statements"]
+
 
         # Find the matching END IF
         i = start_idx + 1
         nest_level = 0  # Track nested IF blocks
 
+
         while i < len(statements_list):
             item = statements_list[i]
+
 
             if isinstance(item, dict) and "line" in item:
                 line = item["line"].strip()
                 indent = item.get("indent", 0)
                 line_no = item["line_no"]
 
+
                 # Check for nested IF statements (increase nest level)
-                if line.upper().startswith("IF "):
+                if line.upper().startswith("IF"):
                     if indent > start_indent:
                         nest_level += 1
                         log_nesting_level(nest_level, f"nested IF at line {line_no}")
@@ -1847,6 +2017,7 @@ class OracleTriggerAnalyzer:
                             "Found lower-indent IF at line %d, stopping parse", line_no
                         )
                         break
+
 
                 # Check for nested END IF (decrease nest level)
                 elif line.upper() == "END IF;":
@@ -1874,6 +2045,7 @@ class OracleTriggerAnalyzer:
                         )
                         current_statements.append(item)
 
+
                 # Check for ELSIF at the same level
                 elif (
                     line.upper().startswith("ELSIF ")
@@ -1882,12 +2054,14 @@ class OracleTriggerAnalyzer:
                 ):
                     log_structure_found("ELSIF", line_no)
 
+
                     # Extract ELSIF condition
                     elsif_condition = line[6:].strip()  # Remove "ELSIF " prefix
                     if elsif_condition.upper().endswith(" THEN"):
                         elsif_condition = elsif_condition[
                             :-5
                         ].strip()  # Remove " THEN" suffix
+
 
                     # Add to else_if list
                     elsif_block = {
@@ -1897,9 +2071,11 @@ class OracleTriggerAnalyzer:
                     }
                     if_block["else_if"].append(elsif_block)
 
+
                     # Switch to ELSIF statements
                     current_section = "elsif"
                     current_statements = elsif_block["then_statements"]
+
 
                 # Check for ELSE at the same level
                 elif (
@@ -1909,9 +2085,11 @@ class OracleTriggerAnalyzer:
                 ):
                     log_structure_found("ELSE", line_no)
 
+
                     # Switch to else statements
                     current_section = "else"
                     current_statements = if_block["else_statements"]
+
 
                 else:
                     # Regular statement - add to current section
@@ -1920,29 +2098,33 @@ class OracleTriggerAnalyzer:
                 # Non-line item - add to current section
                 current_statements.append(item)
 
+
             i += 1
 
+
         # If we get here, we didn't find a matching END IF
-        log_parsing_error(
-            "IF-ELSE structure",
-            f"Could not find matching END IF for IF statement",
-            start_line_no,
+        logger.debug(
+            f"IF-ELSE structure Could not find matching END IF for IF statement at line {start_line_no}"
         )
         return None
+
 
     def _parse_then_statements(self, if_line_no, if_indent, then_end_line_no):
         """
         Parse THEN statements between IF and the next ELSIF/ELSE/END IF.
+
 
         Args:
             if_line_no (int): Line number where IF statement starts
             if_indent (int): Indentation level of the parent IF statement
             then_end_line_no (int): Line number where THEN section ends
 
+
         Returns:
             list: Parsed THEN statements
         """
         then_statements = []
+
 
         # Collect statements between IF and next clause
         for line_info in self.structured_lines:
@@ -1951,20 +2133,25 @@ class OracleTriggerAnalyzer:
                 line = line_info["line"].strip()
                 indent = line_info["indent"]
 
+
                 # Only include statements that are more indented than the IF
                 if indent > if_indent and line and not line.startswith("--"):
                     then_statements.append(line_info)
 
+
         return then_statements
+
 
     def _parse_else_if_clause(self, else_if_line_no, if_indent, next_line_no):
         """
         Parse an ELSIF clause starting at the given line number.
 
+
         Args:
             else_if_line_no (int): Line number where ELSIF clause starts
             if_indent (int): Indentation level of the parent IF statement
             next_line_no (int): Line number where this ELSIF section ends
+
 
         Returns:
             dict: Parsed ELSIF clause structure
@@ -1975,6 +2162,7 @@ class OracleTriggerAnalyzer:
             "else_if_line_no": else_if_line_no,
         }
 
+
         # Find the ELSIF line and extract the condition
         else_if_line_info = None
         for line_info in self.structured_lines:
@@ -1982,12 +2170,15 @@ class OracleTriggerAnalyzer:
                 else_if_line_info = line_info
                 break
 
+
         if not else_if_line_info:
             logger.warning(f"Could not find ELSIF line %d", else_if_line_no)
             return None
 
+
         else_if_line = else_if_line_info["line"].strip()
         else_if_line_upper = else_if_line.upper()
+
 
         # Extract the else_if condition
         if else_if_line_upper.startswith("ELSIF "):
@@ -1999,6 +2190,7 @@ class OracleTriggerAnalyzer:
             else_if_clause["condition"] = else_if_condition
             logger.debug(f"Parsed ELSIF clause: %s", else_if_condition)
 
+
         # Collect statements between ELSIF and next clause
         for line_info in self.structured_lines:
             line_no = line_info["line_no"]
@@ -2006,25 +2198,31 @@ class OracleTriggerAnalyzer:
                 line = line_info["line"].strip()
                 indent = line_info["indent"]
 
+
                 # Only include statements that are more indented than the IF
                 if indent > if_indent and line and not line.startswith("--"):
                     else_if_clause["then_statements"].append(line_info)
 
+
         return else_if_clause
+
 
     def _parse_else_statements(self, else_line_no, if_indent, end_if_line_no):
         """
         Parse ELSE statements starting at the given line number.
+
 
         Args:
             else_line_no (int): Line number where ELSE clause starts
             if_indent (int): Indentation level of the parent IF statement
             end_if_line_no (int): Line number where END IF; is located
 
+
         Returns:
             list: Parsed ELSE statements
         """
         else_statements = []
+
 
         # Collect statements between ELSE and END IF;
         for line_info in self.structured_lines:
@@ -2033,21 +2231,26 @@ class OracleTriggerAnalyzer:
                 line = line_info["line"].strip()
                 indent = line_info["indent"]
 
+
                 # Only include statements that are more indented than the IF
                 if indent > if_indent and line and not line.startswith("--"):
                     else_statements.append(line_info)
 
+
         logger.debug(f"Parsed ELSE clause with %d statements", len(else_statements))
         return else_statements
+
 
     def _process_nested_structures_in_if_else_enhanced(self, if_statement):
         """
         Process any nested structures within the enhanced if statement.
 
+
         Args:
             if_statement (dict): The enhanced if statement structure to process
         """
         logger.debug("Processing nested structures in enhanced IF statement")
+
 
         # Process then_statements
         if if_statement.get("then_statements"):
@@ -2055,6 +2258,7 @@ class OracleTriggerAnalyzer:
                 if_statement["then_statements"]
             )
             if_statement["then_statements"] = processed_statements
+
 
         # Process else_if statements
         if if_statement.get("else_if"):
@@ -2067,12 +2271,14 @@ class OracleTriggerAnalyzer:
                     )
                     else_if_block["then_statements"] = processed_statements
 
+
         # Process else_statements
         if if_statement.get("else_statements"):
             processed_statements = self._process_statements_for_nested_structures(
                 if_statement["else_statements"]
             )
             if_statement["else_statements"] = processed_statements
+
 
     def _process_nested_structures_in_if_else(self, if_block):
         """
@@ -2081,10 +2287,12 @@ class OracleTriggerAnalyzer:
         """
         debug("Processing nested structures in IF-ELSE block")
 
+
         # Process then_statements
         if if_block.get("then_statements"):
             debug("Processing nested structures in then_statements")
             self._process_statements_for_nested_structures(if_block["then_statements"])
+
 
         # Process else_if statements
         if if_block.get("else_if"):
@@ -2095,10 +2303,12 @@ class OracleTriggerAnalyzer:
                         elsif_block["then_statements"]
                     )
 
+
         # Process else_statements
         if if_block.get("else_statements"):
             debug("Processing nested structures in else_statements")
             self._process_statements_for_nested_structures(if_block["else_statements"])
+
 
     def _process_nested_structures_recursively(self, parsed_structure):
         """
@@ -2110,13 +2320,16 @@ class OracleTriggerAnalyzer:
             parsed_structure.get("type", "unknown"),
         )
 
+
         # Handle IF-ELSE structures
         if parsed_structure.get("type") == "if_else":
             self._process_nested_structures_in_if_else(parsed_structure)
 
+
         # Handle CASE-WHEN structures
         elif parsed_structure.get("type") == "case_when":
             self._process_nested_structures_in_case(parsed_structure)
+
 
         # Handle BEGIN-END structures
         elif parsed_structure.get("type") == "begin_end":
@@ -2129,12 +2342,14 @@ class OracleTriggerAnalyzer:
                     parsed_structure["exception_statements"]
                 )
 
+
         # Handle FOR LOOP structures
         elif parsed_structure.get("type") == "for_loop":
             if parsed_structure.get("loop_statements"):
                 self._process_statements_for_nested_structures(
                     parsed_structure["loop_statements"]
                 )
+
 
         # Handle other statement lists
         for key in [
@@ -2146,6 +2361,7 @@ class OracleTriggerAnalyzer:
             if key in parsed_structure and isinstance(parsed_structure[key], list):
                 self._process_statements_for_nested_structures(parsed_structure[key])
 
+
     def _parse_assignment_statement(self):
         """
         Parse assignment statements from the main section of SQL.
@@ -2156,18 +2372,22 @@ class OracleTriggerAnalyzer:
         """
         logger.debug("Starting assignment statements parsing")
 
+
         def process_assignment_statement_in_list(statements_list, parent_context=""):
             """Recursively process assignment statements in a list of statements"""
             if not statements_list:
                 return
 
+
             i = 0
             while i < len(statements_list):
                 item = statements_list[i]
 
+
                 # Handle line_info objects (from structured_lines)
                 if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
+
 
                     # Check if this line contains an assignment operator (:=)
                     if " := " in line:
@@ -2177,6 +2397,7 @@ class OracleTriggerAnalyzer:
                             parent_context,
                             line[:30],
                         )
+
 
                         # Check if this assignment ends with semicolon on the same line
                         if item["is_end_semicolon"]:
@@ -2200,12 +2421,14 @@ class OracleTriggerAnalyzer:
                             assignment_lines = [line]
                             j = i + 1
 
+
                             # Collect all lines until we find a semicolon
                             while j < len(statements_list):
                                 next_item = statements_list[j]
                                 if isinstance(next_item, dict) and "line" in next_item:
                                     next_line = next_item["line"].strip()
                                     assignment_lines.append(next_line)
+
 
                                     if next_item["is_end_semicolon"]:
                                         # Found the end of the assignment statement
@@ -2215,11 +2438,13 @@ class OracleTriggerAnalyzer:
                                     # Not a line_info object, stop here
                                     break
 
+
                             # Create the complete assignment statement
                             complete_assignment = " ".join(assignment_lines)
                             assignment_parts = self._parse_assignment_line(
                                 complete_assignment
                             )
+
 
                             if assignment_parts:
                                 assignment_statement = {
@@ -2230,19 +2455,23 @@ class OracleTriggerAnalyzer:
                                     "statement_line_no": item["line_no"]	
                                 }
 
+
                                 # Replace the first line with the complete statement
                                 statements_list[i] = assignment_statement
+
 
                                 # Remove the subsequent lines that were part of this assignment statement
                                 for k in range(j, i, -1):
                                     if k < len(statements_list):
                                         statements_list.pop(k)
 
+
                                 logger.debug(
                                     "Parsed multi-line assignment statement: %s",
                                     assignment_parts["variable"],
                                 )
                                 continue
+
 
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
@@ -2254,6 +2483,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.begin_end_statements",
                             )
 
+
                         # Process assignment statements in exception_handlers
                         if "exception_handlers" in item:
                             for handler in item["exception_handlers"]:
@@ -2262,6 +2492,7 @@ class OracleTriggerAnalyzer:
                                         handler["exception_statements"],
                                         f"{parent_context}.exception_statements",
                                     )
+
 
                     elif item["type"] == "case_when":
                         # Process assignment statements in when_clauses (then_statements)
@@ -2276,12 +2507,14 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.then_statements",
                                     )
 
+
                         # Process assignment statements in top-level else_statements
                         if "else_statements" in item:
                             process_assignment_statement_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "if_else":
                         # Process assignment statements in then_statements, else_if, and else_statements
@@ -2291,6 +2524,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.then_statements",
                             )
 
+
                         if "else_if" in item:
                             for elsif_block in item["else_if"]:
                                 if "then_statements" in elsif_block:
@@ -2299,11 +2533,13 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.else_if.then_statements",
                                     )
 
+
                         if "else_statements" in item:
                             process_assignment_statement_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "for_loop":
                         # Process assignment statements in loop_statements
@@ -2313,21 +2549,27 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.loop_statements",
                             )
 
+
                 i += 1
+
 
         # Process the main_section_lines
         process_assignment_statement_in_list(
             self.main_section_lines, "main_section_lines"
         )
 
+
         logger.debug("Assignment statements parsing complete")
+
 
     def _parse_assignment_line(self, line):
         """
         Parse an assignment line to extract variable name and value.
 
+
         Args:
             line (str): The assignment line (e.g., "v_count := 10;")
+
 
         Returns:
             dict: Dictionary with variable name and value, or None if parsing fails
@@ -2335,6 +2577,7 @@ class OracleTriggerAnalyzer:
         try:
             # Remove trailing semicolon if present
             line = line.strip().rstrip(";")
+
 
             # Split by " := " to separate variable and value
             if " := " in line:
@@ -2347,7 +2590,9 @@ class OracleTriggerAnalyzer:
         except Exception as e:
             logger.debug("Failed to parse assignment line '%s': %s", line, e)
 
+
         return None
+
 
     def _parse_sql_statements(self):
         """
@@ -2366,6 +2611,7 @@ class OracleTriggerAnalyzer:
         """
         logger.debug("Starting SQL statements parsing")
 
+
         # Define SQL statement type mapping
         STMT_TYPE_MAP = {
             "SELECT": "select_statement",
@@ -2375,19 +2621,23 @@ class OracleTriggerAnalyzer:
             "RAISE": "raise_statement",
         }
 
+
         def process_sql_statements_in_list(statements_list, parent_context=""):
             """Recursively process SQL statements in a list of statements"""
             if not statements_list:
                 return
 
+
             i = 0
             while i < len(statements_list):
                 item = statements_list[i]
+
 
                 # Handle line_info objects (from structured_lines)
                 if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
+
 
                     # Check if this line starts with a SQL statement type
                     sql_type = None
@@ -2396,6 +2646,7 @@ class OracleTriggerAnalyzer:
                             sql_type = stmt_type
                             break
 
+
                     if sql_type:
                         logger.debug(
                             "Found SQL statement at line %d in %s: %s",
@@ -2403,6 +2654,7 @@ class OracleTriggerAnalyzer:
                             parent_context,
                             line_upper[:20],
                         )
+
 
                         # Check if this statement ends with semicolon on the same line
                         if item["is_end_semicolon"]:
@@ -2417,12 +2669,14 @@ class OracleTriggerAnalyzer:
                             sql_lines = [line]
                             j = i + 1
 
+
                             # Collect all lines until we find a semicolon
                             while j < len(statements_list):
                                 next_item = statements_list[j]
                                 if isinstance(next_item, dict) and "line" in next_item:
                                     next_line = next_item["line"].strip()
                                     sql_lines.append(next_line)
+
 
                                     if next_item["is_end_semicolon"]:
                                         # Found the end of the SQL statement
@@ -2432,22 +2686,27 @@ class OracleTriggerAnalyzer:
                                     # Not a line_info object, stop here
                                     break
 
+
                             # Create the complete SQL statement
                             complete_sql = " ".join(sql_lines)
                             sql_statement = {"sql_statement": complete_sql, "type": sql_type, "statement_indent": item["indent"], "statement_line_no": item["line_no"]}
 
+
                             # Replace the first line with the complete statement
                             statements_list[i] = sql_statement
+
 
                             # Remove the subsequent lines that were part of this SQL statement
                             for k in range(j, i, -1):
                                 if k < len(statements_list):
                                     statements_list.pop(k)
 
+
                             logger.debug(
                                 "Parsed multi-line SQL statement: %s", sql_type
                             )
                             continue
+
 
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
@@ -2459,6 +2718,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.begin_end_statements",
                             )
 
+
                         # Process SQL statements in exception_handlers
                         if "exception_handlers" in item:
                             for handler in item["exception_handlers"]:
@@ -2467,6 +2727,7 @@ class OracleTriggerAnalyzer:
                                         handler["exception_statements"],
                                         f"{parent_context}.exception_statements",
                                     )
+
 
                     elif item["type"] == "case_when":
                         # Process SQL statements in when_clauses (then_statements)
@@ -2481,12 +2742,14 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.then_statements",
                                     )
 
+
                         # Process SQL statements in top-level else_statements
                         if "else_statements" in item:
                             process_sql_statements_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "if_else":
                         # Process SQL statements in then_statements, else_if, and else_statements
@@ -2496,6 +2759,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.then_statements",
                             )
 
+
                         if "else_if" in item:
                             for elsif_block in item["else_if"]:
                                 if "then_statements" in elsif_block:
@@ -2504,11 +2768,13 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.else_if.then_statements",
                                     )
 
+
                         if "else_statements" in item:
                             process_sql_statements_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "for_loop":
                         # Process SQL statements in loop_statements
@@ -2518,12 +2784,16 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.loop_statements",
                             )
 
+
                 i += 1
+
 
         # Process the main_section_lines
         process_sql_statements_in_list(self.main_section_lines, "main_section_lines")
 
+
         logger.debug("SQL statements parsing complete")
+
 
     def _parse_case_when(self):
         """
@@ -2534,19 +2804,23 @@ class OracleTriggerAnalyzer:
         """
         logger.debug("Starting CASE WHEN ELSE parsing with indentation-based nesting")
 
+
         def process_case_statements_in_list(statements_list, parent_context=""):
             """Recursively process CASE statements in a list of statements"""
             if not statements_list:
                 return
 
+
             i = 0
             while i < len(statements_list):
                 item = statements_list[i]
+
 
                 # Handle line_info objects (from structured_lines)
                 if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
+
 
                     # Check for CASE statement start
                     if line_upper == "CASE" or line_upper.startswith("CASE "):
@@ -2587,6 +2861,7 @@ class OracleTriggerAnalyzer:
                                     j += 1
                             continue
 
+
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
                     if item["type"] == "begin_end":
@@ -2597,6 +2872,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.begin_end_statements",
                             )
 
+
                         # Process CASE statements in exception_handlers
                         if "exception_handlers" in item:
                             for handler in item["exception_handlers"]:
@@ -2605,6 +2881,7 @@ class OracleTriggerAnalyzer:
                                         handler["exception_statements"],
                                         f"{parent_context}.exception_statements",
                                     )
+
 
                     elif item["type"] == "case_when":
                         # Process CASE statements in when_clauses (then_statements)
@@ -2619,12 +2896,14 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.then_statements",
                                     )
 
+
                         # Process CASE statements in top-level else_statements
                         if "else_statements" in item:
                             process_case_statements_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "if_else":
                         # Process CASE statements in then_statements, else_if, and else_statements
@@ -2634,6 +2913,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.then_statements",
                             )
 
+
                         if "else_if" in item:
                             for elsif_block in item["else_if"]:
                                 if "then_statements" in elsif_block:
@@ -2642,11 +2922,13 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.else_if.then_statements",
                                     )
 
+
                         if "else_statements" in item:
                             process_case_statements_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "for_loop":
                         # Process CASE statements in loop_statements
@@ -2656,12 +2938,16 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.loop_statements",
                             )
 
+
                 i += 1
+
 
         # Process the main_section_lines
         process_case_statements_in_list(self.main_section_lines, "main_section_lines")
 
+
         logger.debug("CASE WHEN ELSE parsing complete")
+
 
     def _find_line_index(self, line_no):
         """Find the index in structured_lines for a given line number"""
@@ -2669,6 +2955,7 @@ class OracleTriggerAnalyzer:
             if line_info["line_no"] == line_no:
                 return i
         return -1
+
 
     def _parse_begin_end(self):
         """
@@ -2678,19 +2965,23 @@ class OracleTriggerAnalyzer:
         """
         logger.debug("Starting nested BEGIN block parsing")
 
+
         def process_begin_end_in_list(statements_list, parent_context=""):
             """Recursively process BEGIN blocks in a list of statements"""
             if not statements_list:
                 return
 
+
             i = 0
             while i < len(statements_list):
                 item = statements_list[i]
+
 
                 # Handle line_info objects (from structured_lines)
                 if isinstance(item, dict) and "line" in item:
                     line = item["line"].strip()
                     line_upper = line.upper()
+
 
                     # Check for BEGIN block start
                     if line_upper == "BEGIN":
@@ -2727,6 +3018,7 @@ class OracleTriggerAnalyzer:
                                     j += 1
                             continue
 
+
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
                 elif isinstance(item, dict) and "type" in item:
                     if item["type"] == "begin_end":
@@ -2737,6 +3029,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.begin_end_statements",
                             )
 
+
                         # Process BEGIN blocks in exception_handlers
                         if "exception_handlers" in item:
                             for handler in item["exception_handlers"]:
@@ -2745,6 +3038,7 @@ class OracleTriggerAnalyzer:
                                         handler["exception_statements"],
                                         f"{parent_context}.exception_statements",
                                     )
+
 
                     elif item["type"] == "case_when":
                         # Process BEGIN blocks in when_clauses (then_statements)
@@ -2759,12 +3053,14 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.then_statements",
                                     )
 
+
                         # Process BEGIN blocks in top-level else_statements
                         if "else_statements" in item:
                             process_begin_end_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "if_else":
                         # Process BEGIN blocks in then_statements, else_if, and else_statements
@@ -2774,6 +3070,7 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.then_statements",
                             )
 
+
                         if "else_if" in item:
                             for elsif_block in item["else_if"]:
                                 if "then_statements" in elsif_block:
@@ -2782,11 +3079,13 @@ class OracleTriggerAnalyzer:
                                         f"{parent_context}.else_if.then_statements",
                                     )
 
+
                         if "else_statements" in item:
                             process_begin_end_in_list(
                                 item["else_statements"],
                                 f"{parent_context}.else_statements",
                             )
+
 
                     elif item["type"] == "for_loop":
                         # Process BEGIN blocks in loop_statements
@@ -2796,12 +3095,16 @@ class OracleTriggerAnalyzer:
                                 f"{parent_context}.loop_statements",
                             )
 
+
                 i += 1
+
 
         # Process the main_section_lines recursively for nested BEGIN structures
         process_begin_end_in_list(self.main_section_lines, "main_section_lines")
 
+
         logger.debug("Nested BEGIN block parsing complete")
+
 
     def _parse_begin_end_structure(self, start_idx):
         """
@@ -2811,17 +3114,21 @@ class OracleTriggerAnalyzer:
         if start_idx < 0 or start_idx >= len(self.structured_lines):
             return None
 
+
         start_line_info = self.structured_lines[start_idx]
         start_line = start_line_info["line"].strip()
         start_line_upper = start_line.upper()
+
 
         # Verify this is a BEGIN statement
         if start_line_upper != "BEGIN":
             return None
 
+
         logger.debug(
             "Parsing BEGIN-END block starting at line %d", start_line_info["line_no"]
         )
+
 
         # Initialize the block structure
         begin_end_block = {
@@ -2830,15 +3137,18 @@ class OracleTriggerAnalyzer:
             "exception_handlers": [],
         }
 
+
         # Track block nesting
         block_stack = [begin_end_block]
         current_block = begin_end_block
+
 
         i = start_idx + 1
         while i < len(self.structured_lines):
             line_info = self.structured_lines[i]
             line = line_info["line"].strip()
             line_upper = line.upper()
+
 
             # Check for nested BEGIN
             if line_upper == "BEGIN":
@@ -2854,6 +3164,7 @@ class OracleTriggerAnalyzer:
                 logger.debug(
                     "Found nested BEGIN block at line %d", line_info["line_no"]
                 )
+
 
             # Check for END
             elif line_upper == "END;":
@@ -2871,11 +3182,13 @@ class OracleTriggerAnalyzer:
                     )
                     return begin_end_block, line_info["line_no"]
 
+
             # Check for EXCEPTION section
             elif line_upper == "EXCEPTION":
                 # Start exception handling section
                 current_block["exception_handlers"] = []
                 logger.debug("Found EXCEPTION section at line %d", line_info["line_no"])
+
 
             # Check for exception handlers
             elif line_upper.startswith("WHEN ") and " THEN" in line_upper:
@@ -2890,6 +3203,7 @@ class OracleTriggerAnalyzer:
                             "Parsed exception handler: %s",
                             exception_handler["exception_name"],
                         )
+
 
             # Add regular statements to current block
             elif line and not line.startswith("--"):
@@ -2906,7 +3220,9 @@ class OracleTriggerAnalyzer:
                     # Add to the current block's begin_end_statements
                     current_block["begin_end_statements"].append(line_info)
 
+
             i += 1
+
 
         # If we reach here, the block wasn't properly closed
         logger.warning(
@@ -2915,10 +3231,12 @@ class OracleTriggerAnalyzer:
         )
         return None
 
+
     def _process_block_sqls(self, block):
         """
         Process a block's SQL statements to identify and structure CASE statements.
         This is called after a complete block has been parsed.
+
 
         Args:
             block (dict): The parsed block containing SQL statements
@@ -2926,24 +3244,30 @@ class OracleTriggerAnalyzer:
         if not block or "begin_end_statements" not in block:
             return
 
+
         # Skip if there are no begin_end_statements in the block
         if not block["begin_end_statements"]:
             return
+
 
         logger.debug(
             "Processing block begin_end_statements for potential nested CASE statements"
         )
 
+
         # No additional processing needed here as we now process CASE statements
         # during initial parsing
+
 
     def _parse_case_statement_enhanced(self, start_idx):
         """
         Parse a CASE statement from structured_lines with enhanced line number detection and indentation-based nesting.
         First detects CASE and END CASE; line numbers, then finds all WHEN and ELSE statements at the same indentation level.
 
+
         Args:
             start_idx (int): Index in structured_lines where the CASE statement starts
+
 
         Returns:
             tuple: (case_block, end_idx) if successful, None otherwise
@@ -2952,21 +3276,25 @@ class OracleTriggerAnalyzer:
             "Starting enhanced CASE statement parsing from index %d", start_idx
         )
 
+
         # Check if we have a valid CASE statement
         if start_idx >= len(self.structured_lines):
             logger.debug("Invalid start index for CASE statement")
             return None
+
 
         case_line_info = self.structured_lines[start_idx]
         case_line = case_line_info["line"].strip()
         case_indent = case_line_info["indent"]
         case_line_no = case_line_info["line_no"]
 
+
         # Determine if this is a CASE with expression or a simple CASE
         case_expression = ""
         if case_line.upper() != "CASE":
             # Extract expression part after "CASE "
             case_expression = case_line[5:].strip()
+
 
         logger.debug(
             "CASE statement - Type: %s, Expression: '%s', Indent: %d",
@@ -2975,9 +3303,11 @@ class OracleTriggerAnalyzer:
             case_indent,
         )
 
+
         # Step 1: Find the matching END CASE; at the same indentation level
         end_case_line_no = None
         end_case_idx = -1
+
 
         i = start_idx + 1
         while i < len(self.structured_lines):
@@ -2985,6 +3315,7 @@ class OracleTriggerAnalyzer:
             line = line_info["line"].strip()
             line_upper = line.upper()
             indent = line_info["indent"]
+
 
             # Check for END CASE; at the same indentation level
             if line_upper == "END CASE;" and indent == case_indent:
@@ -2994,6 +3325,7 @@ class OracleTriggerAnalyzer:
                     "Found END CASE; at line %d (indent %d)", end_case_line_no, indent
                 )
                 break
+
 
             # Handle nested CASE statements - skip to their END CASE;
             elif line_upper == "CASE" and indent > case_indent:
@@ -3005,6 +3337,7 @@ class OracleTriggerAnalyzer:
                     nested_line_upper = nested_line.upper()
                     nested_indent_level = nested_line_info["indent"]
 
+
                     if (
                         nested_line_upper == "END CASE;"
                         and nested_indent_level == nested_indent
@@ -3013,7 +3346,9 @@ class OracleTriggerAnalyzer:
                         break
                     j += 1
 
+
             i += 1
+
 
         if end_case_line_no is None:
             logger.warning(
@@ -3022,15 +3357,18 @@ class OracleTriggerAnalyzer:
             )
             return None
 
+
         # Step 2: Find all WHEN and ELSE statements between CASE and END CASE; at the same or higher indentation level
         when_line_nos = []
         else_line_no = None
+
 
         for k in range(start_idx + 1, end_case_idx):
             line_info = self.structured_lines[k]
             line = line_info["line"].strip()
             line_upper = line.upper()
             indent = line_info["indent"]
+
 
             # Check for WHEN statements at the same or higher indentation level than CASE
             if (
@@ -3046,6 +3384,7 @@ class OracleTriggerAnalyzer:
                     case_indent,
                 )
 
+
             # Check for ELSE statement at the same or higher indentation level than CASE
             elif line_upper == "ELSE" and indent >= case_indent:
                 else_line_no = line_info["line_no"]
@@ -3055,6 +3394,7 @@ class OracleTriggerAnalyzer:
                     indent,
                     case_indent,
                 )
+
 
         # Step 3: Build the enhanced case statement structure
         case_statement = {
@@ -3069,6 +3409,7 @@ class OracleTriggerAnalyzer:
             "end_case_line_no": end_case_line_no,
         }
 
+
         # Step 4: Process WHEN clauses
         for when_line_no in when_line_nos:
             when_clause = self._parse_when_clause(
@@ -3076,6 +3417,7 @@ class OracleTriggerAnalyzer:
             )
             if when_clause:
                 case_statement["when_clauses"].append(when_clause)
+
 
         # Step 5: Process ELSE clause if exists
         if else_line_no:
@@ -3085,8 +3427,10 @@ class OracleTriggerAnalyzer:
             if else_clause:
                 case_statement["else_statements"] = else_clause.get("else_statements", [])
 
+
         # Step 6: Process nested structures in each clause
         self._process_nested_structures_in_case_enhanced(case_statement)
+
 
         logger.debug(
             "Completed enhanced CASE statement parsing: %d when clauses, ELSE at line %s, end at line %d",
@@ -3095,19 +3439,24 @@ class OracleTriggerAnalyzer:
             end_case_line_no,
         )
 
+
         return case_statement, end_case_idx
+
 
     def _parse_case_statement(self, start_idx):
         """
         Parse a CASE statement from structured_lines, starting at the given index.
 
+
         Args:
             start_idx (int): Index in structured_lines where the CASE statement starts
+
 
         Returns:
             tuple: (case_block, end_idx) if successful, None otherwise
         """
         logger.debug("Starting CASE statement parsing from index %d", start_idx)
+
 
         # Initialize case statement structure
         case_statement = {
@@ -3116,17 +3465,21 @@ class OracleTriggerAnalyzer:
             "when_clauses": [],
         }
 
+
         # Collect the full CASE statement text for debugging and the 'sql' field
         full_case_text = []
+
 
         # Check if we have a valid CASE statement
         if start_idx >= len(self.structured_lines):
             logger.debug("Invalid start index for CASE statement")
             return None
 
+
         case_line = self.structured_lines[start_idx]["line"].strip()
         case_indent = self.structured_lines[start_idx]["indent"]
         full_case_text.append(case_line)
+
 
         # Determine if this is a CASE with expression or a simple CASE
         if case_line.upper() == "CASE":
@@ -3135,11 +3488,13 @@ class OracleTriggerAnalyzer:
             # Extract expression part after "CASE "
             case_statement["case_expression"] = case_line[5:].strip()
 
+
         logger.debug(
             "CASE statement - Type: %s, Expression: '%s'",
             "simple" if not case_statement["case_expression"] else "with expression",
             case_statement["case_expression"],
         )
+
 
         # Find matching END CASE; at the same indentation level
         end_idx = -1
@@ -3147,9 +3502,11 @@ class OracleTriggerAnalyzer:
         collecting_then_statements = False
         current_statements = []
 
+
         # Stack to track nested blocks inside CASE
         nested_blocks = []
         in_nested_block = False
+
 
         i = start_idx + 1
         while i < len(self.structured_lines):
@@ -3158,14 +3515,17 @@ class OracleTriggerAnalyzer:
             line_upper = line.upper()
             indent = line_info["indent"]
 
+
             # Track the original line with indentation preserved
             original_line = self.structured_lines[i]["line"]
             full_case_text.append(original_line)
+
 
             # Check for END CASE; at the same indentation as CASE
             if line_upper == "END CASE;" and indent == case_indent:
                 end_idx = i
                 break
+
 
             # Handle nested BEGIN blocks
             if line_upper == "BEGIN":
@@ -3176,17 +3536,21 @@ class OracleTriggerAnalyzer:
                 nested_blocks.append(("BEGIN", indent))
                 in_nested_block = True
 
+
                 if collecting_then_statements:
                     # Start collecting the nested block as a single statement
                     current_nested_block = ["BEGIN"]
+
 
             elif line_upper == "END;" and in_nested_block:
                 if nested_blocks and nested_blocks[-1][0] == "BEGIN":
                     logger.debug("Found end of nested BEGIN block in CASE statement")
                     nested_blocks.pop()
 
+
                     if not nested_blocks:
                         in_nested_block = False
+
 
                         if (
                             collecting_then_statements
@@ -3202,6 +3566,7 @@ class OracleTriggerAnalyzer:
                             }
                             current_nested_block.append(end_line_info)
 
+
                             if "when_value" in current_when_clause:
                                 current_when_clause["then_statements"].extend(
                                     current_nested_block
@@ -3211,7 +3576,9 @@ class OracleTriggerAnalyzer:
                                     current_nested_block
                                 )
 
+
                             current_nested_block = []
+
 
             # Process WHEN clause - ensure it's at the same indentation level as CASE
             # or slightly more indented (common formatting style)
@@ -3229,14 +3596,17 @@ class OracleTriggerAnalyzer:
                         current_when_clause["then_statements"] = current_statements
                     current_statements = []
 
+
                 # Extract the when value/condition
                 when_value = line[5:].split(" THEN", 1)[0].strip()
                 logger.debug("Found WHEN clause: %s", when_value)
+
 
                 # Create a new when clause
                 current_when_clause = {"when_value": when_value, "then_statements": []}
                 case_statement["when_clauses"].append(current_when_clause)
                 collecting_then_statements = True
+
 
             # Process ELSE clause - ensure it's at the same indentation level as WHEN clauses
             elif line_upper == "ELSE" and (
@@ -3248,6 +3618,7 @@ class OracleTriggerAnalyzer:
                         current_when_clause["then_statements"] = current_statements
                     current_statements = []
 
+
                 # Create the ELSE clause
                 logger.debug(
                     "Found ELSE clause at indent %d (case indent: %d)",
@@ -3257,6 +3628,7 @@ class OracleTriggerAnalyzer:
                 current_when_clause = {"else_statements": []}
                 case_statement["when_clauses"].append(current_when_clause)
                 collecting_then_statements = True
+
 
             # Collect statements for the current WHEN or ELSE clause
             elif collecting_then_statements:
@@ -3269,7 +3641,9 @@ class OracleTriggerAnalyzer:
                     # to preserve the structure in the statement array
                     current_statements.append(line_info)
 
+
             i += 1
+
 
         # Save any remaining statements for the last clause
         if collecting_then_statements and current_when_clause is not None:
@@ -3277,6 +3651,7 @@ class OracleTriggerAnalyzer:
                 current_when_clause["then_statements"] = current_statements
             else:
                 current_when_clause["else_statements"] = current_statements
+
 
         # Check if we found a complete CASE statement
         if end_idx == -1:
@@ -3286,11 +3661,14 @@ class OracleTriggerAnalyzer:
             )
             return None
 
+
         # Process the statements in each clause to handle nested structures
         self._process_nested_structures_in_case(case_statement)
 
+
         # Add the full SQL text to the case_statement, preserving original indentation
         case_statement["sql"] = "\n".join(full_case_text)
+
 
         logger.debug(
             "Completed CASE statement parsing: %d when clauses, end at index %d",
@@ -3298,16 +3676,20 @@ class OracleTriggerAnalyzer:
             end_idx,
         )
 
+
         return case_statement, end_idx
+
 
     def _parse_when_clause(self, when_line_no, case_indent, end_case_line_no):
         """
         Parse a WHEN clause starting at the given line number.
 
+
         Args:
             when_line_no (int): Line number where WHEN clause starts
             case_indent (int): Indentation level of the parent CASE statement
             end_case_line_no (int): Line number where END CASE; is located
+
 
         Returns:
             dict: Parsed WHEN clause structure
@@ -3318,6 +3700,7 @@ class OracleTriggerAnalyzer:
             "when_line_no": when_line_no,
         }
 
+
         # Find the WHEN line and extract the condition
         when_line_info = None
         for line_info in self.structured_lines:
@@ -3325,12 +3708,15 @@ class OracleTriggerAnalyzer:
                 when_line_info = line_info
                 break
 
+
         if not when_line_info:
             logger.warning("Could not find WHEN line %d", when_line_no)
             return None
 
+
         when_line = when_line_info["line"].strip()
         when_line_upper = when_line.upper()
+
 
         # Extract the when value/condition
         if when_line_upper.startswith("WHEN ") and " THEN" in when_line_upper:
@@ -3338,8 +3724,10 @@ class OracleTriggerAnalyzer:
             when_clause["when_value"] = when_value
             logger.debug("Parsed WHEN clause: %s", when_value)
 
+
         # Find the next WHEN or ELSE or END CASE; to determine the end of this clause
         next_clause_line_no = end_case_line_no
+
 
         for line_info in self.structured_lines:
             line_no = line_info["line_no"]
@@ -3347,6 +3735,7 @@ class OracleTriggerAnalyzer:
                 line = line_info["line"].strip()
                 line_upper = line.upper()
                 indent = line_info["indent"]
+
 
                 # Check for next WHEN or ELSE at the same or higher indentation level
                 if (
@@ -3357,6 +3746,7 @@ class OracleTriggerAnalyzer:
                     next_clause_line_no = line_no
                     break
 
+
         # Collect statements between WHEN and next clause
         for line_info in self.structured_lines:
             line_no = line_info["line_no"]
@@ -3364,25 +3754,31 @@ class OracleTriggerAnalyzer:
                 line = line_info["line"].strip()
                 indent = line_info["indent"]
 
+
                 # Only include statements that are more indented than the CASE
                 if indent > case_indent and line and not line.startswith("--"):
                     when_clause["then_statements"].append(line_info)
 
+
         return when_clause
+
 
     def _parse_else_clause(self, else_line_no, case_indent, end_case_line_no):
         """
         Parse an ELSE clause starting at the given line number.
+
 
         Args:
             else_line_no (int): Line number where ELSE clause starts
             case_indent (int): Indentation level of the parent CASE statement
             end_case_line_no (int): Line number where END CASE; is located
 
+
         Returns:
             dict: Parsed ELSE clause structure
         """
         else_clause = {"else_statements": [], "else_line_no": else_line_no}
+
 
         # Collect statements between ELSE and END CASE;
         for line_info in self.structured_lines:
@@ -3391,23 +3787,28 @@ class OracleTriggerAnalyzer:
                 line = line_info["line"].strip()
                 indent = line_info["indent"]
 
+
                 # Only include statements that are more indented than the CASE
                 if indent > case_indent and line and not line.startswith("--"):
                     else_clause["else_statements"].append(line_info)
+
 
         logger.debug(
             "Parsed ELSE clause with %d statements", len(else_clause["else_statements"])
         )
         return else_clause
 
+
     def _process_nested_structures_in_case_enhanced(self, case_statement):
         """
         Process any nested structures within the enhanced case statement.
+
 
         Args:
             case_statement (dict): The enhanced case statement structure to process
         """
         logger.debug("Processing nested structures in enhanced CASE statement")
+
 
         # Process each when clause
         for clause in case_statement["when_clauses"]:
@@ -3419,6 +3820,7 @@ class OracleTriggerAnalyzer:
                 )
                 clause["then_statements"] = processed_statements
 
+
         # Process top-level else_statements
         if case_statement.get("else_statements"):
             statements = case_statement["else_statements"]
@@ -3427,15 +3829,18 @@ class OracleTriggerAnalyzer:
             )
             case_statement["else_statements"] = processed_statements
 
+
     def _process_nested_structures_in_case(self, case_statement):
         """
         Process any nested structures (like nested CASE statements or BEGIN blocks)
         within the statements of each WHEN/ELSE clause.
 
+
         Args:
             case_statement (dict): The case statement structure to process
         """
         logger.debug("Processing nested structures in CASE statement")
+
 
         # Process each when clause
         for clause in case_statement["when_clauses"]:
@@ -3454,13 +3859,16 @@ class OracleTriggerAnalyzer:
                 )
                 clause["else_statements"] = processed_statements
 
+
     def _process_statements_for_nested_structures(self, statements):
         """
         Process a list of statements to identify and parse any nested structures
         such as CASE statements or BEGIN blocks.
 
+
         Args:
             statements (list): List of statement line_info objects and parsed structures
+
 
         Returns:
             list: Processed list of statements with nested structures converted to proper format
@@ -3468,8 +3876,10 @@ class OracleTriggerAnalyzer:
         processed = []
         i = 0
 
+
         while i < len(statements):
             stmt_info = statements[i]
+
 
             # Check if this is a line_info object or already parsed structure
             if isinstance(stmt_info, dict) and "line" in stmt_info:
@@ -3486,6 +3896,7 @@ class OracleTriggerAnalyzer:
                 processed.append(stmt_info)
                 i += 1
                 continue
+
 
             # Check for nested CASE statements
             if stmt.upper().startswith("CASE"):
@@ -3543,6 +3954,7 @@ class OracleTriggerAnalyzer:
                 case_text = [stmt]
                 end_idx = -1
 
+
                 # Find the end of the nested CASE statement
                 for j in range(i + 1, len(statements)):
                     if isinstance(statements[j], dict) and "line" in statements[j]:
@@ -3551,9 +3963,11 @@ class OracleTriggerAnalyzer:
                             end_idx = j
                             break
 
+
                 if end_idx != -1:
                     # Found a complete nested CASE statement
                     logger.debug("Found nested CASE statement in clause (fallback method)")
+
 
                     # Create a nested case structure
                     nested_case = {
@@ -3569,18 +3983,23 @@ class OracleTriggerAnalyzer:
                         "sql": "\n".join(case_text),
                     }
 
+
                     # Add this nested CASE structure as a single entity
                     processed.append(nested_case)
+
 
                     # Skip past this CASE statement
                     i = end_idx + 1
                     continue
 
+
             # Regular statement
             processed.append(stmt_info)
             i += 1
 
+
         return processed
+
 
     def _parse_exception_section(
         self, exception_start_line_no: int, end_line_no: int
@@ -3589,29 +4008,36 @@ class OracleTriggerAnalyzer:
         """
         Parse exception handling section from EXCEPTION to END.
 
+
         Args:
             exception_start_line_no (int): Line number where EXCEPTION starts
             end_line_no (int): Line number where END; is located
+
 
         Returns:
             List[Dict[str, Any]]: List of exception handlers with their statements
         """
         exception_handlers = []
         current_handler = None
+        processed_lines = set()  # Track lines that have been processed as part of multi-line statements
+
 
         for line_info in self.structured_lines:
             line_no = line_info["line_no"]
+
 
             # Only process lines within the exception section
             if exception_start_line_no < line_no < end_line_no:
                 line = line_info["line"].strip()
                 line_upper = line.upper()
 
+
                 # Check for exception handler (WHEN ... THEN)
                 if line_upper.startswith("WHEN ") and " THEN" in line_upper:
                     # Save previous handler if exists
                     if current_handler:
                         exception_handlers.append(current_handler)
+
 
                     # Parse new exception handler
                     exception_handler = self._parse_exception_handler(line)
@@ -3623,52 +4049,86 @@ class OracleTriggerAnalyzer:
                             exception_handler["exception_name"],
                         )
 
+
                 # Check for RAISE statements in exception handlers
                 elif line_upper.startswith("RAISE") and current_handler:
                     if "RAISE_APPLICATION_ERROR" in line_upper:
-                        rae_info = self._parse_raise_application_error(line)
-                        if rae_info:
-                            # Create function_calling structure for RAISE_APPLICATION_ERROR
-                            function_call = {
-                                "type": "function_calling",
-                                "function_name": "raise_application_error",
-                                "parameter": {
-                                    "handler_code": rae_info["handler_code"],
-                                    "handler_string": rae_info["handler_string"],
-                                },
-                            }
-                            current_handler["exception_statements"].append(
-                                function_call
-                            )
-                            logger.debug(
-                                "Added RAISE_APPLICATION_ERROR function call: %s",
-                                rae_info,
-                            )
+                        # Find the end of the RAISE_APPLICATION_ERROR statement (next semicolon)
+                        rae_start_line_no = line_no
+                        rae_end_line_no = None
+                        
+                        # Look for the semicolon that ends this RAISE_APPLICATION_ERROR statement
+                        for search_line_info in self.structured_lines:
+                            if search_line_info["line_no"] >= line_no:
+                                search_line = search_line_info["line"].strip()
+                                if search_line.endswith(";"):
+                                    # Check if this semicolon belongs to our RAISE_APPLICATION_ERROR
+                                    # by looking for RAISE_APPLICATION_ERROR in the accumulated text
+                                    accumulated_text = ""
+                                    for check_line_info in self.structured_lines:
+                                        if rae_start_line_no <= check_line_info["line_no"] <= search_line_info["line_no"]:
+                                            accumulated_text += " " + check_line_info["line"]
+                                    
+                                    if "RAISE_APPLICATION_ERROR" in accumulated_text.upper():
+                                        rae_end_line_no = search_line_info["line_no"]
+                                        break
+                        
+                        if rae_end_line_no:
+                            rae_info = self._parse_raise_application_error(rae_start_line_no, rae_end_line_no)
+                            if rae_info:
+                                # Create function_calling structure for RAISE_APPLICATION_ERROR
+                                function_call = {
+                                    "type": "function_calling",
+                                    "function_name": "raise_application_error",
+                                    "parameter": {
+                                        "handler_code": rae_info["handler_code"],
+                                        "handler_string": rae_info["handler_string"],
+                                    },
+                                }
+                                current_handler["exception_statements"].append(
+                                    function_call
+                                )
+                                logger.debug(
+                                    "Added RAISE_APPLICATION_ERROR function call: %s",
+                                    rae_info,
+                                )
+                                
+                                # Mark all lines from start to end as processed
+                                for i in range(rae_start_line_no, rae_end_line_no + 1):
+                                    processed_lines.add(i)
+                        else:
+                            logger.debug(f"Could not find end of RAISE_APPLICATION_ERROR statement starting at line {rae_start_line_no}")
                     else:
                         # Regular RAISE statement
                         raise_statement = {"sql_statement": line, "type": "raise_statement", "statement_indent": line_info["indent"], "statement_line_no": line_info["line_no"]}
                         current_handler["exception_statements"].append(raise_statement)
                         logger.debug(f"Added RAISE statement: {line}")
 
+
                 # Add regular SQL statements to current exception handler
-                elif current_handler and line and not line.startswith("--"):
+                elif current_handler and line and not line.startswith("--") and line_no not in processed_lines:
                     sql_statement = {"sql_statement": line, "type": "unknown_statement", "statement_indent": line_info["indent"], "statement_line_no": line_info["line_no"]}
                     current_handler["exception_statements"].append(sql_statement)
                     logger.debug(f"Added SQL statement to exception handler: {line}")
+
 
         # Add the last handler if exists
         if current_handler:
             exception_handlers.append(current_handler)
 
+
         logger.debug("Parsed exception section: %d handlers", len(exception_handlers))
         return exception_handlers
+
 
     def _parse_exception_handler(self, line: str) -> Dict[str, Any]:
         """
         Parse an exception handler line.
 
+
         Args:
             line (str): The exception handler line (e.g., "WHEN no_data_found THEN")
+
 
         Returns:
             dict: Parsed exception handler information
@@ -3679,31 +4139,56 @@ class OracleTriggerAnalyzer:
                 exception_part = line[5:]  # Remove "WHEN "
                 exception_name = exception_part.split(" THEN")[0].strip()
 
+
                 return {"exception_name": exception_name}
         except Exception as e:
             logger.debug(f"Failed to parse exception handler '{line}': {e}")
 
+
         return None
 
-    def _parse_raise_application_error(self, line: str) -> Dict[str, str]:
+
+    def _parse_raise_application_error(self, start_line_no: int, end_line_no: int) -> Dict[str, str]:
         """
-        Parse RAISE_APPLICATION_ERROR statement.
+        Parse RAISE_APPLICATION_ERROR statement spanning multiple lines.
+
 
         Args:
-            line (str): The RAISE_APPLICATION_ERROR line
+            start_line_no (int): Line number where RAISE_APPLICATION_ERROR starts
+            end_line_no (int): Line number where the statement ends (at semicolon)
+
 
         Returns:
             dict: Parsed error code and message
         """
         try:
+            # Validate line numbers
+            if start_line_no < 0 or end_line_no < start_line_no:
+                logger.debug(f"Invalid line numbers for RAISE_APPLICATION_ERROR: start={start_line_no}, end={end_line_no}")
+                return None
+
+            # Collect all lines from start_line_no to end_line_no
+            statement_lines = []
+            for line_info in self.structured_lines:
+                if start_line_no <= line_info["line_no"] <= end_line_no:
+                    statement_lines.append(line_info["line"])
+            
+            if not statement_lines:
+                logger.debug(f"No lines found for RAISE_APPLICATION_ERROR between lines {start_line_no} and {end_line_no}")
+                return None
+
+            # Join lines into complete statement
+            complete_statement = " ".join(statement_lines)
+            logger.debug(f"Complete RAISE_APPLICATION_ERROR statement: {complete_statement}")
+
             # Extract parameters from RAISE_APPLICATION_ERROR(error_code, message)
-            if "RAISE_APPLICATION_ERROR" in line.upper():
+            if "RAISE_APPLICATION_ERROR" in complete_statement.upper():
                 # Find the parentheses
-                start_paren = line.find("(")
-                end_paren = line.rfind(")")
+                start_paren = complete_statement.find("(")
+                end_paren = complete_statement.rfind(")")
 
                 if start_paren != -1 and end_paren != -1:
-                    params = line[start_paren + 1 : end_paren]
+                    params = complete_statement[start_paren + 1 : end_paren]
 
                     # Split by comma, but be careful with quoted strings
                     parts = self._split_params_safely(params)
@@ -3716,17 +4201,27 @@ class OracleTriggerAnalyzer:
                             "handler_code": handler_code,
                             "handler_string": handler_string,
                         }
+                    else:
+                        logger.debug(f"Insufficient parameters in RAISE_APPLICATION_ERROR: found {len(parts)} parts")
+                else:
+                    logger.debug(f"Missing parentheses in RAISE_APPLICATION_ERROR: {complete_statement}")
+            else:
+                logger.debug(f"Statement does not contain RAISE_APPLICATION_ERROR: {complete_statement}")
+
         except Exception as e:
-            logger.debug(f"Failed to parse RAISE_APPLICATION_ERROR '{line}': {e}")
+            logger.debug(f"Failed to parse RAISE_APPLICATION_ERROR from lines {start_line_no}-{end_line_no}: {e}")
 
         return None
+
 
     def _split_params_safely(self, params: str) -> List[str]:
         """
         Safely split parameters by comma, respecting quoted strings.
 
+
         Args:
             params (str): Parameter string
+
 
         Returns:
             list: List of parameter parts
@@ -3735,6 +4230,7 @@ class OracleTriggerAnalyzer:
         current_part = ""
         in_quotes = False
         quote_char = None
+
 
         for char in params:
             if char in ["'", '"'] and not in_quotes:
@@ -3751,14 +4247,18 @@ class OracleTriggerAnalyzer:
             else:
                 current_part += char
 
+
         if current_part.strip():
             parts.append(current_part.strip())
 
+
         return parts
+
 
     def rest_strings(self) -> List[str]:
         """
         Find all "rest string" content in various statement types within the JSON structure.
+
 
         This method recursively searches through:
         - begin_end_statements
@@ -3766,10 +4266,12 @@ class OracleTriggerAnalyzer:
         - then_statements
         - else_statements
 
+
         Returns:
             List[str]: List of all rest string content found
         """
         rest_strings_list = []
+
 
         def extract_rest_strings_from_item(item):
             """Recursively extract rest strings from any item"""
@@ -3784,23 +4286,29 @@ class OracleTriggerAnalyzer:
                 for value in item.values():
                     extract_rest_strings_from_item(value)
 
+
             elif isinstance(item, list):
                 # Recursively process all items in the list
                 for sub_item in item:
                     extract_rest_strings_from_item(sub_item)
 
+
         # Process main_section_lines
         extract_rest_strings_from_item(self.main_section_lines)
 
+
         return rest_strings_list
+
 
     def to_json(self):
         """
         Convert the analyzed trigger structure to a JSON-serializable dictionary.
 
+
         This method prepares the final structured representation of the Oracle trigger,
         including declarations, main blocks, and conversion statistics. If rule violations
         were detected, it returns an error structure instead of the parsed content.
+
 
         Returns:
             Dict: JSON-serializable dictionary representing the analyzed trigger structure
@@ -3814,6 +4322,7 @@ class OracleTriggerAnalyzer:
             )
             return {"error": self.rule_errors}
 
+
         # Step 4: Construct the result dictionary
         result = {
             "declarations": {
@@ -3824,12 +4333,14 @@ class OracleTriggerAnalyzer:
             "main": self.main_section_lines,
             "sql_comments": self.sql_comments,
             "rest_strings": self.rest_strings_line,
-            # "strng_convert_json": self.strng_convert_json,
+            "sql_lines": self.structured_lines,
         }
+
 
         # # Step 5: Add additional metadata to the result
         # # Include structured lines for clients that need them
         # result["structured_lines"] = self.structured_lines
+
 
         # Add conversion statistics
         result["conversion_stats"] = {
@@ -3841,14 +4352,16 @@ class OracleTriggerAnalyzer:
             "sql_convert_count": self.strng_convert_json
         }
 
+
         # Include parse timestamp
         result["metadata"] = {
             "parse_timestamp": self._get_timestamp(),
             "parser_version": "1.0",  # Increment when making significant parser changes
         }
 
+
         # Log detailed statistics for troubleshooting
-        info(
+        logger.debug(
             "JSON conversion complete: %d vars, %d consts, %d excs, %d comments",
             len(self.variables),
             len(self.constants),
@@ -3856,6 +4369,7 @@ class OracleTriggerAnalyzer:
             len(self.sql_comments),
         )
         return result
+
 
     def _remove_duplicate_case_when_structures(self):
         """
@@ -3939,9 +4453,11 @@ class OracleTriggerAnalyzer:
         
         logger.debug("Duplicate case_when structures removal complete")
 
+
     def _get_timestamp(self):
         """Get current timestamp in ISO format for metadata"""
         from datetime import datetime
+
 
         return datetime.now().isoformat()
     
@@ -3970,7 +4486,13 @@ class OracleTriggerAnalyzer:
             formatted_msg = " || ".join(formatted_msg)
         # else:
 
+
         #         formatted_msg = formatted_msg
         #     else:
         #         formatted_msg = "'" + formatted_msg + "'"
         return formatted_msg
+
+
+
+
+

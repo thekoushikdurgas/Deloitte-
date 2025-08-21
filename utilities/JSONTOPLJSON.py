@@ -10,12 +10,6 @@ from utilities.common import (
     error,
     critical,
     alert,
-    log_parsing_start,
-    log_parsing_complete,
-    log_parsing_error,
-    log_structure_found,
-    log_nesting_level,
-    log_performance,
 )
 import copy
 
@@ -334,6 +328,7 @@ class JSONTOPLJSON:
             return item
 
         for u, main_item in enumerate(self.after_parse_on_insert):
+            logger.debug(f"after_parse_on_insert: {main_item["begin_end_statements"]}")
             for r, begin_end_item in enumerate(main_item["begin_end_statements"]):
                 json_path = f"main.begin_end_statements.{r}.begin_end_statements"
                 self.after_parse_on_insert[u]["begin_end_statements"][r] = (

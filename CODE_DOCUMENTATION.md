@@ -96,11 +96,11 @@ def clean_json_files() -> None:
 
 ## 📁 utilities/FORMATOracleTriggerAnalyzer.py
 
-### Overview
+### Overview =
 
 Converts JSON analysis back to formatted Oracle PL/SQL code with proper indentation and structure.
 
-### Code Flow Analysis
+### Code Flow Analysis=
 
 #### **Lines 1-25: Imports and Setup**
 
@@ -208,13 +208,13 @@ def _indent_lines(self, lines: List[str], level: int) -> List[str]:
 
 ## 📁 utilities/FORMATPostsqlTriggerAnalyzer.py
 
-### Overview
+### Overview=
 
 Converts JSON analysis to PostgreSQL-compatible SQL with type mappings and function translations.
 
-### Code Flow Analysis
+### Code Flow Analysis==
 
-#### **Lines 1-25: Imports and Setup**
+#### **Lines 1-25: Imports and Setup**=
 
 ```python
 import os, json, re, copy, pandas as pd
@@ -353,13 +353,13 @@ def _render_function_call(self, node: Dict[str, Any], indent_level: int) -> List
 
 ## 📁 utilities/JSONTOPLJSON.py
 
-### Overview
+### Overview==
 
 Transforms JSON analysis into operation-specific structure (INSERT, UPDATE, DELETE) for PostgreSQL triggers.
 
-### Code Flow Analysis
+### Code Flow Analysis===
 
-#### **Lines 1-25: Imports and Setup**
+#### **Lines 1-25: Imports and Setup**==
 
 ```python
 import json, copy
@@ -474,13 +474,13 @@ def to_sql(self):
 
 ## 📁 main.py
 
-### Overview
+### Overview===
 
 Main execution script that orchestrates the entire Oracle to PostgreSQL conversion workflow.
 
-### Code Flow Analysis
+### Code Flow Analysis====
 
-#### **Lines 1-25: Imports and Setup**
+#### **Lines 1-25: Imports and Setup**===
 
 ```python
 #!/usr/bin/env python3
