@@ -847,8 +847,6 @@ def convert_postgresql_format_files_to_sql() -> None:
     )
     info("=== PostgreSQL format to SQL conversion complete ===")
 
-def check_errors_in_json():
-    """check_errors_in_json function."""
 
 def main() -> None:
     """
@@ -894,9 +892,9 @@ def main() -> None:
         debug(f"Step 1 completed in {step1_duration:.2f} seconds")
 
 
-        if check_errors_in_json():
-            error("Errors found in JSON files, skipping conversion")
-            return
+        # if check_errors_in_json():
+        #     error("Errors found in JSON files, skipping conversion")
+        #     return
 
         # # Step 2: Convert JSON back to SQL
         # # -------------------------------

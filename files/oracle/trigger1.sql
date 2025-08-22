@@ -92,7 +92,8 @@ BEGIN
       )                 
    WHERE
       ROWNUM = 1;
-   IF (:NEW.IN_PREP_IND = 'Y') THEN
+   IF (:NEW.IN_PREP_IND = 'Y') 
+   THEN
       IF (:NEW.PORTF_PROJ_CD <> 'Y') THEN
          RAISE IN_PREP_NOT_PORTF_PROJ;
       END IF;
@@ -861,5 +862,8 @@ EXCEPTION
    WHEN PORTF_PROJ_MOL_CRE_ERR THEN
       RAISE_APPLICATION_ERROR( -20120, 'MDM_V_THEMES_IOF');
    WHEN DEBUGGING THEN
-      RAISE_APPLICATION_ERROR( -20900, 'Debug in Themes IOF standard' );
+      RAISE_APPLICATION_ERROR( 
+         -20900,
+       'Debug in Themes IOF standard' 
+       );
 END;

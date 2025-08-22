@@ -60,453 +60,1324 @@
       }
     ]
   },
-  "main": [
-    {
-      "type": "begin_end",
-      "begin_line_no": 14,
-      "begin_indent": 0,
-      "begin_end_statements": [
-        {
-          "type": "begin_end",
-          "begin_end_statements": [
-            {
-              "variable": "V_USERID",
-              "value": "TXO_UTIL.GET_USERID",
-              "type": "assignment_statement",
-              "statement_indent": 8,
-              "statement_line_no": 16
-            }
-          ],
-          "exception_handlers": [
-            {
-              "exception_name": "OTHERS",
-              "exception_statements": [
-                {
-                  "variable": "V_USERID",
-                  "value": "USER",
-                  "type": "assignment_statement",
-                  "statement_indent": 12,
-                  "statement_line_no": 19
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "variable": "CNTR",
-          "value": "0",
-          "type": "assignment_statement",
-          "statement_indent": 4,
-          "statement_line_no": 22
-        },
-        {
-          "sql_statement": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD) AND ADDRESS_TYPE_CD = NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD);",
-          "type": "select_statement",
-          "statement_indent": 4,
-          "statement_line_no": 23
-        },
-        {
-          "type": "if_else",
-          "condition": "INSERTING",
-          "then_statements": [
-            {
-              "type": "if_else",
-              "condition": "CNTR > 0",
-              "then_statements": [
-                {
-                  "sql_statement": "RAISE ERR_INS;",
-                  "type": "raise_statement",
-                  "statement_indent": 12,
-                  "statement_line_no": 32
-                }
-              ],
-              "else_if": [],
-              "else_statements": [],
-              "if_line_no": 31,
-              "if_indent": 8,
-              "else_if_line_nos": [],
-              "else_line_no": null,
-              "end_if_line_no": 33
-            }
-          ],
-          "else_if": [],
-          "else_statements": [],
-          "if_line_no": 30,
-          "if_indent": 4,
-          "else_if_line_nos": [],
-          "else_line_no": null,
-          "end_if_line_no": 34
-        },
-        {
-          "type": "if_else",
-          "condition": "INSERTING OR UPDATING",
-          "then_statements": [
-            {
-              "sql_statement": "SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);",
-              "type": "select_statement",
-              "statement_indent": 8,
-              "statement_line_no": 37
-            },
-            {
-              "type": "if_else",
-              "condition": "V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L')",
-              "then_statements": [
-                {
-                  "sql_statement": "RAISE ERR_INS_LEGAL_ADDR;",
-                  "type": "raise_statement",
-                  "statement_indent": 12,
-                  "statement_line_no": 44
-                }
-              ],
-              "else_if": [],
-              "else_statements": [],
-              "if_line_no": 43,
-              "if_indent": 8,
-              "else_if_line_nos": [],
-              "else_line_no": null,
-              "end_if_line_no": 45
-            },
-            {
-              "type": "if_else",
-              "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L')",
-              "then_statements": [
-                {
-                  "type": "if_else",
-                  "condition": "NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID",
-                  "then_statements": [
-                    {
-                      "sql_statement": "RAISE ERR_CTRY_CHG;",
-                      "type": "raise_statement",
-                      "statement_indent": 16,
-                      "statement_line_no": 49
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [],
-                  "if_line_no": 48,
-                  "if_indent": 12,
-                  "else_if_line_nos": [],
-                  "else_line_no": null,
-                  "end_if_line_no": 50
-                },
-                {
-                  "type": "if_else",
-                  "condition": "CNTR = 0",
-                  "then_statements": [
-                    {
-                      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
-                      "type": "unknown_statement",
-                      "indent": 16,
-                      "line_no": 55
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "type": "if_else",
-                      "condition": "NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID",
-                      "then_statements": [
-                        {
-                          "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'CTRY_CHANGE' );",
-                          "type": "unknown_statement",
-                          "indent": 20,
-                          "line_no": 82
-                        },
-                        {
-                          "variable": "CNTR",
-                          "value": "0",
-                          "type": "assignment_statement",
-                          "statement_indent": 20,
-                          "statement_line_no": 102
-                        },
-                        {
-                          "sql_statement": "SELECT COUNT(*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('B', 'L');",
-                          "type": "select_statement",
-                          "statement_indent": 20,
-                          "statement_line_no": 105
-                        },
-                        {
-                          "type": "if_else",
-                          "condition": ":NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0",
-                          "then_statements": [
-                            {
-                              "sql_statement": "SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID;",
-                              "type": "select_statement",
-                              "statement_indent": 24,
-                              "statement_line_no": 118
-                            },
-                            {
-                              "type": "if_else",
-                              "condition": "TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01'",
-                              "then_statements": [
-                                {
-                                  "variable": "V_VALID_FROM",
-                                  "value": "TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy')",
-                                  "type": "assignment_statement",
-                                  "statement_indent": 28,
-                                  "statement_line_no": 129
-                                }
-                              ],
-                              "else_if": [],
-                              "else_statements": [
-                                {
-                                  "variable": "V_VALID_FROM",
-                                  "value": "TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy')",
-                                  "type": "assignment_statement",
-                                  "statement_indent": 28,
-                                  "statement_line_no": 133
-                                }
-                              ],
-                              "if_line_no": 126,
-                              "if_indent": 24,
-                              "else_if_line_nos": [],
-                              "else_line_no": 130,
-                              "end_if_line_no": 134
-                            },
-                            {
-                              "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_VALID_FROM, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT' );",
-                              "type": "unknown_statement",
-                              "indent": 24,
-                              "line_no": 136
-                            },
-                            {
-                              "type": "if_else",
-                              "condition": "V_COMPANY_TYPE_CD = 'L'",
-                              "then_statements": [
-                                {
-                                  "type": "for_loop",
-                                  "loop_variable": "V_REC",
-                                  "cursor_query": "(SELECT COMPANY_CD FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('O', 'V') )",
-                                  "loop_statements": [
-                                    {
-                                      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => V_REC.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_VALID_FROM, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT' );",
-                                      "type": "unknown_statement",
-                                      "indent": 32,
-                                      "line_no": 160
-                                    }
-                                  ]
-                                }
-                              ],
-                              "else_if": [],
-                              "else_statements": [],
-                              "if_line_no": 148,
-                              "if_indent": 24,
-                              "else_if_line_nos": [],
-                              "else_line_no": null,
-                              "end_if_line_no": 171
-                            }
-                          ],
-                          "else_if": [],
-                          "else_statements": [],
-                          "if_line_no": 114,
-                          "if_indent": 20,
-                          "else_if_line_nos": [],
-                          "else_line_no": null,
-                          "end_if_line_no": 172
-                        }
-                      ],
-                      "else_if": [],
-                      "else_statements": [
-                        {
-                          "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE' );",
-                          "type": "unknown_statement",
-                          "indent": 20,
-                          "line_no": 176
-                        }
-                      ],
-                      "if_line_no": 76,
-                      "if_indent": 16,
-                      "else_if_line_nos": [],
-                      "else_line_no": 173,
-                      "end_if_line_no": 194
-                    }
-                  ],
-                  "if_line_no": 52,
-                  "if_indent": 12,
-                  "else_if_line_nos": [],
-                  "else_line_no": 73,
-                  "end_if_line_no": 195
-                }
-              ],
-              "else_if": [],
-              "else_statements": [],
-              "if_line_no": 47,
-              "if_indent": 8,
-              "else_if_line_nos": [],
-              "else_line_no": null,
-              "end_if_line_no": 196
-            },
-            {
-              "type": "if_else",
-              "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L')",
-              "then_statements": [
-                {
-                  "type": "if_else",
-                  "condition": "CNTR = 0",
-                  "then_statements": [
-                    {
-                      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
-                      "type": "unknown_statement",
-                      "indent": 16,
-                      "line_no": 202
-                    }
-                  ],
-                  "else_if": [],
-                  "else_statements": [
-                    {
-                      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE' );",
-                      "type": "unknown_statement",
-                      "indent": 16,
-                      "line_no": 223
-                    }
-                  ],
-                  "if_line_no": 199,
-                  "if_indent": 12,
-                  "else_if_line_nos": [],
-                  "else_line_no": 220,
-                  "end_if_line_no": 241
-                }
-              ],
-              "else_if": [],
-              "else_statements": [],
-              "if_line_no": 198,
-              "if_indent": 8,
-              "else_if_line_nos": [],
-              "else_line_no": null,
-              "end_if_line_no": 242
-            }
-          ],
-          "else_if": [],
-          "else_statements": [],
-          "if_line_no": 36,
-          "if_indent": 4,
-          "else_if_line_nos": [],
-          "else_line_no": null,
-          "end_if_line_no": 243
-        },
-        {
-          "type": "if_else",
-          "condition": "DELETING",
-          "then_statements": [
-            {
-              "type": "if_else",
-              "condition": "NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P')",
-              "then_statements": [
-                {
-                  "sql_statement": "RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;",
-                  "type": "raise_statement",
-                  "statement_indent": 12,
-                  "statement_line_no": 247
-                }
-              ],
-              "else_if": [],
-              "else_statements": [],
-              "if_line_no": 246,
-              "if_indent": 8,
-              "else_if_line_nos": [],
-              "else_line_no": null,
-              "end_if_line_no": 248
-            },
-            {
-              "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');",
-              "type": "unknown_statement",
-              "indent": 8,
-              "line_no": 250
-            }
-          ],
-          "else_if": [],
-          "else_statements": [],
-          "if_line_no": 245,
-          "if_indent": 4,
-          "else_if_line_nos": [],
-          "else_line_no": null,
-          "end_if_line_no": 251
-        }
-      ],
-      "exception_handlers": [
-        {
-          "exception_name": "ERR_UPD",
-          "exception_statements": [
-            {
-              "type": "function_calling",
-              "function_name": "raise_application_error",
-              "parameter": {
-                "handler_code": "-20111",
-                "handler_string": "'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD"
-              }
-            }
-          ]
-        },
-        {
-          "exception_name": "ERR_INS",
-          "exception_statements": [
-            {
-              "type": "function_calling",
-              "function_name": "raise_application_error",
-              "parameter": {
-                "handler_code": "-20112",
-                "handler_string": "'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.'"
-              }
-            }
-          ]
-        },
-        {
-          "exception_name": "ERR_CTRY_CHG",
-          "exception_statements": [
-            {
-              "type": "function_calling",
-              "function_name": "raise_application_error",
-              "parameter": {
-                "handler_code": "-20113",
-                "handler_string": "'The company country modified but not the Valid From Date. Please update also the Valid From Date.'"
-              }
-            }
-          ]
-        },
-        {
-          "exception_name": "TEST_ERR",
-          "exception_statements": [
-            {
-              "type": "function_calling",
-              "function_name": "raise_application_error",
-              "parameter": {
-                "handler_code": "-20113",
-                "handler_string": "'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR"
-              }
-            }
-          ]
-        },
-        {
-          "exception_name": "ERR_INS_LEGAL_ADDR",
-          "exception_statements": [
-            {
-              "type": "function_calling",
-              "function_name": "raise_application_error",
-              "parameter": {
-                "handler_code": "-20113",
-                "handler_string": "'The legal address cannot be inserted for this type of company'"
-              }
-            }
-          ]
-        },
-        {
-          "exception_name": "ERR_NOT_ALLOWED_TO_INVALIDATE",
-          "exception_statements": [
-            {
-              "type": "function_calling",
-              "function_name": "raise_application_error",
-              "parameter": {
-                "handler_code": "-20113",
-                "handler_string": "'It is not allowed to invalidate/delete this type of address'"
-              }
-            }
-          ]
-        }
-      ],
-      "exception_line_no": 252,
-      "end_line_no": 273
-    }
-  ],
+  "main": {
+    "type": "begin_end",
+    "begin_line_no": 14,
+    "begin_indent": 0,
+    "begin_end_statements": [
+      {
+        "type": "begin_end",
+        "begin_line_no": 15,
+        "begin_indent": 4,
+        "begin_end_statements": [
+          {
+            "indent": 8,
+            "line": "        V_USERID := TXO_UTIL.GET_USERID;",
+            "line_no": 16,
+            "is_end_semicolon": true
+          }
+        ],
+        "exception_handlers": [
+          {
+            "indent": 8,
+            "line": "        WHEN OTHERS THEN",
+            "line_no": 18,
+            "is_end_semicolon": false
+          },
+          {
+            "indent": 12,
+            "line": "            V_USERID := USER;",
+            "line_no": 19,
+            "is_end_semicolon": true
+          }
+        ],
+        "exception_line_no": 17,
+        "end_line_no": 20
+      },
+      {
+        "indent": 4,
+        "line": "    CNTR := 0;",
+        "line_no": 22,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    SELECT",
+        "line_no": 23,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        COUNT (*) INTO CNTR",
+        "line_no": 24,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 4,
+        "line": "    FROM",
+        "line_no": 25,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        CFG_V_COMPANY_ADDRESSES",
+        "line_no": 26,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 4,
+        "line": "    WHERE",
+        "line_no": 27,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        COMPANY_CD = NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD)",
+        "line_no": 28,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        AND ADDRESS_TYPE_CD = NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD);",
+        "line_no": 29,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    IF INSERTING THEN",
+        "line_no": 30,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        IF CNTR > 0 THEN",
+        "line_no": 31,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 12,
+        "line": "            RAISE ERR_INS;",
+        "line_no": 32,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        END IF;",
+        "line_no": 33,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    END IF;",
+        "line_no": 34,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    IF INSERTING OR UPDATING THEN",
+        "line_no": 36,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        SELECT",
+        "line_no": 37,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 12,
+        "line": "            COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD",
+        "line_no": 38,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        FROM",
+        "line_no": 39,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 12,
+        "line": "            CFG_V_COMPANIES",
+        "line_no": 40,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        WHERE",
+        "line_no": 41,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 12,
+        "line": "            COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);",
+        "line_no": 42,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        IF V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L') THEN",
+        "line_no": 43,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 12,
+        "line": "            RAISE ERR_INS_LEGAL_ADDR;",
+        "line_no": 44,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        END IF;",
+        "line_no": 45,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        IF NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L') THEN",
+        "line_no": 47,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 12,
+        "line": "            IF NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN",
+        "line_no": 48,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 16,
+        "line": "                RAISE ERR_CTRY_CHG;",
+        "line_no": 49,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 12,
+        "line": "            END IF;",
+        "line_no": 50,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 12,
+        "line": "            IF CNTR = 0 THEN",
+        "line_no": 52,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 16,
+        "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+        "line_no": 55,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
+        "line_no": 56,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+        "line_no": 57,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+        "line_no": 58,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_STREET => :NEW.STREET,",
+        "line_no": 59,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
+        "line_no": 60,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_BUILDING => :NEW.BUILDING,",
+        "line_no": 61,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+        "line_no": 62,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
+        "line_no": 63,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_CITY=> :NEW.CITY,",
+        "line_no": 64,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+        "line_no": 65,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+        "line_no": 66,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_LATITUDE => :NEW.LATITUDE,",
+        "line_no": 67,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
+        "line_no": 68,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+        "line_no": 69,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
+        "line_no": 70,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ACTION_TYPE => 'INSERT'",
+        "line_no": 71,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 16,
+        "line": "                );",
+        "line_no": 72,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 12,
+        "line": "            ELSE",
+        "line_no": 73,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 16,
+        "line": "                IF NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN",
+        "line_no": 76,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+        "line_no": 82,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_COMPANY_CD => :NEW.COMPANY_CD,",
+        "line_no": 83,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+        "line_no": 84,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+        "line_no": 85,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_STREET => :NEW.STREET,",
+        "line_no": 86,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_HOUSE_NO => :NEW.HOUSE_NO,",
+        "line_no": 87,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_BUILDING => :NEW.BUILDING,",
+        "line_no": 88,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+        "line_no": 89,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ZIP_CODE => :NEW.ZIP_CODE,",
+        "line_no": 90,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_CITY=> :NEW.CITY,",
+        "line_no": 91,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+        "line_no": 92,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+        "line_no": 93,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_LATITUDE => :NEW.LATITUDE,",
+        "line_no": 94,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_LONGITUDE => :NEW.LONGITUDE,",
+        "line_no": 95,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+        "line_no": 96,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_VALID_FROM => :NEW.VALID_FROM,",
+        "line_no": 97,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ACTION_TYPE => 'CTRY_CHANGE'",
+        "line_no": 98,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    );",
+        "line_no": 99,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 20,
+        "line": "                    CNTR := 0;",
+        "line_no": 102,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 20,
+        "line": "                    SELECT",
+        "line_no": 105,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        COUNT(*) INTO CNTR",
+        "line_no": 106,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    FROM",
+        "line_no": 107,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        CFG_V_COMPANIES",
+        "line_no": 108,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    WHERE",
+        "line_no": 109,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        COMPANY_CD = :NEW.COMPANY_CD",
+        "line_no": 110,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        AND VALID_IND = 'Y'",
+        "line_no": 111,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        AND CBC_GBE_SCOPE = 'Y'",
+        "line_no": 112,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        AND COMPANY_TYPE_CD IN ('B', 'L');",
+        "line_no": 113,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 20,
+        "line": "                    IF :NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0 THEN",
+        "line_no": 114,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        SELECT",
+        "line_no": 118,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            COUNTRY_CD INTO V_COUNTRY_CD",
+        "line_no": 119,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        FROM",
+        "line_no": 120,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            MDM_V_COUNTRIES",
+        "line_no": 121,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        WHERE",
+        "line_no": 122,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            COUNTRY_ID = :NEW.COUNTRY_ID;",
+        "line_no": 123,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 24,
+        "line": "                        IF TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01' THEN",
+        "line_no": 126,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            V_VALID_FROM := TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy');",
+        "line_no": 129,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 24,
+        "line": "                        ELSE",
+        "line_no": 130,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            V_VALID_FROM := TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy');",
+        "line_no": 133,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 24,
+        "line": "                        END IF;",
+        "line_no": 134,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 24,
+        "line": "                        MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
+        "line_no": 136,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            I_COMPANY_CD => :NEW.COMPANY_CD,",
+        "line_no": 137,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            I_REPORTING_ENTITY_CD => 'J-'",
+        "line_no": 138,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 53,
+        "line": "                                                     || V_COUNTRY_CD,",
+        "line_no": 139,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            I_VALID_FROM_DATE => V_VALID_FROM,",
+        "line_no": 140,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            I_VALID_TO_DATE => NULL,",
+        "line_no": 141,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            I_CHANGE_USER => V_USERID,",
+        "line_no": 142,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            I_MAPPING_TYPE => 'JU',",
+        "line_no": 143,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            I_ACTION_TYPE => 'INSERT'",
+        "line_no": 144,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        );",
+        "line_no": 145,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 24,
+        "line": "                        IF V_COMPANY_TYPE_CD = 'L' THEN",
+        "line_no": 148,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            FOR V_REC IN (",
+        "line_no": 149,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 32,
+        "line": "                                SELECT",
+        "line_no": 150,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    COMPANY_CD",
+        "line_no": 151,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 32,
+        "line": "                                FROM",
+        "line_no": 152,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    CFG_V_COMPANIES",
+        "line_no": 153,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 32,
+        "line": "                                WHERE",
+        "line_no": 154,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    LEGAL_COMPANY_CD = :NEW.COMPANY_CD",
+        "line_no": 155,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    AND VALID_IND = 'Y'",
+        "line_no": 156,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    AND CBC_GBE_SCOPE = 'Y'",
+        "line_no": 157,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    AND COMPANY_TYPE_CD IN ('O', 'V')",
+        "line_no": 158,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 28,
+        "line": "                            ) LOOP",
+        "line_no": 159,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 32,
+        "line": "                                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
+        "line_no": 160,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    I_COMPANY_CD => V_REC.COMPANY_CD,",
+        "line_no": 161,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    I_REPORTING_ENTITY_CD => 'J-'",
+        "line_no": 162,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 61,
+        "line": "                                                             || V_COUNTRY_CD,",
+        "line_no": 163,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    I_VALID_FROM_DATE => V_VALID_FROM,",
+        "line_no": 164,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    I_VALID_TO_DATE => NULL,",
+        "line_no": 165,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    I_CHANGE_USER => V_USERID,",
+        "line_no": 166,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    I_MAPPING_TYPE => 'JU',",
+        "line_no": 167,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 36,
+        "line": "                                    I_ACTION_TYPE => 'INSERT'",
+        "line_no": 168,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 32,
+        "line": "                                );",
+        "line_no": 169,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 28,
+        "line": "                            END LOOP;",
+        "line_no": 170,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 24,
+        "line": "                        END IF;",
+        "line_no": 171,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 20,
+        "line": "                    END IF;",
+        "line_no": 172,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 16,
+        "line": "                ELSE",
+        "line_no": 173,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+        "line_no": 176,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_COMPANY_CD => :NEW.COMPANY_CD,",
+        "line_no": 177,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+        "line_no": 178,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+        "line_no": 179,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_STREET => :NEW.STREET,",
+        "line_no": 180,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_HOUSE_NO => :NEW.HOUSE_NO,",
+        "line_no": 181,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_BUILDING => :NEW.BUILDING,",
+        "line_no": 182,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+        "line_no": 183,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ZIP_CODE => :NEW.ZIP_CODE,",
+        "line_no": 184,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_CITY=> :NEW.CITY,",
+        "line_no": 185,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+        "line_no": 186,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+        "line_no": 187,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_LATITUDE => :NEW.LATITUDE,",
+        "line_no": 188,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_LONGITUDE => :NEW.LONGITUDE,",
+        "line_no": 189,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+        "line_no": 190,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_VALID_FROM => :NEW.VALID_FROM,",
+        "line_no": 191,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 24,
+        "line": "                        P_ACTION_TYPE => 'UPDATE'",
+        "line_no": 192,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    );",
+        "line_no": 193,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 16,
+        "line": "                END IF;",
+        "line_no": 194,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 12,
+        "line": "            END IF;",
+        "line_no": 195,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        END IF;",
+        "line_no": 196,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        IF NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L') THEN",
+        "line_no": 198,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 12,
+        "line": "            IF CNTR = 0 THEN",
+        "line_no": 199,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 16,
+        "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+        "line_no": 202,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
+        "line_no": 203,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+        "line_no": 204,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+        "line_no": 205,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_STREET => :NEW.STREET,",
+        "line_no": 206,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
+        "line_no": 207,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_BUILDING => :NEW.BUILDING,",
+        "line_no": 208,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+        "line_no": 209,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
+        "line_no": 210,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_CITY=> :NEW.CITY,",
+        "line_no": 211,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+        "line_no": 212,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+        "line_no": 213,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_LATITUDE => :NEW.LATITUDE,",
+        "line_no": 214,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
+        "line_no": 215,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+        "line_no": 216,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
+        "line_no": 217,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ACTION_TYPE => 'INSERT'",
+        "line_no": 218,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 16,
+        "line": "                );",
+        "line_no": 219,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 12,
+        "line": "            ELSE",
+        "line_no": 220,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 16,
+        "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
+        "line_no": 223,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
+        "line_no": 224,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
+        "line_no": 225,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
+        "line_no": 226,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_STREET => :NEW.STREET,",
+        "line_no": 227,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
+        "line_no": 228,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_BUILDING => :NEW.BUILDING,",
+        "line_no": 229,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
+        "line_no": 230,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
+        "line_no": 231,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_CITY=> :NEW.CITY,",
+        "line_no": 232,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
+        "line_no": 233,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
+        "line_no": 234,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_LATITUDE => :NEW.LATITUDE,",
+        "line_no": 235,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
+        "line_no": 236,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
+        "line_no": 237,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
+        "line_no": 238,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 20,
+        "line": "                    P_ACTION_TYPE => 'UPDATE'",
+        "line_no": 239,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 16,
+        "line": "                );",
+        "line_no": 240,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 12,
+        "line": "            END IF;",
+        "line_no": 241,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        END IF;",
+        "line_no": 242,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    END IF;",
+        "line_no": 243,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    IF DELETING THEN",
+        "line_no": 245,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        IF NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P') THEN",
+        "line_no": 246,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 12,
+        "line": "            RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;",
+        "line_no": 247,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        END IF;",
+        "line_no": 248,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 8,
+        "line": "        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');",
+        "line_no": 250,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    END IF;",
+        "line_no": 251,
+        "is_end_semicolon": true
+      }
+    ],
+    "exception_handlers": [
+      {
+        "indent": 4,
+        "line": "    WHEN ERR_UPD THEN",
+        "line_no": 253,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        RAISE_APPLICATION_ERROR (-20111, 'The address cannot be updated because the Address type is different. Old address type: '",
+        "line_no": 254,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 41,
+        "line": "                                         ||:OLD.ADDRESS_TYPE_CD",
+        "line_no": 255,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 41,
+        "line": "                                         ||' New address type: '",
+        "line_no": 256,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 41,
+        "line": "                                         ||:NEW.ADDRESS_TYPE_CD);",
+        "line_no": 257,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    WHEN ERR_INS THEN",
+        "line_no": 258,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        RAISE_APPLICATION_ERROR (-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');",
+        "line_no": 259,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    WHEN ERR_CTRY_CHG THEN",
+        "line_no": 260,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        RAISE_APPLICATION_ERROR (-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');",
+        "line_no": 261,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    WHEN TEST_ERR THEN",
+        "line_no": 262,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        RAISE_APPLICATION_ERROR (-20113, 'New: '",
+        "line_no": 263,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 41,
+        "line": "                                         ||:NEW.COMPANY_CD",
+        "line_no": 264,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 41,
+        "line": "                                         ||' Old:'",
+        "line_no": 265,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 41,
+        "line": "                                         ||:OLD.COMPANY_CD",
+        "line_no": 266,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 41,
+        "line": "                                         ||'Count: '",
+        "line_no": 267,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 41,
+        "line": "                                         ||CNTR);",
+        "line_no": 268,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    WHEN ERR_INS_LEGAL_ADDR THEN",
+        "line_no": 269,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        RAISE_APPLICATION_ERROR (-20113, 'The legal address cannot be inserted for this type of company');",
+        "line_no": 270,
+        "is_end_semicolon": true
+      },
+      {
+        "indent": 4,
+        "line": "    WHEN ERR_NOT_ALLOWED_TO_INVALIDATE THEN",
+        "line_no": 271,
+        "is_end_semicolon": false
+      },
+      {
+        "indent": 8,
+        "line": "        RAISE_APPLICATION_ERROR (-20113, 'It is not allowed to invalidate/delete this type of address');",
+        "line_no": 272,
+        "is_end_semicolon": true
+      }
+    ],
+    "exception_line_no": 252,
+    "end_line_no": 273
+  },
   "sql_comments": [
     "--insert address P/L + RES/INC with valid_from date",
     "--check if there are changes on the valid_from date and country => if YES, old records will be expired and new ones will be inserted",
@@ -526,1476 +1397,15 @@
     "--insert address different than P, L address type with valid_from date",
     "--update address different than P, L address type with valid_from date"
   ],
-  "rest_strings": [
-    {
-      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
-      "type": "unknown_statement",
-      "indent": 16,
-      "line_no": 55
-    },
-    {
-      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'CTRY_CHANGE' );",
-      "type": "unknown_statement",
-      "indent": 20,
-      "line_no": 82
-    },
-    {
-      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_VALID_FROM, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT' );",
-      "type": "unknown_statement",
-      "indent": 24,
-      "line_no": 136
-    },
-    {
-      "statement": "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU ( I_COMPANY_CD => V_REC.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_VALID_FROM, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT' );",
-      "type": "unknown_statement",
-      "indent": 32,
-      "line_no": 160
-    },
-    {
-      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE' );",
-      "type": "unknown_statement",
-      "indent": 20,
-      "line_no": 176
-    },
-    {
-      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT' );",
-      "type": "unknown_statement",
-      "indent": 16,
-      "line_no": 202
-    },
-    {
-      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS( P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY=> :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE' );",
-      "type": "unknown_statement",
-      "indent": 16,
-      "line_no": 223
-    },
-    {
-      "statement": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');",
-      "type": "unknown_statement",
-      "indent": 8,
-      "line_no": 250
-    }
-  ],
-  "sql_lines": [
-    {
-      "indent": 0,
-      "line": "DECLARE",
-      "line_no": 1,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 4,
-      "line": "    V_TRIGGER_NAME                VARCHAR2 (100) := 'COMPANY_ADDRESSES_IOF';",
-      "line_no": 2,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    CNTR                          PLS_INTEGER;",
-      "line_no": 3,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    ERR_UPD EXCEPTION;",
-      "line_no": 4,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    ERR_INS EXCEPTION;",
-      "line_no": 5,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    ERR_CTRY_CHG EXCEPTION;",
-      "line_no": 6,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    ERR_NOT_ALLOWED_TO_INVALIDATE EXCEPTION;",
-      "line_no": 7,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    V_USERID                      VARCHAR2 (100);",
-      "line_no": 8,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    TEST_ERR EXCEPTION;",
-      "line_no": 9,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    V_COUNTRY_CD                  CORE.COUNTRIES.COUNTRY_CD%TYPE;",
-      "line_no": 10,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    V_COMPANY_TYPE_CD             CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;",
-      "line_no": 11,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    ERR_INS_LEGAL_ADDR EXCEPTION;",
-      "line_no": 12,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    V_VALID_FROM                  CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;",
-      "line_no": 13,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 0,
-      "line": "BEGIN",
-      "line_no": 14,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 4,
-      "line": "    BEGIN",
-      "line_no": 15,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        V_USERID := TXO_UTIL.GET_USERID;",
-      "line_no": 16,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    EXCEPTION",
-      "line_no": 17,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        WHEN OTHERS THEN",
-      "line_no": 18,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            V_USERID := USER;",
-      "line_no": 19,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    END;",
-      "line_no": 20,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    CNTR := 0;",
-      "line_no": 22,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    SELECT",
-      "line_no": 23,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        COUNT (*) INTO CNTR",
-      "line_no": 24,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 4,
-      "line": "    FROM",
-      "line_no": 25,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        CFG_V_COMPANY_ADDRESSES",
-      "line_no": 26,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 4,
-      "line": "    WHERE",
-      "line_no": 27,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        COMPANY_CD = NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD)",
-      "line_no": 28,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        AND ADDRESS_TYPE_CD = NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD);",
-      "line_no": 29,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    IF INSERTING THEN",
-      "line_no": 30,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        IF CNTR > 0 THEN",
-      "line_no": 31,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            RAISE ERR_INS;",
-      "line_no": 32,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        END IF;",
-      "line_no": 33,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    END IF;",
-      "line_no": 34,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    IF INSERTING OR UPDATING THEN",
-      "line_no": 36,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        SELECT",
-      "line_no": 37,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD",
-      "line_no": 38,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        FROM",
-      "line_no": 39,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            CFG_V_COMPANIES",
-      "line_no": 40,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        WHERE",
-      "line_no": 41,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            COMPANY_CD = NVL ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);",
-      "line_no": 42,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        IF V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L') THEN",
-      "line_no": 43,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            RAISE ERR_INS_LEGAL_ADDR;",
-      "line_no": 44,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        END IF;",
-      "line_no": 45,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        IF NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L') THEN",
-      "line_no": 47,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            IF NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) = NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN",
-      "line_no": 48,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                RAISE ERR_CTRY_CHG;",
-      "line_no": 49,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            END IF;",
-      "line_no": 50,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            IF CNTR = 0 THEN",
-      "line_no": 52,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 55,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 56,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 57,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 58,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_STREET => :NEW.STREET,",
-      "line_no": 59,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 60,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_BUILDING => :NEW.BUILDING,",
-      "line_no": 61,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 62,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 63,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_CITY=> :NEW.CITY,",
-      "line_no": 64,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 65,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 66,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 67,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 68,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 69,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 70,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ACTION_TYPE => 'INSERT'",
-      "line_no": 71,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                );",
-      "line_no": 72,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            ELSE",
-      "line_no": 73,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                IF NVL(:OLD.VALID_FROM, TRUNC(SYSDATE)) <> NVL(:NEW.VALID_FROM, TRUNC(SYSDATE)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN",
-      "line_no": 76,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 82,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 83,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 84,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 85,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_STREET => :NEW.STREET,",
-      "line_no": 86,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 87,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_BUILDING => :NEW.BUILDING,",
-      "line_no": 88,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 89,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 90,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_CITY=> :NEW.CITY,",
-      "line_no": 91,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 92,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 93,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 94,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 95,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 96,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 97,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ACTION_TYPE => 'CTRY_CHANGE'",
-      "line_no": 98,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    );",
-      "line_no": 99,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 20,
-      "line": "                    CNTR := 0;",
-      "line_no": 102,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 20,
-      "line": "                    SELECT",
-      "line_no": 105,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        COUNT(*) INTO CNTR",
-      "line_no": 106,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    FROM",
-      "line_no": 107,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        CFG_V_COMPANIES",
-      "line_no": 108,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    WHERE",
-      "line_no": 109,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        COMPANY_CD = :NEW.COMPANY_CD",
-      "line_no": 110,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        AND VALID_IND = 'Y'",
-      "line_no": 111,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        AND CBC_GBE_SCOPE = 'Y'",
-      "line_no": 112,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        AND COMPANY_TYPE_CD IN ('B', 'L');",
-      "line_no": 113,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 20,
-      "line": "                    IF :NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0 THEN",
-      "line_no": 114,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        SELECT",
-      "line_no": 118,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            COUNTRY_CD INTO V_COUNTRY_CD",
-      "line_no": 119,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        FROM",
-      "line_no": 120,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            MDM_V_COUNTRIES",
-      "line_no": 121,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        WHERE",
-      "line_no": 122,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            COUNTRY_ID = :NEW.COUNTRY_ID;",
-      "line_no": 123,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 24,
-      "line": "                        IF TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01' THEN",
-      "line_no": 126,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            V_VALID_FROM := TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy');",
-      "line_no": 129,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 24,
-      "line": "                        ELSE",
-      "line_no": 130,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            V_VALID_FROM := TO_DATE(ADD_MONTHS(TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy');",
-      "line_no": 133,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 24,
-      "line": "                        END IF;",
-      "line_no": 134,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 24,
-      "line": "                        MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
-      "line_no": 136,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 137,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_REPORTING_ENTITY_CD => 'J-'",
-      "line_no": 138,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 53,
-      "line": "                                                     || V_COUNTRY_CD,",
-      "line_no": 139,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_VALID_FROM_DATE => V_VALID_FROM,",
-      "line_no": 140,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_VALID_TO_DATE => NULL,",
-      "line_no": 141,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_CHANGE_USER => V_USERID,",
-      "line_no": 142,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_MAPPING_TYPE => 'JU',",
-      "line_no": 143,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            I_ACTION_TYPE => 'INSERT'",
-      "line_no": 144,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        );",
-      "line_no": 145,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 24,
-      "line": "                        IF V_COMPANY_TYPE_CD = 'L' THEN",
-      "line_no": 148,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            FOR V_REC IN (",
-      "line_no": 149,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 32,
-      "line": "                                SELECT",
-      "line_no": 150,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    COMPANY_CD",
-      "line_no": 151,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 32,
-      "line": "                                FROM",
-      "line_no": 152,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    CFG_V_COMPANIES",
-      "line_no": 153,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 32,
-      "line": "                                WHERE",
-      "line_no": 154,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    LEGAL_COMPANY_CD = :NEW.COMPANY_CD",
-      "line_no": 155,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    AND VALID_IND = 'Y'",
-      "line_no": 156,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    AND CBC_GBE_SCOPE = 'Y'",
-      "line_no": 157,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    AND COMPANY_TYPE_CD IN ('O', 'V')",
-      "line_no": 158,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 28,
-      "line": "                            ) LOOP",
-      "line_no": 159,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 32,
-      "line": "                                MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU (",
-      "line_no": 160,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_COMPANY_CD => V_REC.COMPANY_CD,",
-      "line_no": 161,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_REPORTING_ENTITY_CD => 'J-'",
-      "line_no": 162,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 61,
-      "line": "                                                             || V_COUNTRY_CD,",
-      "line_no": 163,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_VALID_FROM_DATE => V_VALID_FROM,",
-      "line_no": 164,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_VALID_TO_DATE => NULL,",
-      "line_no": 165,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_CHANGE_USER => V_USERID,",
-      "line_no": 166,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_MAPPING_TYPE => 'JU',",
-      "line_no": 167,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 36,
-      "line": "                                    I_ACTION_TYPE => 'INSERT'",
-      "line_no": 168,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 32,
-      "line": "                                );",
-      "line_no": 169,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 28,
-      "line": "                            END LOOP;",
-      "line_no": 170,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 24,
-      "line": "                        END IF;",
-      "line_no": 171,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 20,
-      "line": "                    END IF;",
-      "line_no": 172,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 16,
-      "line": "                ELSE",
-      "line_no": 173,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 176,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 177,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 178,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 179,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_STREET => :NEW.STREET,",
-      "line_no": 180,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 181,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_BUILDING => :NEW.BUILDING,",
-      "line_no": 182,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 183,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 184,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_CITY=> :NEW.CITY,",
-      "line_no": 185,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 186,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 187,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 188,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 189,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 190,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 191,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        P_ACTION_TYPE => 'UPDATE'",
-      "line_no": 192,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    );",
-      "line_no": 193,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 16,
-      "line": "                END IF;",
-      "line_no": 194,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            END IF;",
-      "line_no": 195,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        END IF;",
-      "line_no": 196,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        IF NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L') THEN",
-      "line_no": 198,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            IF CNTR = 0 THEN",
-      "line_no": 199,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 202,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 203,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 204,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 205,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_STREET => :NEW.STREET,",
-      "line_no": 206,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 207,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_BUILDING => :NEW.BUILDING,",
-      "line_no": 208,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 209,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 210,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_CITY=> :NEW.CITY,",
-      "line_no": 211,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 212,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 213,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 214,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 215,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 216,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 217,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ACTION_TYPE => 'INSERT'",
-      "line_no": 218,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                );",
-      "line_no": 219,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            ELSE",
-      "line_no": 220,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(",
-      "line_no": 223,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COMPANY_CD => :NEW.COMPANY_CD,",
-      "line_no": 224,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD,",
-      "line_no": 225,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME,",
-      "line_no": 226,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_STREET => :NEW.STREET,",
-      "line_no": 227,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_HOUSE_NO => :NEW.HOUSE_NO,",
-      "line_no": 228,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_BUILDING => :NEW.BUILDING,",
-      "line_no": 229,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO,",
-      "line_no": 230,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ZIP_CODE => :NEW.ZIP_CODE,",
-      "line_no": 231,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_CITY=> :NEW.CITY,",
-      "line_no": 232,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_DISTRICT_NAME => :NEW.DISTRICT_NAME,",
-      "line_no": 233,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_COUNTRY_ID => :NEW.COUNTRY_ID,",
-      "line_no": 234,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LATITUDE => :NEW.LATITUDE,",
-      "line_no": 235,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_LONGITUDE => :NEW.LONGITUDE,",
-      "line_no": 236,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK,",
-      "line_no": 237,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_VALID_FROM => :NEW.VALID_FROM,",
-      "line_no": 238,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    P_ACTION_TYPE => 'UPDATE'",
-      "line_no": 239,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                );",
-      "line_no": 240,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            END IF;",
-      "line_no": 241,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        END IF;",
-      "line_no": 242,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    END IF;",
-      "line_no": 243,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    IF DELETING THEN",
-      "line_no": 245,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        IF NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P') THEN",
-      "line_no": 246,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;",
-      "line_no": 247,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        END IF;",
-      "line_no": 248,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');",
-      "line_no": 250,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    END IF;",
-      "line_no": 251,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 0,
-      "line": "EXCEPTION",
-      "line_no": 252,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 4,
-      "line": "    WHEN ERR_UPD THEN",
-      "line_no": 253,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        RAISE_APPLICATION_ERROR (-20111, 'The address cannot be updated because the Address type is different. Old address type: '",
-      "line_no": 254,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 41,
-      "line": "                                         ||:OLD.ADDRESS_TYPE_CD",
-      "line_no": 255,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 41,
-      "line": "                                         ||' New address type: '",
-      "line_no": 256,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 41,
-      "line": "                                         ||:NEW.ADDRESS_TYPE_CD);",
-      "line_no": 257,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    WHEN ERR_INS THEN",
-      "line_no": 258,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        RAISE_APPLICATION_ERROR (-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');",
-      "line_no": 259,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    WHEN ERR_CTRY_CHG THEN",
-      "line_no": 260,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        RAISE_APPLICATION_ERROR (-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');",
-      "line_no": 261,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    WHEN TEST_ERR THEN",
-      "line_no": 262,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        RAISE_APPLICATION_ERROR (-20113, 'New: '",
-      "line_no": 263,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 41,
-      "line": "                                         ||:NEW.COMPANY_CD",
-      "line_no": 264,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 41,
-      "line": "                                         ||' Old:'",
-      "line_no": 265,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 41,
-      "line": "                                         ||:OLD.COMPANY_CD",
-      "line_no": 266,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 41,
-      "line": "                                         ||'Count: '",
-      "line_no": 267,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 41,
-      "line": "                                         ||CNTR);",
-      "line_no": 268,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    WHEN ERR_INS_LEGAL_ADDR THEN",
-      "line_no": 269,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        RAISE_APPLICATION_ERROR (-20113, 'The legal address cannot be inserted for this type of company');",
-      "line_no": 270,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    WHEN ERR_NOT_ALLOWED_TO_INVALIDATE THEN",
-      "line_no": 271,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        RAISE_APPLICATION_ERROR (-20113, 'It is not allowed to invalidate/delete this type of address');",
-      "line_no": 272,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 0,
-      "line": "END;",
-      "line_no": 273,
-      "is_end_semicolon": true
-    }
-  ],
+  "rest_strings": [],
   "conversion_stats": {
     "declaration_count": 12,
     "comment_count": 17,
-    "rest_string_count": 8,
-    "sql_convert_count": 46
+    "rest_string_count": 0,
+    "sql_convert_count": 0
   },
   "metadata": {
-    "parse_timestamp": "2025-08-22T00:31:33.391855",
+    "parse_timestamp": "2025-08-22T05:53:32.254207",
     "parser_version": "1.0"
   }
 }

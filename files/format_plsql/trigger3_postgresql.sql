@@ -1,5 +1,5 @@
 -- PostgreSQL Trigger for trigger3_postgresql.json
--- Generated on: 2025-08-22 00:31:37
+-- Generated on: 2025-08-22 00:35:22
 
 -- ON INSERT
 DO $$
