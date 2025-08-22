@@ -79,16 +79,22 @@
         ],
         "exception_handlers": [
           {
-            "indent": 8,
-            "line": "        WHEN OTHERS THEN",
-            "line_no": 18,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            V_USERID := USER;",
-            "line_no": 19,
-            "is_end_semicolon": true
+            "type": "exception_handler",
+            "exception_name": "OTHERS",
+            "when_line_no": 18,
+            "when_indent": 8,
+            "then_line_no": 18,
+            "exception_statements": [
+              {
+                "indent": 12,
+                "line": "            V_USERID := USER;",
+                "line_no": 19,
+                "is_end_semicolon": true
+              }
+            ],
+            "exception_statements_line_no": [
+              19
+            ]
           }
         ],
         "exception_line_no": 17,
@@ -1255,76 +1261,124 @@
     ],
     "exception_handlers": [
       {
-        "indent": 4,
-        "line": "    WHEN ERR_UPD THEN",
-        "line_no": 253,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "ERR_UPD",
+        "when_line_no": 253,
+        "when_indent": 4,
+        "then_line_no": 253,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20111,
+              "handler_string": "'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          254
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20111, 'The address cannot be updated because the Address type is different. Old address type: ' || :OLD.ADDRESS_TYPE_CD || ' New address type: ' || :NEW.ADDRESS_TYPE_CD);",
-        "line_no": 254,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "ERR_INS",
+        "when_line_no": 255,
+        "when_indent": 4,
+        "then_line_no": 255,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20112,
+              "handler_string": "'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          256
+        ]
       },
       {
-        "indent": 4,
-        "line": "    WHEN ERR_INS THEN",
-        "line_no": 255,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "ERR_CTRY_CHG",
+        "when_line_no": 257,
+        "when_indent": 4,
+        "then_line_no": 257,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20113,
+              "handler_string": "'The company country modified but not the Valid From Date. Please update also the Valid From Date.'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          258
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');",
-        "line_no": 256,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "TEST_ERR",
+        "when_line_no": 259,
+        "when_indent": 4,
+        "then_line_no": 259,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20113,
+              "handler_string": "'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          260
+        ]
       },
       {
-        "indent": 4,
-        "line": "    WHEN ERR_CTRY_CHG THEN",
-        "line_no": 257,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "ERR_INS_LEGAL_ADDR",
+        "when_line_no": 261,
+        "when_indent": 4,
+        "then_line_no": 261,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20113,
+              "handler_string": "'The legal address cannot be inserted for this type of company'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          262
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');",
-        "line_no": 258,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN TEST_ERR THEN",
-        "line_no": 259,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20113, 'New: ' || :NEW.COMPANY_CD || ' Old:' || :OLD.COMPANY_CD || 'Count: ' || CNTR);",
-        "line_no": 260,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN ERR_INS_LEGAL_ADDR THEN",
-        "line_no": 261,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20113, 'The legal address cannot be inserted for this type of company');",
-        "line_no": 262,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN ERR_NOT_ALLOWED_TO_INVALIDATE THEN",
-        "line_no": 263,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20113, 'It is not allowed to invalidate/delete this type of address');",
-        "line_no": 264,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "ERR_NOT_ALLOWED_TO_INVALIDATE",
+        "when_line_no": 263,
+        "when_indent": 4,
+        "then_line_no": 263,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20113,
+              "handler_string": "'It is not allowed to invalidate/delete this type of address'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          264
+        ]
       }
     ],
     "exception_line_no": 252,
@@ -1357,7 +1411,7 @@
     "sql_convert_count": 0
   },
   "metadata": {
-    "parse_timestamp": "2025-08-22T05:53:32.303965",
+    "parse_timestamp": "2025-08-22T20:23:18.500076",
     "parser_version": "1.0"
   }
 }

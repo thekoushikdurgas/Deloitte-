@@ -38,7 +38,8 @@ def setup_logging(log_dir="output", log_level="INFO"):
         os.makedirs(log_dir)
    
     # Create a timestamp-based filename
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d")
     log_file = os.path.join(log_dir, f"oracle_conversion_{timestamp}.log")
    
     # Configure the root logger
@@ -46,9 +47,9 @@ def setup_logging(log_dir="output", log_level="INFO"):
     logger.setLevel(logging.DEBUG)  # Capture all levels
    
     # Clear any existing handlers (in case setup_logging is called multiple times)
-    if logger.hasHandlers():
-        logger.handlers.clear()
-   
+    # if logger.hasHandlers():
+    #     logger.handlers.clear()
+    logger.handlers.clear()
     # Create formatters with more detailed information
     file_formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'

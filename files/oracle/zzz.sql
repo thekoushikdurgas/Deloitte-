@@ -255,7 +255,8 @@ EXCEPTION
                                          ||:OLD.ADDRESS_TYPE_CD
                                          ||' New address type: '
                                          ||:NEW.ADDRESS_TYPE_CD);
-    WHEN ERR_INS THEN
+    WHEN ERR_INS 
+    THEN
         RAISE_APPLICATION_ERROR (-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');
     WHEN ERR_CTRY_CHG THEN
         RAISE_APPLICATION_ERROR (-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');

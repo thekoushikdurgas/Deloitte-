@@ -378,52 +378,84 @@
     ],
     "exception_handlers": [
       {
-        "indent": 4,
-        "line": "    WHEN DUP_VAL_ON_INDEX THEN",
-        "line_no": 81,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "DUP_VAL_ON_INDEX",
+        "when_line_no": 81,
+        "when_indent": 4,
+        "then_line_no": 81,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20600,
+              "handler_string": "V_TRIGGER_NAME"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          82
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR(-20600, V_TRIGGER_NAME);",
-        "line_no": 82,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "V_NO_UPDATE_EVOLVED_TO_TERMINATED",
+        "when_line_no": 83,
+        "when_indent": 4,
+        "then_line_no": 83,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20800,
+              "handler_string": "V_TRIGGER_NAME"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          84
+        ]
       },
       {
-        "indent": 4,
-        "line": "    WHEN V_NO_UPDATE_EVOLVED_TO_TERMINATED THEN",
-        "line_no": 83,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "V_NO_UPDATE_TO_EVOLVED",
+        "when_line_no": 85,
+        "when_indent": 4,
+        "then_line_no": 85,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20900,
+              "handler_string": "V_TRIGGER_NAME"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          86
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20800, V_TRIGGER_NAME);",
-        "line_no": 84,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN V_NO_UPDATE_TO_EVOLVED THEN",
-        "line_no": 85,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR(-20900, V_TRIGGER_NAME);",
-        "line_no": 86,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN V_EXPLORATORY_THEMENO_NOT_NULL THEN",
-        "line_no": 87,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR(-20940, V_TRIGGER_NAME);",
-        "line_no": 88,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "V_EXPLORATORY_THEMENO_NOT_NULL",
+        "when_line_no": 87,
+        "when_indent": 4,
+        "then_line_no": 87,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20940,
+              "handler_string": "V_TRIGGER_NAME"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          88
+        ]
       }
     ],
     "exception_line_no": 80,
@@ -445,7 +477,7 @@
     "sql_convert_count": 0
   },
   "metadata": {
-    "parse_timestamp": "2025-08-22T05:53:32.320804",
+    "parse_timestamp": "2025-08-22T20:23:18.514920",
     "parser_version": "1.0"
   }
 }

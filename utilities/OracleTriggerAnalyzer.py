@@ -55,7 +55,7 @@ class OracleTriggerAnalyzer:
 
         self.sql_content: str = sql_content
         self.declare_section: List[int] = [0, 0]
-        self.main_section: List[int] = [0, 0]
+        # self.main_section: List[int] = [0, 0]
         self.main_section_lines: Dict = {}
         self.variables: List[Dict[str, Any]] = []
         self.constants: List[Dict[str, Any]] = []
@@ -299,7 +299,6 @@ class OracleTriggerAnalyzer:
         # Find DECLARE and BEGIN sections
         declare_start = -1
         begin_start = -1
-        begin_end_start = -1
 
         for i, line_info in enumerate(self.structured_lines):
             line_content = line_info["line"].strip().upper()
@@ -313,9 +312,9 @@ class OracleTriggerAnalyzer:
                 begin_start = line_info["line_no"]
                 logger.debug("Found BEGIN at line %d", begin_start)
 
-            elif line_content.endswith("END;"):
-                begin_end_start = line_info["line_no"]
-                logger.debug("Found END at line %d", begin_end_start)
+            # elif line_content.endswith("END;"):
+            #     begin_end_start = line_info["line_no"]
+            #     logger.debug("Found END at line %d", begin_end_start)
 
         # Set section boundaries
         if declare_start != -1:
@@ -326,19 +325,12 @@ class OracleTriggerAnalyzer:
             self.declare_section = [0, 0]
             logger.debug("No DECLARE section found")
 
-        if begin_start != -1:
-            self.main_section = [begin_start, begin_end_start]
-            logger.debug("Main section: lines %d-%d", begin_start, begin_end_start)
-        else:
-            self.main_section = [0, 0]
-            logger.debug("Could not identify main section (BEGIN/END)")
-
         # Process declarations if DECLARE section exists
         if self.declare_section[0] > 0:
             self._parse_declarations()
 
         # Process main section if main section exists
-        if self.main_section[0] > 0:
+        if begin_start != len(self.structured_lines):
             self._process_main_section()
 
     def _parse_declarations(self) -> None:
@@ -601,11 +593,6 @@ class OracleTriggerAnalyzer:
         This method populates self.main_section_lines with the lines from
         the main section of the Oracle PL/SQL trigger.
         """
-        debug(
-            "Processing main section from lines %d to %d",
-            self.main_section[0],
-            self.main_section[1],
-        )
 
         self._parse_begin_blocks()
         self._parse_begin_end_statements()
@@ -695,35 +682,36 @@ class OracleTriggerAnalyzer:
         logger.debug("Starting top-level BEGIN blocks parsing")
 
         # Initialize main_section_lines with lines from the main section
-        working_lines = self.structured_lines[
-            self.main_section[0] - 1 : self.main_section[1] + 1
-        ]
+        begin_line_no = -1
+        begin_line_indent = -1
         exception_lines_no = -1
         end_line_no = -1
-        for i in range(len(working_lines)):
-            line_info = working_lines[i]
+        for i in range(len(self.structured_lines)):
+            line_info = self.structured_lines[i]
             line_upper = line_info["line"].strip().upper()
+            if line_upper.startswith("BEGIN") and begin_line_no == -1:
+                begin_line_no = i
+                begin_line_indent = line_info["indent"]
             if (
                 line_upper.startswith("EXCEPTION")
-                and line_info["indent"] == working_lines[0]["indent"]
+                and line_info["indent"] == begin_line_indent
             ):
                 exception_lines_no = i
-            if (
-                line_upper.startswith("END;")
-                and line_info["indent"] == working_lines[0]["indent"]
-            ):
+            if line_upper.endswith("END;") and line_info["indent"] == begin_line_indent:
                 end_line_no = i
 
         self.main_section_lines = {
             "type": "begin_end",
-            "begin_line_no": working_lines[0]["line_no"],
-            "begin_indent": working_lines[0]["indent"],
-            "begin_end_statements": working_lines[1:exception_lines_no],
+            "begin_line_no": self.structured_lines[begin_line_no]["line_no"],
+            "begin_indent": self.structured_lines[begin_line_no]["indent"],
+            "begin_end_statements": self.structured_lines[
+                begin_line_no + 1 : exception_lines_no
+            ],
             "exception_handlers": self._parse_exception_handlers(
-                working_lines[exception_lines_no + 1 : end_line_no]
+                self.structured_lines[exception_lines_no + 1 : end_line_no]
             ),
-            "exception_line_no": working_lines[exception_lines_no]["line_no"],
-            "end_line_no": working_lines[end_line_no]["line_no"],
+            "exception_line_no": self.structured_lines[exception_lines_no]["line_no"],
+            "end_line_no": self.structured_lines[end_line_no]["line_no"],
         }
 
     def _parse_begin_end_statements(self):
@@ -732,42 +720,59 @@ class OracleTriggerAnalyzer:
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
         """
+
         def parse_begin_end_statements(working_lines: List[Dict[str, Any]]):
             begin_end_statements = []
             i = 0
-            begin_line_no = -1
+            begin_i = -1
             begin_line_indent = -1
-            exception_line_no = -1
+            exception_i = -1
             while i < len(working_lines):
                 line_info = working_lines[i]
                 line_upper = line_info["line"].strip().upper()
                 if line_upper.startswith("BEGIN"):
                     logger.debug(f"Begin line: {line_info} {i}")
-                    begin_line_no = i
+                    begin_i = i
                     begin_line_indent = line_info["indent"]
                     while i < len(working_lines):
                         line_info = working_lines[i]
                         line_upper = line_info["line"].strip().upper()
-                        if line_upper.startswith("EXCEPTION") and line_info["indent"] == begin_line_indent:
+                        if (
+                            line_upper.startswith("EXCEPTION")
+                            and line_info["indent"] == begin_line_indent
+                        ):
                             logger.debug(f"Exception line: {line_info} {i}")
-                            exception_line_no = i
+                            exception_i = i
                             while i < len(working_lines):
                                 line_info = working_lines[i]
                                 line_upper = line_info["line"].strip().upper()
-                                if line_upper.startswith("END;") and line_info["indent"] == begin_line_indent:
+                                if (
+                                    line_upper.endswith("END;")
+                                    and line_info["indent"] == begin_line_indent
+                                ):
                                     logger.debug(f"End line: {line_info} {i}")
-                                    begin_end_statements.append({
+                                    begin_end_statements.append(
+                                        {
                                             "type": "begin_end",
-                                            "begin_line_no": working_lines[begin_line_no]["line_no"],
+                                            "begin_line_no": working_lines[begin_i][
+                                                "line_no"
+                                            ],
                                             "begin_indent": begin_line_indent,
-                                            "begin_end_statements": parse_begin_end_statements(working_lines[begin_line_no+1:exception_line_no]),
-                                            "exception_handlers": self._parse_exception_handlers(working_lines[exception_line_no + 1 : i]),
-                                            "exception_line_no": working_lines[exception_line_no]["line_no"],
+                                            "begin_end_statements": parse_begin_end_statements(
+                                                working_lines[begin_i + 1 : exception_i]
+                                            ),
+                                            "exception_handlers": self._parse_exception_handlers(
+                                                working_lines[exception_i + 1 : i]
+                                            ),
+                                            "exception_line_no": working_lines[
+                                                exception_i
+                                            ]["line_no"],
                                             "end_line_no": line_info["line_no"],
-                                    })
-                                    begin_line_no = -1
+                                        }
+                                    )
+                                    begin_i = -1
                                     begin_line_indent = -1
-                                    exception_line_no = -1
+                                    exception_i = -1
                                     break
                                 i += 1
                             break
@@ -776,7 +781,10 @@ class OracleTriggerAnalyzer:
                     begin_end_statements.append(line_info)
                 i += 1
             return begin_end_statements
-        self.main_section_lines["begin_end_statements"] = parse_begin_end_statements(self.main_section_lines["begin_end_statements"])
+
+        self.main_section_lines["begin_end_statements"] = parse_begin_end_statements(
+            self.main_section_lines["begin_end_statements"]
+        )
 
     def _parse_exception_handlers(self, working_lines: List[Dict[str, Any]]):
         """
@@ -785,10 +793,288 @@ class OracleTriggerAnalyzer:
         Updates self.main_section_lines with parsed blocks.
         """
         exception_handlers = []
-        for line in working_lines:
-            exception_handlers.append(line)
+        i = 0
+        while i < len(working_lines):
+            line_info = working_lines[i]
+            line_upper = line_info["line"].strip().upper()
+            if line_upper.startswith("WHEN"):
+                when_i = i
+                # Check if WHEN and THEN are on the same line
+                if line_upper.endswith("THEN"):
+                    # Same line: WHEN exception_name THEN
+                    then_i = i
+                else:
+                    # Multi-line: WHEN exception_name ... THEN
+                    # Find the THEN clause on subsequent lines
+                    then_i = -1
+                    j = i + 1
+                    while j < len(working_lines):
+                        j_line_info = working_lines[j]
+                        j_line_upper = j_line_info["line"].strip().upper()
+                        # Extract exception name from current line
+                        if j_line_upper.endswith("THEN"):
+                            then_i = j
+                            break
+                        j += 1
+                    if then_i == -1:
+                        # No THEN found, skip this WHEN
+                        i += 1
+                        continue
+                # if when_i == then_i:
+                #     exception_name = self._extract_exception_name_from_when([working_lines[when_i]])
+                # else:
+                #     exception_name = self._extract_exception_name_from_when(
+                #         working_lines[when_i:then_i+1]
+                #     )
+                # Create exception handler structure
+                exception_handler = {
+                    "type": "exception_handler",
+                    "exception_name": self._extract_exception_name_from_when([working_lines[when_i]]) if when_i == then_i else self._extract_exception_name_from_when(working_lines[when_i:then_i+1]),
+                    "when_line_no": working_lines[when_i]["line_no"],
+                    "when_indent": working_lines[when_i]["indent"],
+                    "then_line_no": working_lines[then_i]["line_no"],
+                    "exception_statements": [],
+                    "exception_statements_line_no": [],
+                }
+
+                # Collect exception statements (lines after THEN until next WHEN or end)
+                k = then_i + 1
+                while k < len(working_lines):
+                    k_line_info = working_lines[k]
+                    k_line_upper = k_line_info["line"].strip().upper()
+
+                    # Stop if we encounter another WHEN clause at the same indentation level
+                    if (
+                        k_line_upper.startswith("WHEN")
+                        and k_line_info["indent"] == working_lines[when_i]["indent"]
+                    ):
+                        break
+
+                    # Add the line to exception statements
+                    exception_handler["exception_statements"].append(k_line_info)
+                    exception_handler["exception_statements_line_no"].append(k_line_info["line_no"])
+                    k += 1
+                exception_handler["exception_statements"] = (
+                    self._parse_exception_statements(
+                        exception_handler["exception_statements"]
+                    )
+                )
+                exception_handlers.append(exception_handler)
+                i = k  # Continue from where we left off
+            else:
+                i += 1
+
         return exception_handlers
 
+    def _parse_exception_statements(self, exception_statements: List[Dict[str, Any]]):
+        """
+        Parse exception statements from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+        i=0
+        statements=[]
+        raise_application_error_i=-1
+        while i < len(exception_statements):
+            line_info = exception_statements[i]
+            line_upper = line_info["line"].strip().upper()
+            if line_upper.startswith("RAISE_APPLICATION_ERROR"):
+                raise_application_error_i = i
+                if line_upper.endswith(";"):
+                    # print(exception_statements[raise_application_error_i:i+1])
+                    statements.append(self._parse_raise_application_error([line_info]))
+                    raise_application_error_i = -1            
+            elif line_upper.endswith(";") and raise_application_error_i != -1:
+                # print(exception_statements[raise_application_error_i:i+1])
+                statements.append(self._parse_raise_application_error(exception_statements[raise_application_error_i:i+1]))
+                raise_application_error_i = -1
+            elif raise_application_error_i == -1:
+                statements.append(line_info)
+            i += 1
+        return statements
+    
+    def _parse_raise_application_error(self, working_lines: List[Dict[str, Any]]):
+        """
+        Parse RAISE_APPLICATION_ERROR calls from the main section of SQL.
+        Extracts the structure and converts to a structured format.
+        
+        Handles patterns like:
+        - RAISE_APPLICATION_ERROR(-20101, 'Invalid theme number format');
+        - RAISE_APPLICATION_ERROR(-20117, V_TRIGGER_NAME || ' - Insert error');
+        - Multi-line RAISE_APPLICATION_ERROR calls
+        
+        Returns:
+            dict: Structured representation of the RAISE_APPLICATION_ERROR call
+        """
+        # Combine all lines into a single string
+        combined_line = self.combine_lines(working_lines)
+        # print(combined_line)
+        # Remove trailing semicolon if present
+        combined_line = combined_line.rstrip(';').strip()
+        
+        logger.debug(f"Processing RAISE_APPLICATION_ERROR: {combined_line}")
+        
+        # Extract the function name (should be RAISE_APPLICATION_ERROR)
+        if not combined_line.upper().startswith('RAISE_APPLICATION_ERROR'):
+            logger.debug(f"Not a RAISE_APPLICATION_ERROR call: {combined_line}")
+            return combined_line
+        
+        # Find the opening parenthesis after RAISE_APPLICATION_ERROR
+        open_paren_pos = combined_line.find('(')
+        if open_paren_pos == -1:
+            logger.debug(f"No opening parenthesis found in: {combined_line}")
+            return combined_line
+        
+        # Extract the parameters part (everything between parentheses)
+        params_start = open_paren_pos + 1
+        params_end = self._find_matching_closing_paren(combined_line, open_paren_pos)
+        if params_end == -1:
+            logger.debug(f"No closing parenthesis found in: {combined_line}")
+            return combined_line
+        
+        params_text = combined_line[params_start:params_end].strip()
+        logger.debug(f"Parameters text: {params_text}")
+        
+        # Parse the parameters (handler_code and handler_string)
+        handler_code, handler_string = self._parse_raise_application_error_params(params_text)
+        
+        logger.debug(f"Parsed - handler_code: '{handler_code}', handler_string: '{handler_string}'")
+        
+        # Create the structured representation
+        result = {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+                "handler_code": handler_code,
+                "handler_string": handler_string
+            }
+        }
+        
+        return result
+    
+    def _find_matching_closing_paren(self, text: str, open_pos: int) -> int:
+        """
+        Find the matching closing parenthesis for an opening parenthesis.
+        Handles nested parentheses correctly.
+        
+        Args:
+            text (str): The text to search in
+            open_pos (int): Position of the opening parenthesis
+            
+        Returns:
+            int: Position of the matching closing parenthesis, or -1 if not found
+        """
+        stack = 0
+        for i in range(open_pos, len(text)):
+            if text[i] == '(':
+                stack += 1
+            elif text[i] == ')':
+                stack -= 1
+                if stack == 0:
+                    return i
+        return -1
+    
+    def _parse_raise_application_error_params(self, params_text: str) -> Tuple[int, str]:
+        """
+        Parse the parameters of a RAISE_APPLICATION_ERROR call.
+        
+        Args:
+            params_text (str): The text between parentheses of RAISE_APPLICATION_ERROR
+            
+        Returns:
+            Tuple[str, str]: (handler_code, handler_string)
+        """
+        logger.debug(f"Parsing parameters: '{params_text}'")
+        
+        # Find the comma that separates the two parameters
+        # We need to handle cases where the first parameter might contain commas
+        # (like in complex expressions)
+        
+        # First, try to find a comma that's not inside quotes or parentheses
+        comma_pos = -1
+        paren_stack = 0
+        in_single_quote = False
+        in_double_quote = False
+        
+        for i, char in enumerate(params_text):
+            if char == "'" and not in_double_quote:
+                in_single_quote = not in_single_quote
+            elif char == '"' and not in_single_quote:
+                in_double_quote = not in_double_quote
+            elif char == '(' and not in_single_quote and not in_double_quote:
+                paren_stack += 1
+            elif char == ')' and not in_single_quote and not in_double_quote:
+                paren_stack -= 1
+            elif char == ',' and paren_stack == 0 and not in_single_quote and not in_double_quote:
+                comma_pos = i
+                break
+        
+        if comma_pos == -1:
+            # If no comma found, assume it's a single parameter
+            logger.debug(f"Only one parameter found in RAISE_APPLICATION_ERROR: {params_text}")
+            return int(params_text.strip()), ""
+        
+        # Split the parameters
+        handler_code = int(params_text[:comma_pos].strip())
+        handler_string = self.format_values(params_text[comma_pos + 1:].strip())
+        
+        logger.debug(f"Handler code part: '{handler_code}'")
+        logger.debug(f"Handler string part: '{handler_string}'")
+        
+        return handler_code, handler_string
+    
+    def _extract_exception_name_from_when(self, working_lines: List[Dict[str, Any]]) -> str:
+        """
+        Extract the exception name from a WHEN clause.
+
+        Handles both formats:
+        - Single line: "WHEN exception_name THEN"
+        - Multi-line: "WHEN exception_name" followed by "THEN" on next line
+
+        Args:
+            when_line (str): The WHEN clause line
+
+        Returns:
+            str: The extracted exception name
+
+        Examples:
+            "WHEN ERR_UPD THEN" -> "ERR_UPD"
+            "WHEN OTHERS THEN" -> "OTHERS"
+            "WHEN NO_DATA_FOUND THEN" -> "NO_DATA_FOUND"
+            "WHEN exception_name" -> "exception_name"
+        """
+        # Remove leading/trailing whitespace and convert to uppercase for consistency
+        line = self.combine_lines(working_lines)
+
+        # Remove "WHEN" prefix
+        if line.startswith("WHEN"):
+            line = line[4:].strip()
+
+        # If line ends with "THEN", remove it
+        if line.endswith("THEN"):
+            line = line[:-4].strip()
+
+        # For multi-line cases, just return the exception name part
+        return line
+    
+    def combine_lines(self, working_lines: List[Dict[str, Any]]):
+        """
+        Combine lines from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+        if len(working_lines) == 0:
+            return ""
+        elif len(working_lines) == 1:
+            line =  working_lines[0]["line"].strip()
+        elif len(working_lines) > 1:
+            line =  ""
+            for i in range(len(working_lines)):
+                line += working_lines[i]["line"].strip() + " "
+            line = line.strip()
+            # print(line)
+        return line
+    
     def rest_strings(self) -> List[str]:
         """
         Find all "rest string" content in various statement types within the JSON structure.

@@ -120,16 +120,22 @@
         ],
         "exception_handlers": [
           {
-            "indent": 8,
-            "line": "        WHEN OTHERS THEN",
-            "line_no": 27,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            V_USERID := USER;",
-            "line_no": 28,
-            "is_end_semicolon": true
+            "type": "exception_handler",
+            "exception_name": "OTHERS",
+            "when_line_no": 27,
+            "when_indent": 8,
+            "then_line_no": 27,
+            "exception_statements": [
+              {
+                "indent": 12,
+                "line": "            V_USERID := USER;",
+                "line_no": 28,
+                "is_end_semicolon": true
+              }
+            ],
+            "exception_statements_line_no": [
+              28
+            ]
           }
         ],
         "exception_line_no": 26,
@@ -1710,148 +1716,226 @@
     ],
     "exception_handlers": [
       {
-        "indent": 4,
-        "line": "    WHEN ERR_DEL THEN",
-        "line_no": 345,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "ERR_DEL",
+        "when_line_no": 345,
+        "when_indent": 4,
+        "then_line_no": 345,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20110,
+              "handler_string": "V_TRIGGER_NAME"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          346
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);",
-        "line_no": 346,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "ERR_UPD",
+        "when_line_no": 347,
+        "when_indent": 4,
+        "then_line_no": 347,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20111,
+              "handler_string": "V_TRIGGER_NAME"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          348
+        ]
       },
       {
-        "indent": 4,
-        "line": "    WHEN ERR_UPD THEN",
-        "line_no": 347,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "ERR_INS",
+        "when_line_no": 349,
+        "when_indent": 4,
+        "then_line_no": 349,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20114,
+              "handler_string": "V_TRIGGER_NAME"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          350
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20111, V_TRIGGER_NAME);",
-        "line_no": 348,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "ERR_VALID_FROM_DATE",
+        "when_line_no": 351,
+        "when_indent": 4,
+        "then_line_no": 351,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20122,
+              "handler_string": "'Please insert : Rep. Code Assignm. Valid from Date'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          352
+        ]
       },
       {
-        "indent": 4,
-        "line": "    WHEN ERR_INS THEN",
-        "line_no": 349,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "RU_NOT_IN_CBC_SCOPE",
+        "when_line_no": 353,
+        "when_indent": 4,
+        "then_line_no": 353,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20123,
+              "handler_string": "'A company cannot be in CBC/GBE scope if the RU that reports it is not in CBC scope'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          354
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR (-20114, V_TRIGGER_NAME);",
-        "line_no": 350,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "ERR_CPY_STILL_IN_SCOPE",
+        "when_line_no": 355,
+        "when_indent": 4,
+        "then_line_no": 355,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20124,
+              "handler_string": "'The CBC/GBE Scope must be set to No before deactivating the company'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          356
+        ]
       },
       {
-        "indent": 4,
-        "line": "    WHEN ERR_VALID_FROM_DATE THEN",
-        "line_no": 351,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "ERR_NO_ADR",
+        "when_line_no": 357,
+        "when_indent": 4,
+        "then_line_no": 357,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20124,
+              "handler_string": "'No Physical Address found. Please insert the address before setting the CBC/GBE Scope to Yes'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          358
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR ( -20122, 'Please insert : Rep. Code Assignm. Valid from Date');",
-        "line_no": 352,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "CPY_IN_USE",
+        "when_line_no": 359,
+        "when_indent": 4,
+        "then_line_no": 359,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20125,
+              "handler_string": "'The Company cannot be invalidated because is still used as Legal Company for the following companies: ' || V_COMPANY_CODES_LIST"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          360,
+          361
+        ]
       },
       {
-        "indent": 4,
-        "line": "    WHEN RU_NOT_IN_CBC_SCOPE THEN",
-        "line_no": 353,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "INVALID_LEGAL_COMP",
+        "when_line_no": 362,
+        "when_indent": 4,
+        "then_line_no": 362,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20126,
+              "handler_string": "V_LEGAL_COMPANY_CD || ' is not a valid Legal Company Code'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          363,
+          364
+        ]
       },
       {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR ( -20123, 'A company cannot be in CBC/GBE scope if the RU that reports it is not in CBC scope');",
-        "line_no": 354,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC",
+        "when_line_no": 365,
+        "when_indent": 4,
+        "then_line_no": 365,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20127,
+              "handler_string": "'An Associate Entity cannot be in CBC/GBE Scope!'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          366
+        ]
       },
       {
-        "indent": 4,
-        "line": "    WHEN ERR_CPY_STILL_IN_SCOPE THEN",
-        "line_no": 355,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR ( -20124, 'The CBC/GBE Scope must be set to No before deactivating the company');",
-        "line_no": 356,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN ERR_NO_ADR THEN",
-        "line_no": 357,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR ( -20124, 'No Physical Address found. Please insert the address before setting the CBC/GBE Scope to Yes');",
-        "line_no": 358,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN CPY_IN_USE THEN",
-        "line_no": 359,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR ( -20125, 'The Company cannot be invalidated because is still used as Legal Company for the following companies: '",
-        "line_no": 360,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 42,
-        "line": "                                          || V_COMPANY_CODES_LIST);",
-        "line_no": 361,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN INVALID_LEGAL_COMP THEN",
-        "line_no": 362,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR ( -20126, V_LEGAL_COMPANY_CD",
-        "line_no": 363,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 42,
-        "line": "                                          || ' is not a valid Legal Company Code');",
-        "line_no": 364,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC THEN",
-        "line_no": 365,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR ( -20127, 'An Associate Entity cannot be in CBC/GBE Scope!');",
-        "line_no": 366,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 4,
-        "line": "    WHEN ERR_CPY_STILL_IN_MFR THEN",
-        "line_no": 367,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 8,
-        "line": "        RAISE_APPLICATION_ERROR ( -20127, 'Please fill in Rep. Code Assignm. Valid to Date field before invalidating the company');",
-        "line_no": 368,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "ERR_CPY_STILL_IN_MFR",
+        "when_line_no": 367,
+        "when_indent": 4,
+        "then_line_no": 367,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20127,
+              "handler_string": "'Please fill in Rep. Code Assignm. Valid to Date field before invalidating the company'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          368
+        ]
       }
     ],
     "exception_line_no": 344,
@@ -1886,7 +1970,7 @@
     "sql_convert_count": 0
   },
   "metadata": {
-    "parse_timestamp": "2025-08-22T05:53:32.244170",
+    "parse_timestamp": "2025-08-22T20:23:18.528524",
     "parser_version": "1.0"
   }
 }

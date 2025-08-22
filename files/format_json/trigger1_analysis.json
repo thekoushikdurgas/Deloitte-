@@ -613,16 +613,22 @@
         ],
         "exception_handlers": [
           {
-            "indent": 9,
-            "line": "         WHEN NO_DATA_FOUND THEN",
-            "line_no": 127,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            RAISE INVALID_MOLECULE_ID;",
-            "line_no": 128,
-            "is_end_semicolon": true
+            "type": "exception_handler",
+            "exception_name": "NO_DATA_FOUND",
+            "when_line_no": 127,
+            "when_indent": 9,
+            "then_line_no": 127,
+            "exception_statements": [
+              {
+                "indent": 12,
+                "line": "            RAISE INVALID_MOLECULE_ID;",
+                "line_no": 128,
+                "is_end_semicolon": true
+              }
+            ],
+            "exception_statements_line_no": [
+              128
+            ]
           }
         ],
         "exception_line_no": 126,
@@ -3900,16 +3906,22 @@
         ],
         "exception_handlers": [
           {
-            "indent": 15,
-            "line": "               WHEN NO_DATA_FOUND THEN",
-            "line_no": 781,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 18,
-            "line": "                  RAISE INVALID_MOLECULE_ID;",
-            "line_no": 782,
-            "is_end_semicolon": true
+            "type": "exception_handler",
+            "exception_name": "NO_DATA_FOUND",
+            "when_line_no": 781,
+            "when_indent": 15,
+            "then_line_no": 781,
+            "exception_statements": [
+              {
+                "indent": 18,
+                "line": "                  RAISE INVALID_MOLECULE_ID;",
+                "line_no": 782,
+                "is_end_semicolon": true
+              }
+            ],
+            "exception_statements_line_no": [
+              782
+            ]
           }
         ],
         "exception_line_no": 780,
@@ -4026,274 +4038,373 @@
     ],
     "exception_handlers": [
       {
-        "indent": 3,
-        "line": "   WHEN ADMIN_UPDATE_ONLY THEN",
-        "line_no": 824,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "ADMIN_UPDATE_ONLY",
+        "when_line_no": 824,
+        "when_indent": 3,
+        "then_line_no": 824,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20115,
+              "handler_string": "'MDM_V_THEMES_IOF'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          825
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20115, 'MDM_V_THEMES_IOF');",
-        "line_no": 825,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "IN_PREP_NOT_PORTF_PROJ",
+        "when_line_no": 826,
+        "when_indent": 3,
+        "then_line_no": 826,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20116,
+              "handler_string": "'MDM_V_THEMES_IOF'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          827
+        ]
       },
       {
-        "indent": 3,
-        "line": "   WHEN IN_PREP_NOT_PORTF_PROJ THEN",
-        "line_no": 826,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "IN_PREP_NOT_CLOSED",
+        "when_line_no": 828,
+        "when_indent": 3,
+        "then_line_no": 828,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20117,
+              "handler_string": "'MDM_V_THEMES_IOF'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          829
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20116, 'MDM_V_THEMES_IOF');",
-        "line_no": 827,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "INVALID_MOLECULE_ID",
+        "when_line_no": 830,
+        "when_indent": 3,
+        "then_line_no": 830,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20118,
+              "handler_string": "'This is not a valid Molecule ID'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          831
+        ]
       },
       {
-        "indent": 3,
-        "line": "   WHEN IN_PREP_NOT_CLOSED THEN",
-        "line_no": 828,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "SEC_MOL_LIST_NOT_EMPTY",
+        "when_line_no": 832,
+        "when_indent": 3,
+        "then_line_no": 832,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20119,
+              "handler_string": "'MDM_V_THEMES_IOF'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          833
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20117, 'MDM_V_THEMES_IOF');",
-        "line_no": 829,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "INVALID_THEME_NO",
+        "when_line_no": 834,
+        "when_indent": 3,
+        "then_line_no": 834,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20101,
+              "handler_string": "'This is not a valid Theme No'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          835
+        ]
       },
       {
-        "indent": 3,
-        "line": "   WHEN INVALID_MOLECULE_ID THEN",
-        "line_no": 830,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "DELETE_NO_MORE_POSSIBLE",
+        "when_line_no": 836,
+        "when_indent": 3,
+        "then_line_no": 836,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          837
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20118, 'This is not a valid Molecule ID');",
-        "line_no": 831,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "THEME_NO_ONLY_INSERT",
+        "when_line_no": 838,
+        "when_indent": 3,
+        "then_line_no": 838,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'Theme No cannot be updated'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          839
+        ]
       },
       {
-        "indent": 3,
-        "line": "   WHEN SEC_MOL_LIST_NOT_EMPTY THEN",
-        "line_no": 832,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "DESCRIPTION_TOO_LONG",
+        "when_line_no": 840,
+        "when_indent": 3,
+        "then_line_no": 840,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'The automatically generated Theme Description \"' || V_DESCRIPTION || '\" is too long'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          841,
+          842,
+          843
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20119, 'MDM_V_THEMES_IOF');",
-        "line_no": 833,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "THEME_DESC_PROPOSAL_TOO_LONG",
+        "when_line_no": 844,
+        "when_indent": 3,
+        "then_line_no": 844,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'The automatically generated Short Description Proposal \"' || :OLD.THEME_DESC_PROPOSAL || '\" is too long'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          845,
+          846,
+          847
+        ]
       },
       {
-        "indent": 3,
-        "line": "   WHEN INVALID_THEME_NO THEN",
-        "line_no": 834,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "THEME_DESC_ALT_TOO_LONG",
+        "when_line_no": 848,
+        "when_indent": 3,
+        "then_line_no": 848,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'The automatically generated Downstream Theme Description \"' || :OLD.THEME_DESC_ALT || '\" is too long'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          849,
+          850,
+          851
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20101, 'This is not a valid Theme No');",
-        "line_no": 835,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "THEME_NO_CANNOT_BE_INSERTED",
+        "when_line_no": 852,
+        "when_indent": 3,
+        "then_line_no": 852,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'This Theme No already exists'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          853
+        ]
       },
       {
-        "indent": 3,
-        "line": "   WHEN DELETE_NO_MORE_POSSIBLE THEN",
-        "line_no": 836,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "ONLYONEOFFICIALCHANGEPERDAY",
+        "when_line_no": 854,
+        "when_indent": 3,
+        "then_line_no": 854,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'Official Change for this Theme No and Day already exists'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          855
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'Theme cannot be deleted when the deletion is not on the same day, on which the Theme has been inserted');",
-        "line_no": 837,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "INSERTSMUSTBEOFFICIAL",
+        "when_line_no": 856,
+        "when_indent": 3,
+        "then_line_no": 856,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'New Themes can only be inserted by Official Changes'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          857
+        ]
       },
       {
-        "indent": 3,
-        "line": "   WHEN THEME_NO_ONLY_INSERT THEN",
-        "line_no": 838,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "THEMEDESCRIPTIONMANDATORY",
+        "when_line_no": 858,
+        "when_indent": 3,
+        "then_line_no": 858,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'If Pharma Rx Portfolio Project is set to \"No\", then the Theme Description must be filled'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          859
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'Theme No cannot be updated');",
-        "line_no": 839,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "THEME_DESC_NOT_UNIQUE",
+        "when_line_no": 860,
+        "when_indent": 3,
+        "then_line_no": 860,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20400,
+              "handler_string": "'This Theme Description already exists'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          861
+        ]
       },
       {
-        "indent": 3,
-        "line": "   WHEN DESCRIPTION_TOO_LONG THEN",
-        "line_no": 840,
-        "is_end_semicolon": false
+        "type": "exception_handler",
+        "exception_name": "PORTF_PROJ_MOL_CRE_ERR",
+        "when_line_no": 862,
+        "when_indent": 3,
+        "then_line_no": 862,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20120,
+              "handler_string": "'MDM_V_THEMES_IOF'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          863
+        ]
       },
       {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Theme Description \"'",
-        "line_no": 841,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 38,
-        "line": "                                      || V_DESCRIPTION",
-        "line_no": 842,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 38,
-        "line": "                                      || '\" is too long');",
-        "line_no": 843,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN THEME_DESC_PROPOSAL_TOO_LONG THEN",
-        "line_no": 844,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Short Description Proposal \"'",
-        "line_no": 845,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 38,
-        "line": "                                      || :OLD.THEME_DESC_PROPOSAL",
-        "line_no": 846,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 38,
-        "line": "                                      || '\" is too long');",
-        "line_no": 847,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN THEME_DESC_ALT_TOO_LONG THEN",
-        "line_no": 848,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'The automatically generated Downstream Theme Description \"'",
-        "line_no": 849,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 38,
-        "line": "                                      || :OLD.THEME_DESC_ALT",
-        "line_no": 850,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 38,
-        "line": "                                      || '\" is too long');",
-        "line_no": 851,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN THEME_NO_CANNOT_BE_INSERTED THEN",
-        "line_no": 852,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'This Theme No already exists');",
-        "line_no": 853,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN ONLYONEOFFICIALCHANGEPERDAY THEN",
-        "line_no": 854,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'Official Change for this Theme No and Day already exists');",
-        "line_no": 855,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN INSERTSMUSTBEOFFICIAL THEN",
-        "line_no": 856,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'New Themes can only be inserted by Official Changes');",
-        "line_no": 857,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN THEMEDESCRIPTIONMANDATORY THEN",
-        "line_no": 858,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'If Pharma Rx Portfolio Project is set to \"No\", then the Theme Description must be filled' );",
-        "line_no": 859,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN THEME_DESC_NOT_UNIQUE THEN",
-        "line_no": 860,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(-20400, 'This Theme Description already exists');",
-        "line_no": 861,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN PORTF_PROJ_MOL_CRE_ERR THEN",
-        "line_no": 862,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR( -20120, 'MDM_V_THEMES_IOF');",
-        "line_no": 863,
-        "is_end_semicolon": true
-      },
-      {
-        "indent": 3,
-        "line": "   WHEN DEBUGGING THEN",
-        "line_no": 864,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 6,
-        "line": "      RAISE_APPLICATION_ERROR(",
-        "line_no": 865,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 9,
-        "line": "         -20900,",
-        "line_no": 866,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 7,
-        "line": "       'Debug in Themes IOF standard'",
-        "line_no": 867,
-        "is_end_semicolon": false
-      },
-      {
-        "indent": 7,
-        "line": "       );",
-        "line_no": 868,
-        "is_end_semicolon": true
+        "type": "exception_handler",
+        "exception_name": "DEBUGGING",
+        "when_line_no": 864,
+        "when_indent": 3,
+        "then_line_no": 864,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "raise_application_error",
+            "parameter": {
+              "handler_code": -20900,
+              "handler_string": "'Debug in Themes IOF standard'"
+            }
+          }
+        ],
+        "exception_statements_line_no": [
+          865,
+          866,
+          867,
+          868
+        ]
       }
     ],
     "exception_line_no": 823,
@@ -4372,7 +4483,7 @@
     "sql_convert_count": 0
   },
   "metadata": {
-    "parse_timestamp": "2025-08-22T05:53:32.270152",
+    "parse_timestamp": "2025-08-22T20:23:18.473109",
     "parser_version": "1.0"
   }
 }
