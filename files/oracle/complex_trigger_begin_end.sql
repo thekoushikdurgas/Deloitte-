@@ -149,7 +149,7 @@ BEGIN
                             THEME_NO
                         FROM
                             GMD.THEMES_ARCHIVE
-                    )                  T
+                    ) 
                 WHERE
                     T.THEME_NO = :NEW.THEME_NO;
                 IF V_COUNTER > 0 THEN

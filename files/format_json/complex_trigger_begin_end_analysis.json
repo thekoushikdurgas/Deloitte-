@@ -425,1830 +425,500 @@
         "end_line_no": 98
       },
       {
-        "indent": 4,
-        "line": "    IF INSERTING THEN",
-        "line_no": 102,
-        "is_end_semicolon": false
-      },
-      {
-        "type": "begin_end",
-        "begin_line_no": 103,
-        "begin_indent": 8,
-        "begin_end_statements": [
-          {
-            "indent": 12,
-            "line": "            CASE LENGTH(:NEW.THEME_NO)",
-            "line_no": 106,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 16,
-            "line": "                WHEN 4 THEN",
-            "line_no": 107,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0",
-            "line_no": 108,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9",
-            "line_no": 109,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0",
-            "line_no": 110,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9",
-            "line_no": 111,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0",
-            "line_no": 112,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9",
-            "line_no": 113,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0",
-            "line_no": 114,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9) THEN",
-            "line_no": 115,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 24,
-            "line": "                        RAISE INVALID_THEME_NO;",
-            "line_no": 116,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 20,
-            "line": "                    END IF;",
-            "line_no": 117,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 16,
-            "line": "                WHEN 5 THEN",
-            "line_no": 118,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    IF (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0",
-            "line_no": 119,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9",
-            "line_no": 120,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0",
-            "line_no": 121,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9",
-            "line_no": 122,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0",
-            "line_no": 123,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9",
-            "line_no": 124,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0",
-            "line_no": 125,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9",
-            "line_no": 126,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0",
-            "line_no": 127,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    AND 9) THEN",
-            "line_no": 128,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 24,
-            "line": "                        RAISE INVALID_THEME_NO;",
-            "line_no": 129,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 20,
-            "line": "                    END IF;",
-            "line_no": 130,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 16,
-            "line": "                ELSE",
-            "line_no": 131,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    RAISE INVALID_THEME_NO;",
-            "line_no": 132,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 12,
-            "line": "            END CASE;",
-            "line_no": 133,
-            "is_end_semicolon": true
-          },
+        "if_expression": " INSERTING ",
+        "type": "if_else",
+        "if_line_no": 102,
+        "then_statements": [
           {
             "type": "begin_end",
-            "begin_line_no": 137,
-            "begin_indent": 12,
+            "begin_line_no": 103,
+            "begin_indent": 8,
             "begin_end_statements": [
               {
-                "indent": 16,
-                "line": "                SELECT",
-                "line_no": 138,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    COUNT(*) INTO V_COUNTER",
-                "line_no": 139,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 16,
-                "line": "                FROM",
-                "line_no": 140,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    (",
-                "line_no": 141,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        SELECT",
-                "line_no": 142,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 28,
-                "line": "                            THEME_NO",
-                "line_no": 143,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        FROM",
-                "line_no": 144,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 28,
-                "line": "                            V_THEMES",
-                "line_no": 145,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        UNION",
-                "line_no": 146,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        ALL",
-                "line_no": 147,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        SELECT",
-                "line_no": 148,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 28,
-                "line": "                            THEME_NO",
-                "line_no": 149,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        FROM",
-                "line_no": 150,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 28,
-                "line": "                            GMD.THEMES_ARCHIVE",
-                "line_no": 151,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    )                  T",
-                "line_no": 152,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 16,
-                "line": "                WHERE",
-                "line_no": 153,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    T.THEME_NO = :NEW.THEME_NO;",
-                "line_no": 154,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                IF V_COUNTER > 0 THEN",
-                "line_no": 155,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    RAISE THEME_NO_CANNOT_BE_INSERTED;",
-                "line_no": 156,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                END IF;",
-                "line_no": 157,
-                "is_end_semicolon": true
-              }
-            ],
-            "exception_handlers": [
-              {
-                "type": "exception_handler",
-                "exception_name": "NO_DATA_FOUND",
-                "when_line_no": 159,
-                "when_indent": 16,
-                "then_line_no": 159,
-                "exception_statements": [
+                "case_expression": " LENGTH(:NEW.THEME_NO)",
+                "type": "case_when",
+                "case_line_no": 106,
+                "case_indent": 12,
+                "end_case_line_no": 133,
+                "when_clauses": [
                   {
-                    "indent": 20,
-                    "line": "                    NULL;",
-                    "line_no": 160,
-                    "is_end_semicolon": true
+                    "type": "when_statement",
+                    "when_line_no": 107,
+                    "when_indent": 16,
+                    "when_value": "4",
+                    "then_line_no": 107,
+                    "then_statements": [
+                      {
+                        "if_expression": "AND 9OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0AND 9OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0AND 9OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0",
+                        "type": "if_else",
+                        "if_line_no": 108,
+                        "then_statements": [],
+                        "if_indent": 20,
+                        "end_if_line_no": 117,
+                        "if_elses": [],
+                        "else_statements": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "when_statement",
+                    "when_line_no": 118,
+                    "when_indent": 16,
+                    "when_value": "5",
+                    "then_line_no": 118,
+                    "then_statements": [
+                      {
+                        "if_expression": "AND 9OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0AND 9OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0AND 9OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0AND 9OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0",
+                        "type": "if_else",
+                        "if_line_no": 119,
+                        "then_statements": [],
+                        "if_indent": 20,
+                        "end_if_line_no": 130,
+                        "if_elses": [],
+                        "else_statements": []
+                      }
+                    ]
                   }
                 ],
-                "exception_statements_line_no": [
-                  160
+                "else_statements": [
+                  {
+                    "indent": 20,
+                    "line": "                    RAISE INVALID_THEME_NO;",
+                    "line_no": 132,
+                    "is_end_semicolon": true
+                  }
                 ]
-              }
-            ],
-            "exception_line_no": 158,
-            "end_line_no": 161
-          },
-          {
-            "indent": 12,
-            "line": "            IF :NEW.MOLECULE_ID IS NOT NULL THEN",
-            "line_no": 165,
-            "is_end_semicolon": false
-          },
-          {
-            "type": "begin_end",
-            "begin_line_no": 166,
-            "begin_indent": 16,
-            "begin_end_statements": [
-              {
-                "indent": 20,
-                "line": "                    SELECT",
-                "line_no": 167,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        RG_NO,",
-                "line_no": 168,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        COMPARATOR_IND INTO V_RG_NO,",
-                "line_no": 169,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        V_COMPARATOR_IND",
-                "line_no": 170,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    FROM",
-                "line_no": 171,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        V_THEME_MOLECULES",
-                "line_no": 172,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    WHERE",
-                "line_no": 173,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        MOLECULE_ID = :NEW.MOLECULE_ID",
-                "line_no": 174,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 24,
-                "line": "                        AND VALID_IND = 'Y';",
-                "line_no": 175,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 20,
-                "line": "                    IF V_RG_NO IS NULL AND V_COMPARATOR_IND = 'N' THEN",
-                "line_no": 178,
-                "is_end_semicolon": false
               },
               {
                 "type": "begin_end",
-                "begin_line_no": 179,
-                "begin_indent": 24,
+                "begin_line_no": 137,
+                "begin_indent": 12,
                 "begin_end_statements": [
                   {
-                    "indent": 28,
-                    "line": "                            SELECT",
-                    "line_no": 182,
+                    "indent": 16,
+                    "line": "                SELECT",
+                    "line_no": 138,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 32,
-                    "line": "                                NEW_RG_NO INTO V_NEW_RG_NO",
-                    "line_no": 183,
+                    "indent": 20,
+                    "line": "                    COUNT(*) INTO V_COUNTER",
+                    "line_no": 139,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 28,
-                    "line": "                            FROM",
-                    "line_no": 184,
+                    "indent": 16,
+                    "line": "                FROM",
+                    "line_no": 140,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 32,
-                    "line": "                                (",
-                    "line_no": 185,
+                    "indent": 20,
+                    "line": "                    (",
+                    "line_no": 141,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 36,
-                    "line": "                                    SELECT",
-                    "line_no": 186,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 40,
-                    "line": "                                        ROWNUM AS NEW_RG_NO",
-                    "line_no": 187,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 36,
-                    "line": "                                    FROM",
-                    "line_no": 188,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 40,
-                    "line": "                                        DUAL",
-                    "line_no": 189,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 36,
-                    "line": "                                    CONNECT BY",
-                    "line_no": 190,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 40,
-                    "line": "                                        1 = 1",
-                    "line_no": 191,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 40,
-                    "line": "                                        AND ROWNUM <= 6999",
-                    "line_no": 192,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                )",
-                    "line_no": 193,
+                    "indent": 24,
+                    "line": "                        SELECT",
+                    "line_no": 142,
                     "is_end_semicolon": false
                   },
                   {
                     "indent": 28,
-                    "line": "                            WHERE",
-                    "line_no": 194,
+                    "line": "                            THEME_NO",
+                    "line_no": 143,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 32,
-                    "line": "                                NEW_RG_NO > 5999 MINUS",
-                    "line_no": 195,
+                    "indent": 24,
+                    "line": "                        FROM",
+                    "line_no": 144,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 32,
-                    "line": "                                SELECT",
-                    "line_no": 196,
+                    "indent": 28,
+                    "line": "                            V_THEMES",
+                    "line_no": 145,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 36,
-                    "line": "                                    TO_NUMBER(RG_NO)",
-                    "line_no": 197,
+                    "indent": 24,
+                    "line": "                        UNION",
+                    "line_no": 146,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 32,
-                    "line": "                                FROM",
-                    "line_no": 198,
+                    "indent": 24,
+                    "line": "                        ALL",
+                    "line_no": 147,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 36,
-                    "line": "                                    V_THEME_MOLECULES",
-                    "line_no": 199,
+                    "indent": 24,
+                    "line": "                        SELECT",
+                    "line_no": 148,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 32,
-                    "line": "                                WHERE",
-                    "line_no": 200,
+                    "indent": 28,
+                    "line": "                            THEME_NO",
+                    "line_no": 149,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 36,
-                    "line": "                                    ROWNUM = 1;",
-                    "line_no": 201,
+                    "indent": 24,
+                    "line": "                        FROM",
+                    "line_no": 150,
+                    "is_end_semicolon": false
+                  },
+                  {
+                    "indent": 28,
+                    "line": "                            GMD.THEMES_ARCHIVE",
+                    "line_no": 151,
+                    "is_end_semicolon": false
+                  },
+                  {
+                    "indent": 20,
+                    "line": "                    )",
+                    "line_no": 152,
+                    "is_end_semicolon": false
+                  },
+                  {
+                    "indent": 16,
+                    "line": "                WHERE",
+                    "line_no": 153,
+                    "is_end_semicolon": false
+                  },
+                  {
+                    "indent": 20,
+                    "line": "                    T.THEME_NO = :NEW.THEME_NO;",
+                    "line_no": 154,
                     "is_end_semicolon": true
                   },
                   {
-                    "indent": 28,
-                    "line": "                            UPDATE V_THEME_MOLECULES",
-                    "line_no": 204,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            SET",
-                    "line_no": 205,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                RG_NO = V_NEW_RG_NO",
-                    "line_no": 206,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            WHERE",
-                    "line_no": 207,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                MOLECULE_ID = :NEW.MOLECULE_ID;",
-                    "line_no": 208,
-                    "is_end_semicolon": true
+                    "if_expression": " V_COUNTER > 0 ",
+                    "type": "if_else",
+                    "if_line_no": 155,
+                    "then_statements": [],
+                    "if_indent": 16,
+                    "end_if_line_no": 157,
+                    "if_elses": [],
+                    "else_statements": []
                   }
                 ],
                 "exception_handlers": [
                   {
                     "type": "exception_handler",
                     "exception_name": "NO_DATA_FOUND",
-                    "when_line_no": 210,
-                    "when_indent": 28,
-                    "then_line_no": 210,
+                    "when_line_no": 159,
+                    "when_indent": 16,
+                    "then_line_no": 159,
                     "exception_statements": [
                       {
-                        "indent": 32,
-                        "line": "                                RAISE INVALID_MOLECULE_ID;",
-                        "line_no": 211,
+                        "indent": 20,
+                        "line": "                    NULL;",
+                        "line_no": 160,
                         "is_end_semicolon": true
                       }
                     ],
                     "exception_statements_line_no": [
-                      211
+                      160
                     ]
                   }
                 ],
-                "exception_line_no": 209,
-                "end_line_no": 212
+                "exception_line_no": 158,
+                "end_line_no": 161
               },
               {
-                "indent": 20,
-                "line": "                    END IF;",
-                "line_no": 213,
-                "is_end_semicolon": true
-              }
-            ],
-            "exception_handlers": [
-              {
-                "type": "exception_handler",
-                "exception_name": "NO_DATA_FOUND",
-                "when_line_no": 215,
-                "when_indent": 20,
-                "then_line_no": 215,
-                "exception_statements": [
-                  {
-                    "indent": 24,
-                    "line": "                        RAISE INVALID_MOLECULE_ID;",
-                    "line_no": 216,
-                    "is_end_semicolon": true
-                  }
-                ],
-                "exception_statements_line_no": [
-                  216
-                ]
-              }
-            ],
-            "exception_line_no": 214,
-            "end_line_no": 217
-          },
-          {
-            "indent": 12,
-            "line": "            END IF;",
-            "line_no": 218,
-            "is_end_semicolon": true
-          },
-          {
-            "type": "begin_end",
-            "begin_line_no": 222,
-            "begin_indent": 12,
-            "begin_end_statements": [
-              {
-                "indent": 16,
-                "line": "                OPEN C_COMPANY_MAPPINGS;",
-                "line_no": 223,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                LOOP",
-                "line_no": 224,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    FETCH C_COMPANY_MAPPINGS INTO V_COMPANY_REC;",
-                "line_no": 225,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 20,
-                "line": "                    EXIT WHEN C_COMPANY_MAPPINGS%NOTFOUND;",
-                "line_no": 226,
-                "is_end_semicolon": true
+                "if_expression": " :NEW.MOLECULE_ID IS NOT NULL ",
+                "type": "if_else",
+                "if_line_no": 165,
+                "then_statements": [],
+                "if_indent": 12,
+                "end_if_line_no": 218,
+                "if_elses": [],
+                "else_statements": []
               },
               {
                 "type": "begin_end",
-                "begin_line_no": 227,
-                "begin_indent": 20,
+                "begin_line_no": 222,
+                "begin_indent": 12,
                 "begin_end_statements": [
                   {
-                    "indent": 24,
-                    "line": "                        SELECT",
-                    "line_no": 230,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            COUNT(*) INTO V_COUNTER",
-                    "line_no": 231,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        FROM",
-                    "line_no": 232,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            CFG_V_COMPANIES",
-                    "line_no": 233,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        WHERE",
-                    "line_no": 234,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            COMPANY_TYPE_CD IN ('L')",
-                    "line_no": 235,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            AND VALID_IND = 'Y'",
-                    "line_no": 236,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            AND COMPANY_CD = V_COMPANY_REC.LEGAL_COMPANY_CD;",
-                    "line_no": 237,
+                    "indent": 16,
+                    "line": "                OPEN C_COMPANY_MAPPINGS;",
+                    "line_no": 223,
                     "is_end_semicolon": true
                   },
                   {
-                    "indent": 24,
-                    "line": "                        IF V_COUNTER = 0 THEN",
-                    "line_no": 238,
+                    "indent": 16,
+                    "line": "                LOOP",
+                    "line_no": 224,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 28,
-                    "line": "                            RAISE INVALID_LEGAL_COMP;",
-                    "line_no": 239,
+                    "indent": 20,
+                    "line": "                    FETCH C_COMPANY_MAPPINGS INTO V_COMPANY_REC;",
+                    "line_no": 225,
                     "is_end_semicolon": true
                   },
                   {
-                    "indent": 24,
-                    "line": "                        END IF;",
-                    "line_no": 240,
+                    "indent": 20,
+                    "line": "                    EXIT WHEN C_COMPANY_MAPPINGS%NOTFOUND;",
+                    "line_no": 226,
                     "is_end_semicolon": true
                   },
                   {
                     "type": "begin_end",
-                    "begin_line_no": 244,
-                    "begin_indent": 24,
+                    "begin_line_no": 227,
+                    "begin_indent": 20,
                     "begin_end_statements": [
                       {
-                        "indent": 28,
-                        "line": "                            SELECT",
-                        "line_no": 245,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                COUNT(*) INTO V_COUNTER",
-                        "line_no": 246,
+                        "indent": 24,
+                        "line": "                        SELECT",
+                        "line_no": 230,
                         "is_end_semicolon": false
                       },
                       {
                         "indent": 28,
-                        "line": "                            FROM",
-                        "line_no": 247,
+                        "line": "                            COUNT(*) INTO V_COUNTER",
+                        "line_no": 231,
                         "is_end_semicolon": false
                       },
                       {
-                        "indent": 32,
-                        "line": "                                CFG.CFG_V_COMPANY_ADDRESSES",
-                        "line_no": 248,
+                        "indent": 24,
+                        "line": "                        FROM",
+                        "line_no": 232,
                         "is_end_semicolon": false
                       },
                       {
                         "indent": 28,
-                        "line": "                            WHERE",
-                        "line_no": 249,
+                        "line": "                            CFG_V_COMPANIES",
+                        "line_no": 233,
                         "is_end_semicolon": false
                       },
                       {
-                        "indent": 32,
-                        "line": "                                COMPANY_CD = V_COMPANY_REC.REPORTING_ENTITY_CD",
-                        "line_no": 250,
+                        "indent": 24,
+                        "line": "                        WHERE",
+                        "line_no": 234,
                         "is_end_semicolon": false
                       },
                       {
-                        "indent": 32,
-                        "line": "                                AND ADDRESS_TYPE_CD = 'RES';",
-                        "line_no": 251,
+                        "indent": 28,
+                        "line": "                            COMPANY_TYPE_CD IN ('L')",
+                        "line_no": 235,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 28,
+                        "line": "                            AND VALID_IND = 'Y'",
+                        "line_no": 236,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 28,
+                        "line": "                            AND COMPANY_CD = V_COMPANY_REC.LEGAL_COMPANY_CD;",
+                        "line_no": 237,
                         "is_end_semicolon": true
                       },
                       {
-                        "indent": 28,
-                        "line": "                            IF V_COUNTER = 0 THEN",
-                        "line_no": 252,
-                        "is_end_semicolon": false
+                        "if_expression": " V_COUNTER = 0 ",
+                        "type": "if_else",
+                        "if_line_no": 238,
+                        "then_statements": [],
+                        "if_indent": 24,
+                        "end_if_line_no": 240,
+                        "if_elses": [],
+                        "else_statements": []
                       },
                       {
-                        "indent": 32,
-                        "line": "                                RAISE ERR_NO_ADR;",
-                        "line_no": 253,
-                        "is_end_semicolon": true
-                      },
-                      {
-                        "indent": 28,
-                        "line": "                            END IF;",
-                        "line_no": 254,
-                        "is_end_semicolon": true
-                      },
-                      {
-                        "indent": 28,
-                        "line": "                            SELECT",
-                        "line_no": 258,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                VALID_FROM,",
-                        "line_no": 259,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                COUNTRY_CD INTO V_VALID_FROM_DATE,",
-                        "line_no": 260,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                V_COUNTRY_CD",
-                        "line_no": 261,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 28,
-                        "line": "                            FROM",
-                        "line_no": 262,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                CFG.CFG_V_COMPANY_ADDRESSES",
-                        "line_no": 263,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 28,
-                        "line": "                            WHERE",
-                        "line_no": 264,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                COMPANY_CD = V_COMPANY_REC.REPORTING_ENTITY_CD",
-                        "line_no": 265,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                AND ADDRESS_TYPE_CD = 'RES';",
-                        "line_no": 266,
-                        "is_end_semicolon": true
-                      }
-                    ],
-                    "exception_handlers": [
-                      {
-                        "type": "exception_handler",
-                        "exception_name": "NO_DATA_FOUND",
-                        "when_line_no": 268,
-                        "when_indent": 28,
-                        "then_line_no": 268,
-                        "exception_statements": [
+                        "type": "begin_end",
+                        "begin_line_no": 244,
+                        "begin_indent": 24,
+                        "begin_end_statements": [
+                          {
+                            "indent": 28,
+                            "line": "                            SELECT",
+                            "line_no": 245,
+                            "is_end_semicolon": false
+                          },
                           {
                             "indent": 32,
-                            "line": "                                RAISE ERR_NO_ADR;",
-                            "line_no": 269,
-                            "is_end_semicolon": true
-                          }
-                        ],
-                        "exception_statements_line_no": [
-                          269
-                        ]
-                      }
-                    ],
-                    "exception_line_no": 267,
-                    "end_line_no": 270
-                  }
-                ],
-                "exception_handlers": [
-                  {
-                    "type": "exception_handler",
-                    "exception_name": "INVALID_LEGAL_COMP",
-                    "when_line_no": 272,
-                    "when_indent": 24,
-                    "then_line_no": 272,
-                    "exception_statements": [
-                      {
-                        "indent": 28,
-                        "line": "                            NULL;",
-                        "line_no": 275,
-                        "is_end_semicolon": true
-                      }
-                    ],
-                    "exception_statements_line_no": [
-                      275
-                    ]
-                  },
-                  {
-                    "type": "exception_handler",
-                    "exception_name": "ERR_NO_ADR",
-                    "when_line_no": 276,
-                    "when_indent": 24,
-                    "then_line_no": 276,
-                    "exception_statements": [
-                      {
-                        "indent": 28,
-                        "line": "                            NULL;",
-                        "line_no": 279,
-                        "is_end_semicolon": true
-                      }
-                    ],
-                    "exception_statements_line_no": [
-                      279
-                    ]
-                  }
-                ],
-                "exception_line_no": 271,
-                "end_line_no": 280
-              },
-              {
-                "indent": 16,
-                "line": "                END LOOP;",
-                "line_no": 281,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                CLOSE C_COMPANY_MAPPINGS;",
-                "line_no": 283,
-                "is_end_semicolon": true
-              }
-            ],
-            "exception_handlers": [
-              {
-                "type": "exception_handler",
-                "exception_name": "OTHERS",
-                "when_line_no": 285,
-                "when_indent": 16,
-                "then_line_no": 285,
-                "exception_statements": [
-                  {
-                    "indent": 20,
-                    "line": "                    IF C_COMPANY_MAPPINGS%ISOPEN THEN",
-                    "line_no": 286,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        CLOSE C_COMPANY_MAPPINGS;",
-                    "line_no": 287,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 20,
-                    "line": "                    END IF;",
-                    "line_no": 288,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 20,
-                    "line": "                    RAISE;",
-                    "line_no": 290,
-                    "is_end_semicolon": true
-                  }
-                ],
-                "exception_statements_line_no": [
-                  286,
-                  287,
-                  288,
-                  290
-                ]
-              }
-            ],
-            "exception_line_no": 284,
-            "end_line_no": 291
-          },
-          {
-            "type": "begin_end",
-            "begin_line_no": 295,
-            "begin_indent": 12,
-            "begin_end_statements": [
-              {
-                "indent": 16,
-                "line": "                OPEN C_THEME_MOLECULES;",
-                "line_no": 296,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                LOOP",
-                "line_no": 297,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    FETCH C_THEME_MOLECULES INTO V_THEME_REC;",
-                "line_no": 298,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 20,
-                "line": "                    EXIT WHEN C_THEME_MOLECULES%NOTFOUND;",
-                "line_no": 299,
-                "is_end_semicolon": true
-              },
-              {
-                "type": "begin_end",
-                "begin_line_no": 300,
-                "begin_indent": 20,
-                "begin_end_statements": [
-                  {
-                    "indent": 24,
-                    "line": "                        IF V_THEME_REC.COMPARATOR_IND = 'N' THEN",
-                    "line_no": 303,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "type": "begin_end",
-                    "begin_line_no": 304,
-                    "begin_indent": 28,
-                    "begin_end_statements": [
-                      {
-                        "indent": 32,
-                        "line": "                                SELECT",
-                        "line_no": 305,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    MOLECULE_TYPE_ID,",
-                        "line_no": 306,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    PHARMACOLOGICAL_TYPE_ID INTO V_MOLECULE_TYPE_ID,",
-                        "line_no": 307,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    V_PHARMACOLOGICAL_TYPE_ID",
-                        "line_no": 308,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                FROM",
-                        "line_no": 309,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    V_THEME_MOLECULES",
-                        "line_no": 310,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                WHERE",
-                        "line_no": 311,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    MOLECULE_ID = V_THEME_REC.MOLECULE_ID",
-                        "line_no": 312,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    AND VALID_IND = 'Y';",
-                        "line_no": 313,
-                        "is_end_semicolon": true
-                      }
-                    ],
-                    "exception_handlers": [
-                      {
-                        "type": "exception_handler",
-                        "exception_name": "NO_DATA_FOUND",
-                        "when_line_no": 315,
-                        "when_indent": 32,
-                        "then_line_no": 315,
-                        "exception_statements": [
+                            "line": "                                COUNT(*) INTO V_COUNTER",
+                            "line_no": 246,
+                            "is_end_semicolon": false
+                          },
                           {
-                            "indent": 36,
-                            "line": "                                    V_MOLECULE_TYPE_ID := C_MOLECULE_TYPE_ID;",
-                            "line_no": 316,
+                            "indent": 28,
+                            "line": "                            FROM",
+                            "line_no": 247,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                CFG.CFG_V_COMPANY_ADDRESSES",
+                            "line_no": 248,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 28,
+                            "line": "                            WHERE",
+                            "line_no": 249,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                COMPANY_CD = V_COMPANY_REC.REPORTING_ENTITY_CD",
+                            "line_no": 250,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                AND ADDRESS_TYPE_CD = 'RES';",
+                            "line_no": 251,
                             "is_end_semicolon": true
                           },
                           {
-                            "indent": 36,
-                            "line": "                                    V_PHARMACOLOGICAL_TYPE_ID := C_PHARMACOLOGICAL_TYPE_ID;",
-                            "line_no": 317,
+                            "if_expression": " V_COUNTER = 0 ",
+                            "type": "if_else",
+                            "if_line_no": 252,
+                            "then_statements": [],
+                            "if_indent": 28,
+                            "end_if_line_no": 254,
+                            "if_elses": [],
+                            "else_statements": []
+                          },
+                          {
+                            "indent": 28,
+                            "line": "                            SELECT",
+                            "line_no": 258,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                VALID_FROM,",
+                            "line_no": 259,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                COUNTRY_CD INTO V_VALID_FROM_DATE,",
+                            "line_no": 260,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                V_COUNTRY_CD",
+                            "line_no": 261,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 28,
+                            "line": "                            FROM",
+                            "line_no": 262,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                CFG.CFG_V_COMPANY_ADDRESSES",
+                            "line_no": 263,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 28,
+                            "line": "                            WHERE",
+                            "line_no": 264,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                COMPANY_CD = V_COMPANY_REC.REPORTING_ENTITY_CD",
+                            "line_no": 265,
+                            "is_end_semicolon": false
+                          },
+                          {
+                            "indent": 32,
+                            "line": "                                AND ADDRESS_TYPE_CD = 'RES';",
+                            "line_no": 266,
                             "is_end_semicolon": true
                           }
                         ],
-                        "exception_statements_line_no": [
-                          316,
-                          317
-                        ]
-                      }
-                    ],
-                    "exception_line_no": 314,
-                    "end_line_no": 318
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        END IF;",
-                    "line_no": 319,
-                    "is_end_semicolon": true
-                  }
-                ],
-                "exception_handlers": [
-                  {
-                    "type": "exception_handler",
-                    "exception_name": "OTHERS",
-                    "when_line_no": 321,
-                    "when_indent": 24,
-                    "then_line_no": 321,
-                    "exception_statements": [
-                      {
-                        "indent": 28,
-                        "line": "                            NULL;",
-                        "line_no": 324,
-                        "is_end_semicolon": true
-                      }
-                    ],
-                    "exception_statements_line_no": [
-                      324
-                    ]
-                  }
-                ],
-                "exception_line_no": 320,
-                "end_line_no": 325
-              },
-              {
-                "indent": 16,
-                "line": "                END LOOP;",
-                "line_no": 326,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                CLOSE C_THEME_MOLECULES;",
-                "line_no": 328,
-                "is_end_semicolon": true
-              }
-            ],
-            "exception_handlers": [
-              {
-                "type": "exception_handler",
-                "exception_name": "OTHERS",
-                "when_line_no": 330,
-                "when_indent": 16,
-                "then_line_no": 330,
-                "exception_statements": [
-                  {
-                    "indent": 20,
-                    "line": "                    IF C_THEME_MOLECULES%ISOPEN THEN",
-                    "line_no": 331,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        CLOSE C_THEME_MOLECULES;",
-                    "line_no": 332,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 20,
-                    "line": "                    END IF;",
-                    "line_no": 333,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 20,
-                    "line": "                    RAISE;",
-                    "line_no": 335,
-                    "is_end_semicolon": true
-                  }
-                ],
-                "exception_statements_line_no": [
-                  331,
-                  332,
-                  333,
-                  335
-                ]
-              }
-            ],
-            "exception_line_no": 329,
-            "end_line_no": 336
-          },
-          {
-            "type": "begin_end",
-            "begin_line_no": 340,
-            "begin_indent": 12,
-            "begin_end_statements": [
-              {
-                "indent": 16,
-                "line": "                OPEN C_ADDRESS_RECORDS;",
-                "line_no": 341,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                LOOP",
-                "line_no": 342,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    FETCH C_ADDRESS_RECORDS INTO V_ADDRESS_REC;",
-                "line_no": 343,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 20,
-                "line": "                    EXIT WHEN C_ADDRESS_RECORDS%NOTFOUND;",
-                "line_no": 344,
-                "is_end_semicolon": true
-              },
-              {
-                "type": "begin_end",
-                "begin_line_no": 345,
-                "begin_indent": 20,
-                "begin_end_statements": [
-                  {
-                    "indent": 24,
-                    "line": "                        IF V_ADDRESS_REC.ADDRESS_TYPE_CD IN ('P', 'L') THEN",
-                    "line_no": 348,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "type": "begin_end",
-                    "begin_line_no": 349,
-                    "begin_indent": 28,
-                    "begin_end_statements": [
-                      {
-                        "indent": 32,
-                        "line": "                                SELECT",
-                        "line_no": 350,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    COUNT(*) INTO V_COUNTER",
-                        "line_no": 351,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                FROM",
-                        "line_no": 352,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    CFG_V_COMPANY_ADDRESSES OLD_ADDR",
-                        "line_no": 353,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                WHERE",
-                        "line_no": 354,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    OLD_ADDR.COMPANY_CD = V_ADDRESS_REC.COMPANY_CD",
-                        "line_no": 355,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    AND OLD_ADDR.ADDRESS_TYPE_CD = V_ADDRESS_REC.ADDRESS_TYPE_CD",
-                        "line_no": 356,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    AND OLD_ADDR.VALID_FROM = V_ADDRESS_REC.VALID_FROM",
-                        "line_no": 357,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    AND OLD_ADDR.COUNTRY_ID <> V_ADDRESS_REC.COUNTRY_ID;",
-                        "line_no": 358,
-                        "is_end_semicolon": true
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                IF V_COUNTER > 0 THEN",
-                        "line_no": 359,
-                        "is_end_semicolon": false
-                      },
-                      {
-                        "indent": 36,
-                        "line": "                                    RAISE ERR_CTRY_CHG;",
-                        "line_no": 360,
-                        "is_end_semicolon": true
-                      },
-                      {
-                        "indent": 32,
-                        "line": "                                END IF;",
-                        "line_no": 361,
-                        "is_end_semicolon": true
+                        "exception_handlers": [
+                          {
+                            "type": "exception_handler",
+                            "exception_name": "NO_DATA_FOUND",
+                            "when_line_no": 268,
+                            "when_indent": 28,
+                            "then_line_no": 268,
+                            "exception_statements": [
+                              {
+                                "indent": 32,
+                                "line": "                                RAISE ERR_NO_ADR;",
+                                "line_no": 269,
+                                "is_end_semicolon": true
+                              }
+                            ],
+                            "exception_statements_line_no": [
+                              269
+                            ]
+                          }
+                        ],
+                        "exception_line_no": 267,
+                        "end_line_no": 270
                       }
                     ],
                     "exception_handlers": [
                       {
                         "type": "exception_handler",
-                        "exception_name": "NO_DATA_FOUND",
-                        "when_line_no": 363,
-                        "when_indent": 32,
-                        "then_line_no": 363,
+                        "exception_name": "INVALID_LEGAL_COMP",
+                        "when_line_no": 272,
+                        "when_indent": 24,
+                        "then_line_no": 272,
                         "exception_statements": [
                           {
-                            "indent": 36,
-                            "line": "                                    NULL;",
-                            "line_no": 364,
+                            "indent": 28,
+                            "line": "                            NULL;",
+                            "line_no": 275,
                             "is_end_semicolon": true
                           }
                         ],
                         "exception_statements_line_no": [
-                          364
+                          275
+                        ]
+                      },
+                      {
+                        "type": "exception_handler",
+                        "exception_name": "ERR_NO_ADR",
+                        "when_line_no": 276,
+                        "when_indent": 24,
+                        "then_line_no": 276,
+                        "exception_statements": [
+                          {
+                            "indent": 28,
+                            "line": "                            NULL;",
+                            "line_no": 279,
+                            "is_end_semicolon": true
+                          }
+                        ],
+                        "exception_statements_line_no": [
+                          279
                         ]
                       }
                     ],
-                    "exception_line_no": 362,
-                    "end_line_no": 365
+                    "exception_line_no": 271,
+                    "end_line_no": 280
                   },
                   {
-                    "indent": 24,
-                    "line": "                        END IF;",
-                    "line_no": 366,
-                    "is_end_semicolon": true
-                  }
-                ],
-                "exception_handlers": [
-                  {
-                    "type": "exception_handler",
-                    "exception_name": "ERR_CTRY_CHG",
-                    "when_line_no": 368,
-                    "when_indent": 24,
-                    "then_line_no": 368,
-                    "exception_statements": [
-                      {
-                        "indent": 28,
-                        "line": "                            NULL;",
-                        "line_no": 371,
-                        "is_end_semicolon": true
-                      }
-                    ],
-                    "exception_statements_line_no": [
-                      371
-                    ]
-                  }
-                ],
-                "exception_line_no": 367,
-                "end_line_no": 372
-              },
-              {
-                "indent": 16,
-                "line": "                END LOOP;",
-                "line_no": 373,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                CLOSE C_ADDRESS_RECORDS;",
-                "line_no": 375,
-                "is_end_semicolon": true
-              }
-            ],
-            "exception_handlers": [
-              {
-                "type": "exception_handler",
-                "exception_name": "OTHERS",
-                "when_line_no": 377,
-                "when_indent": 16,
-                "then_line_no": 377,
-                "exception_statements": [
-                  {
-                    "indent": 20,
-                    "line": "                    IF C_ADDRESS_RECORDS%ISOPEN THEN",
-                    "line_no": 378,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        CLOSE C_ADDRESS_RECORDS;",
-                    "line_no": 379,
+                    "indent": 16,
+                    "line": "                END LOOP;",
+                    "line_no": 281,
                     "is_end_semicolon": true
                   },
                   {
-                    "indent": 20,
-                    "line": "                    END IF;",
-                    "line_no": 380,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 20,
-                    "line": "                    RAISE;",
-                    "line_no": 382,
-                    "is_end_semicolon": true
-                  }
-                ],
-                "exception_statements_line_no": [
-                  378,
-                  379,
-                  380,
-                  382
-                ]
-              }
-            ],
-            "exception_line_no": 376,
-            "end_line_no": 383
-          }
-        ],
-        "exception_handlers": [
-          {
-            "type": "exception_handler",
-            "exception_name": "INVALID_THEME_NO",
-            "when_line_no": 385,
-            "when_indent": 12,
-            "then_line_no": 385,
-            "exception_statements": [
-              {
-                "type": "function_calling",
-                "function_name": "raise_application_error",
-                "parameter": {
-                  "handler_code": -20101,
-                  "handler_string": "'Invalid theme number format'"
-                }
-              }
-            ],
-            "exception_statements_line_no": [
-              386
-            ]
-          },
-          {
-            "type": "exception_handler",
-            "exception_name": "THEME_NO_CANNOT_BE_INSERTED",
-            "when_line_no": 387,
-            "when_indent": 12,
-            "then_line_no": 387,
-            "exception_statements": [
-              {
-                "type": "function_calling",
-                "function_name": "raise_application_error",
-                "parameter": {
-                  "handler_code": -20102,
-                  "handler_string": "'Theme number already exists'"
-                }
-              }
-            ],
-            "exception_statements_line_no": [
-              388
-            ]
-          },
-          {
-            "type": "exception_handler",
-            "exception_name": "INVALID_MOLECULE_ID",
-            "when_line_no": 389,
-            "when_indent": 12,
-            "then_line_no": 389,
-            "exception_statements": [
-              {
-                "type": "function_calling",
-                "function_name": "raise_application_error",
-                "parameter": {
-                  "handler_code": -20103,
-                  "handler_string": "'Invalid molecule ID'"
-                }
-              }
-            ],
-            "exception_statements_line_no": [
-              390
-            ]
-          },
-          {
-            "type": "exception_handler",
-            "exception_name": "OTHERS",
-            "when_line_no": 391,
-            "when_indent": 12,
-            "then_line_no": 391,
-            "exception_statements": [
-              {
-                "type": "function_calling",
-                "function_name": "raise_application_error",
-                "parameter": {
-                  "handler_code": -20999,
-                  "handler_string": "'Unexpected error during insert: ' || SQLERRM"
-                }
-              }
-            ],
-            "exception_statements_line_no": [
-              392,
-              393
-            ]
-          }
-        ],
-        "exception_line_no": 384,
-        "end_line_no": 394
-      },
-      {
-        "indent": 4,
-        "line": "    ELSIF UPDATING THEN",
-        "line_no": 395,
-        "is_end_semicolon": false
-      },
-      {
-        "type": "begin_end",
-        "begin_line_no": 396,
-        "begin_indent": 8,
-        "begin_end_statements": [
-          {
-            "indent": 12,
-            "line": "            IF :NEW.THEME_NO <> :OLD.THEME_NO THEN",
-            "line_no": 399,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 16,
-            "line": "                RAISE THEME_NO_ONLY_INSERT;",
-            "line_no": 400,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 12,
-            "line": "            END IF;",
-            "line_no": 401,
-            "is_end_semicolon": true
-          },
-          {
-            "type": "begin_end",
-            "begin_line_no": 405,
-            "begin_indent": 12,
-            "begin_end_statements": [
-              {
-                "indent": 16,
-                "line": "                SELECT",
-                "line_no": 408,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    COUNT(*) INTO V_COUNTER",
-                "line_no": 409,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 16,
-                "line": "                FROM",
-                "line_no": 410,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    V_THEME_MOLECULE_MAP",
-                "line_no": 411,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 16,
-                "line": "                WHERE",
-                "line_no": 412,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    THEME_NO = :NEW.THEME_NO",
-                "line_no": 413,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    AND MOLECULE_ID = :NEW.MOLECULE_ID",
-                "line_no": 414,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    AND VALID_IND = 'Y';",
-                "line_no": 415,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                IF V_COUNTER > 0 THEN",
-                "line_no": 416,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    RAISE ERR_MAP_EXISTS;",
-                "line_no": 417,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                END IF;",
-                "line_no": 418,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                IF :NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO THEN",
-                "line_no": 422,
-                "is_end_semicolon": false
-              },
-              {
-                "type": "begin_end",
-                "begin_line_no": 423,
-                "begin_indent": 20,
-                "begin_end_statements": [
-                  {
-                    "indent": 24,
-                    "line": "                        UPDATE THEME_MOLECULE_MAP",
-                    "line_no": 426,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        SET",
-                    "line_no": 427,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            VALID_IND = 'N'",
-                    "line_no": 428,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        WHERE",
-                    "line_no": 429,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            THEME_NO = :NEW.THEME_NO",
-                    "line_no": 430,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            AND MOLECULE_ID = :OLD.MOLECULE_ID;",
-                    "line_no": 431,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        IF :OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO THEN",
-                    "line_no": 434,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            UPDATE THEME_MOLECULE_MAP",
-                    "line_no": 435,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            SET",
-                    "line_no": 436,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                MOLECULE_SEQ_NO = MOLECULE_SEQ_NO - 1",
-                    "line_no": 437,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            WHERE",
-                    "line_no": 438,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                THEME_NO = :NEW.THEME_NO",
-                    "line_no": 439,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                AND MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO",
-                    "line_no": 440,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                AND MOLECULE_SEQ_NO <= :NEW.MOLECULE_SEQ_NO",
-                    "line_no": 441,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                AND VALID_IND = 'Y';",
-                    "line_no": 442,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        ELSE",
-                    "line_no": 443,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            UPDATE THEME_MOLECULE_MAP",
-                    "line_no": 444,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            SET",
-                    "line_no": 445,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                MOLECULE_SEQ_NO = MOLECULE_SEQ_NO + 1",
-                    "line_no": 446,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            WHERE",
-                    "line_no": 447,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                THEME_NO = :NEW.THEME_NO",
-                    "line_no": 448,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                AND VALID_IND = 'Y'",
-                    "line_no": 449,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                AND MOLECULE_SEQ_NO >= :NEW.MOLECULE_SEQ_NO",
-                    "line_no": 450,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                AND MOLECULE_SEQ_NO < :OLD.MOLECULE_SEQ_NO;",
-                    "line_no": 451,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        END IF;",
-                    "line_no": 452,
-                    "is_end_semicolon": true
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        INSERT INTO THEME_MOLECULE_MAP (",
-                    "line_no": 456,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            THEME_NO,",
-                    "line_no": 457,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            MOLECULE_ID,",
-                    "line_no": 458,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            MOLECULE_SEQ_NO,",
-                    "line_no": 459,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            MOLECULE_MAP_CHAR,",
-                    "line_no": 460,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            VALID_IND",
-                    "line_no": 461,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        ) VALUES (",
-                    "line_no": 462,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            :NEW.THEME_NO,",
-                    "line_no": 463,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            :NEW.MOLECULE_ID,",
-                    "line_no": 464,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            :NEW.MOLECULE_SEQ_NO,",
-                    "line_no": 465,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            :NEW.MOLECULE_MAP_CHAR,",
-                    "line_no": 466,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            'Y'",
-                    "line_no": 467,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        );",
-                    "line_no": 468,
+                    "indent": 16,
+                    "line": "                CLOSE C_COMPANY_MAPPINGS;",
+                    "line_no": 283,
                     "is_end_semicolon": true
                   }
                 ],
@@ -2256,503 +926,594 @@
                   {
                     "type": "exception_handler",
                     "exception_name": "OTHERS",
-                    "when_line_no": 470,
-                    "when_indent": 24,
-                    "then_line_no": 470,
+                    "when_line_no": 285,
+                    "when_indent": 16,
+                    "then_line_no": 285,
                     "exception_statements": [
                       {
-                        "indent": 28,
-                        "line": "                            RAISE ERR_UPD_INV_MAP;",
-                        "line_no": 471,
+                        "if_expression": " C_COMPANY_MAPPINGS%ISOPEN ",
+                        "type": "if_else",
+                        "if_line_no": 286,
+                        "then_statements": [],
+                        "if_indent": 20,
+                        "end_if_line_no": 288,
+                        "if_elses": [],
+                        "else_statements": []
+                      },
+                      {
+                        "indent": 20,
+                        "line": "                    RAISE;",
+                        "line_no": 290,
                         "is_end_semicolon": true
                       }
                     ],
                     "exception_statements_line_no": [
-                      471
+                      286,
+                      287,
+                      288,
+                      290
                     ]
                   }
                 ],
-                "exception_line_no": 469,
-                "end_line_no": 472
-              },
-              {
-                "indent": 16,
-                "line": "                END IF;",
-                "line_no": 473,
-                "is_end_semicolon": true
-              }
-            ],
-            "exception_handlers": [
-              {
-                "type": "exception_handler",
-                "exception_name": "ERR_MAP_EXISTS",
-                "when_line_no": 475,
-                "when_indent": 16,
-                "then_line_no": 475,
-                "exception_statements": [
-                  {
-                    "type": "function_calling",
-                    "function_name": "raise_application_error",
-                    "parameter": {
-                      "handler_code": -20110,
-                      "handler_string": "'Mapping already exists'"
-                    }
-                  }
-                ],
-                "exception_statements_line_no": [
-                  476
-                ]
-              },
-              {
-                "type": "exception_handler",
-                "exception_name": "ERR_UPD_INV_MAP",
-                "when_line_no": 477,
-                "when_indent": 16,
-                "then_line_no": 477,
-                "exception_statements": [
-                  {
-                    "type": "function_calling",
-                    "function_name": "raise_application_error",
-                    "parameter": {
-                      "handler_code": -20111,
-                      "handler_string": "'Invalid mapping update'"
-                    }
-                  }
-                ],
-                "exception_statements_line_no": [
-                  478
-                ]
-              }
-            ],
-            "exception_line_no": 474,
-            "end_line_no": 479
-          },
-          {
-            "type": "begin_end",
-            "begin_line_no": 483,
-            "begin_indent": 12,
-            "begin_end_statements": [
-              {
-                "indent": 16,
-                "line": "                IF NVL(:NEW.VALID_IND, 'Y') = 'N' AND NVL(:OLD.VALID_IND, 'N') = 'Y' THEN",
-                "line_no": 484,
-                "is_end_semicolon": false
+                "exception_line_no": 284,
+                "end_line_no": 291
               },
               {
                 "type": "begin_end",
-                "begin_line_no": 485,
-                "begin_indent": 20,
+                "begin_line_no": 295,
+                "begin_indent": 12,
                 "begin_end_statements": [
                   {
-                    "indent": 24,
-                    "line": "                        SELECT",
-                    "line_no": 488,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            COUNT(*) INTO V_COUNTER",
-                    "line_no": 489,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        FROM",
-                    "line_no": 490,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            CFG_V_COMPANIES",
-                    "line_no": 491,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        WHERE",
-                    "line_no": 492,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            LEGAL_COMPANY_CD = :NEW.COMPANY_CD",
-                    "line_no": 493,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            AND COMPANY_CD <> :NEW.COMPANY_CD",
-                    "line_no": 494,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            AND VALID_IND = 'Y';",
-                    "line_no": 495,
+                    "indent": 16,
+                    "line": "                OPEN C_THEME_MOLECULES;",
+                    "line_no": 296,
                     "is_end_semicolon": true
                   },
                   {
-                    "indent": 24,
-                    "line": "                        IF V_COUNTER > 0 THEN",
-                    "line_no": 496,
+                    "indent": 16,
+                    "line": "                LOOP",
+                    "line_no": 297,
                     "is_end_semicolon": false
                   },
                   {
-                    "indent": 28,
-                    "line": "                            RAISE CPY_IN_USE;",
-                    "line_no": 497,
+                    "indent": 20,
+                    "line": "                    FETCH C_THEME_MOLECULES INTO V_THEME_REC;",
+                    "line_no": 298,
                     "is_end_semicolon": true
                   },
                   {
-                    "indent": 24,
-                    "line": "                        END IF;",
-                    "line_no": 498,
+                    "indent": 20,
+                    "line": "                    EXIT WHEN C_THEME_MOLECULES%NOTFOUND;",
+                    "line_no": 299,
                     "is_end_semicolon": true
                   },
                   {
-                    "indent": 24,
-                    "line": "                        UPDATE CFG.CFG_COMPANY_ADDRESSES",
-                    "line_no": 502,
-                    "is_end_semicolon": false
+                    "type": "begin_end",
+                    "begin_line_no": 300,
+                    "begin_indent": 20,
+                    "begin_end_statements": [
+                      {
+                        "if_expression": " V_THEME_REC.COMPARATOR_IND = 'N' ",
+                        "type": "if_else",
+                        "if_line_no": 303,
+                        "then_statements": [],
+                        "if_indent": 24,
+                        "end_if_line_no": 319,
+                        "if_elses": [],
+                        "else_statements": []
+                      }
+                    ],
+                    "exception_handlers": [
+                      {
+                        "type": "exception_handler",
+                        "exception_name": "OTHERS",
+                        "when_line_no": 321,
+                        "when_indent": 24,
+                        "then_line_no": 321,
+                        "exception_statements": [
+                          {
+                            "indent": 28,
+                            "line": "                            NULL;",
+                            "line_no": 324,
+                            "is_end_semicolon": true
+                          }
+                        ],
+                        "exception_statements_line_no": [
+                          324
+                        ]
+                      }
+                    ],
+                    "exception_line_no": 320,
+                    "end_line_no": 325
                   },
                   {
-                    "indent": 24,
-                    "line": "                        SET",
-                    "line_no": 503,
-                    "is_end_semicolon": false
+                    "indent": 16,
+                    "line": "                END LOOP;",
+                    "line_no": 326,
+                    "is_end_semicolon": true
                   },
                   {
-                    "indent": 28,
-                    "line": "                            VALID_TO = TRUNC(",
-                    "line_no": 504,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 32,
-                    "line": "                                SYSDATE",
-                    "line_no": 505,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            ) - 1",
-                    "line_no": 506,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 24,
-                    "line": "                        WHERE",
-                    "line_no": 507,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            COMPANY_CD = :NEW.COMPANY_CD",
-                    "line_no": 508,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            AND (VALID_TO > TRUNC(SYSDATE)",
-                    "line_no": 509,
-                    "is_end_semicolon": false
-                  },
-                  {
-                    "indent": 28,
-                    "line": "                            OR VALID_TO IS NULL);",
-                    "line_no": 510,
+                    "indent": 16,
+                    "line": "                CLOSE C_THEME_MOLECULES;",
+                    "line_no": 328,
                     "is_end_semicolon": true
                   }
                 ],
                 "exception_handlers": [
                   {
                     "type": "exception_handler",
-                    "exception_name": "CPY_IN_USE",
-                    "when_line_no": 512,
-                    "when_indent": 24,
-                    "then_line_no": 512,
+                    "exception_name": "OTHERS",
+                    "when_line_no": 330,
+                    "when_indent": 16,
+                    "then_line_no": 330,
+                    "exception_statements": [
+                      {
+                        "if_expression": " C_THEME_MOLECULES%ISOPEN ",
+                        "type": "if_else",
+                        "if_line_no": 331,
+                        "then_statements": [],
+                        "if_indent": 20,
+                        "end_if_line_no": 333,
+                        "if_elses": [],
+                        "else_statements": []
+                      },
+                      {
+                        "indent": 20,
+                        "line": "                    RAISE;",
+                        "line_no": 335,
+                        "is_end_semicolon": true
+                      }
+                    ],
+                    "exception_statements_line_no": [
+                      331,
+                      332,
+                      333,
+                      335
+                    ]
+                  }
+                ],
+                "exception_line_no": 329,
+                "end_line_no": 336
+              },
+              {
+                "type": "begin_end",
+                "begin_line_no": 340,
+                "begin_indent": 12,
+                "begin_end_statements": [
+                  {
+                    "indent": 16,
+                    "line": "                OPEN C_ADDRESS_RECORDS;",
+                    "line_no": 341,
+                    "is_end_semicolon": true
+                  },
+                  {
+                    "indent": 16,
+                    "line": "                LOOP",
+                    "line_no": 342,
+                    "is_end_semicolon": false
+                  },
+                  {
+                    "indent": 20,
+                    "line": "                    FETCH C_ADDRESS_RECORDS INTO V_ADDRESS_REC;",
+                    "line_no": 343,
+                    "is_end_semicolon": true
+                  },
+                  {
+                    "indent": 20,
+                    "line": "                    EXIT WHEN C_ADDRESS_RECORDS%NOTFOUND;",
+                    "line_no": 344,
+                    "is_end_semicolon": true
+                  },
+                  {
+                    "type": "begin_end",
+                    "begin_line_no": 345,
+                    "begin_indent": 20,
+                    "begin_end_statements": [
+                      {
+                        "if_expression": " V_ADDRESS_REC.ADDRESS_TYPE_CD IN ('P', 'L') ",
+                        "type": "if_else",
+                        "if_line_no": 348,
+                        "then_statements": [],
+                        "if_indent": 24,
+                        "end_if_line_no": 366,
+                        "if_elses": [],
+                        "else_statements": []
+                      }
+                    ],
+                    "exception_handlers": [
+                      {
+                        "type": "exception_handler",
+                        "exception_name": "ERR_CTRY_CHG",
+                        "when_line_no": 368,
+                        "when_indent": 24,
+                        "then_line_no": 368,
+                        "exception_statements": [
+                          {
+                            "indent": 28,
+                            "line": "                            NULL;",
+                            "line_no": 371,
+                            "is_end_semicolon": true
+                          }
+                        ],
+                        "exception_statements_line_no": [
+                          371
+                        ]
+                      }
+                    ],
+                    "exception_line_no": 367,
+                    "end_line_no": 372
+                  },
+                  {
+                    "indent": 16,
+                    "line": "                END LOOP;",
+                    "line_no": 373,
+                    "is_end_semicolon": true
+                  },
+                  {
+                    "indent": 16,
+                    "line": "                CLOSE C_ADDRESS_RECORDS;",
+                    "line_no": 375,
+                    "is_end_semicolon": true
+                  }
+                ],
+                "exception_handlers": [
+                  {
+                    "type": "exception_handler",
+                    "exception_name": "OTHERS",
+                    "when_line_no": 377,
+                    "when_indent": 16,
+                    "then_line_no": 377,
+                    "exception_statements": [
+                      {
+                        "if_expression": " C_ADDRESS_RECORDS%ISOPEN ",
+                        "type": "if_else",
+                        "if_line_no": 378,
+                        "then_statements": [],
+                        "if_indent": 20,
+                        "end_if_line_no": 380,
+                        "if_elses": [],
+                        "else_statements": []
+                      },
+                      {
+                        "indent": 20,
+                        "line": "                    RAISE;",
+                        "line_no": 382,
+                        "is_end_semicolon": true
+                      }
+                    ],
+                    "exception_statements_line_no": [
+                      378,
+                      379,
+                      380,
+                      382
+                    ]
+                  }
+                ],
+                "exception_line_no": 376,
+                "end_line_no": 383
+              }
+            ],
+            "exception_handlers": [
+              {
+                "type": "exception_handler",
+                "exception_name": "INVALID_THEME_NO",
+                "when_line_no": 385,
+                "when_indent": 12,
+                "then_line_no": 385,
+                "exception_statements": [
+                  {
+                    "type": "function_calling",
+                    "function_name": "raise_application_error",
+                    "parameter": {
+                      "handler_code": -20101,
+                      "handler_string": "'Invalid theme number format'"
+                    }
+                  }
+                ],
+                "exception_statements_line_no": [
+                  386
+                ]
+              },
+              {
+                "type": "exception_handler",
+                "exception_name": "THEME_NO_CANNOT_BE_INSERTED",
+                "when_line_no": 387,
+                "when_indent": 12,
+                "then_line_no": 387,
+                "exception_statements": [
+                  {
+                    "type": "function_calling",
+                    "function_name": "raise_application_error",
+                    "parameter": {
+                      "handler_code": -20102,
+                      "handler_string": "'Theme number already exists'"
+                    }
+                  }
+                ],
+                "exception_statements_line_no": [
+                  388
+                ]
+              },
+              {
+                "type": "exception_handler",
+                "exception_name": "INVALID_MOLECULE_ID",
+                "when_line_no": 389,
+                "when_indent": 12,
+                "then_line_no": 389,
+                "exception_statements": [
+                  {
+                    "type": "function_calling",
+                    "function_name": "raise_application_error",
+                    "parameter": {
+                      "handler_code": -20103,
+                      "handler_string": "'Invalid molecule ID'"
+                    }
+                  }
+                ],
+                "exception_statements_line_no": [
+                  390
+                ]
+              },
+              {
+                "type": "exception_handler",
+                "exception_name": "OTHERS",
+                "when_line_no": 391,
+                "when_indent": 12,
+                "then_line_no": 391,
+                "exception_statements": [
+                  {
+                    "type": "function_calling",
+                    "function_name": "raise_application_error",
+                    "parameter": {
+                      "handler_code": -20999,
+                      "handler_string": "'Unexpected error during insert: ' || SQLERRM"
+                    }
+                  }
+                ],
+                "exception_statements_line_no": [
+                  392,
+                  393
+                ]
+              }
+            ],
+            "exception_line_no": 384,
+            "end_line_no": 394
+          }
+        ],
+        "if_indent": 4,
+        "end_if_line_no": 565,
+        "if_elses": [
+          {
+            "type": "elif_statement",
+            "elif_line_no": 395,
+            "elif_indent": 4,
+            "elif_value": "UPDATING",
+            "then_line_no": 395,
+            "then_statements": [
+              {
+                "type": "begin_end",
+                "begin_line_no": 396,
+                "begin_indent": 8,
+                "begin_end_statements": [
+                  {
+                    "if_expression": " :NEW.THEME_NO <> :OLD.THEME_NO ",
+                    "type": "if_else",
+                    "if_line_no": 399,
+                    "then_statements": [],
+                    "if_indent": 12,
+                    "end_if_line_no": 401,
+                    "if_elses": [],
+                    "else_statements": []
+                  },
+                  {
+                    "type": "begin_end",
+                    "begin_line_no": 405,
+                    "begin_indent": 12,
+                    "begin_end_statements": [
+                      {
+                        "indent": 16,
+                        "line": "                SELECT",
+                        "line_no": 408,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 20,
+                        "line": "                    COUNT(*) INTO V_COUNTER",
+                        "line_no": 409,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 16,
+                        "line": "                FROM",
+                        "line_no": 410,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 20,
+                        "line": "                    V_THEME_MOLECULE_MAP",
+                        "line_no": 411,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 16,
+                        "line": "                WHERE",
+                        "line_no": 412,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 20,
+                        "line": "                    THEME_NO = :NEW.THEME_NO",
+                        "line_no": 413,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 20,
+                        "line": "                    AND MOLECULE_ID = :NEW.MOLECULE_ID",
+                        "line_no": 414,
+                        "is_end_semicolon": false
+                      },
+                      {
+                        "indent": 20,
+                        "line": "                    AND VALID_IND = 'Y';",
+                        "line_no": 415,
+                        "is_end_semicolon": true
+                      },
+                      {
+                        "if_expression": " V_COUNTER > 0 ",
+                        "type": "if_else",
+                        "if_line_no": 416,
+                        "then_statements": [],
+                        "if_indent": 16,
+                        "end_if_line_no": 418,
+                        "if_elses": [],
+                        "else_statements": []
+                      },
+                      {
+                        "if_expression": " :NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO ",
+                        "type": "if_else",
+                        "if_line_no": 422,
+                        "then_statements": [],
+                        "if_indent": 16,
+                        "end_if_line_no": 473,
+                        "if_elses": [],
+                        "else_statements": []
+                      }
+                    ],
+                    "exception_handlers": [
+                      {
+                        "type": "exception_handler",
+                        "exception_name": "ERR_MAP_EXISTS",
+                        "when_line_no": 475,
+                        "when_indent": 16,
+                        "then_line_no": 475,
+                        "exception_statements": [
+                          {
+                            "type": "function_calling",
+                            "function_name": "raise_application_error",
+                            "parameter": {
+                              "handler_code": -20110,
+                              "handler_string": "'Mapping already exists'"
+                            }
+                          }
+                        ],
+                        "exception_statements_line_no": [
+                          476
+                        ]
+                      },
+                      {
+                        "type": "exception_handler",
+                        "exception_name": "ERR_UPD_INV_MAP",
+                        "when_line_no": 477,
+                        "when_indent": 16,
+                        "then_line_no": 477,
+                        "exception_statements": [
+                          {
+                            "type": "function_calling",
+                            "function_name": "raise_application_error",
+                            "parameter": {
+                              "handler_code": -20111,
+                              "handler_string": "'Invalid mapping update'"
+                            }
+                          }
+                        ],
+                        "exception_statements_line_no": [
+                          478
+                        ]
+                      }
+                    ],
+                    "exception_line_no": 474,
+                    "end_line_no": 479
+                  },
+                  {
+                    "type": "begin_end",
+                    "begin_line_no": 483,
+                    "begin_indent": 12,
+                    "begin_end_statements": [
+                      {
+                        "if_expression": " NVL(:NEW.VALID_IND, 'Y') = 'N' AND NVL(:OLD.VALID_IND, 'N') = 'Y' ",
+                        "type": "if_else",
+                        "if_line_no": 484,
+                        "then_statements": [],
+                        "if_indent": 16,
+                        "end_if_line_no": 515,
+                        "if_elses": [],
+                        "else_statements": []
+                      }
+                    ],
+                    "exception_handlers": [
+                      {
+                        "type": "exception_handler",
+                        "exception_name": "OTHERS",
+                        "when_line_no": 517,
+                        "when_indent": 16,
+                        "then_line_no": 517,
+                        "exception_statements": [
+                          {
+                            "indent": 20,
+                            "line": "                    RAISE;",
+                            "line_no": 518,
+                            "is_end_semicolon": true
+                          }
+                        ],
+                        "exception_statements_line_no": [
+                          518
+                        ]
+                      }
+                    ],
+                    "exception_line_no": 516,
+                    "end_line_no": 519
+                  }
+                ],
+                "exception_handlers": [
+                  {
+                    "type": "exception_handler",
+                    "exception_name": "THEME_NO_ONLY_INSERT",
+                    "when_line_no": 521,
+                    "when_indent": 12,
+                    "then_line_no": 521,
                     "exception_statements": [
                       {
                         "type": "function_calling",
                         "function_name": "raise_application_error",
                         "parameter": {
-                          "handler_code": -20112,
-                          "handler_string": "'Company cannot be invalidated - still in use'"
+                          "handler_code": -20113,
+                          "handler_string": "'Theme number cannot be updated'"
                         }
                       }
                     ],
                     "exception_statements_line_no": [
-                      513
+                      522
+                    ]
+                  },
+                  {
+                    "type": "exception_handler",
+                    "exception_name": "OTHERS",
+                    "when_line_no": 523,
+                    "when_indent": 12,
+                    "then_line_no": 523,
+                    "exception_statements": [
+                      {
+                        "type": "function_calling",
+                        "function_name": "raise_application_error",
+                        "parameter": {
+                          "handler_code": -20998,
+                          "handler_string": "'Unexpected error during update: ' || SQLERRM"
+                        }
+                      }
+                    ],
+                    "exception_statements_line_no": [
+                      524,
+                      525
                     ]
                   }
                 ],
-                "exception_line_no": 511,
-                "end_line_no": 514
-              },
-              {
-                "indent": 16,
-                "line": "                END IF;",
-                "line_no": 515,
-                "is_end_semicolon": true
+                "exception_line_no": 520,
+                "end_line_no": 526
               }
-            ],
-            "exception_handlers": [
-              {
-                "type": "exception_handler",
-                "exception_name": "OTHERS",
-                "when_line_no": 517,
-                "when_indent": 16,
-                "then_line_no": 517,
-                "exception_statements": [
-                  {
-                    "indent": 20,
-                    "line": "                    RAISE;",
-                    "line_no": 518,
-                    "is_end_semicolon": true
-                  }
-                ],
-                "exception_statements_line_no": [
-                  518
-                ]
-              }
-            ],
-            "exception_line_no": 516,
-            "end_line_no": 519
-          }
-        ],
-        "exception_handlers": [
-          {
-            "type": "exception_handler",
-            "exception_name": "THEME_NO_ONLY_INSERT",
-            "when_line_no": 521,
-            "when_indent": 12,
-            "then_line_no": 521,
-            "exception_statements": [
-              {
-                "type": "function_calling",
-                "function_name": "raise_application_error",
-                "parameter": {
-                  "handler_code": -20113,
-                  "handler_string": "'Theme number cannot be updated'"
-                }
-              }
-            ],
-            "exception_statements_line_no": [
-              522
-            ]
-          },
-          {
-            "type": "exception_handler",
-            "exception_name": "OTHERS",
-            "when_line_no": 523,
-            "when_indent": 12,
-            "then_line_no": 523,
-            "exception_statements": [
-              {
-                "type": "function_calling",
-                "function_name": "raise_application_error",
-                "parameter": {
-                  "handler_code": -20998,
-                  "handler_string": "'Unexpected error during update: ' || SQLERRM"
-                }
-              }
-            ],
-            "exception_statements_line_no": [
-              524,
-              525
             ]
           }
         ],
-        "exception_line_no": 520,
-        "end_line_no": 526
-      },
-      {
-        "indent": 4,
-        "line": "    ELSIF DELETING THEN",
-        "line_no": 527,
-        "is_end_semicolon": false
-      },
-      {
-        "type": "begin_end",
-        "begin_line_no": 528,
-        "begin_indent": 8,
-        "begin_end_statements": [
-          {
-            "indent": 12,
-            "line": "            IF NVL(:OLD.ADDRESS_TYPE_CD, 'X') IN ('L', 'P') THEN",
-            "line_no": 531,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 16,
-            "line": "                RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;",
-            "line_no": 532,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 12,
-            "line": "            END IF;",
-            "line_no": 533,
-            "is_end_semicolon": true
-          },
-          {
-            "type": "begin_end",
-            "begin_line_no": 537,
-            "begin_indent": 12,
-            "begin_end_statements": [
-              {
-                "indent": 16,
-                "line": "                UPDATE THEME_MOLECULE_MAP",
-                "line_no": 540,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 16,
-                "line": "                SET",
-                "line_no": 541,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    VALID_IND = 'N'",
-                "line_no": 542,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 16,
-                "line": "                WHERE",
-                "line_no": 543,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    THEME_NO = :OLD.THEME_NO",
-                "line_no": 544,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    AND MOLECULE_ID = :OLD.MOLECULE_ID;",
-                "line_no": 545,
-                "is_end_semicolon": true
-              },
-              {
-                "indent": 16,
-                "line": "                UPDATE THEME_MOLECULE_MAP",
-                "line_no": 548,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 16,
-                "line": "                SET",
-                "line_no": 549,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    MOLECULE_SEQ_NO = MOLECULE_SEQ_NO - 1",
-                "line_no": 550,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 16,
-                "line": "                WHERE",
-                "line_no": 551,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    THEME_NO = :OLD.THEME_NO",
-                "line_no": 552,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    AND MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO",
-                "line_no": 553,
-                "is_end_semicolon": false
-              },
-              {
-                "indent": 20,
-                "line": "                    AND VALID_IND = 'Y';",
-                "line_no": 554,
-                "is_end_semicolon": true
-              }
-            ],
-            "exception_handlers": [
-              {
-                "type": "exception_handler",
-                "exception_name": "OTHERS",
-                "when_line_no": 556,
-                "when_indent": 16,
-                "then_line_no": 556,
-                "exception_statements": [
-                  {
-                    "indent": 20,
-                    "line": "                    RAISE ERR_DEL;",
-                    "line_no": 557,
-                    "is_end_semicolon": true
-                  }
-                ],
-                "exception_statements_line_no": [
-                  557
-                ]
-              }
-            ],
-            "exception_line_no": 555,
-            "end_line_no": 558
-          }
-        ],
-        "exception_handlers": [
-          {
-            "type": "exception_handler",
-            "exception_name": "ERR_NOT_ALLOWED_TO_INVALIDATE",
-            "when_line_no": 560,
-            "when_indent": 12,
-            "then_line_no": 560,
-            "exception_statements": [
-              {
-                "type": "function_calling",
-                "function_name": "raise_application_error",
-                "parameter": {
-                  "handler_code": -20114,
-                  "handler_string": "'Not allowed to invalidate this type of record'"
-                }
-              }
-            ],
-            "exception_statements_line_no": [
-              561
-            ]
-          },
-          {
-            "type": "exception_handler",
-            "exception_name": "ERR_DEL",
-            "when_line_no": 562,
-            "when_indent": 12,
-            "then_line_no": 562,
-            "exception_statements": [
-              {
-                "type": "function_calling",
-                "function_name": "raise_application_error",
-                "parameter": {
-                  "handler_code": -20115,
-                  "handler_string": "'Error during deletion'"
-                }
-              }
-            ],
-            "exception_statements_line_no": [
-              563
-            ]
-          }
-        ],
-        "exception_line_no": 559,
-        "end_line_no": 564
-      },
-      {
-        "indent": 4,
-        "line": "    END IF;",
-        "line_no": 565,
-        "is_end_semicolon": true
+        "else_statements": []
       },
       {
         "type": "begin_end",
@@ -2856,22 +1617,14 @@
             "is_end_semicolon": true
           },
           {
-            "indent": 8,
-            "line": "        IF V_COUNTER > 0 THEN",
-            "line_no": 588,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            RAISE ERR_INV_MOL_SEQUENCE;",
-            "line_no": 589,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 8,
-            "line": "        END IF;",
-            "line_no": 590,
-            "is_end_semicolon": true
+            "if_expression": " V_COUNTER > 0 ",
+            "type": "if_else",
+            "if_line_no": 588,
+            "then_statements": [],
+            "if_indent": 8,
+            "end_if_line_no": 590,
+            "if_elses": [],
+            "else_statements": []
           },
           {
             "type": "begin_end",
@@ -3385,15 +2138,682 @@
     "-- Clean up expired records",
     "-- Log cleanup error but don't fail the main operation"
   ],
-  "rest_strings": [],
+  "rest_strings": [
+    {
+      "indent": 8,
+      "line": "        V_USERID := TXO_UTIL.GET_USERID;",
+      "line_no": 94,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            V_USERID := USER;",
+      "line_no": 97,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    RAISE INVALID_THEME_NO;",
+      "line_no": 132,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                SELECT",
+      "line_no": 138,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    COUNT(*) INTO V_COUNTER",
+      "line_no": 139,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                FROM",
+      "line_no": 140,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    (",
+      "line_no": 141,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        SELECT",
+      "line_no": 142,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            THEME_NO",
+      "line_no": 143,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        FROM",
+      "line_no": 144,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            V_THEMES",
+      "line_no": 145,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        UNION",
+      "line_no": 146,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        ALL",
+      "line_no": 147,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        SELECT",
+      "line_no": 148,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            THEME_NO",
+      "line_no": 149,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        FROM",
+      "line_no": 150,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            GMD.THEMES_ARCHIVE",
+      "line_no": 151,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    )",
+      "line_no": 152,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                WHERE",
+      "line_no": 153,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    T.THEME_NO = :NEW.THEME_NO;",
+      "line_no": 154,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    NULL;",
+      "line_no": 160,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                OPEN C_COMPANY_MAPPINGS;",
+      "line_no": 223,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                LOOP",
+      "line_no": 224,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    FETCH C_COMPANY_MAPPINGS INTO V_COMPANY_REC;",
+      "line_no": 225,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    EXIT WHEN C_COMPANY_MAPPINGS%NOTFOUND;",
+      "line_no": 226,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 24,
+      "line": "                        SELECT",
+      "line_no": 230,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            COUNT(*) INTO V_COUNTER",
+      "line_no": 231,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        FROM",
+      "line_no": 232,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            CFG_V_COMPANIES",
+      "line_no": 233,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 24,
+      "line": "                        WHERE",
+      "line_no": 234,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            COMPANY_TYPE_CD IN ('L')",
+      "line_no": 235,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            AND VALID_IND = 'Y'",
+      "line_no": 236,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            AND COMPANY_CD = V_COMPANY_REC.LEGAL_COMPANY_CD;",
+      "line_no": 237,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 28,
+      "line": "                            SELECT",
+      "line_no": 245,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                COUNT(*) INTO V_COUNTER",
+      "line_no": 246,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            FROM",
+      "line_no": 247,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                CFG.CFG_V_COMPANY_ADDRESSES",
+      "line_no": 248,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            WHERE",
+      "line_no": 249,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                COMPANY_CD = V_COMPANY_REC.REPORTING_ENTITY_CD",
+      "line_no": 250,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                AND ADDRESS_TYPE_CD = 'RES';",
+      "line_no": 251,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 28,
+      "line": "                            SELECT",
+      "line_no": 258,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                VALID_FROM,",
+      "line_no": 259,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                COUNTRY_CD INTO V_VALID_FROM_DATE,",
+      "line_no": 260,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                V_COUNTRY_CD",
+      "line_no": 261,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            FROM",
+      "line_no": 262,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                CFG.CFG_V_COMPANY_ADDRESSES",
+      "line_no": 263,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 28,
+      "line": "                            WHERE",
+      "line_no": 264,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                COMPANY_CD = V_COMPANY_REC.REPORTING_ENTITY_CD",
+      "line_no": 265,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 32,
+      "line": "                                AND ADDRESS_TYPE_CD = 'RES';",
+      "line_no": 266,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 32,
+      "line": "                                RAISE ERR_NO_ADR;",
+      "line_no": 269,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 28,
+      "line": "                            NULL;",
+      "line_no": 275,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 28,
+      "line": "                            NULL;",
+      "line_no": 279,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                END LOOP;",
+      "line_no": 281,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                CLOSE C_COMPANY_MAPPINGS;",
+      "line_no": 283,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    RAISE;",
+      "line_no": 290,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                OPEN C_THEME_MOLECULES;",
+      "line_no": 296,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                LOOP",
+      "line_no": 297,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    FETCH C_THEME_MOLECULES INTO V_THEME_REC;",
+      "line_no": 298,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    EXIT WHEN C_THEME_MOLECULES%NOTFOUND;",
+      "line_no": 299,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 28,
+      "line": "                            NULL;",
+      "line_no": 324,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                END LOOP;",
+      "line_no": 326,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                CLOSE C_THEME_MOLECULES;",
+      "line_no": 328,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    RAISE;",
+      "line_no": 335,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                OPEN C_ADDRESS_RECORDS;",
+      "line_no": 341,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                LOOP",
+      "line_no": 342,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    FETCH C_ADDRESS_RECORDS INTO V_ADDRESS_REC;",
+      "line_no": 343,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    EXIT WHEN C_ADDRESS_RECORDS%NOTFOUND;",
+      "line_no": 344,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 28,
+      "line": "                            NULL;",
+      "line_no": 371,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                END LOOP;",
+      "line_no": 373,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                CLOSE C_ADDRESS_RECORDS;",
+      "line_no": 375,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    RAISE;",
+      "line_no": 382,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                SELECT",
+      "line_no": 408,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    COUNT(*) INTO V_COUNTER",
+      "line_no": 409,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                FROM",
+      "line_no": 410,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    V_THEME_MOLECULE_MAP",
+      "line_no": 411,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                WHERE",
+      "line_no": 412,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    THEME_NO = :NEW.THEME_NO",
+      "line_no": 413,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    AND MOLECULE_ID = :NEW.MOLECULE_ID",
+      "line_no": 414,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    AND VALID_IND = 'Y';",
+      "line_no": 415,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 20,
+      "line": "                    RAISE;",
+      "line_no": 518,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 8,
+      "line": "        SELECT",
+      "line_no": 572,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            COUNT(*) INTO V_COUNTER",
+      "line_no": 573,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 8,
+      "line": "        FROM",
+      "line_no": 574,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            (",
+      "line_no": 575,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                SELECT",
+      "line_no": 576,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    MOLECULE_SEQ_NO",
+      "line_no": 577,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                FROM",
+      "line_no": 578,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    THEME_MOLECULE_MAP",
+      "line_no": 579,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                WHERE",
+      "line_no": 580,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    THEME_NO = NVL(:NEW.THEME_NO, :OLD.THEME_NO)",
+      "line_no": 581,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    AND VALID_IND = 'Y'",
+      "line_no": 582,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                GROUP BY",
+      "line_no": 583,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    MOLECULE_SEQ_NO",
+      "line_no": 584,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                HAVING",
+      "line_no": 585,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    COUNT(*) > 1",
+      "line_no": 586,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            );",
+      "line_no": 587,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            FOR EXPIRED_REC IN (",
+      "line_no": 595,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                SELECT",
+      "line_no": 596,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    THEME_NO,",
+      "line_no": 597,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    REGISTRAT_DATE",
+      "line_no": 598,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                FROM",
+      "line_no": 599,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    V_THEMES",
+      "line_no": 600,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                WHERE",
+      "line_no": 601,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    VALID_TO <= TRUNC(SYSDATE)",
+      "line_no": 602,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 12,
+      "line": "            ) LOOP",
+      "line_no": 603,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                DELETE FROM GMD.THEMES",
+      "line_no": 604,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 16,
+      "line": "                WHERE",
+      "line_no": 605,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    THEME_NO = EXPIRED_REC.THEME_NO",
+      "line_no": 606,
+      "is_end_semicolon": false
+    },
+    {
+      "indent": 20,
+      "line": "                    AND REGISTRAT_DATE = EXPIRED_REC.REGISTRAT_DATE;",
+      "line_no": 607,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 12,
+      "line": "            END LOOP;",
+      "line_no": 608,
+      "is_end_semicolon": true
+    },
+    {
+      "indent": 16,
+      "line": "                NULL;",
+      "line_no": 613,
+      "is_end_semicolon": true
+    }
+  ],
   "conversion_stats": {
     "declaration_count": 84,
     "comment_count": 40,
-    "rest_string_count": 0,
-    "sql_convert_count": 0
+    "rest_string_count": 111,
+    "sql_convert_count": 99
   },
   "metadata": {
-    "parse_timestamp": "2025-08-22T20:23:18.448361",
+    "parse_timestamp": "2025-08-25T02:26:38.728184",
     "parser_version": "1.0"
   }
 }

@@ -596,15 +596,15 @@ class OracleTriggerAnalyzer:
 
         self._parse_begin_blocks()
         self._parse_begin_end_statements()
-        self._parse_final_statement()
         self._parse_case_when()
         self._parse_if_else()
-        self._parse_for_loop()
-        self._parse_assignment_statement()
+        # self._parse_for_loop()
+        # self._parse_assignment_statement()
         self._parse_sql_statements()
+        # self._parse_final_statement()
 
-        # # to check how many rest strings are in main section
-        # self.rest_strings_line = self.rest_strings()
+        # to check how many rest strings are in main section
+        self.rest_strings_line = self.rest_strings()
 
     def _parse_sql_statements(self):
         """
@@ -614,13 +614,104 @@ class OracleTriggerAnalyzer:
         Unified method to group both SQL statements (SELECT, INSERT, UPDATE, DELETE)
         and RAISE statements. Uses structured line dictionaries.
         STMT_TYPE_MAP = {
-            "SELECT": "select_statements",
-            "INSERT": "insert_statements",
-            "UPDATE": "update_statements",
-            "DELETE": "delete_statements",
-            "RAISE": "raise_statements"
+            "SELECT": "select_statement",
+            "INSERT": "insert_statement",
+            "UPDATE": "update_statement",
+            "DELETE": "delete_statement",
+            "RAISE": "raise_statement"
             }
         """
+        STMT_TYPE_MAP = [
+            ["SELECT", "select_statement"],
+            ["INSERT", "insert_statement"],
+            ["UPDATE", "update_statement"],
+            ["DELETE", "delete_statement"],
+            ["RAISE", "raise_statement"],
+        ]
+
+        def parse_sql_statements(working_lines: List[Dict[str, Any]], json_path: str):
+            sql_statements = []
+            i = 0
+            stmt_type_i = -1
+            stmt_type_type = ""
+            while i < len(working_lines):
+                # print(f"i: {i}")
+                item = working_lines[i]
+                # print(f"item: {item}")
+                if "line" in item:
+                    line_upper = item["line"].strip().upper()
+                    if line_upper.startswith("SELECT") and stmt_type_i == -1:
+                            stmt_type_i = i
+                            stmt_type_type = "select_statement"
+                            print(f"stmt_type_i: {working_lines[stmt_type_i]['line_no']} || {stmt_type_type}")
+                    elif line_upper.startswith("INSERT") and stmt_type_i == -1:
+                            stmt_type_i = i
+                            stmt_type_type = "insert_statement"
+                            print(f"stmt_type_i: {working_lines[stmt_type_i]['line_no']} || {stmt_type_type}")
+                    elif line_upper.startswith("UPDATE") and stmt_type_i == -1:
+                            stmt_type_i = i
+                            stmt_type_type = "update_statement"
+                            print(f"stmt_type_i: {working_lines[stmt_type_i]['line_no']} || {stmt_type_type}")
+                    elif line_upper.startswith("DELETE") and stmt_type_i == -1:
+                            stmt_type_i = i
+                            stmt_type_type = "delete_statement"
+                            print(f"stmt_type_i: {working_lines[stmt_type_i]['line_no']} || {stmt_type_type}")
+                    elif line_upper.startswith("RAISE") and stmt_type_i == -1:
+                            stmt_type_i = i
+                            stmt_type_type = "raise_statement"
+                            print(f"stmt_type_i: {working_lines[stmt_type_i]['line_no']} || {stmt_type_type}")
+                    elif line_upper.endswith(";") and stmt_type_i != -1:
+                        print(f"stmt_type: {working_lines[stmt_type_i]['line_no']} : {item['line_no']} || {stmt_type_type}")                         
+                        # sql_statements.append({
+                        #         "type": stmt_type_type,
+                        #         "line": self.combine_lines(working_lines[stmt_type_i:i+1]),
+                        #         "statement_line_no": working_lines[stmt_type_i]["line_no"],
+                        #         "statement_indent": working_lines[stmt_type_i]["indent"],
+                        # })
+                        stmt_type_i = -1
+                    # else:
+                    #     stmt_type_line += " " +  item["line"].strip()
+                # Handle nested structures (begin_end blocks, exception handlers, etc.)
+                # Process IF statements in begin_end_statements
+                elif "type" in item:
+                    if item["type"] == "begin_end":
+                        # Process IF statements in begin_end_statements
+                        if "begin_end_statements" in item:
+                            item["begin_end_statements"] = parse_sql_statements(item["begin_end_statements"], json_path + "begin_end.begin_end_statements")
+                        # Process IF statements in exception_handlers
+                        if "exception_handlers" in item:
+                            for k, handler in enumerate(item["exception_handlers"]):
+                                if "exception_statements" in handler:
+                                    handler["exception_statements"] = parse_sql_statements(handler["exception_statements"], json_path + f"begin_end.exception_handlers[{k}].exception_statements")
+
+                    elif item["type"] == "case_when":
+                        if "when_clauses" in item:
+                            for k, clause in enumerate(item["when_clauses"]):
+                                if "then_statements" in clause:
+                                    clause["then_statements"] = parse_sql_statements(clause["then_statements"], json_path + f"case_when.when_clauses[{k}].then_statements")
+                        # Process CASE statements in top-level else_statements
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_sql_statements(item["else_statements"], json_path + "case_when.else_statements")
+
+                    elif item["type"] == "if_else":
+                        # Process CASE statements in then_statements, if_elses, and else_statements
+                        if "then_statements" in item:
+                            item["then_statements"] = parse_sql_statements(item["then_statements"], json_path + "if_else.then_statements")
+                        if "if_elses" in item:
+                            for k, elsif_block in enumerate(item["if_elses"]):
+                                if "then_statements" in elsif_block:
+                                    elsif_block["then_statements"] = parse_sql_statements(elsif_block["then_statements"], json_path + f"if_else.if_elses[{k}].then_statements")
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_sql_statements(item["else_statements"], json_path + "if_else.else_statements")
+                    # Process SQL statements in for_loop
+                    elif item["type"] == "for_loop":
+                        if "for_statements" in item:
+                            item["for_statements"] = parse_sql_statements(item["for_statements"], json_path + "for_loop.for_statements")
+                    if stmt_type_i == -1:
+                        sql_statements.append(item)
+                i += 1
+            return working_lines
+        self.main_section_lines["begin_end_statements"] = parse_sql_statements(self.main_section_lines["begin_end_statements"],"main.begin_end_statements")
 
     def _parse_assignment_statement(self):
         """
@@ -637,15 +728,95 @@ class OracleTriggerAnalyzer:
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
 
-
         Detects FOR loop patterns in the format:
         FOR loop_variable IN (cursor_query) LOOP
             statements...
         END LOOP;
 
-
         And converts them to a structured JSON representation.
-        """
+        """ 
+        def parse_for_loop(working_lines: List[Dict[str, Any]]):
+            for_loop_statements = []
+            i = 0
+            for_i = -1
+            for_indent = -1
+            while i < len(working_lines):
+                item = working_lines[i]
+                if "line" in item:
+                    line_upper = item["line"].strip().upper()
+                    if line_upper.startswith("FOR") and for_i == -1:
+                        for_i = i
+                        for_indent = item["indent"]
+                        for_expression = ""
+                        if line_upper.endswith("LOOP"):
+                            for_expression = item["line"].strip()[3:-4]
+                        else:
+                            for j in range(for_i + 1, len(working_lines)):
+                                line_info = working_lines[j]
+                                line_upper = line_info["line"].strip().upper()
+                                if line_upper.endswith("LOOP"):
+                                    i = j - 1
+                                    break
+                                for_expression += line_info["line"].strip()
+                        logger.debug(f"for_expression: {for_expression}")
+                    elif (
+                        line_upper.startswith("END LOOP;")
+                        and item["indent"] == for_indent
+                        and for_i != -1
+                    ):
+                        logger.debug(
+                            f"for_i: {working_lines[for_i]["line_no"]} i: {item["line_no"]}"
+                        )
+                        for_loop_statements.append({
+                            "for_expression": for_expression,
+                            "type": "for_loop",
+                            "for_line_no": working_lines[for_i]["line_no"],
+                            "for_indent": for_indent,
+                            "end_for_line_no": item["line_no"],
+                        })
+                        for_i = -1
+                        for_indent = -1
+                    elif for_i == -1:
+                        for_loop_statements.append(item)
+                # Handle nested structures (begin_end blocks, exception handlers, etc.)
+                # Process FOR loop statements in begin_end_statements
+                elif "type" in item:
+                    if item["type"] == "begin_end":
+                        if "begin_end_statements" in item:
+                            item["begin_end_statements"] = parse_for_loop(item["begin_end_statements"])
+                        # Process FOR loop statements in exception_handlers
+                        if "exception_handlers" in item:
+                            for handler in item["exception_handlers"]:
+                                if "exception_statements" in handler:
+                                    handler["exception_statements"] = parse_for_loop(handler["exception_statements"])
+                    # Process FOR loop statements in case_when
+                    elif item["type"] == "case_when":
+                        if "when_clauses" in item:
+                            for clause in item["when_clauses"]:
+                                if "then_statements" in clause:
+                                    clause["then_statements"] = parse_for_loop(clause["then_statements"])
+                        # Process FOR loop statements in else_statements
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_for_loop(item["else_statements"])
+                    # Process FOR loop statements in if_else
+                    elif item["type"] == "if_else":
+                        if "then_statements" in item:
+                            item["then_statements"] = parse_for_loop(item["then_statements"])
+                        if "if_elses" in item:
+                            for elsif_block in item["if_elses"]:
+                                if "then_statements" in elsif_block:
+                                    elsif_block["then_statements"] = parse_for_loop(elsif_block["then_statements"])
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_for_loop(item["else_statements"])
+                    # Process FOR loop statements in for_loop
+                    elif item["type"] == "for_loop":
+                        if "for_statements" in item:
+                            item["for_statements"] = parse_for_loop(item["for_statements"])
+                    if for_i == -1:
+                        for_loop_statements.append(item)
+                i += 1
+            return for_loop_statements
+        self.main_section_lines["begin_end_statements"] = parse_for_loop(self.main_section_lines["begin_end_statements"])
 
     def _parse_if_else(self):
         """
@@ -655,6 +826,248 @@ class OracleTriggerAnalyzer:
         Updates self.main_section_lines with parsed blocks.
         """
 
+        def parse_if_else(working_lines: List[Dict[str, Any]]):
+            if_else_statements = []
+            i = 0
+            if_i = -1
+            if_indent = -1
+            while i < len(working_lines):
+                item = working_lines[i]
+                logger.debug(f"item: {item}")
+                if "line" in item:
+                    line_upper = item["line"].strip().upper()
+                    if line_upper.startswith("IF") and if_i == -1:
+                        if_i = i
+                        if_indent = item["indent"]
+                        logger.debug(f"if_indent: {if_indent}")
+                        if_expression = ""
+                        if line_upper.endswith("THEN"):
+                            if_expression = item["line"].strip()[2:-4]
+                        else:
+                            for j in range(if_i + 1, len(working_lines)):
+                                line_info = working_lines[j]
+                                line_upper = line_info["line"].strip().upper()
+                                logger.debug(f"line_info : {line_info}")
+                                if line_upper.endswith("THEN"):
+                                    i = j - 1
+                                    break
+                                if_expression += line_info["line"].strip()
+                        logger.debug(f"case_expression: {if_expression}")
+                    elif (
+                        line_upper.startswith("END IF;")
+                        and item["indent"] == if_indent
+                        and if_i != -1
+                    ):
+                        logger.debug(
+                            f"if_i: {working_lines[if_i]["line_no"]} i: {item["line_no"]}"
+                        )
+                        if_then, if_elses, else_statements = (
+                            self._parse_elif_else_statements(
+                                working_lines[if_i + 1 : i], if_indent
+                            )
+                        )
+                        if_then = parse_if_else(if_then)
+                        for elif_clause in if_elses:
+                            elif_clause["then_statements"] = parse_if_else(
+                                elif_clause["then_statements"]
+                            )
+                        else_statements = parse_if_else(else_statements)
+                        if_else_statements.append(
+                            {
+                                "if_expression": if_expression,
+                                "type": "if_else",
+                                "if_line_no": working_lines[if_i]["line_no"],
+                                "then_statements": if_then,
+                                "if_indent": if_indent,
+                                "end_if_line_no": item["line_no"],
+                                "if_elses": if_elses,
+                                "else_statements": else_statements,
+                            }
+                        )
+                        if_i = -1
+                        if_indent = -1
+                    elif if_i == -1:
+                        if_else_statements.append(item)
+                # Handle nested structures (begin_end blocks, exception handlers, etc.)
+                # Process IF statements in begin_end_statements
+                elif "type" in item:
+                    if item["type"] == "begin_end":
+                        # Process IF statements in begin_end_statements
+                        if "begin_end_statements" in item:
+                            item["begin_end_statements"] = parse_if_else(item["begin_end_statements"])
+                        # Process IF statements in exception_handlers
+                        if "exception_handlers" in item:
+                            for handler in item["exception_handlers"]:
+                                if "exception_statements" in handler:
+                                    handler["exception_statements"] = parse_if_else(handler["exception_statements"])
+
+                    elif item["type"] == "case_when":
+                        if "when_clauses" in item:
+                            for clause in item["when_clauses"]:
+                                if "then_statements" in clause:
+                                    clause["then_statements"] = parse_if_else(clause["then_statements"])
+                        # Process CASE statements in top-level else_statements
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_if_else(item["else_statements"])
+
+                    elif item["type"] == "if_else":
+                        # Process CASE statements in then_statements, if_elses, and else_statements
+                        if "then_statements" in item:
+                            item["then_statements"] = parse_if_else(item["then_statements"])
+                        if "if_elses" in item:
+                            for elsif_block in item["if_elses"]:
+                                if "then_statements" in elsif_block:
+                                    elsif_block["then_statements"] = parse_if_else(elsif_block["then_statements"])
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_if_else(item["else_statements"])
+                    # Process IF statements in for_loop
+                    elif item["type"] == "for_loop":
+                        if "for_statements" in item:
+                            item["for_statements"] = parse_if_else(item["for_statements"])
+                    if if_i == -1:
+                        if_else_statements.append(item)
+                i += 1
+            return if_else_statements
+
+        self.main_section_lines["begin_end_statements"] = parse_if_else(self.main_section_lines["begin_end_statements"])
+
+    def _parse_elif_else_statements(
+        self, working_lines: List[Dict[str, Any]], elif_line_indent: int
+    ):
+        """
+        Parse elif and else statements from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+        elif_else_statements = working_lines
+        i = 0
+        if_then = []
+        if_elses = []
+        else_statements = []
+        elif_i = -1
+        while i < len(elif_else_statements):
+            line_info = elif_else_statements[i]
+            if isinstance(line_info, dict) and "line" in line_info:
+                line_upper = line_info["line"].strip().upper()
+                if (
+                    line_upper.startswith("ELSIF")
+                    and line_info["indent"] == elif_line_indent
+                ):
+                    if elif_i == -1:
+                        if_then = elif_else_statements[0:i]
+                    elif_i = i
+                    i += 1
+                    while i < len(elif_else_statements):
+                        line_info = elif_else_statements[i]
+                        logger.debug(f"line_info: {line_info}")
+                        if isinstance(line_info, dict) and "line" in line_info:
+                            line_upper = line_info["line"].strip().upper()
+                            if (
+                                line_upper.startswith("ELSIF")
+                                and line_info["indent"] == elif_line_indent
+                            ):
+                                i -= 1
+                                logger.debug(
+                                    elif_else_statements[elif_i],
+                                    elif_else_statements[i],
+                                )
+                                if_elses.append(
+                                    self._parse_elif_else_then_statements(
+                                        elif_else_statements[elif_i : i + 1]
+                                    )
+                                )
+                                break
+                            if (
+                                line_upper.startswith("ELSE")
+                                and line_info["indent"] == elif_line_indent
+                            ):
+                                logger.debug(
+                                    elif_else_statements[elif_i],
+                                    elif_else_statements[i - 1],
+                                )
+                                if_elses.append(
+                                    self._parse_elif_else_then_statements(
+                                        elif_else_statements[elif_i:i]
+                                    )
+                                )
+                                logger.debug(
+                                    elif_else_statements[i + 1],
+                                    elif_else_statements[-1],
+                                )
+                                else_statements = elif_else_statements[
+                                    i + 1 : len(elif_else_statements)
+                                ]
+                                i = len(elif_else_statements)
+                                break
+                        i += 1
+                elif (
+                    line_upper.startswith("ELSE")
+                    and line_info["indent"] == elif_line_indent
+                ):
+                    if elif_i == -1:
+                        if_then = elif_else_statements[0:i]
+                    logger.debug(
+                        f"else_statements: {elif_else_statements[i+1]["line_no"]}, {elif_else_statements[-1]["line_no"]}"
+                    )
+                    else_statements = elif_else_statements[
+                        i + 1 : len(elif_else_statements)
+                    ]
+                    i = len(elif_else_statements)
+            i += 1
+        return if_then, if_elses, else_statements
+
+    def _parse_elif_else_then_statements(self, working_lines: List[Dict[str, Any]]):
+        """
+        Parse elif and else then statements from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+        elif_else_then_statements = working_lines
+        logger.debug(elif_else_then_statements)
+        elif_value = ""
+        then_i = 0
+        logger.debug(f"elif_else_then_statements[0]: {elif_else_then_statements[0]}")
+        if elif_else_then_statements[0]["line"].strip().upper().endswith("THEN"):
+            then_i = 0
+            elif_value = self._extract_value_from_when_then(
+                [elif_else_then_statements[0]], ["ELSIF", "THEN"]
+            )
+        else:
+            # Multi-line: WHEN value ... THEN
+            # Find the THEN clause on subsequent lines
+            then_i = -1
+            j = 1
+            while j < len(elif_else_then_statements):
+                # Extract value from current line
+                logger.debug(f"elif_else_then_statements[j]: {elif_else_then_statements[j]}")
+                if (
+                    elif_else_then_statements[j]["line"]
+                    .strip()
+                    .upper()
+                    .endswith("THEN")
+                ):
+                    then_i = j
+                    break
+                j += 1
+            if then_i != -1:
+                elif_value = self._extract_value_from_when_then(
+                    elif_else_then_statements[: then_i + 1], ["ELSIF", "THEN"]
+                )
+        logger.debug(f"elif_else_then_statements 0: {elif_else_then_statements[0]['line_no']} then_i: {elif_else_then_statements[then_i]['line_no']}")
+        logger.debug(f"case_when_then_statements: {elif_else_then_statements}")
+        logger.debug(
+            f"elif_else_then_statements[0]['indent']: {elif_else_then_statements[0]['indent']}"
+        )
+        elif_statements = {
+            "type": "elif_statement",
+            "elif_line_no": elif_else_then_statements[0]["line_no"],
+            "elif_indent": elif_else_then_statements[0]["indent"],
+            "elif_value": elif_value,
+            "then_line_no": elif_else_then_statements[then_i]["line_no"],
+            "then_statements": elif_else_then_statements[then_i + 1 :],
+        }
+        return elif_statements
+
     def _parse_case_when(self):
         """
         Parse CASE WHEN ELSE statements from the main section of SQL with proper nested structure based on indentation.
@@ -662,6 +1075,226 @@ class OracleTriggerAnalyzer:
         Maintains the hierarchical structure of CASE-WHEN-ELSE blocks by checking indentation levels.
         Updates self.main_section_lines with parsed blocks.
         """
+
+        def parse_case_when(working_lines: List[Dict[str, Any]]):
+            case_when_statements = []
+            i = 0
+            case_i = -1
+            case_indent = -1
+            while i < len(working_lines):
+                item = working_lines[i]
+                if "line" in item:
+                    line_upper = item["line"].strip().upper()
+                    if line_upper.startswith("CASE") and case_i == -1:
+                        case_i = i
+                        case_indent = item["indent"]
+                        case_expression = item["line"].strip()[4:]
+                        for j in range(case_i + 1, len(working_lines)):
+                            line_info = working_lines[j]
+                            line_upper = line_info["line"].strip().upper()
+                            logger.debug(f"line_info : {line_info}")
+                            if line_upper.startswith("WHEN") or line_upper.startswith(
+                                "ELSE"
+                            ):
+                                i = j - 1
+                                break
+                            case_expression += line_info["line"].strip()
+                        logger.debug(f"case_expression: {case_expression}")
+                    elif (
+                        line_upper.startswith("END CASE;")
+                        and item["indent"] == case_indent
+                        and case_i != -1
+                    ):
+                        logger.debug(
+                            f"case_i: {working_lines[case_i]["line_no"]} i: {item["line_no"]}"
+                        )
+                        when_clauses, else_statements = (
+                            self._parse_case_when_statements(
+                                working_lines[case_i + 1 : i]
+                            )
+                        )
+                        for when_clause in when_clauses:
+                            when_clause["then_statements"] = parse_case_when(
+                                when_clause["then_statements"]
+                            )
+                        else_statements = parse_case_when(else_statements)
+                        case_when_statements.append(
+                            {
+                                "case_expression": case_expression,
+                                "type": "case_when",
+                                "case_line_no": working_lines[case_i]["line_no"],
+                                "case_indent": working_lines[case_i]["indent"],
+                                "end_case_line_no": item["line_no"],
+                                "when_clauses": when_clauses,
+                                "else_statements": else_statements,
+                            }
+                        )
+                        case_i = -1
+                        case_indent = -1
+                    elif case_i == -1:
+                        case_when_statements.append(item)
+                # Handle nested structures (begin_end blocks, exception handlers, etc.)
+                # Process CASE statements in begin_end_statements
+                elif "type" in item:
+                    if item["type"] == "begin_end":
+                        # Process CASE statements in begin_end_statements
+                        if "begin_end_statements" in item:
+                            item["begin_end_statements"] = parse_case_when(
+                                item["begin_end_statements"]
+                            )
+                        # Process CASE statements in exception_handlers
+                        if "exception_handlers" in item:
+                            for handler in item["exception_handlers"]:
+                                if "exception_statements" in handler:
+                                    handler["exception_statements"] = parse_case_when(
+                                        handler["exception_statements"]
+                                    )
+                    elif item["type"] == "case_when":
+                        if "when_clauses" in item:
+                            for clause in item["when_clauses"]:
+                                if "then_statements" in clause:
+                                    clause["then_statements"] = parse_case_when(
+                                        clause["then_statements"]
+                                    )
+                        # Process CASE statements in top-level else_statements
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_case_when(
+                                item["else_statements"]
+                            )
+                    # Process CASE statements in for_loop
+                    elif item["type"] == "for_loop":
+                        if "for_statements" in item:
+                            item["for_statements"] = parse_case_when(item["for_statements"])
+                    # Process CASE statements in if_else
+                    elif item["type"] == "if_else":
+                        if "then_statements" in item:
+                            item["then_statements"] = parse_case_when(item["then_statements"])
+                        if "if_elses" in item:
+                            for elsif_block in item["if_elses"]:
+                                if "then_statements" in elsif_block:
+                                    elsif_block["then_statements"] = parse_case_when(elsif_block["then_statements"])
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_case_when(item["else_statements"])
+                    if case_i == -1:
+                        case_when_statements.append(item)
+
+                i += 1
+            return case_when_statements
+
+        self.main_section_lines["begin_end_statements"] = parse_case_when(
+            self.main_section_lines["begin_end_statements"]
+        )
+
+    def _parse_case_when_statements(self, working_lines: List[Dict[str, Any]]):
+        """
+        Parse case when statements from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+        case_when_statements = working_lines
+        i = 0
+        when_clauses = []
+        else_statements = []
+        when_line_indent = case_when_statements[0]["indent"]
+        when_i = -1
+        while i < len(case_when_statements):
+            line_info = case_when_statements[i]
+            line_upper = line_info["line"].strip().upper()
+            if (
+                line_upper.startswith("WHEN")
+                and line_info["indent"] == when_line_indent
+            ):
+                when_i = i
+                i += 1
+                while i < len(case_when_statements):
+                    line_info = case_when_statements[i]
+                    line_upper = line_info["line"].strip().upper()
+                    if (
+                        line_upper.startswith("WHEN")
+                        and line_info["indent"] == when_line_indent
+                    ):
+                        i -= 1
+                        logger.debug(
+                            case_when_statements[when_i], case_when_statements[i]
+                        )
+                        when_clauses.append(
+                            self._parse_case_when_then_statements(
+                                case_when_statements[when_i : i + 1]
+                            )
+                        )
+                        break
+                    if (
+                        line_upper.startswith("ELSE")
+                        and line_info["indent"] == when_line_indent
+                    ):
+                        logger.debug(
+                            case_when_statements[when_i], case_when_statements[i - 1]
+                        )
+                        when_clauses.append(
+                            self._parse_case_when_then_statements(
+                                case_when_statements[when_i:i]
+                            )
+                        )
+                        logger.debug(
+                            case_when_statements[i + 1], case_when_statements[-1]
+                        )
+                        else_statements = case_when_statements[
+                            i + 1 : len(case_when_statements)
+                        ]
+                        i = len(case_when_statements)
+                        break
+                    i += 1
+            i += 1
+        return when_clauses, else_statements
+
+    def _parse_case_when_then_statements(self, working_lines: List[Dict[str, Any]]):
+        """
+        Parse case when then statements from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+        case_when_then_statements = working_lines
+        logger.debug(case_when_then_statements)
+        when_value = ""
+        then_i = 0
+        if case_when_then_statements[0]["line"].strip().upper().endswith("THEN"):
+            then_i = 0
+            when_value = self._extract_value_from_when_then(
+                [case_when_then_statements[0]], ["WHEN", "THEN"]
+            )
+        else:
+            # Multi-line: WHEN value ... THEN
+            # Find the THEN clause on subsequent lines
+            then_i = -1
+            j = 1
+            while j < len(case_when_then_statements):
+                # Extract value from current line
+                if (
+                    case_when_then_statements[j]["line"]
+                    .strip()
+                    .upper()
+                    .endswith("THEN")
+                ):
+                    then_i = j
+                    break
+                j += 1
+            if then_i != -1:
+                when_value = self._extract_value_from_when_then(
+                    case_when_then_statements[: then_i + 1], ["WHEN", "THEN"]
+                )
+        logger.debug(
+            f"case_when_then_statements 0: {case_when_then_statements[0]['line_no']} then_i: {case_when_then_statements[then_i]['line_no']}"
+        )
+        logger.debug(f"case_when_then_statements: {case_when_then_statements}")
+        when_statements = {
+            "type": "when_statement",
+            "when_line_no": case_when_then_statements[0]["line_no"],
+            "when_indent": case_when_then_statements[0]["indent"],
+            "when_value": when_value,
+            "then_line_no": case_when_then_statements[then_i]["line_no"],
+            "then_statements": case_when_then_statements[then_i + 1 :],
+        }
+        return when_statements
 
     def _parse_final_statement(self):
         """
@@ -730,7 +1363,7 @@ class OracleTriggerAnalyzer:
             while i < len(working_lines):
                 line_info = working_lines[i]
                 line_upper = line_info["line"].strip().upper()
-                if line_upper.startswith("BEGIN"):
+                if line_upper.startswith("BEGIN") and begin_i == -1:
                     logger.debug(f"Begin line: {line_info} {i}")
                     begin_i = i
                     begin_line_indent = line_info["indent"]
@@ -820,16 +1453,18 @@ class OracleTriggerAnalyzer:
                         # No THEN found, skip this WHEN
                         i += 1
                         continue
-                # if when_i == then_i:
-                #     exception_name = self._extract_exception_name_from_when([working_lines[when_i]])
-                # else:
-                #     exception_name = self._extract_exception_name_from_when(
-                #         working_lines[when_i:then_i+1]
-                #     )
                 # Create exception handler structure
                 exception_handler = {
                     "type": "exception_handler",
-                    "exception_name": self._extract_exception_name_from_when([working_lines[when_i]]) if when_i == then_i else self._extract_exception_name_from_when(working_lines[when_i:then_i+1]),
+                    "exception_name": (
+                        self._extract_value_from_when_then(
+                            [working_lines[when_i]], ["WHEN", "THEN"]
+                        )
+                        if when_i == then_i
+                        else self._extract_value_from_when_then(
+                            working_lines[when_i : then_i + 1], ["WHEN", "THEN"]
+                        )
+                    ),
                     "when_line_no": working_lines[when_i]["line_no"],
                     "when_indent": working_lines[when_i]["indent"],
                     "then_line_no": working_lines[then_i]["line_no"],
@@ -852,7 +1487,9 @@ class OracleTriggerAnalyzer:
 
                     # Add the line to exception statements
                     exception_handler["exception_statements"].append(k_line_info)
-                    exception_handler["exception_statements_line_no"].append(k_line_info["line_no"])
+                    exception_handler["exception_statements_line_no"].append(
+                        k_line_info["line_no"]
+                    )
                     k += 1
                 exception_handler["exception_statements"] = (
                     self._parse_exception_statements(
@@ -872,191 +1509,213 @@ class OracleTriggerAnalyzer:
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
         """
-        i=0
-        statements=[]
-        raise_application_error_i=-1
+        i = 0
+        statements = []
+        raise_application_error_i = -1
         while i < len(exception_statements):
             line_info = exception_statements[i]
             line_upper = line_info["line"].strip().upper()
             if line_upper.startswith("RAISE_APPLICATION_ERROR"):
                 raise_application_error_i = i
                 if line_upper.endswith(";"):
-                    # print(exception_statements[raise_application_error_i:i+1])
+                    logger.debug(
+                        exception_statements[raise_application_error_i : i + 1]
+                    )
                     statements.append(self._parse_raise_application_error([line_info]))
-                    raise_application_error_i = -1            
+                    raise_application_error_i = -1
             elif line_upper.endswith(";") and raise_application_error_i != -1:
-                # print(exception_statements[raise_application_error_i:i+1])
-                statements.append(self._parse_raise_application_error(exception_statements[raise_application_error_i:i+1]))
+                logger.debug(exception_statements[raise_application_error_i : i + 1])
+                statements.append(
+                    self._parse_raise_application_error(
+                        exception_statements[raise_application_error_i : i + 1]
+                    )
+                )
                 raise_application_error_i = -1
             elif raise_application_error_i == -1:
                 statements.append(line_info)
             i += 1
         return statements
-    
+
     def _parse_raise_application_error(self, working_lines: List[Dict[str, Any]]):
         """
         Parse RAISE_APPLICATION_ERROR calls from the main section of SQL.
         Extracts the structure and converts to a structured format.
-        
+
         Handles patterns like:
         - RAISE_APPLICATION_ERROR(-20101, 'Invalid theme number format');
         - RAISE_APPLICATION_ERROR(-20117, V_TRIGGER_NAME || ' - Insert error');
         - Multi-line RAISE_APPLICATION_ERROR calls
-        
+
         Returns:
             dict: Structured representation of the RAISE_APPLICATION_ERROR call
         """
         # Combine all lines into a single string
         combined_line = self.combine_lines(working_lines)
-        # print(combined_line)
+        logger.debug(combined_line)
         # Remove trailing semicolon if present
-        combined_line = combined_line.rstrip(';').strip()
-        
+        combined_line = combined_line.rstrip(";").strip()
+
         logger.debug(f"Processing RAISE_APPLICATION_ERROR: {combined_line}")
-        
+
         # Extract the function name (should be RAISE_APPLICATION_ERROR)
-        if not combined_line.upper().startswith('RAISE_APPLICATION_ERROR'):
+        if not combined_line.upper().startswith("RAISE_APPLICATION_ERROR"):
             logger.debug(f"Not a RAISE_APPLICATION_ERROR call: {combined_line}")
             return combined_line
-        
+
         # Find the opening parenthesis after RAISE_APPLICATION_ERROR
-        open_paren_pos = combined_line.find('(')
+        open_paren_pos = combined_line.find("(")
         if open_paren_pos == -1:
             logger.debug(f"No opening parenthesis found in: {combined_line}")
             return combined_line
-        
+
         # Extract the parameters part (everything between parentheses)
         params_start = open_paren_pos + 1
         params_end = self._find_matching_closing_paren(combined_line, open_paren_pos)
         if params_end == -1:
             logger.debug(f"No closing parenthesis found in: {combined_line}")
             return combined_line
-        
+
         params_text = combined_line[params_start:params_end].strip()
         logger.debug(f"Parameters text: {params_text}")
-        
+
         # Parse the parameters (handler_code and handler_string)
-        handler_code, handler_string = self._parse_raise_application_error_params(params_text)
-        
-        logger.debug(f"Parsed - handler_code: '{handler_code}', handler_string: '{handler_string}'")
-        
+        handler_code, handler_string = self._parse_raise_application_error_params(
+            params_text
+        )
+
+        logger.debug(
+            f"Parsed - handler_code: '{handler_code}', handler_string: '{handler_string}'"
+        )
+
         # Create the structured representation
         result = {
             "type": "function_calling",
             "function_name": "raise_application_error",
             "parameter": {
                 "handler_code": handler_code,
-                "handler_string": handler_string
-            }
+                "handler_string": handler_string,
+            },
         }
-        
+
         return result
-    
+
     def _find_matching_closing_paren(self, text: str, open_pos: int) -> int:
         """
         Find the matching closing parenthesis for an opening parenthesis.
         Handles nested parentheses correctly.
-        
+
         Args:
             text (str): The text to search in
             open_pos (int): Position of the opening parenthesis
-            
+
         Returns:
             int: Position of the matching closing parenthesis, or -1 if not found
         """
         stack = 0
         for i in range(open_pos, len(text)):
-            if text[i] == '(':
+            if text[i] == "(":
                 stack += 1
-            elif text[i] == ')':
+            elif text[i] == ")":
                 stack -= 1
                 if stack == 0:
                     return i
         return -1
-    
-    def _parse_raise_application_error_params(self, params_text: str) -> Tuple[int, str]:
+
+    def _parse_raise_application_error_params(
+        self, params_text: str
+    ) -> Tuple[int, str]:
         """
         Parse the parameters of a RAISE_APPLICATION_ERROR call.
-        
+
         Args:
             params_text (str): The text between parentheses of RAISE_APPLICATION_ERROR
-            
+
         Returns:
             Tuple[str, str]: (handler_code, handler_string)
         """
         logger.debug(f"Parsing parameters: '{params_text}'")
-        
+
         # Find the comma that separates the two parameters
         # We need to handle cases where the first parameter might contain commas
         # (like in complex expressions)
-        
+
         # First, try to find a comma that's not inside quotes or parentheses
         comma_pos = -1
         paren_stack = 0
         in_single_quote = False
         in_double_quote = False
-        
+
         for i, char in enumerate(params_text):
             if char == "'" and not in_double_quote:
                 in_single_quote = not in_single_quote
             elif char == '"' and not in_single_quote:
                 in_double_quote = not in_double_quote
-            elif char == '(' and not in_single_quote and not in_double_quote:
+            elif char == "(" and not in_single_quote and not in_double_quote:
                 paren_stack += 1
-            elif char == ')' and not in_single_quote and not in_double_quote:
+            elif char == ")" and not in_single_quote and not in_double_quote:
                 paren_stack -= 1
-            elif char == ',' and paren_stack == 0 and not in_single_quote and not in_double_quote:
+            elif (
+                char == ","
+                and paren_stack == 0
+                and not in_single_quote
+                and not in_double_quote
+            ):
                 comma_pos = i
                 break
-        
+
         if comma_pos == -1:
             # If no comma found, assume it's a single parameter
-            logger.debug(f"Only one parameter found in RAISE_APPLICATION_ERROR: {params_text}")
+            logger.debug(
+                f"Only one parameter found in RAISE_APPLICATION_ERROR: {params_text}"
+            )
             return int(params_text.strip()), ""
-        
+
         # Split the parameters
         handler_code = int(params_text[:comma_pos].strip())
-        handler_string = self.format_values(params_text[comma_pos + 1:].strip())
-        
+        handler_string = self.format_values(params_text[comma_pos + 1 :].strip())
+
         logger.debug(f"Handler code part: '{handler_code}'")
         logger.debug(f"Handler string part: '{handler_string}'")
-        
+
         return handler_code, handler_string
-    
-    def _extract_exception_name_from_when(self, working_lines: List[Dict[str, Any]]) -> str:
+
+    def _extract_value_from_when_then(
+        self, working_lines: List[Dict[str, Any]], change_blocks: [str, str]
+    ) -> str:
         """
-        Extract the exception name from a WHEN clause.
+        Extract the value from a WHEN clause.
 
         Handles both formats:
-        - Single line: "WHEN exception_name THEN"
-        - Multi-line: "WHEN exception_name" followed by "THEN" on next line
+        - Single line: "WHEN value THEN"
+        - Multi-line: "WHEN value" followed by "THEN" on next line
+        - Multi-line: "WHEN value" followed by "THEN" on next line
 
         Args:
-            when_line (str): The WHEN clause line
+            working_lines (List[Dict[str, Any]]): The lines to extract the value from
+            change_blocks (List[str]): The blocks to change
 
         Returns:
-            str: The extracted exception name
+            str: The extracted value
 
         Examples:
             "WHEN ERR_UPD THEN" -> "ERR_UPD"
             "WHEN OTHERS THEN" -> "OTHERS"
             "WHEN NO_DATA_FOUND THEN" -> "NO_DATA_FOUND"
-            "WHEN exception_name" -> "exception_name"
+            "WHEN value" -> "value"
         """
         # Remove leading/trailing whitespace and convert to uppercase for consistency
         line = self.combine_lines(working_lines)
-
         # Remove "WHEN" prefix
-        if line.startswith("WHEN"):
-            line = line[4:].strip()
+        if line.startswith(change_blocks[0]):
+            line = line[len(change_blocks[0]) :].strip()
 
         # If line ends with "THEN", remove it
-        if line.endswith("THEN"):
-            line = line[:-4].strip()
+        if line.endswith(change_blocks[1]):
+            line = line[: -len(change_blocks[1])].strip()
 
-        # For multi-line cases, just return the exception name part
-        return line
-    
+        # For multi-line cases, just return the value part
+        return line.strip()
+
     def combine_lines(self, working_lines: List[Dict[str, Any]]):
         """
         Combine lines from the main section of SQL.
@@ -1066,15 +1725,15 @@ class OracleTriggerAnalyzer:
         if len(working_lines) == 0:
             return ""
         elif len(working_lines) == 1:
-            line =  working_lines[0]["line"].strip()
+            line = working_lines[0]["line"].strip()
         elif len(working_lines) > 1:
-            line =  ""
+            line = ""
             for i in range(len(working_lines)):
                 line += working_lines[i]["line"].strip() + " "
             line = line.strip()
-            # print(line)
-        return line
-    
+            logger.debug(line)
+        return line.strip()
+
     def rest_strings(self) -> List[str]:
         """
         Find all "rest string" content in various statement types within the JSON structure.

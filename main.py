@@ -206,11 +206,17 @@ def sql_to_json_processor(src_path: str, out_path: str, file_name: str) -> None:
         out_path (str): Path to the output JSON file
         file_name (str): Trigger number extracted from filename
     """
+
+    # with open(src_path, "r", encoding="utf-8") as f:
+    #     sql_content: str = f.read()
+    # analyzer = OracleTriggerAnalyzer(sql_content)
+    # json_content: Dict[str, Any] = analyzer.to_json()
+    # with open(out_path, "w", encoding="utf-8") as f:
+    #     json.dump(json_content, f, indent=2)
     debug("=== SQL to JSON processing for trigger %s ===", file_name)
-
-
     # Step 1: Read the SQL file content
-    debug("Reading SQL file: %s", src_path)
+    # info("Reading SQL file: %s", src_path)
+    print(f"Reading SQL file: {src_path}")
     try:
         with open(src_path, "r", encoding="utf-8") as f:
             sql_content: str = f.read()
@@ -896,18 +902,18 @@ def main() -> None:
         #     error("Errors found in JSON files, skipping conversion")
         #     return
 
-        # # Step 2: Convert JSON back to SQL
-        # # -------------------------------
-        # info("Step 2: Converting JSON analysis back to formatted SQL...")
-        # debug("Starting Step 2: JSON analysis → formatted Oracle SQL")
-        # step2_start = time.time()
+        # Step 2: Convert JSON back to SQL
+        # -------------------------------
+        info("Step 2: Converting JSON analysis back to formatted SQL...")
+        debug("Starting Step 2: JSON analysis → formatted Oracle SQL")
+        step2_start = time.time()
        
-        # # Generate formatted SQL from the JSON analysis
-        # render_oracle_sql_from_analysis()
+        # Generate formatted SQL from the JSON analysis
+        render_oracle_sql_from_analysis()
        
-        # step2_duration = time.time() - step2_start
-        # info("✓ SQL formatting complete! (Duration: %.2f seconds)", step2_duration)
-        # debug(f"Step 2 completed in {step2_duration:.2f} seconds")
+        step2_duration = time.time() - step2_start
+        info("✓ SQL formatting complete! (Duration: %.2f seconds)", step2_duration)
+        debug(f"Step 2 completed in {step2_duration:.2f} seconds")
 
 
         # # Step 3: Clean JSON files
@@ -989,7 +995,7 @@ def main() -> None:
         # Detailed performance breakdown
         info("Performance breakdown by step:")
         info("  - Step 1 (SQL → JSON):              %.2f seconds (%.1f%%)", step1_duration, step1_duration/total_duration*100)
-        # info("  - Step 2 (JSON → Oracle SQL):       %.2f seconds (%.1f%%)", step2_duration, step2_duration/total_duration*100)
+        info("  - Step 2 (JSON → Oracle SQL):       %.2f seconds (%.1f%%)", step2_duration, step2_duration/total_duration*100)
         # info("  - Step 3 (JSON cleaning):           %.2f seconds (%.1f%%)", step3_duration, step3_duration/total_duration*100)
         # info("  - Step 4 (Validation):              %.2f seconds (%.1f%%)", step4_duration, step4_duration/total_duration*100)
         info("  - Step 5 (JSON → PL/JSON):          %.2f seconds (%.1f%%)", step5_duration, step5_duration/total_duration*100)
