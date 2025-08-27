@@ -17,380 +17,119 @@
   },
   "main": {
     "type": "begin_end",
-    "begin_line_no": 4,
     "begin_indent": 0,
     "begin_end_statements": [
       {
-        "indent": 4,
-        "line": "    V_USERID := COALESCE(NEW.UPD_USER, OLD.UPD_USER);",
-        "line_no": 5,
-        "is_end_semicolon": true
+        "type": "assignment",
+        "variable_name": "V_USERID",
+        "assignment_operator": ":=",
+        "expression": "COALESCE(NEW.UPD_USER, OLD.UPD_USER);",
+        "assignment_indent": 4
       },
       {
-        "indent": 4,
-        "line": "    V_TRG_UPD_DATE_STR := TO_CHAR(COALESCE(NEW.UPD_DATE, OLD.UPD_DATE), 'YYYY-MM-DD');",
-        "line_no": 6,
-        "is_end_semicolon": true
+        "type": "assignment",
+        "variable_name": "V_TRG_UPD_DATE_STR",
+        "assignment_operator": ":=",
+        "expression": "TO_CHAR(COALESCE(NEW.UPD_DATE, OLD.UPD_DATE), 'YYYY-MM-DD');",
+        "assignment_indent": 4
       },
       {
-        "if_expression": " TG_OP = 'UPDATE' ",
+        "condition": " TG_OP = 'UPDATE' ",
         "type": "if_else",
-        "if_line_no": 7,
-        "then_statements": [],
         "if_indent": 4,
-        "end_if_line_no": 33,
+        "then_statements": [
+          {
+            "condition": " COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X') ",
+            "type": "if_else",
+            "if_indent": 8,
+            "then_statements": [
+              {
+                "condition": "",
+                "type": "case_when",
+                "case_indent": 12,
+                "when_clauses": [
+                  {
+                    "type": "when_statement",
+                    "when_indent": 16,
+                    "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')",
+                    "then_statements": [
+                      {
+                        "type": "update_statement",
+                        "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.PROD_FAM_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
+                        "statement_indent": 20
+                      }
+                    ]
+                  },
+                  {
+                    "type": "when_statement",
+                    "when_indent": 16,
+                    "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')",
+                    "then_statements": [
+                      {
+                        "type": "update_statement",
+                        "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
+                        "statement_indent": 20
+                      }
+                    ]
+                  }
+                ],
+                "else_statements": [
+                  {
+                    "type": "null_statement",
+                    "sql_statement": "NULL;",
+                    "statement_indent": 20
+                  }
+                ]
+              },
+              "CALL GMD.GMD_UTIL_THEMES$UPD_THEME_DESC_JOB_PROC( P_PRODUCT_FAMILY_CD => NEW.PRODUCT_FAMILY_CD::TEXT, P_REGISTRAR => V_USERID::TEXT, P_TRG_TABLE => 'PRODUCT_FAMILIES'::TEXT, P_TRG_UPD_DATE => V_TRG_UPD_DATE_STR::TEXT )"
+            ],
+            "if_elses": [],
+            "else_statements": []
+          }
+        ],
         "if_elses": [],
         "else_statements": []
       },
       {
-        "indent": 4,
-        "line": "    RETURN NULL;",
-        "line_no": 35,
-        "is_end_semicolon": true
+        "type": "return_statement",
+        "sql_statement": "RETURN NULL;",
+        "statement_indent": 4
       }
     ],
-    "exception_handlers": [
-      {
-        "type": "exception_handler",
-        "exception_name": "NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')",
-        "when_line_no": 10,
-        "when_indent": 16,
-        "then_line_no": 10,
-        "exception_statements": [
-          {
-            "indent": 20,
-            "line": "                    UPDATE GMD.THEME_MOLECULES",
-            "line_no": 11,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    SET",
-            "line_no": 12,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 24,
-            "line": "                        MOLECULE_DESC = NEW.PROD_FAM_NAME",
-            "line_no": 13,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    WHERE",
-            "line_no": 14,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 24,
-            "line": "                        PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
-            "line_no": 15,
-            "is_end_semicolon": true
-          }
-        ],
-        "exception_statements_line_no": [
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
-      },
-      {
-        "type": "exception_handler",
-        "exception_name": "NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')",
-        "when_line_no": 16,
-        "when_indent": 16,
-        "then_line_no": 16,
-        "exception_statements": [
-          {
-            "indent": 20,
-            "line": "                    UPDATE GMD.THEME_MOLECULES",
-            "line_no": 17,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    SET",
-            "line_no": 18,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 24,
-            "line": "                        MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME",
-            "line_no": 19,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    WHERE",
-            "line_no": 20,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 24,
-            "line": "                        PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
-            "line_no": 21,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 16,
-            "line": "                ELSE",
-            "line_no": 22,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 20,
-            "line": "                    NULL;",
-            "line_no": 23,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 12,
-            "line": "            END CASE;",
-            "line_no": 24,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 12,
-            "line": "            CALL GMD.GMD_UTIL_THEMES$UPD_THEME_DESC_JOB_PROC(",
-            "line_no": 26,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 16,
-            "line": "                P_PRODUCT_FAMILY_CD => NEW.PRODUCT_FAMILY_CD::TEXT,",
-            "line_no": 27,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 16,
-            "line": "                P_REGISTRAR => V_USERID::TEXT,",
-            "line_no": 28,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 16,
-            "line": "                P_TRG_TABLE => 'PRODUCT_FAMILIES'::TEXT,",
-            "line_no": 29,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 16,
-            "line": "                P_TRG_UPD_DATE => V_TRG_UPD_DATE_STR::TEXT",
-            "line_no": 30,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            );",
-            "line_no": 31,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 8,
-            "line": "        END IF;",
-            "line_no": 32,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 4,
-            "line": "    END IF;",
-            "line_no": 33,
-            "is_end_semicolon": true
-          },
-          {
-            "indent": 4,
-            "line": "    RETURN NULL;",
-            "line_no": 35,
-            "is_end_semicolon": true
-          }
-        ],
-        "exception_statements_line_no": [
-          17,
-          18,
-          19,
-          20,
-          21,
-          22,
-          23,
-          24,
-          26,
-          27,
-          28,
-          29,
-          30,
-          31,
-          32,
-          33,
-          35
-        ]
-      }
-    ],
-    "exception_line_no": 36,
-    "end_line_no": 36
+    "exception_handlers": []
   },
   "sql_comments": [],
-  "rest_strings": [
-    {
-      "indent": 4,
-      "line": "    V_USERID := COALESCE(NEW.UPD_USER, OLD.UPD_USER);",
-      "line_no": 5,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    V_TRG_UPD_DATE_STR := TO_CHAR(COALESCE(NEW.UPD_DATE, OLD.UPD_DATE), 'YYYY-MM-DD');",
-      "line_no": 6,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    RETURN NULL;",
-      "line_no": 35,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 20,
-      "line": "                    UPDATE GMD.THEME_MOLECULES",
-      "line_no": 11,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    SET",
-      "line_no": 12,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        MOLECULE_DESC = NEW.PROD_FAM_NAME",
-      "line_no": 13,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    WHERE",
-      "line_no": 14,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
-      "line_no": 15,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 20,
-      "line": "                    UPDATE GMD.THEME_MOLECULES",
-      "line_no": 17,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    SET",
-      "line_no": 18,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME",
-      "line_no": 19,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    WHERE",
-      "line_no": 20,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 24,
-      "line": "                        PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
-      "line_no": 21,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 16,
-      "line": "                ELSE",
-      "line_no": 22,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 20,
-      "line": "                    NULL;",
-      "line_no": 23,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            END CASE;",
-      "line_no": 24,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 12,
-      "line": "            CALL GMD.GMD_UTIL_THEMES$UPD_THEME_DESC_JOB_PROC(",
-      "line_no": 26,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                P_PRODUCT_FAMILY_CD => NEW.PRODUCT_FAMILY_CD::TEXT,",
-      "line_no": 27,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                P_REGISTRAR => V_USERID::TEXT,",
-      "line_no": 28,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                P_TRG_TABLE => 'PRODUCT_FAMILIES'::TEXT,",
-      "line_no": 29,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 16,
-      "line": "                P_TRG_UPD_DATE => V_TRG_UPD_DATE_STR::TEXT",
-      "line_no": 30,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            );",
-      "line_no": 31,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        END IF;",
-      "line_no": 32,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    END IF;",
-      "line_no": 33,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 4,
-      "line": "    RETURN NULL;",
-      "line_no": 35,
-      "is_end_semicolon": true
-    }
-  ],
+  "rest_strings": [],
   "conversion_stats": {
     "declaration_count": 2,
     "comment_count": 0,
-    "rest_string_count": 25,
-    "sql_convert_count": 4
+    "rest_string_count": 0,
+    "sql_convert_count": {
+      "select_statement": 0,
+      "insert_statement": 0,
+      "update_statement": 2,
+      "delete_statement": 0,
+      "raise_statement": 0,
+      "assignment": 2,
+      "for_loop": 0,
+      "if_else": 2,
+      "case_when": 1,
+      "begin_end": 1,
+      "exception_handler": 0,
+      "function_calling": 0,
+      "when_statement": 2,
+      "elif_statement": 0,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 1,
+      "return_statement": 1
+    }
   },
   "metadata": {
-    "parse_timestamp": "2025-08-25T02:26:38.872213",
+    "parse_timestamp": "2025-08-28T03:15:39.289807",
     "parser_version": "1.0"
   }
 }

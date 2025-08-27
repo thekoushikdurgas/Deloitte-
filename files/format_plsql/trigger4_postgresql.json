@@ -1,0 +1,20 @@
+{
+    "on_insert": [
+        {
+            "type": "sql",
+            "sql": "DO $$\nDECLARE\n  V_ACTION TEXT;\n  COL_NAMES TEXT[];\n  COL_NEW_VALUES TEXT[];\n  COL_OLD_VALUES TEXT[];\n  V_TABLE_NAME TEXT := LOWER(TG_TABLE_NAME) || '_his';\n  V_SCHEMA_NAME TEXT := LOWER(TG_TABLE_SCHEMA);\nBEGIN\n  IF TG_OP = '' THEN\n  END IF;\n  RETURN NULL;\nEND;\nEND $$;"
+        }
+    ],
+    "on_update": [
+        {
+            "type": "sql",
+            "sql": "DO $$\nDECLARE\n  V_ACTION TEXT;\n  COL_NAMES TEXT[];\n  COL_NEW_VALUES TEXT[];\n  COL_OLD_VALUES TEXT[];\n  V_TABLE_NAME TEXT := LOWER(TG_TABLE_NAME) || '_his';\n  V_SCHEMA_NAME TEXT := LOWER(TG_TABLE_SCHEMA);\nBEGIN\n  IF TG_OP = '' THEN\n  END IF;\n  RETURN NULL;\nEND;\nEND $$;"
+        }
+    ],
+    "on_delete": [
+        {
+            "type": "sql",
+            "sql": "DO $$\nDECLARE\n  V_ACTION TEXT;\n  COL_NAMES TEXT[];\n  COL_NEW_VALUES TEXT[];\n  COL_OLD_VALUES TEXT[];\n  V_TABLE_NAME TEXT := LOWER(TG_TABLE_NAME) || '_his';\n  V_SCHEMA_NAME TEXT := LOWER(TG_TABLE_SCHEMA);\nBEGIN\n  IF TG_OP = '' THEN\n  END IF;\n  RETURN NULL;\nEND;\nEND $$;"
+        }
+    ]
+}

@@ -139,6 +139,7 @@ BEGIN
                RG_NO = V_NEW_RG_NO --:new.theme_no
             WHERE
                MOLECULE_ID = :NEW.MOLECULE_ID;
+            v_bonus := CASE WHEN :NEW.salary > 50000 THEN :NEW.salary * 0.1 ELSE 0 END;
          END IF;
       END IF;
    END IF;

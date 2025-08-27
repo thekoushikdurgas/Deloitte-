@@ -272,7 +272,7 @@ class FORMATPostsqlTriggerAnalyzer:
         
         # Render main execution block
         logger.debug("Rendering main execution block...")
-        main_lines = self._render_main_block(self.analysis["main"][0], 0)
+        main_lines = self._render_main_block(self.analysis["main"], 0)
         lines.extend(main_lines)
         
         # Add footer

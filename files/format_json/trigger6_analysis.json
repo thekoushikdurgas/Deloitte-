@@ -54,193 +54,113 @@
   },
   "main": {
     "type": "begin_end",
-    "begin_line_no": 12,
     "begin_indent": 0,
     "begin_end_statements": [
       {
-        "indent": 4,
-        "line": "    V_EVOLVED_THEME_NO := :NEW.EVOLVED_THEME_NO;",
-        "line_no": 13,
-        "is_end_semicolon": true
+        "type": "assignment",
+        "variable_name": "V_EVOLVED_THEME_NO",
+        "assignment_operator": ":=",
+        "expression": ":NEW.EVOLVED_THEME_NO;",
+        "assignment_indent": 4
       },
       {
-        "if_expression": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME) ",
+        "condition": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME) ",
         "type": "if_else",
-        "if_line_no": 18,
-        "then_statements": [],
         "if_indent": 4,
-        "end_if_line_no": 20,
-        "if_elses": [],
-        "else_statements": []
-      },
-      {
-        "if_expression": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED) ",
-        "type": "if_else",
-        "if_line_no": 24,
-        "then_statements": [],
-        "if_indent": 4,
-        "end_if_line_no": 26,
-        "if_elses": [],
-        "else_statements": []
-      },
-      {
-        "if_expression": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL) ",
-        "type": "if_else",
-        "if_line_no": 30,
-        "then_statements": [],
-        "if_indent": 4,
-        "end_if_line_no": 32,
-        "if_elses": [],
-        "else_statements": []
-      },
-      {
-        "if_expression": " (:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL) ",
-        "type": "if_else",
-        "if_line_no": 36,
-        "then_statements": [],
-        "if_indent": 4,
-        "end_if_line_no": 38,
-        "if_elses": [],
-        "else_statements": []
-      },
-      {
-        "if_expression": " (INSERTING) ",
-        "type": "if_else",
-        "if_line_no": 40,
         "then_statements": [
           {
-            "indent": 8,
-            "line": "        V_PROPOSAL_ID := PREDMD.SEQ_NMP_PROPOSAL_ID.NEXTVAL;",
-            "line_no": 41,
-            "is_end_semicolon": true
+            "type": "raise_statement",
+            "sql_statement": "RAISE V_NO_UPDATE_TO_EVOLVED;",
+            "statement_indent": 8
+          }
+        ],
+        "if_elses": [],
+        "else_statements": []
+      },
+      {
+        "condition": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED) ",
+        "type": "if_else",
+        "if_indent": 4,
+        "then_statements": [
+          {
+            "type": "raise_statement",
+            "sql_statement": "RAISE V_NO_UPDATE_EVOLVED_TO_TERMINATED;",
+            "statement_indent": 8
+          }
+        ],
+        "if_elses": [],
+        "else_statements": []
+      },
+      {
+        "condition": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL) ",
+        "type": "if_else",
+        "if_indent": 4,
+        "then_statements": [
+          {
+            "type": "assignment",
+            "variable_name": "V_EVOLVED_THEME_NO",
+            "assignment_operator": ":=",
+            "expression": "NULL;",
+            "assignment_indent": 8
+          }
+        ],
+        "if_elses": [],
+        "else_statements": []
+      },
+      {
+        "condition": " (:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL) ",
+        "type": "if_else",
+        "if_indent": 4,
+        "then_statements": [
+          {
+            "type": "raise_statement",
+            "sql_statement": "RAISE V_EXPLORATORY_THEMENO_NOT_NULL;",
+            "statement_indent": 8
+          }
+        ],
+        "if_elses": [],
+        "else_statements": []
+      },
+      {
+        "condition": " (INSERTING) ",
+        "type": "if_else",
+        "if_indent": 4,
+        "then_statements": [
+          {
+            "type": "assignment",
+            "variable_name": "V_PROPOSAL_ID",
+            "assignment_operator": ":=",
+            "expression": "PREDMD.SEQ_NMP_PROPOSAL_ID.NEXTVAL;",
+            "assignment_indent": 8
           },
           {
-            "indent": 8,
-            "line": "        INSERT INTO V_NEW_MEDICINE_PROPOSALS(",
-            "line_no": 42,
-            "is_end_semicolon": false
+            "type": "insert_statement",
+            "sql_statement": "INSERT INTO V_NEW_MEDICINE_PROPOSALS( PROPOSAL_ID, EXPLORATORY_THEME_NO, PROPOSAL_NAME, PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID, FIREWALL_ID ) VALUES ( V_PROPOSAL_ID, :NEW.EXPLORATORY_THEME_NO, :NEW.PROPOSAL_NAME, :NEW.PROPOSAL_STATUS_CD, :NEW.EVOLVED_THEME_NO, :NEW.MOLECULE_TYPE_ID, :NEW.PHARMACOLOGICAL_TYPE_ID, :NEW.FIREWALL_ID );",
+            "statement_indent": 8
           },
           {
-            "indent": 12,
-            "line": "            PROPOSAL_ID,",
-            "line_no": 43,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            EXPLORATORY_THEME_NO,",
-            "line_no": 44,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            PROPOSAL_NAME,",
-            "line_no": 45,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            PROPOSAL_STATUS_CD,",
-            "line_no": 46,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            EVOLVED_THEME_NO,",
-            "line_no": 47,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            MOLECULE_TYPE_ID,",
-            "line_no": 48,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            PHARMACOLOGICAL_TYPE_ID,",
-            "line_no": 49,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            FIREWALL_ID",
-            "line_no": 50,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 8,
-            "line": "        ) VALUES (",
-            "line_no": 51,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            V_PROPOSAL_ID,",
-            "line_no": 52,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            :NEW.EXPLORATORY_THEME_NO,",
-            "line_no": 53,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            :NEW.PROPOSAL_NAME,",
-            "line_no": 54,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            :NEW.PROPOSAL_STATUS_CD,",
-            "line_no": 55,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            :NEW.EVOLVED_THEME_NO,",
-            "line_no": 56,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            :NEW.MOLECULE_TYPE_ID,",
-            "line_no": 57,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            :NEW.PHARMACOLOGICAL_TYPE_ID,",
-            "line_no": 58,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 12,
-            "line": "            :NEW.FIREWALL_ID",
-            "line_no": 59,
-            "is_end_semicolon": false
-          },
-          {
-            "indent": 8,
-            "line": "        );",
-            "line_no": 60,
-            "is_end_semicolon": true
-          },
-          {
-            "if_expression": " :NEW.PARTNER_ID IS NOT NULL ",
+            "condition": " :NEW.PARTNER_ID IS NOT NULL ",
             "type": "if_else",
-            "if_line_no": 61,
-            "then_statements": [],
             "if_indent": 8,
-            "end_if_line_no": 63,
+            "then_statements": [
+              {
+                "type": "function_calling",
+                "function_name": "MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA",
+                "parameters": {
+                  "parameter_type": "positional",
+                  "positional_params": [
+                    "V_PROPOSAL_ID",
+                    ":NEW.PARTNER_ID"
+                  ],
+                  "named_params": {},
+                  "raw_text": "V_PROPOSAL_ID, :NEW.PARTNER_ID"
+                }
+              }
+            ],
             "if_elses": [],
             "else_statements": []
           }
         ],
-        "if_indent": 4,
-        "end_if_line_no": 79,
         "if_elses": [],
         "else_statements": []
       }
@@ -249,86 +169,84 @@
       {
         "type": "exception_handler",
         "exception_name": "DUP_VAL_ON_INDEX",
-        "when_line_no": 81,
         "when_indent": 4,
-        "then_line_no": 81,
         "exception_statements": [
           {
             "type": "function_calling",
-            "function_name": "raise_application_error",
-            "parameter": {
-              "handler_code": -20600,
-              "handler_string": "V_TRIGGER_NAME"
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20600",
+                "V_TRIGGER_NAME"
+              ],
+              "named_params": {},
+              "raw_text": "-20600, V_TRIGGER_NAME"
             }
           }
-        ],
-        "exception_statements_line_no": [
-          82
         ]
       },
       {
         "type": "exception_handler",
         "exception_name": "V_NO_UPDATE_EVOLVED_TO_TERMINATED",
-        "when_line_no": 83,
         "when_indent": 4,
-        "then_line_no": 83,
         "exception_statements": [
           {
             "type": "function_calling",
-            "function_name": "raise_application_error",
-            "parameter": {
-              "handler_code": -20800,
-              "handler_string": "V_TRIGGER_NAME"
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20800",
+                "V_TRIGGER_NAME"
+              ],
+              "named_params": {},
+              "raw_text": "-20800, V_TRIGGER_NAME"
             }
           }
-        ],
-        "exception_statements_line_no": [
-          84
         ]
       },
       {
         "type": "exception_handler",
         "exception_name": "V_NO_UPDATE_TO_EVOLVED",
-        "when_line_no": 85,
         "when_indent": 4,
-        "then_line_no": 85,
         "exception_statements": [
           {
             "type": "function_calling",
-            "function_name": "raise_application_error",
-            "parameter": {
-              "handler_code": -20900,
-              "handler_string": "V_TRIGGER_NAME"
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20900",
+                "V_TRIGGER_NAME"
+              ],
+              "named_params": {},
+              "raw_text": "-20900, V_TRIGGER_NAME"
             }
           }
-        ],
-        "exception_statements_line_no": [
-          86
         ]
       },
       {
         "type": "exception_handler",
         "exception_name": "V_EXPLORATORY_THEMENO_NOT_NULL",
-        "when_line_no": 87,
         "when_indent": 4,
-        "then_line_no": 87,
         "exception_statements": [
           {
             "type": "function_calling",
-            "function_name": "raise_application_error",
-            "parameter": {
-              "handler_code": -20940,
-              "handler_string": "V_TRIGGER_NAME"
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20940",
+                "V_TRIGGER_NAME"
+              ],
+              "named_params": {},
+              "raw_text": "-20940, V_TRIGGER_NAME"
             }
           }
-        ],
-        "exception_statements_line_no": [
-          88
         ]
       }
-    ],
-    "exception_line_no": 80,
-    "end_line_no": 89
+    ]
   },
   "sql_comments": [
     "-- status update to evolved is only allowed from the themes screen",
@@ -338,142 +256,37 @@
     "-- Evolved to Active",
     "-- not allowed to create NMP with exploratory_theme_no = null"
   ],
-  "rest_strings": [
-    {
-      "indent": 4,
-      "line": "    V_EVOLVED_THEME_NO := :NEW.EVOLVED_THEME_NO;",
-      "line_no": 13,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        V_PROPOSAL_ID := PREDMD.SEQ_NMP_PROPOSAL_ID.NEXTVAL;",
-      "line_no": 41,
-      "is_end_semicolon": true
-    },
-    {
-      "indent": 8,
-      "line": "        INSERT INTO V_NEW_MEDICINE_PROPOSALS(",
-      "line_no": 42,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            PROPOSAL_ID,",
-      "line_no": 43,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            EXPLORATORY_THEME_NO,",
-      "line_no": 44,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            PROPOSAL_NAME,",
-      "line_no": 45,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            PROPOSAL_STATUS_CD,",
-      "line_no": 46,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            EVOLVED_THEME_NO,",
-      "line_no": 47,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            MOLECULE_TYPE_ID,",
-      "line_no": 48,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            PHARMACOLOGICAL_TYPE_ID,",
-      "line_no": 49,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            FIREWALL_ID",
-      "line_no": 50,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        ) VALUES (",
-      "line_no": 51,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            V_PROPOSAL_ID,",
-      "line_no": 52,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            :NEW.EXPLORATORY_THEME_NO,",
-      "line_no": 53,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            :NEW.PROPOSAL_NAME,",
-      "line_no": 54,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            :NEW.PROPOSAL_STATUS_CD,",
-      "line_no": 55,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            :NEW.EVOLVED_THEME_NO,",
-      "line_no": 56,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            :NEW.MOLECULE_TYPE_ID,",
-      "line_no": 57,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            :NEW.PHARMACOLOGICAL_TYPE_ID,",
-      "line_no": 58,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 12,
-      "line": "            :NEW.FIREWALL_ID",
-      "line_no": 59,
-      "is_end_semicolon": false
-    },
-    {
-      "indent": 8,
-      "line": "        );",
-      "line_no": 60,
-      "is_end_semicolon": true
-    }
-  ],
+  "rest_strings": [],
   "conversion_stats": {
     "declaration_count": 10,
     "comment_count": 6,
-    "rest_string_count": 21,
-    "sql_convert_count": 15
+    "rest_string_count": 0,
+    "sql_convert_count": {
+      "select_statement": 0,
+      "insert_statement": 1,
+      "update_statement": 0,
+      "delete_statement": 0,
+      "raise_statement": 3,
+      "assignment": 3,
+      "for_loop": 0,
+      "if_else": 6,
+      "case_when": 0,
+      "begin_end": 1,
+      "exception_handler": 4,
+      "function_calling": 5,
+      "when_statement": 0,
+      "elif_statement": 0,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 0,
+      "return_statement": 0
+    }
   },
   "metadata": {
-    "parse_timestamp": "2025-08-25T02:26:38.888978",
+    "parse_timestamp": "2025-08-28T03:15:39.304502",
     "parser_version": "1.0"
   }
 }

@@ -327,13 +327,11 @@ class JSONTOPLJSON:
                             )
             return item
 
-        for u, main_item in enumerate(self.after_parse_on_insert):
-            logger.debug(f"after_parse_on_insert: {main_item["begin_end_statements"]}")
-            for r, begin_end_item in enumerate(main_item["begin_end_statements"]):
-                json_path = f"main.begin_end_statements.{r}.begin_end_statements"
-                self.after_parse_on_insert[u]["begin_end_statements"][r] = (
-                    process_on_insert_json(begin_end_item, json_path, "on_insert")
-                )
+        # for u, main_item in enumerate(self.after_parse_on_insert):
+        logger.debug(f"after_parse_on_insert: {self.after_parse_on_insert["begin_end_statements"]}")
+        for r, begin_end_item in enumerate(self.after_parse_on_insert["begin_end_statements"]):
+            json_path = f"main.begin_end_statements.{r}.begin_end_statements"
+            self.after_parse_on_insert["begin_end_statements"][r] = (process_on_insert_json(begin_end_item, json_path, "on_insert"))
 
     def parse_pl_json_on_update(self):
         """parse_pl_json_on_update function."""
@@ -465,12 +463,10 @@ class JSONTOPLJSON:
                             )
             return item
 
-        for u, main_item in enumerate(self.after_parse_on_update):
-            for r, begin_end_item in enumerate(main_item["begin_end_statements"]):
-                json_path = f"main.begin_end_statements.{r}.begin_end_statements"
-                self.after_parse_on_update[u]["begin_end_statements"][r] = (
-                    process_on_update_json(begin_end_item, json_path, "on_update")
-                )
+        # for u, main_item in enumerate(self.after_parse_on_update):
+        for r, begin_end_item in enumerate(self.after_parse_on_update["begin_end_statements"]):
+            json_path = f"main.begin_end_statements.{r}.begin_end_statements"
+            self.after_parse_on_update["begin_end_statements"][r] = (process_on_update_json(begin_end_item, json_path, "on_update"))
 
     def parse_pl_json_on_delete(self):
         """parse_pl_json_on_delete function."""
@@ -600,12 +596,10 @@ class JSONTOPLJSON:
                             )
             return item
 
-        for u, main_item in enumerate(self.after_parse_on_delete):
-            for r, begin_end_item in enumerate(main_item["begin_end_statements"]):
-                json_path = f"main.begin_end_statements.{r}.begin_end_statements"
-                self.after_parse_on_delete[u]["begin_end_statements"][r] = (
-                    process_on_delete_json(begin_end_item, json_path, "on_delete")
-                )
+        # for u, main_item in enumerate(self.after_parse_on_delete):
+        for r, begin_end_item in enumerate(self.after_parse_on_delete["begin_end_statements"]):
+            json_path = f"main.begin_end_statements.{r}.begin_end_statements"
+            self.after_parse_on_delete["begin_end_statements"][r] = (process_on_delete_json(begin_end_item, json_path, "on_delete"))
 
     def to_sql(self):
         """

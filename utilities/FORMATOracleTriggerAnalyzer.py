@@ -83,7 +83,7 @@ class FORMATOracleTriggerAnalyzer:
             str: Formatted Oracle SQL code ready for execution
         """
         start_time = time.time()
-        log_parsing_start("Oracle SQL generation", "Converting JSON analysis to formatted SQL")
+        logger.debug("Oracle SQL generation Converting JSON analysis to formatted SQL")
         debug(f"Analysis contains {len(self.analysis.get('declarations', {}).get('variables', []))} variables, "
               f"{len(self.analysis.get('declarations', {}).get('constants', []))} constants, "
               f"{len(self.analysis.get('declarations', {}).get('exceptions', []))} exceptions")
@@ -103,15 +103,15 @@ class FORMATOracleTriggerAnalyzer:
         debug(f"Generated {len(decl_lines)} lines of declarations")
         lines.extend(decl_lines)
         lines.append("")
-        log_performance("Declarations rendering", time.time() - declaration_start)
+        debug("Declarations rendering", time.time() - declaration_start)
         
         # Step 3: Render main execution block
         debug("Starting main execution block rendering")
         main_start = time.time()
-        main_lines = self._render_main_block(self.analysis["main"][0], 0, wrap_begin_end=True)
+        main_lines = self._render_main_block(self.analysis["main"], 0, wrap_begin_end=True)
         debug(f"Generated {len(main_lines)} lines in main execution block")
         lines.extend(main_lines)
-        log_performance("Main block rendering", time.time() - main_start)
+        debug("Main block rendering", time.time() - main_start)
         
         # Step 4: Add footer
         debug("Adding footer comments")
@@ -123,7 +123,7 @@ class FORMATOracleTriggerAnalyzer:
         debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
         
         duration = time.time() - start_time
-        log_parsing_complete("Oracle SQL generation", f"{len(lines)} lines generated in {duration:.3f}s")
+        debug("Oracle SQL generation", f"{len(lines)} lines generated in {duration:.3f}s")
         return result
 
     def _render_declarations(self, decl: Dict[str, Any]) -> List[str]:

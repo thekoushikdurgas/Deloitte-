@@ -1,0 +1,18 @@
+-- Generated from JSON analysis
+-- Generated on: 2025-08-28 03:15:39
+
+DECLARE
+  V_ACTION TEXT;
+  COL_NAMES TEXT[];
+  COL_NEW_VALUES TEXT[];
+  COL_OLD_VALUES TEXT[];
+  V_TABLE_NAME TEXT := LOWER(TG_TABLE_NAME) || '_his';
+  V_SCHEMA_NAME TEXT := LOWER(TG_TABLE_SCHEMA);
+
+BEGIN
+  IF  TG_OP = 'INSERT'  THEN
+  END IF;
+  RETURN NULL;
+END;
+
+-- End of generated SQL

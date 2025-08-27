@@ -49,6 +49,7 @@ from utilities.common import (
 #     for file in os.listdir("files/oracle"):
 #         if file.endswith(".sql"):
 #             file_name = file.split(".")[0]
+#             print(f"Processing file: {file_name}")
 #             sql_to_json_processor(f"files/oracle/{file}", f"files/format_json/{file_name}_analysis.json", file_name)
 
 def main() -> None:
