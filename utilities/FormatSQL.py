@@ -104,7 +104,6 @@ class FormatSQL:
         # Load mappings from Excel file
         self.func_mapping = self.load_mapping("function_mappings")
         self.type_mapping = self.load_mapping("data_type_mappings")
-        # self.exception_mapping = self.load_mapping("exception_mappings")
         
         # Validate analysis structure
         if not isinstance(analysis, dict):
@@ -251,7 +250,7 @@ class FormatSQL:
             warning(f"Unknown mapping type: {sheet_name}")
             return {}
 
-    def to_sql(self, db_type: str = "Oracle") -> str:
+    def to_sql(self, db_type: str = "Oracle") -> Dict:
         """
         Convert the JSON analysis to formatted SQL code for the specified database type.
         
@@ -865,10 +864,6 @@ class FormatSQL:
         exception_name = handler.get("exception_name", "")
         if exception_name:
             self.json_convert_sql['exception_handler'] += 1
-        # if db_type == "PostgreSQL":
-        #     # Apply exception mapping for PostgreSQL
-        #     mapped_exception = self.exception_mapping.get(exception_name.upper(), exception_name)
-        #     exception_name = mapped_exception
         
         lines.append(self._indent(f"WHEN {exception_name} THEN", indent_level))
         

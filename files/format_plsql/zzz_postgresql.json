@@ -1,0 +1,728 @@
+{
+    "on_insert": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''COMPANY_ADDRESSES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CORE.COUNTRIES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_TYPE_CD CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_VALID_FROM CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''COMPANY_ADDRESSES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CORE.COUNTRIES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_TYPE_CD CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_VALID_FROM CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n    V_USERID := TXO_UTIL.GET_USERID;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n    WHEN OTHERS THEN\n      V_USERID := current_user;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = COALESCE(:NEW.COMPANY_CD, :OLD.COMPANY_CD) AND ADDRESS_TYPE_CD = COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF CNTR > 0 THEN\n      RAISE ERR_INS;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = COALESCE ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L') THEN\n      RAISE ERR_INS_LEGAL_ADDR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L') THEN\n      IF COALESCE(:OLD.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) = COALESCE(:NEW.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN\n        RAISE ERR_CTRY_CHG;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        IF COALESCE(:OLD.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) <> COALESCE(:NEW.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN\n          MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'CTRY_CHANGE');"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT(*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('B', 'L');"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0 THEN\n            SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01' THEN\n              V_VALID_FROM := TO_TIMESTAMP(ADD_MONTHS(DATE_TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n              V_VALID_FROM := TO_TIMESTAMP(ADD_MONTHS(DATE_TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_VALID_FROM, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_COMPANY_TYPE_CD = 'L' THEN\n              FOR V_REC IN ( FOR V_REC IN ( SELECT COMPANY_CD FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('O', 'V') ) LOOP\n              END LOOP;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n          MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L') THEN\n      IF CNTR = 0 THEN\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P') THEN\n      RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_UPD THEN\n    RAISE_APPLICATION_ERROR(-20111, 'The address cannot be updated because the Address type is different. Old address type: ' ||:OLD.ADDRESS_TYPE_CD ||' New address type: ' ||:NEW.ADDRESS_TYPE_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS THEN\n    RAISE_APPLICATION_ERROR(-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CTRY_CHG THEN\n    RAISE_APPLICATION_ERROR(-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN TEST_ERR THEN\n    RAISE_APPLICATION_ERROR(-20113, 'New: ' ||:NEW.COMPANY_CD ||' Old:' ||:OLD.COMPANY_CD ||'Count: ' ||CNTR);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS_LEGAL_ADDR THEN\n    RAISE_APPLICATION_ERROR(-20113, 'The legal address cannot be inserted for this type of company');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NOT_ALLOWED_TO_INVALIDATE THEN\n    RAISE_APPLICATION_ERROR(-20113, 'It is not allowed to invalidate/delete this type of address');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_update": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''COMPANY_ADDRESSES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CORE.COUNTRIES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_TYPE_CD CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_VALID_FROM CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''COMPANY_ADDRESSES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CORE.COUNTRIES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_TYPE_CD CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_VALID_FROM CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n    V_USERID := TXO_UTIL.GET_USERID;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n    WHEN OTHERS THEN\n      V_USERID := current_user;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = COALESCE(:NEW.COMPANY_CD, :OLD.COMPANY_CD) AND ADDRESS_TYPE_CD = COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF CNTR > 0 THEN\n      RAISE ERR_INS;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = COALESCE ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L') THEN\n      RAISE ERR_INS_LEGAL_ADDR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L') THEN\n      IF COALESCE(:OLD.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) = COALESCE(:NEW.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN\n        RAISE ERR_CTRY_CHG;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        IF COALESCE(:OLD.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) <> COALESCE(:NEW.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN\n          MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'CTRY_CHANGE');"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT(*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('B', 'L');"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0 THEN\n            SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01' THEN\n              V_VALID_FROM := TO_TIMESTAMP(ADD_MONTHS(DATE_TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n              V_VALID_FROM := TO_TIMESTAMP(ADD_MONTHS(DATE_TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_VALID_FROM, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_COMPANY_TYPE_CD = 'L' THEN\n              FOR V_REC IN ( FOR V_REC IN ( SELECT COMPANY_CD FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('O', 'V') ) LOOP\n              END LOOP;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n          MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L') THEN\n      IF CNTR = 0 THEN\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P') THEN\n      RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_UPD THEN\n    RAISE_APPLICATION_ERROR(-20111, 'The address cannot be updated because the Address type is different. Old address type: ' ||:OLD.ADDRESS_TYPE_CD ||' New address type: ' ||:NEW.ADDRESS_TYPE_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS THEN\n    RAISE_APPLICATION_ERROR(-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CTRY_CHG THEN\n    RAISE_APPLICATION_ERROR(-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN TEST_ERR THEN\n    RAISE_APPLICATION_ERROR(-20113, 'New: ' ||:NEW.COMPANY_CD ||' Old:' ||:OLD.COMPANY_CD ||'Count: ' ||CNTR);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS_LEGAL_ADDR THEN\n    RAISE_APPLICATION_ERROR(-20113, 'The legal address cannot be inserted for this type of company');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NOT_ALLOWED_TO_INVALIDATE THEN\n    RAISE_APPLICATION_ERROR(-20113, 'It is not allowed to invalidate/delete this type of address');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_delete": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''COMPANY_ADDRESSES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CORE.COUNTRIES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_TYPE_CD CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_VALID_FROM CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''COMPANY_ADDRESSES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CORE.COUNTRIES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_TYPE_CD CFG.CFG_COMPANIES.COMPANY_TYPE_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_VALID_FROM CFG.CFG_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n    V_USERID := TXO_UTIL.GET_USERID;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n    WHEN OTHERS THEN\n      V_USERID := current_user;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = COALESCE(:NEW.COMPANY_CD, :OLD.COMPANY_CD) AND ADDRESS_TYPE_CD = COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF CNTR > 0 THEN\n      RAISE ERR_INS;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    SELECT COMPANY_TYPE_CD INTO V_COMPANY_TYPE_CD FROM CFG_V_COMPANIES WHERE COMPANY_CD = COALESCE ( :NEW.COMPANY_CD, :OLD.COMPANY_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_COMPANY_TYPE_CD NOT IN ('L', 'A') AND COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L') THEN\n      RAISE ERR_INS_LEGAL_ADDR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ( 'P', 'L') THEN\n      IF COALESCE(:OLD.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) = COALESCE(:NEW.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN\n        RAISE ERR_CTRY_CHG;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        IF COALESCE(:OLD.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) <> COALESCE(:NEW.VALID_FROM, DATE_TRUNC(CURRENT_TIMESTAMP)) AND :OLD.COUNTRY_ID <> :NEW.COUNTRY_ID THEN\n          MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'CTRY_CHANGE');"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT(*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('B', 'L');"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.ADDRESS_TYPE_CD = 'P' AND CNTR > 0 THEN\n            SELECT COUNTRY_CD INTO V_COUNTRY_CD FROM MDM_V_COUNTRIES WHERE COUNTRY_ID = :NEW.COUNTRY_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TO_CHAR(:NEW.VALID_FROM, 'dd.mm') = '01.01' THEN\n              V_VALID_FROM := TO_TIMESTAMP(ADD_MONTHS(DATE_TRUNC(:NEW.VALID_FROM, 'yyyy'), 10), 'dd.mm.yyyy');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n              V_VALID_FROM := TO_TIMESTAMP(ADD_MONTHS(DATE_TRUNC(:NEW.VALID_FROM, 'yyyy'), 22), 'dd.mm.yyyy');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_VALID_FROM, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_COMPANY_TYPE_CD = 'L' THEN\n              FOR V_REC IN ( FOR V_REC IN ( SELECT COMPANY_CD FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND VALID_IND = 'Y' AND CBC_GBE_SCOPE = 'Y' AND COMPANY_TYPE_CD IN ('O', 'V') ) LOOP\n              END LOOP;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n          MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) NOT IN ( 'P', 'L') THEN\n      IF CNTR = 0 THEN\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => :NEW.COMPANY_CD, P_ADDRESS_TYPE_CD => :NEW.ADDRESS_TYPE_CD, P_ADDITIONAL_NAME => :NEW.ADDITIONAL_NAME, P_STREET => :NEW.STREET, P_HOUSE_NO => :NEW.HOUSE_NO, P_BUILDING => :NEW.BUILDING, P_ADDITIONAL_INFO => :NEW.ADDITIONAL_INFO, P_ZIP_CODE => :NEW.ZIP_CODE, P_CITY => :NEW.CITY, P_DISTRICT_NAME => :NEW.DISTRICT_NAME, P_COUNTRY_ID => :NEW.COUNTRY_ID, P_LATITUDE => :NEW.LATITUDE, P_LONGITUDE => :NEW.LONGITUDE, P_ADDRESS_REMARK => :NEW.ADDRESS_REMARK, P_VALID_FROM => :NEW.VALID_FROM, P_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF COALESCE(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD) IN ('L', 'P') THEN\n      RAISE ERR_NOT_ALLOWED_TO_INVALIDATE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS(P_COMPANY_CD => NVL(:NEW.COMPANY_CD, :OLD.COMPANY_CD), P_ADDRESS_TYPE_CD => NVL(:NEW.ADDRESS_TYPE_CD, :OLD.ADDRESS_TYPE_CD), P_ACTION_TYPE => 'DELETE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_UPD THEN\n    RAISE_APPLICATION_ERROR(-20111, 'The address cannot be updated because the Address type is different. Old address type: ' ||:OLD.ADDRESS_TYPE_CD ||' New address type: ' ||:NEW.ADDRESS_TYPE_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS THEN\n    RAISE_APPLICATION_ERROR(-20112, 'An address already exists for this Company and Address type. To modify the existing address, please use the Update button.');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CTRY_CHG THEN\n    RAISE_APPLICATION_ERROR(-20113, 'The company country modified but not the Valid From Date. Please update also the Valid From Date.');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN TEST_ERR THEN\n    RAISE_APPLICATION_ERROR(-20113, 'New: ' ||:NEW.COMPANY_CD ||' Old:' ||:OLD.COMPANY_CD ||'Count: ' ||CNTR);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS_LEGAL_ADDR THEN\n    RAISE_APPLICATION_ERROR(-20113, 'The legal address cannot be inserted for this type of company');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NOT_ALLOWED_TO_INVALIDATE THEN\n    RAISE_APPLICATION_ERROR(-20113, 'It is not allowed to invalidate/delete this type of address');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ]
+}

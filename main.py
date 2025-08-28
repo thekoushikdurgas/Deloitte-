@@ -47,10 +47,13 @@ from datetime import datetime
 
 # Directory constants
 FORMAT_JSON_DIR = "files/format_json"
+FORMAT_SQL_DIR = "files/format_sql"
+FORMAT_PL_SQL_DIR = "files/format_plsql"
 
 
 # File suffix constants
 ANALYSIS_JSON_SUFFIX = "_analysis.json"
+JSON_FILE_SUFFIX = ".json"
 
 
 def convert_complex_structure_to_sql(complex_structure):
@@ -446,7 +449,7 @@ def render_oracle_sql_from_analysis() -> None:
     
     process_files(
         source_dir=FORMAT_JSON_DIR,
-        target_dir="files/format_sql",
+        target_dir=FORMAT_SQL_DIR,
         file_pattern=ANALYSIS_JSON_SUFFIX,
         output_suffix=".sql",
         processor_func=json_to_sql_processor,
@@ -713,7 +716,7 @@ def perform_comparison_analysis() -> Dict[str, Any]:
     try:
         # Get list of original SQL files
         oracle_dir = "files/oracle"
-        format_sql_dir = "files/format_sql"
+        format_sql_dir = FORMAT_SQL_DIR
         
         if not os.path.exists(oracle_dir) or not os.path.exists(format_sql_dir):
             warning("Cannot perform comparison: missing directories")
@@ -758,106 +761,6 @@ def perform_comparison_analysis() -> Dict[str, Any]:
     return comparison_stats
 
 
-# def validate_conversion() -> None:
-#     """
-#     Validate the conversion by comparing original and converted files.
-
-
-#     This function:
-#     1. Checks that all original files have corresponding converted files
-#     2. Compares file counts between source and target directories
-#     3. Reports any missing or mismatched files
-#     4. Provides detailed validation statistics
-#     """
-#     info("=== Starting conversion validation ===")
-
-
-#     # Get all original SQL files
-#     oracle_dir = "files/oracle"
-#     format_sql_dir = "files/format_sql"
-
-
-#     debug("Checking original files in: %s", oracle_dir)
-#     try:
-#         original_files = [f for f in os.listdir(oracle_dir) if f.endswith(".sql")]
-#         debug("Found %d original SQL files", len(original_files))
-#     except FileNotFoundError:
-#         error("Oracle directory not found: %s", oracle_dir)
-#         return
-#     except PermissionError:
-#         error("Permission denied accessing oracle directory: %s", oracle_dir)
-#         return
-
-
-#     debug("Checking converted files in: %s", format_sql_dir)
-#     try:
-#         converted_files = [f for f in os.listdir(format_sql_dir) if f.endswith(".sql")]
-#         debug("Found %d converted SQL files", len(converted_files))
-#     except FileNotFoundError:
-#         error("Converted SQL directory not found: %s", format_sql_dir)
-#         return
-#     except PermissionError:
-#         error("Permission denied accessing converted SQL directory: %s", format_sql_dir)
-#         return
-
-
-#     info(
-#         "Validation summary: %d original files and %d converted files",
-#         len(original_files),
-#         len(converted_files),
-#     )
-
-
-#     # Compare file counts
-#     if len(original_files) != len(converted_files):
-#         warning(
-#             "File count mismatch: %d original vs %d converted",
-#             len(original_files),
-#             len(converted_files),
-#         )
-#     else:
-#         info("✓ File count validation passed")
-
-
-#     # Check each converted file exists
-#     missing_files = []
-#     found_files = []
-
-
-#     i = 0
-#     while i < len(original_files):
-#         original_file = original_files[i]
-#         trigger_match = re.search(r"trigger(\d+)", original_file)
-#         if trigger_match:
-#             trigger_num = trigger_match.group(1)
-#             expected_converted = f"trigger{trigger_num}.sql"
-#             if expected_converted not in converted_files:
-#                 warning(
-#                     "Missing converted file for %s: expected %s",
-#                     original_file,
-#                     expected_converted,
-#                 )
-#                 missing_files.append(expected_converted)
-#             else:
-#                 debug("✓ Found converted file: %s", expected_converted)
-#                 found_files.append(expected_converted)
-#         i += 1
-
-
-#     # Report validation results
-#     if missing_files:
-#         warning("Missing %d converted files: %s", len(missing_files), missing_files)
-#     else:
-#         info("✓ All expected converted files found")
-
-
-#     if found_files:
-#         info("Successfully validated %d converted files", len(found_files))
-
-
-#     info("=== Conversion validation complete ===")
-
-
 def read_json_to_oracle_triggers() -> None:
     """read_json_to_oracle_triggers function."""
     # Define directories
@@ -886,7 +789,6 @@ def read_json_to_oracle_triggers() -> None:
             debug(f"processing {json_file}")
             analyzer = JSONTOPLJSON(analysis)
             sql_content = analyzer.to_sql()
-            # analyzer_sql = sql_content["sql"]
 
 
             # Save as JSON with the new structure
@@ -984,8 +886,8 @@ def read_json_to_postsql_triggers() -> None:
     info("=== Starting PL/JSON to PostgreSQL format conversion ===")
     process_files(
         source_dir="files/format_pl_json",
-        target_dir="files/format_plsql",
-        file_pattern=".json",
+        target_dir=FORMAT_PL_SQL_DIR,
+        file_pattern=JSON_FILE_SUFFIX,
         output_suffix="_postgresql.json",
         processor_func=convert_pl_json_to_postgresql_format,
     )
@@ -1002,7 +904,7 @@ def convert_json_analysis_to_postgresql_sql() -> None:
     info("=== Starting JSON analysis to PostgreSQL SQL conversion ===")
     process_files(
         source_dir=FORMAT_JSON_DIR,
-        target_dir="files/format_plsql",
+        target_dir=FORMAT_PL_SQL_DIR,
         file_pattern=ANALYSIS_JSON_SUFFIX,
         output_suffix="_postgresql.sql",
         processor_func=json_to_pl_sql_processor,
@@ -1223,8 +1125,8 @@ def convert_postgresql_format_files_to_sql() -> None:
     """
     info("=== Starting PostgreSQL format to SQL conversion ===")
     process_files(
-        source_dir="files/format_plsql",
-        target_dir="files/format_plsql",
+        source_dir=FORMAT_PL_SQL_DIR,
+        target_dir=FORMAT_PL_SQL_DIR,
         file_pattern="_postgresql.json",
         output_suffix=".sql",
         processor_func=convert_postgresql_format_to_sql,
@@ -1255,7 +1157,7 @@ def main() -> None:
 
     try:
         # Set up logging for the main script
-        main_logger, log_path = setup_logging()
+        _ , log_path = setup_logging()
         debug("Starting main conversion workflow")
         info("=== Starting Oracle Trigger Conversion Process ===")
         info("Logging to: %s", log_path)
@@ -1274,11 +1176,6 @@ def main() -> None:
         step1_duration = time.time() - step1_start
         info("✓ JSON conversion complete! (Duration: %.2f seconds)", step1_duration)
         debug(f"Step 1 completed in {step1_duration:.2f} seconds")
-
-
-        # if check_errors_in_json():
-        #     error("Errors found in JSON files, skipping conversion")
-        #     return
 
         # Step 2: Convert JSON back to SQL
         # -------------------------------
@@ -1306,20 +1203,6 @@ def main() -> None:
         step3_duration = time.time() - step3_start
         info("✓ JSON cleaning complete! (Duration: %.2f seconds)", step3_duration)
         debug(f"Step 3 completed in {step3_duration:.2f} seconds")
-
-
-        # # Step 4: Validate conversion results
-        # # ---------------------------------
-        # info("Step 4: Validating conversion results...")
-        # debug("Starting Step 4: Validating conversion completeness")
-        # step4_start = time.time()
-       
-        # # Check that all files were converted successfully
-        # # validate_conversion()
-       
-        # step4_duration = time.time() - step4_start
-        # info("✓ Validation complete! (Duration: %.2f seconds)", step4_duration)
-        # debug(f"Step 4 completed in {step4_duration:.2f} seconds")
 
 
         # Step 5: Convert JSON to PL/JSON

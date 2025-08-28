@@ -111,7 +111,7 @@ def main() -> None:
 
     # Set up logging for the main script
     info("=== Starting Oracle Trigger Conversion Process ===")
-    main_logger, log_path = setup_logging()
+    _ , log_path = setup_logging()
     info("Logging to: %s", log_path)
     debug("Logging system initialized")
     read_oracle_triggers_to_json()

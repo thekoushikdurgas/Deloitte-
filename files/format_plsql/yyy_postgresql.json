@@ -1,0 +1,1172 @@
+{
+    "on_insert": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REPORTING_ENTITY_CD CFG_V_REPORTING_ENTITIES.REPORTING_ENTITY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_OLD_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE := 'NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REP_CBC_FLAG CFG_V_REPORTING_ENTITIES.CBC_FLAG%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ADDR_VALID_FROM_DATE CFG.CFG_V_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CFG.CFG_V_COMPANY_ADDRESSES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_CODES_LIST VARCHAR2(200);"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\nDO $$\nDECLARE\n   CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REPORTING_ENTITY_CD CFG_V_REPORTING_ENTITIES.REPORTING_ENTITY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_OLD_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE := 'NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REP_CBC_FLAG CFG_V_REPORTING_ENTITIES.CBC_FLAG%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ADDR_VALID_FROM_DATE CFG.CFG_V_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CFG.CFG_V_COMPANY_ADDRESSES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_CODES_LIST VARCHAR2(200);"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n    V_USERID := TXO_UTIL.GET_USERID;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n    WHEN OTHERS THEN\n      V_USERID := current_user;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :OLD.COMPANY_CD != :NEW.COMPANY_CD THEN\n    RAISE ERR_UPD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR > 0 THEN\n      RAISE ERR_INS;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF :NEW.COMPANY_TYPE_CD IN ('L', 'A') AND :NEW.LEGAL_COMPANY_CD IS NULL THEN\n      V_LEGAL_COMPANY_CD := :NEW.COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      V_LEGAL_COMPANY_CD := :NEW.LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_TYPE_CD IN ( 'L') AND VALID_IND = 'Y' AND COMPANY_CD = V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 AND (COALESCE(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) NOT IN ('D', 'A', 'L') OR (:NEW.COMPANY_TYPE_CD = 'D' AND :NEW.CBC_GBE_SCOPE = 'Y' AND V_LEGAL_COMPANY_CD <> :NEW.COMPANY_CD)) THEN\n      RAISE INVALID_LEGAL_COMP;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_COMPANY_TYPE_CD => :NEW.COMPANY_TYPE_CD, I_MULTISEL_COMPANY_PURPOSE => :NEW.MULTISEL_COMPANY_PURPOSE, I_LEGAL_COMPANY_CD => V_LEGAL_COMPANY_CD, I_OFFICIAL_NAME => :NEW.OFFICIAL_NAME, I_SHORT_NAME => :NEW.SHORT_NAME, I_DISCLOSURE_NAME => :NEW.DISCLOSURE_NAME, I_FUNCTIONAL_CURRENCY_CD => :NEW.FUNCTIONAL_CURRENCY_CD, I_STATUTORY_CURRENCY_CD => :NEW.STATUTORY_CURRENCY_CD, I_URL => :NEW.URL, I_PHONEBOOK_URL => :NEW.PHONEBOOK_URL, I_EMERGENCY_PHONE_NO => :NEW.EMERGENCY_PHONE_NO, I_GENERAL_PHONE_NO => :NEW.GENERAL_PHONE_NO, I_GENERAL_FAX_NO => :NEW.GENERAL_FAX_NO, I_ANNUAL_REPORT_IND => :NEW.ANNUAL_REPORT_IND, I_FATCA_CD => :NEW.FATCA_CD, I_PHARMA_NUMBER_RANGE => :NEW.PHARMA_NUMBER_RANGE, I_LIQUIDATION_DATE => :NEW.LIQUIDATION_DATE, I_SAPINST_NO => :NEW.SAPINST_NO, I_SAP_COMPANY_CODE_NO => :NEW.SAP_COMPANY_CODE_NO, I_SAP_GO_LIVE_DATE => :NEW.SAP_GO_LIVE_DATE, I_SAP_GROUP_CODE => :NEW.SAP_GROUP_CODE, I_SAP_LOCAL_COA => :NEW.SAP_LOCAL_COA, I_SAP_CONTROLLING_AREA => :NEW.SAP_CONTROLLING_AREA, I_TOP_SYSTEM_IND => :NEW.TOP_SYSTEM_IND, I_TOP_GO_LIVE_DATE => :NEW.TOP_GO_LIVE_DATE, I_TOP_REMARKS => :NEW.TOP_REMARKS, I_LEGAL_REMARKS => :NEW.LEGAL_REMARKS, I_REMARKS => :NEW.REMARKS, I_LOCAL_STATUTORY_ACC => :NEW.LOCAL_STATUTORY_ACC, I_ICFR_COMPANY_LAYER => :NEW.ICFR_COMPANY_LAYER, I_TRADING_PARTNER => :NEW.TRADING_PARTNER, I_S4_ENTITY_ID => :NEW.S4_ENTITY_ID, I_RCA_DISPLAY_FLAG => :NEW.RCA_DISPLAY_FLAG, I_CBC_GBE_SCOPE => :NEW.CBC_GBE_SCOPE, I_WEB_DISPLAY_IND => :NEW.WEB_DISPLAY_IND, I_HEADCOUNT_IND => :NEW.HEADCOUNT_IND, I_VALID_IND => :NEW.VALID_IND, I_CORE_REMARKS => :NEW.CORE_REMARKS, I_REVIEW_USERID => :NEW.REVIEW_USERID, I_REVIEW_EXP_DATE => :NEW.REVIEW_EXP_DATE, I_REQUESTER_USERID => :NEW.REQUESTER_USERID, I_REQUEST_DATE => :NEW.REQUEST_DATE, I_CHANGE_USER => V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n    WHEN COALESCE (:OLD.REPORTING_ENTITY_CD, '-') != COALESCE (:NEW.REPORTING_ENTITY_CD, '-') OR COALESCE (TO_TIMESTAMP (:OLD.VALID_FROM_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) != COALESCE (TO_TIMESTAMP (:NEW.VALID_FROM_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) OR COALESCE (TO_TIMESTAMP (:OLD.VALID_TO_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) != COALESCE (TO_TIMESTAMP (:NEW.VALID_TO_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) THEN\n      V_REPORTING_ENTITY_CD := :NEW.REPORTING_ENTITY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n      WHEN ( :NEW.VALID_FROM_DATE IS NULL OR :NEW.VALID_FROM_DATE IS NULL) THEN\n        RAISE ERR_VALID_FROM_DATE;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => :NEW.REPORTING_ENTITY_CD, I_VALID_FROM_DATE => :NEW.VALID_FROM_DATE, I_VALID_TO_DATE => :NEW.VALID_TO_DATE, I_CHANGE_USER => V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.VALID_IND, 'Y') = 'N' AND COALESCE(:OLD.VALID_IND, 'N') = 'Y' THEN\n      CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND COMPANY_CD <> :NEW.COMPANY_CD AND VALID_IND = 'Y';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR > 0 THEN\n        SELECT STRING_AGG(DISTINCT COMPANY_CD, ', ') WITHIN GROUP (ORDER BY COMPANY_CD) INTO V_COMPANY_CODES_LIST FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND COMPANY_CD <> :NEW.COMPANY_CD AND VALID_IND = 'Y';"
+        },
+        {
+            "type": "sql",
+            "sql": "RAISE CPY_IN_USE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "UPDATE CFG.CFG_COMPANY_ADDRESSES SET VALID_TO = DATE_TRUNC ( CURRENT_TIMESTAMP ) - 1 WHERE COMPANY_CD = :NEW.COMPANY_CD AND ( VALID_TO > DATE_TRUNC(CURRENT_TIMESTAMP) OR VALID_TO IS NULL);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :OLD.COMPANY_TYPE_CD IN ('L', 'B') AND :NEW.COMPANY_TYPE_CD = 'D' THEN\n      UPDATE CFG.CFG_COMPANY_ADDRESSES SET VALID_TO = DATE_TRUNC ( CURRENT_TIMESTAMP ) - 1 WHERE COMPANY_CD = :NEW.COMPANY_CD AND ADDRESS_TYPE_CD NOT IN ('P', 'RES', 'L', 'INC') AND ( VALID_TO > DATE_TRUNC(CURRENT_TIMESTAMP) OR VALID_TO IS NULL);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.CBC_GBE_SCOPE = 'Y' AND :NEW.VALID_IND = 'N' THEN\n      RAISE ERR_CPY_STILL_IN_SCOPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.VALID_IND = 'N' AND COALESCE(:NEW.REPORTING_ENTITY_CD, :OLD.REPORTING_ENTITY_CD) IS NOT NULL AND COALESCE(:NEW.VALID_TO_DATE, :OLD.VALID_TO_DATE) IS NULL THEN\n      RAISE ERR_CPY_STILL_IN_MFR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.COMPANY_TYPE_CD = 'A' AND :NEW.CBC_GBE_SCOPE = 'Y' THEN\n      RAISE ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) = 'L' OR COALESCE(:NEW.COMPANY_TYPE_CD, :NEW.COMPANY_TYPE_CD) = 'B' THEN\n      V_REPORTING_ENTITY_CD := COALESCE (:NEW.COMPANY_CD, :OLD.COMPANY_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      V_REPORTING_ENTITY_CD := V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_REPORTING_ENTITY_CD IS NOT NULL OR :NEW.COMPANY_TYPE_CD = 'D' THEN\n      IF (:NEW.CBC_GBE_SCOPE = 'Y' AND COALESCE (:OLD.CBC_GBE_SCOPE, 'N') = 'N') OR (COALESCE(:NEW.CBC_GBE_SCOPE, :OLD.CBC_GBE_SCOPE) = 'Y' AND V_LEGAL_COMPANY_CD <> COALESCE(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)) THEN\n        SELECT CBC_FLAG INTO V_REP_CBC_FLAG FROM CFG_V_REPORTING_ENTITIES WHERE REPORTING_ENTITY_CD = V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE (V_REP_CBC_FLAG, 'N') = 'N' THEN\n          RAISE RU_NOT_IN_CBC_SCOPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG.CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = V_REPORTING_ENTITY_CD AND ADDRESS_TYPE_CD = 'RES';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n          RAISE ERR_NO_ADR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT VALID_FROM, COUNTRY_CD INTO V_ADDR_VALID_FROM_DATE, V_COUNTRY_CD FROM CFG.CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = V_REPORTING_ENTITY_CD AND ADDRESS_TYPE_CD = 'RES';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_LEGAL_COMPANY_CD <> COALESCE(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD) THEN\n          V_ADDR_VALID_FROM_DATE := DATE_TRUNC(CURRENT_TIMESTAMP);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => V_REPORTING_ENTITY_CD, I_VALID_FROM_DATE => TRUNC (SYSDATE), I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_ADDR_VALID_FROM_DATE, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.CBC_GBE_SCOPE = 'N' AND COALESCE (:OLD.CBC_GBE_SCOPE, 'Y') = 'Y' THEN\n        MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n    WHEN (COALESCE (:OLD.OFFICIAL_NAME, '-') != COALESCE (:NEW.OFFICIAL_NAME, '-')) AND :OLD.OFFICIAL_NAME IS NOT NULL THEN\n      MDMAPPL.MDM_UTIL_COMPANIES.MODIFYCOMPANYNAME(:NEW.COMPANY_CD, V_LEGAL_COMPANY_CD, :NEW.OFFICIAL_NAME, V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_DEL THEN\n    RAISE_APPLICATION_ERROR(-20110, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_UPD THEN\n    RAISE_APPLICATION_ERROR(-20111, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS THEN\n    RAISE_APPLICATION_ERROR(-20114, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_VALID_FROM_DATE THEN\n    RAISE_APPLICATION_ERROR(-20122, 'Please insert : Rep. Code Assignm. Valid from Date');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN RU_NOT_IN_CBC_SCOPE THEN\n    RAISE_APPLICATION_ERROR(-20123, 'A company cannot be in CBC/GBE scope if the RU that reports it is not in CBC scope');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CPY_STILL_IN_SCOPE THEN\n    RAISE_APPLICATION_ERROR(-20124, 'The CBC/GBE Scope must be set to No before deactivating the company');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NO_ADR THEN\n    RAISE_APPLICATION_ERROR(-20124, 'No Physical Address found. Please insert the address before setting the CBC/GBE Scope to Yes');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN CPY_IN_USE THEN\n    RAISE_APPLICATION_ERROR(-20125, 'The Company cannot be invalidated because is still used as Legal Company for the following companies: ' || V_COMPANY_CODES_LIST);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN INVALID_LEGAL_COMP THEN\n    RAISE_APPLICATION_ERROR(-20126, V_LEGAL_COMPANY_CD || ' is not a valid Legal Company Code');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC THEN\n    RAISE_APPLICATION_ERROR(-20127, 'An Associate Entity cannot be in CBC/GBE Scope!');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CPY_STILL_IN_MFR THEN\n    RAISE_APPLICATION_ERROR(-20127, 'Please fill in Rep. Code Assignm. Valid to Date field before invalidating the company');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_update": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REPORTING_ENTITY_CD CFG_V_REPORTING_ENTITIES.REPORTING_ENTITY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_OLD_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE := 'NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REP_CBC_FLAG CFG_V_REPORTING_ENTITIES.CBC_FLAG%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ADDR_VALID_FROM_DATE CFG.CFG_V_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CFG.CFG_V_COMPANY_ADDRESSES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_CODES_LIST VARCHAR2(200);"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\nDO $$\nDECLARE\n   CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REPORTING_ENTITY_CD CFG_V_REPORTING_ENTITIES.REPORTING_ENTITY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_OLD_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE := 'NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REP_CBC_FLAG CFG_V_REPORTING_ENTITIES.CBC_FLAG%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ADDR_VALID_FROM_DATE CFG.CFG_V_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CFG.CFG_V_COMPANY_ADDRESSES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_CODES_LIST VARCHAR2(200);"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n    V_USERID := TXO_UTIL.GET_USERID;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n    WHEN OTHERS THEN\n      V_USERID := current_user;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :OLD.COMPANY_CD != :NEW.COMPANY_CD THEN\n    RAISE ERR_UPD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR > 0 THEN\n      RAISE ERR_INS;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF :NEW.COMPANY_TYPE_CD IN ('L', 'A') AND :NEW.LEGAL_COMPANY_CD IS NULL THEN\n      V_LEGAL_COMPANY_CD := :NEW.COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      V_LEGAL_COMPANY_CD := :NEW.LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_TYPE_CD IN ( 'L') AND VALID_IND = 'Y' AND COMPANY_CD = V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 AND (COALESCE(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) NOT IN ('D', 'A', 'L') OR (:NEW.COMPANY_TYPE_CD = 'D' AND :NEW.CBC_GBE_SCOPE = 'Y' AND V_LEGAL_COMPANY_CD <> :NEW.COMPANY_CD)) THEN\n      RAISE INVALID_LEGAL_COMP;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_COMPANY_TYPE_CD => :NEW.COMPANY_TYPE_CD, I_MULTISEL_COMPANY_PURPOSE => :NEW.MULTISEL_COMPANY_PURPOSE, I_LEGAL_COMPANY_CD => V_LEGAL_COMPANY_CD, I_OFFICIAL_NAME => :NEW.OFFICIAL_NAME, I_SHORT_NAME => :NEW.SHORT_NAME, I_DISCLOSURE_NAME => :NEW.DISCLOSURE_NAME, I_FUNCTIONAL_CURRENCY_CD => :NEW.FUNCTIONAL_CURRENCY_CD, I_STATUTORY_CURRENCY_CD => :NEW.STATUTORY_CURRENCY_CD, I_URL => :NEW.URL, I_PHONEBOOK_URL => :NEW.PHONEBOOK_URL, I_EMERGENCY_PHONE_NO => :NEW.EMERGENCY_PHONE_NO, I_GENERAL_PHONE_NO => :NEW.GENERAL_PHONE_NO, I_GENERAL_FAX_NO => :NEW.GENERAL_FAX_NO, I_ANNUAL_REPORT_IND => :NEW.ANNUAL_REPORT_IND, I_FATCA_CD => :NEW.FATCA_CD, I_PHARMA_NUMBER_RANGE => :NEW.PHARMA_NUMBER_RANGE, I_LIQUIDATION_DATE => :NEW.LIQUIDATION_DATE, I_SAPINST_NO => :NEW.SAPINST_NO, I_SAP_COMPANY_CODE_NO => :NEW.SAP_COMPANY_CODE_NO, I_SAP_GO_LIVE_DATE => :NEW.SAP_GO_LIVE_DATE, I_SAP_GROUP_CODE => :NEW.SAP_GROUP_CODE, I_SAP_LOCAL_COA => :NEW.SAP_LOCAL_COA, I_SAP_CONTROLLING_AREA => :NEW.SAP_CONTROLLING_AREA, I_TOP_SYSTEM_IND => :NEW.TOP_SYSTEM_IND, I_TOP_GO_LIVE_DATE => :NEW.TOP_GO_LIVE_DATE, I_TOP_REMARKS => :NEW.TOP_REMARKS, I_LEGAL_REMARKS => :NEW.LEGAL_REMARKS, I_REMARKS => :NEW.REMARKS, I_LOCAL_STATUTORY_ACC => :NEW.LOCAL_STATUTORY_ACC, I_ICFR_COMPANY_LAYER => :NEW.ICFR_COMPANY_LAYER, I_TRADING_PARTNER => :NEW.TRADING_PARTNER, I_S4_ENTITY_ID => :NEW.S4_ENTITY_ID, I_RCA_DISPLAY_FLAG => :NEW.RCA_DISPLAY_FLAG, I_CBC_GBE_SCOPE => :NEW.CBC_GBE_SCOPE, I_WEB_DISPLAY_IND => :NEW.WEB_DISPLAY_IND, I_HEADCOUNT_IND => :NEW.HEADCOUNT_IND, I_VALID_IND => :NEW.VALID_IND, I_CORE_REMARKS => :NEW.CORE_REMARKS, I_REVIEW_USERID => :NEW.REVIEW_USERID, I_REVIEW_EXP_DATE => :NEW.REVIEW_EXP_DATE, I_REQUESTER_USERID => :NEW.REQUESTER_USERID, I_REQUEST_DATE => :NEW.REQUEST_DATE, I_CHANGE_USER => V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n    WHEN COALESCE (:OLD.REPORTING_ENTITY_CD, '-') != COALESCE (:NEW.REPORTING_ENTITY_CD, '-') OR COALESCE (TO_TIMESTAMP (:OLD.VALID_FROM_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) != COALESCE (TO_TIMESTAMP (:NEW.VALID_FROM_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) OR COALESCE (TO_TIMESTAMP (:OLD.VALID_TO_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) != COALESCE (TO_TIMESTAMP (:NEW.VALID_TO_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) THEN\n      V_REPORTING_ENTITY_CD := :NEW.REPORTING_ENTITY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n      WHEN ( :NEW.VALID_FROM_DATE IS NULL OR :NEW.VALID_FROM_DATE IS NULL) THEN\n        RAISE ERR_VALID_FROM_DATE;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => :NEW.REPORTING_ENTITY_CD, I_VALID_FROM_DATE => :NEW.VALID_FROM_DATE, I_VALID_TO_DATE => :NEW.VALID_TO_DATE, I_CHANGE_USER => V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.VALID_IND, 'Y') = 'N' AND COALESCE(:OLD.VALID_IND, 'N') = 'Y' THEN\n      CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND COMPANY_CD <> :NEW.COMPANY_CD AND VALID_IND = 'Y';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR > 0 THEN\n        SELECT STRING_AGG(DISTINCT COMPANY_CD, ', ') WITHIN GROUP (ORDER BY COMPANY_CD) INTO V_COMPANY_CODES_LIST FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND COMPANY_CD <> :NEW.COMPANY_CD AND VALID_IND = 'Y';"
+        },
+        {
+            "type": "sql",
+            "sql": "RAISE CPY_IN_USE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "UPDATE CFG.CFG_COMPANY_ADDRESSES SET VALID_TO = DATE_TRUNC ( CURRENT_TIMESTAMP ) - 1 WHERE COMPANY_CD = :NEW.COMPANY_CD AND ( VALID_TO > DATE_TRUNC(CURRENT_TIMESTAMP) OR VALID_TO IS NULL);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :OLD.COMPANY_TYPE_CD IN ('L', 'B') AND :NEW.COMPANY_TYPE_CD = 'D' THEN\n      UPDATE CFG.CFG_COMPANY_ADDRESSES SET VALID_TO = DATE_TRUNC ( CURRENT_TIMESTAMP ) - 1 WHERE COMPANY_CD = :NEW.COMPANY_CD AND ADDRESS_TYPE_CD NOT IN ('P', 'RES', 'L', 'INC') AND ( VALID_TO > DATE_TRUNC(CURRENT_TIMESTAMP) OR VALID_TO IS NULL);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.CBC_GBE_SCOPE = 'Y' AND :NEW.VALID_IND = 'N' THEN\n      RAISE ERR_CPY_STILL_IN_SCOPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.VALID_IND = 'N' AND COALESCE(:NEW.REPORTING_ENTITY_CD, :OLD.REPORTING_ENTITY_CD) IS NOT NULL AND COALESCE(:NEW.VALID_TO_DATE, :OLD.VALID_TO_DATE) IS NULL THEN\n      RAISE ERR_CPY_STILL_IN_MFR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.COMPANY_TYPE_CD = 'A' AND :NEW.CBC_GBE_SCOPE = 'Y' THEN\n      RAISE ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) = 'L' OR COALESCE(:NEW.COMPANY_TYPE_CD, :NEW.COMPANY_TYPE_CD) = 'B' THEN\n      V_REPORTING_ENTITY_CD := COALESCE (:NEW.COMPANY_CD, :OLD.COMPANY_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      V_REPORTING_ENTITY_CD := V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_REPORTING_ENTITY_CD IS NOT NULL OR :NEW.COMPANY_TYPE_CD = 'D' THEN\n      IF (:NEW.CBC_GBE_SCOPE = 'Y' AND COALESCE (:OLD.CBC_GBE_SCOPE, 'N') = 'N') OR (COALESCE(:NEW.CBC_GBE_SCOPE, :OLD.CBC_GBE_SCOPE) = 'Y' AND V_LEGAL_COMPANY_CD <> COALESCE(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)) THEN\n        SELECT CBC_FLAG INTO V_REP_CBC_FLAG FROM CFG_V_REPORTING_ENTITIES WHERE REPORTING_ENTITY_CD = V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE (V_REP_CBC_FLAG, 'N') = 'N' THEN\n          RAISE RU_NOT_IN_CBC_SCOPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG.CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = V_REPORTING_ENTITY_CD AND ADDRESS_TYPE_CD = 'RES';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n          RAISE ERR_NO_ADR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT VALID_FROM, COUNTRY_CD INTO V_ADDR_VALID_FROM_DATE, V_COUNTRY_CD FROM CFG.CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = V_REPORTING_ENTITY_CD AND ADDRESS_TYPE_CD = 'RES';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_LEGAL_COMPANY_CD <> COALESCE(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD) THEN\n          V_ADDR_VALID_FROM_DATE := DATE_TRUNC(CURRENT_TIMESTAMP);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => V_REPORTING_ENTITY_CD, I_VALID_FROM_DATE => TRUNC (SYSDATE), I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_ADDR_VALID_FROM_DATE, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.CBC_GBE_SCOPE = 'N' AND COALESCE (:OLD.CBC_GBE_SCOPE, 'Y') = 'Y' THEN\n        MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n    WHEN (COALESCE (:OLD.OFFICIAL_NAME, '-') != COALESCE (:NEW.OFFICIAL_NAME, '-')) AND :OLD.OFFICIAL_NAME IS NOT NULL THEN\n      MDMAPPL.MDM_UTIL_COMPANIES.MODIFYCOMPANYNAME(:NEW.COMPANY_CD, V_LEGAL_COMPANY_CD, :NEW.OFFICIAL_NAME, V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_DEL THEN\n    RAISE_APPLICATION_ERROR(-20110, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_UPD THEN\n    RAISE_APPLICATION_ERROR(-20111, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS THEN\n    RAISE_APPLICATION_ERROR(-20114, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_VALID_FROM_DATE THEN\n    RAISE_APPLICATION_ERROR(-20122, 'Please insert : Rep. Code Assignm. Valid from Date');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN RU_NOT_IN_CBC_SCOPE THEN\n    RAISE_APPLICATION_ERROR(-20123, 'A company cannot be in CBC/GBE scope if the RU that reports it is not in CBC scope');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CPY_STILL_IN_SCOPE THEN\n    RAISE_APPLICATION_ERROR(-20124, 'The CBC/GBE Scope must be set to No before deactivating the company');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NO_ADR THEN\n    RAISE_APPLICATION_ERROR(-20124, 'No Physical Address found. Please insert the address before setting the CBC/GBE Scope to Yes');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN CPY_IN_USE THEN\n    RAISE_APPLICATION_ERROR(-20125, 'The Company cannot be invalidated because is still used as Legal Company for the following companies: ' || V_COMPANY_CODES_LIST);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN INVALID_LEGAL_COMP THEN\n    RAISE_APPLICATION_ERROR(-20126, V_LEGAL_COMPANY_CD || ' is not a valid Legal Company Code');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC THEN\n    RAISE_APPLICATION_ERROR(-20127, 'An Associate Entity cannot be in CBC/GBE Scope!');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CPY_STILL_IN_MFR THEN\n    RAISE_APPLICATION_ERROR(-20127, 'Please fill in Rep. Code Assignm. Valid to Date field before invalidating the company');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_delete": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REPORTING_ENTITY_CD CFG_V_REPORTING_ENTITIES.REPORTING_ENTITY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_OLD_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE := 'NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REP_CBC_FLAG CFG_V_REPORTING_ENTITIES.CBC_FLAG%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ADDR_VALID_FROM_DATE CFG.CFG_V_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CFG.CFG_V_COMPANY_ADDRESSES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_CODES_LIST VARCHAR2(200);"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\nDO $$\nDECLARE\n   CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_USERID VARCHAR2(100);"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REPORTING_ENTITY_CD CFG_V_REPORTING_ENTITIES.REPORTING_ENTITY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_OLD_LEGAL_COMPANY_CD CFG_V_COMPANIES.LEGAL_COMPANY_CD%TYPE := 'NVL(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_REP_CBC_FLAG CFG_V_REPORTING_ENTITIES.CBC_FLAG%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ADDR_VALID_FROM_DATE CFG.CFG_V_COMPANY_ADDRESSES.VALID_FROM%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COUNTRY_CD CFG.CFG_V_COMPANY_ADDRESSES.COUNTRY_CD%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_COMPANY_CODES_LIST VARCHAR2(200);"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n    V_USERID := TXO_UTIL.GET_USERID;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n    WHEN OTHERS THEN\n      V_USERID := current_user;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :OLD.COMPANY_CD != :NEW.COMPANY_CD THEN\n    RAISE ERR_UPD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_CD = :NEW.COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR > 0 THEN\n      RAISE ERR_INS;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    IF :NEW.COMPANY_TYPE_CD IN ('L', 'A') AND :NEW.LEGAL_COMPANY_CD IS NULL THEN\n      V_LEGAL_COMPANY_CD := :NEW.COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      V_LEGAL_COMPANY_CD := :NEW.LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE COMPANY_TYPE_CD IN ( 'L') AND VALID_IND = 'Y' AND COMPANY_CD = V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 AND (COALESCE(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) NOT IN ('D', 'A', 'L') OR (:NEW.COMPANY_TYPE_CD = 'D' AND :NEW.CBC_GBE_SCOPE = 'Y' AND V_LEGAL_COMPANY_CD <> :NEW.COMPANY_CD)) THEN\n      RAISE INVALID_LEGAL_COMP;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_COMPANY_TYPE_CD => :NEW.COMPANY_TYPE_CD, I_MULTISEL_COMPANY_PURPOSE => :NEW.MULTISEL_COMPANY_PURPOSE, I_LEGAL_COMPANY_CD => V_LEGAL_COMPANY_CD, I_OFFICIAL_NAME => :NEW.OFFICIAL_NAME, I_SHORT_NAME => :NEW.SHORT_NAME, I_DISCLOSURE_NAME => :NEW.DISCLOSURE_NAME, I_FUNCTIONAL_CURRENCY_CD => :NEW.FUNCTIONAL_CURRENCY_CD, I_STATUTORY_CURRENCY_CD => :NEW.STATUTORY_CURRENCY_CD, I_URL => :NEW.URL, I_PHONEBOOK_URL => :NEW.PHONEBOOK_URL, I_EMERGENCY_PHONE_NO => :NEW.EMERGENCY_PHONE_NO, I_GENERAL_PHONE_NO => :NEW.GENERAL_PHONE_NO, I_GENERAL_FAX_NO => :NEW.GENERAL_FAX_NO, I_ANNUAL_REPORT_IND => :NEW.ANNUAL_REPORT_IND, I_FATCA_CD => :NEW.FATCA_CD, I_PHARMA_NUMBER_RANGE => :NEW.PHARMA_NUMBER_RANGE, I_LIQUIDATION_DATE => :NEW.LIQUIDATION_DATE, I_SAPINST_NO => :NEW.SAPINST_NO, I_SAP_COMPANY_CODE_NO => :NEW.SAP_COMPANY_CODE_NO, I_SAP_GO_LIVE_DATE => :NEW.SAP_GO_LIVE_DATE, I_SAP_GROUP_CODE => :NEW.SAP_GROUP_CODE, I_SAP_LOCAL_COA => :NEW.SAP_LOCAL_COA, I_SAP_CONTROLLING_AREA => :NEW.SAP_CONTROLLING_AREA, I_TOP_SYSTEM_IND => :NEW.TOP_SYSTEM_IND, I_TOP_GO_LIVE_DATE => :NEW.TOP_GO_LIVE_DATE, I_TOP_REMARKS => :NEW.TOP_REMARKS, I_LEGAL_REMARKS => :NEW.LEGAL_REMARKS, I_REMARKS => :NEW.REMARKS, I_LOCAL_STATUTORY_ACC => :NEW.LOCAL_STATUTORY_ACC, I_ICFR_COMPANY_LAYER => :NEW.ICFR_COMPANY_LAYER, I_TRADING_PARTNER => :NEW.TRADING_PARTNER, I_S4_ENTITY_ID => :NEW.S4_ENTITY_ID, I_RCA_DISPLAY_FLAG => :NEW.RCA_DISPLAY_FLAG, I_CBC_GBE_SCOPE => :NEW.CBC_GBE_SCOPE, I_WEB_DISPLAY_IND => :NEW.WEB_DISPLAY_IND, I_HEADCOUNT_IND => :NEW.HEADCOUNT_IND, I_VALID_IND => :NEW.VALID_IND, I_CORE_REMARKS => :NEW.CORE_REMARKS, I_REVIEW_USERID => :NEW.REVIEW_USERID, I_REVIEW_EXP_DATE => :NEW.REVIEW_EXP_DATE, I_REQUESTER_USERID => :NEW.REQUESTER_USERID, I_REQUEST_DATE => :NEW.REQUEST_DATE, I_CHANGE_USER => V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n    WHEN COALESCE (:OLD.REPORTING_ENTITY_CD, '-') != COALESCE (:NEW.REPORTING_ENTITY_CD, '-') OR COALESCE (TO_TIMESTAMP (:OLD.VALID_FROM_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) != COALESCE (TO_TIMESTAMP (:NEW.VALID_FROM_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) OR COALESCE (TO_TIMESTAMP (:OLD.VALID_TO_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) != COALESCE (TO_TIMESTAMP (:NEW.VALID_TO_DATE, 'DD-MM-YYYY'), CURRENT_TIMESTAMP + 100) THEN\n      V_REPORTING_ENTITY_CD := :NEW.REPORTING_ENTITY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n      WHEN ( :NEW.VALID_FROM_DATE IS NULL OR :NEW.VALID_FROM_DATE IS NULL) THEN\n        RAISE ERR_VALID_FROM_DATE;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => :NEW.REPORTING_ENTITY_CD, I_VALID_FROM_DATE => :NEW.VALID_FROM_DATE, I_VALID_TO_DATE => :NEW.VALID_TO_DATE, I_CHANGE_USER => V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.VALID_IND, 'Y') = 'N' AND COALESCE(:OLD.VALID_IND, 'N') = 'Y' THEN\n      CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND COMPANY_CD <> :NEW.COMPANY_CD AND VALID_IND = 'Y';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR > 0 THEN\n        SELECT STRING_AGG(DISTINCT COMPANY_CD, ', ') WITHIN GROUP (ORDER BY COMPANY_CD) INTO V_COMPANY_CODES_LIST FROM CFG_V_COMPANIES WHERE LEGAL_COMPANY_CD = :NEW.COMPANY_CD AND COMPANY_CD <> :NEW.COMPANY_CD AND VALID_IND = 'Y';"
+        },
+        {
+            "type": "sql",
+            "sql": "RAISE CPY_IN_USE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "UPDATE CFG.CFG_COMPANY_ADDRESSES SET VALID_TO = DATE_TRUNC ( CURRENT_TIMESTAMP ) - 1 WHERE COMPANY_CD = :NEW.COMPANY_CD AND ( VALID_TO > DATE_TRUNC(CURRENT_TIMESTAMP) OR VALID_TO IS NULL);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :OLD.COMPANY_TYPE_CD IN ('L', 'B') AND :NEW.COMPANY_TYPE_CD = 'D' THEN\n      UPDATE CFG.CFG_COMPANY_ADDRESSES SET VALID_TO = DATE_TRUNC ( CURRENT_TIMESTAMP ) - 1 WHERE COMPANY_CD = :NEW.COMPANY_CD AND ADDRESS_TYPE_CD NOT IN ('P', 'RES', 'L', 'INC') AND ( VALID_TO > DATE_TRUNC(CURRENT_TIMESTAMP) OR VALID_TO IS NULL);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.CBC_GBE_SCOPE = 'Y' AND :NEW.VALID_IND = 'N' THEN\n      RAISE ERR_CPY_STILL_IN_SCOPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.VALID_IND = 'N' AND COALESCE(:NEW.REPORTING_ENTITY_CD, :OLD.REPORTING_ENTITY_CD) IS NOT NULL AND COALESCE(:NEW.VALID_TO_DATE, :OLD.VALID_TO_DATE) IS NULL THEN\n      RAISE ERR_CPY_STILL_IN_MFR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.COMPANY_TYPE_CD = 'A' AND :NEW.CBC_GBE_SCOPE = 'Y' THEN\n      RAISE ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) = 'L' OR COALESCE(:NEW.COMPANY_TYPE_CD, :NEW.COMPANY_TYPE_CD) = 'B' THEN\n      V_REPORTING_ENTITY_CD := COALESCE (:NEW.COMPANY_CD, :OLD.COMPANY_CD);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      V_REPORTING_ENTITY_CD := V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_REPORTING_ENTITY_CD IS NOT NULL OR :NEW.COMPANY_TYPE_CD = 'D' THEN\n      IF (:NEW.CBC_GBE_SCOPE = 'Y' AND COALESCE (:OLD.CBC_GBE_SCOPE, 'N') = 'N') OR (COALESCE(:NEW.CBC_GBE_SCOPE, :OLD.CBC_GBE_SCOPE) = 'Y' AND V_LEGAL_COMPANY_CD <> COALESCE(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD)) THEN\n        SELECT CBC_FLAG INTO V_REP_CBC_FLAG FROM CFG_V_REPORTING_ENTITIES WHERE REPORTING_ENTITY_CD = V_LEGAL_COMPANY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF COALESCE (V_REP_CBC_FLAG, 'N') = 'N' THEN\n          RAISE RU_NOT_IN_CBC_SCOPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR := 0;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM CFG.CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = V_REPORTING_ENTITY_CD AND ADDRESS_TYPE_CD = 'RES';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n          RAISE ERR_NO_ADR;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT VALID_FROM, COUNTRY_CD INTO V_ADDR_VALID_FROM_DATE, V_COUNTRY_CD FROM CFG.CFG_V_COMPANY_ADDRESSES WHERE COMPANY_CD = V_REPORTING_ENTITY_CD AND ADDRESS_TYPE_CD = 'RES';"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_LEGAL_COMPANY_CD <> COALESCE(:OLD.LEGAL_COMPANY_CD, :NEW.LEGAL_COMPANY_CD) THEN\n          V_ADDR_VALID_FROM_DATE := DATE_TRUNC(CURRENT_TIMESTAMP);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => V_REPORTING_ENTITY_CD, I_VALID_FROM_DATE => TRUNC (SYSDATE), I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_REPORTING_ENTITY_CD => 'J-' || V_COUNTRY_CD, I_VALID_FROM_DATE => V_ADDR_VALID_FROM_DATE, I_VALID_TO_DATE => NULL, I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'INSERT');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.CBC_GBE_SCOPE = 'N' AND COALESCE (:OLD.CBC_GBE_SCOPE, 'Y') = 'Y' THEN\n        MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'CE', I_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "MDM_UTIL_COMPANIES.MODIFYCOMPANY(I_COMPANY_CD => :NEW.COMPANY_CD, I_VALID_FROM_DATE => NULL, I_VALID_TO_DATE => TRUNC (SYSDATE), I_CHANGE_USER => V_USERID, I_MAPPING_TYPE => 'JU', I_ACTION_TYPE => 'UPDATE');"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n    WHEN (COALESCE (:OLD.OFFICIAL_NAME, '-') != COALESCE (:NEW.OFFICIAL_NAME, '-')) AND :OLD.OFFICIAL_NAME IS NOT NULL THEN\n      MDMAPPL.MDM_UTIL_COMPANIES.MODIFYCOMPANYNAME(:NEW.COMPANY_CD, V_LEGAL_COMPANY_CD, :NEW.OFFICIAL_NAME, V_USERID);"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_DEL THEN\n    RAISE_APPLICATION_ERROR(-20110, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_UPD THEN\n    RAISE_APPLICATION_ERROR(-20111, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_INS THEN\n    RAISE_APPLICATION_ERROR(-20114, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_VALID_FROM_DATE THEN\n    RAISE_APPLICATION_ERROR(-20122, 'Please insert : Rep. Code Assignm. Valid from Date');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN RU_NOT_IN_CBC_SCOPE THEN\n    RAISE_APPLICATION_ERROR(-20123, 'A company cannot be in CBC/GBE scope if the RU that reports it is not in CBC scope');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CPY_STILL_IN_SCOPE THEN\n    RAISE_APPLICATION_ERROR(-20124, 'The CBC/GBE Scope must be set to No before deactivating the company');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NO_ADR THEN\n    RAISE_APPLICATION_ERROR(-20124, 'No Physical Address found. Please insert the address before setting the CBC/GBE Scope to Yes');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN CPY_IN_USE THEN\n    RAISE_APPLICATION_ERROR(-20125, 'The Company cannot be invalidated because is still used as Legal Company for the following companies: ' || V_COMPANY_CODES_LIST);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN INVALID_LEGAL_COMP THEN\n    RAISE_APPLICATION_ERROR(-20126, V_LEGAL_COMPANY_CD || ' is not a valid Legal Company Code');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_ASSOC_ENT_NOT_ALLOWED_FOR_CBC THEN\n    RAISE_APPLICATION_ERROR(-20127, 'An Associate Entity cannot be in CBC/GBE Scope!');"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_CPY_STILL_IN_MFR THEN\n    RAISE_APPLICATION_ERROR(-20127, 'Please fill in Rep. Code Assignm. Valid to Date field before invalidating the company');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ]
+}

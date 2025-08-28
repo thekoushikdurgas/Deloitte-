@@ -1444,13 +1444,6 @@ class OracleTriggerAnalyzer:
                 exception_lines_no = i
             if line_upper.endswith("END;") and line_info["indent"] == begin_line_indent:
                 end_line_no = i
-        # if exception_lines_no == -1:
-        #     begin_end_statements = self.structured_lines[begin_line_no + 1 : end_line_no]
-        # else:
-        #     begin_end_statements = self.structured_lines[begin_line_no + 1 : exception_lines_no]
-        #     exception_handlers = self._parse_exception_handlers(self.structured_lines[exception_lines_no + 1 : end_line_no])
-        #     exception_line_no = self.structured_lines[exception_lines_no]["line_no"]
-        #     end_line_no = self.structured_lines[end_line_no]["line_no"]
         self.main_section_lines = {
             "type": "begin_end",
             "begin_line_no": self.structured_lines[begin_line_no]["line_no"],
@@ -2023,7 +2016,10 @@ class OracleTriggerAnalyzer:
         for i in rest_strings_list:
             available_rest_strings.append({"filename": self.file_details["filename"], "line": i["line"], "line_no": i["line_no"]})
         # print(available_rest_strings)
-        available_rest_strings.to_excel(main_excel_file, sheet_name="non_parse", index=False)
+        
+        # Save to Excel while preserving other sheets
+        with pd.ExcelWriter(main_excel_file, mode='a', if_sheet_exists='replace') as writer:
+            available_rest_strings.to_excel(writer, sheet_name="non_parse", index=False)
 
     def to_json(self):
         """

@@ -257,6 +257,7 @@ END LOOP;
 Categorizes and parses various SQL statement types:
 
 **Supported Statement Types:**
+
 - `SELECT` statements
 - `INSERT` statements  
 - `UPDATE` statements
@@ -282,11 +283,11 @@ Categorizes and parses various SQL statement types:
 Parses function invocations with parameter analysis:
 
 **Supported Functions:**
+
 - `RAISE_APPLICATION_ERROR`
 - `DBMS_OUTPUT.PUT_LINE`
 - `TXO_UTIL.SET_WARNING`
 - MDM utility functions
-
 **Output Structure:**
 
 ```json

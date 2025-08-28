@@ -1,0 +1,430 @@
+{
+  "on_insert": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "V_USERID",
+          "data_type": "TEXT",
+          "default_value": null
+        },
+        {
+          "name": "V_TRG_UPD_DATE_STR",
+          "data_type": "TEXT",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": []
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "type": "assignment",
+          "variable_name": "V_USERID",
+          "assignment_operator": ":=",
+          "expression": "COALESCE(NEW.UPD_USER, OLD.UPD_USER);",
+          "assignment_indent": 4
+        },
+        {
+          "type": "assignment",
+          "variable_name": "V_TRG_UPD_DATE_STR",
+          "assignment_operator": ":=",
+          "expression": "TO_CHAR(COALESCE(NEW.UPD_DATE, OLD.UPD_DATE), 'YYYY-MM-DD');",
+          "assignment_indent": 4
+        },
+        {
+          "condition": "TG_OP = ''",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "condition": "COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')",
+              "type": "if_else",
+              "if_indent": 8,
+              "then_statements": [
+                {
+                  "condition": "",
+                  "type": "case_when",
+                  "case_indent": 12,
+                  "when_clauses": [
+                    {
+                      "type": "when_statement",
+                      "when_indent": 16,
+                      "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')",
+                      "then_statements": [
+                        {
+                          "type": "update_statement",
+                          "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.PROD_FAM_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
+                          "statement_indent": 20
+                        }
+                      ]
+                    },
+                    {
+                      "type": "when_statement",
+                      "when_indent": 16,
+                      "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')",
+                      "then_statements": [
+                        {
+                          "type": "update_statement",
+                          "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
+                          "statement_indent": 20
+                        }
+                      ]
+                    }
+                  ],
+                  "else_statements": [
+                    {
+                      "type": "null_statement",
+                      "sql_statement": "NULL;",
+                      "statement_indent": 20
+                    }
+                  ]
+                },
+                {
+                  "type": "function_calling",
+                  "function_name": "CALL GMD.GMD_UTIL_THEMES$UPD_THEME_DESC_JOB_PROC",
+                  "parameters": {
+                    "parameter_type": "named",
+                    "positional_params": [],
+                    "named_params": {
+                      "P_PRODUCT_FAMILY_CD": "NEW.PRODUCT_FAMILY_CD::TEXT",
+                      "P_REGISTRAR": "V_USERID::TEXT",
+                      "P_TRG_TABLE": "'PRODUCT_FAMILIES'::TEXT",
+                      "P_TRG_UPD_DATE": "V_TRG_UPD_DATE_STR::TEXT"
+                    },
+                    "raw_text": "P_PRODUCT_FAMILY_CD => NEW.PRODUCT_FAMILY_CD::TEXT, P_REGISTRAR => V_USERID::TEXT, P_TRG_TABLE => 'PRODUCT_FAMILIES'::TEXT, P_TRG_UPD_DATE => V_TRG_UPD_DATE_STR::TEXT"
+                  }
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "type": "return_statement",
+          "sql_statement": "RETURN NULL;",
+          "statement_indent": 4
+        }
+      ],
+      "exception_handlers": []
+    },
+    "conversion_stats": {
+      "select_statement": 0,
+      "insert_statement": 0,
+      "update_statement": 2,
+      "delete_statement": 0,
+      "raise_statement": 0,
+      "assignment": 2,
+      "for_loop": 0,
+      "if_else": 2,
+      "case_when": 1,
+      "begin_end": 1,
+      "exception_handler": 0,
+      "function_calling": 1,
+      "when_statement": 2,
+      "elif_statement": 0,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 1,
+      "return_statement": 1
+    }
+  },
+  "on_update": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "V_USERID",
+          "data_type": "TEXT",
+          "default_value": null
+        },
+        {
+          "name": "V_TRG_UPD_DATE_STR",
+          "data_type": "TEXT",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": []
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "type": "assignment",
+          "variable_name": "V_USERID",
+          "assignment_operator": ":=",
+          "expression": "COALESCE(NEW.UPD_USER, OLD.UPD_USER);",
+          "assignment_indent": 4
+        },
+        {
+          "type": "assignment",
+          "variable_name": "V_TRG_UPD_DATE_STR",
+          "assignment_operator": ":=",
+          "expression": "TO_CHAR(COALESCE(NEW.UPD_DATE, OLD.UPD_DATE), 'YYYY-MM-DD');",
+          "assignment_indent": 4
+        },
+        {
+          "condition": "TG_OP = ''",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "condition": "COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')",
+              "type": "if_else",
+              "if_indent": 8,
+              "then_statements": [
+                {
+                  "condition": "",
+                  "type": "case_when",
+                  "case_indent": 12,
+                  "when_clauses": [
+                    {
+                      "type": "when_statement",
+                      "when_indent": 16,
+                      "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')",
+                      "then_statements": [
+                        {
+                          "type": "update_statement",
+                          "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.PROD_FAM_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
+                          "statement_indent": 20
+                        }
+                      ]
+                    },
+                    {
+                      "type": "when_statement",
+                      "when_indent": 16,
+                      "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')",
+                      "then_statements": [
+                        {
+                          "type": "update_statement",
+                          "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
+                          "statement_indent": 20
+                        }
+                      ]
+                    }
+                  ],
+                  "else_statements": [
+                    {
+                      "type": "null_statement",
+                      "sql_statement": "NULL;",
+                      "statement_indent": 20
+                    }
+                  ]
+                },
+                {
+                  "type": "function_calling",
+                  "function_name": "CALL GMD.GMD_UTIL_THEMES$UPD_THEME_DESC_JOB_PROC",
+                  "parameters": {
+                    "parameter_type": "named",
+                    "positional_params": [],
+                    "named_params": {
+                      "P_PRODUCT_FAMILY_CD": "NEW.PRODUCT_FAMILY_CD::TEXT",
+                      "P_REGISTRAR": "V_USERID::TEXT",
+                      "P_TRG_TABLE": "'PRODUCT_FAMILIES'::TEXT",
+                      "P_TRG_UPD_DATE": "V_TRG_UPD_DATE_STR::TEXT"
+                    },
+                    "raw_text": "P_PRODUCT_FAMILY_CD => NEW.PRODUCT_FAMILY_CD::TEXT, P_REGISTRAR => V_USERID::TEXT, P_TRG_TABLE => 'PRODUCT_FAMILIES'::TEXT, P_TRG_UPD_DATE => V_TRG_UPD_DATE_STR::TEXT"
+                  }
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "type": "return_statement",
+          "sql_statement": "RETURN NULL;",
+          "statement_indent": 4
+        }
+      ],
+      "exception_handlers": []
+    },
+    "conversion_stats": {
+      "select_statement": 0,
+      "insert_statement": 0,
+      "update_statement": 2,
+      "delete_statement": 0,
+      "raise_statement": 0,
+      "assignment": 2,
+      "for_loop": 0,
+      "if_else": 2,
+      "case_when": 1,
+      "begin_end": 1,
+      "exception_handler": 0,
+      "function_calling": 1,
+      "when_statement": 2,
+      "elif_statement": 0,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 1,
+      "return_statement": 1
+    }
+  },
+  "on_delete": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "V_USERID",
+          "data_type": "TEXT",
+          "default_value": null
+        },
+        {
+          "name": "V_TRG_UPD_DATE_STR",
+          "data_type": "TEXT",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": []
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "type": "assignment",
+          "variable_name": "V_USERID",
+          "assignment_operator": ":=",
+          "expression": "COALESCE(NEW.UPD_USER, OLD.UPD_USER);",
+          "assignment_indent": 4
+        },
+        {
+          "type": "assignment",
+          "variable_name": "V_TRG_UPD_DATE_STR",
+          "assignment_operator": ":=",
+          "expression": "TO_CHAR(COALESCE(NEW.UPD_DATE, OLD.UPD_DATE), 'YYYY-MM-DD');",
+          "assignment_indent": 4
+        },
+        {
+          "condition": "TG_OP = ''",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "condition": "COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X')",
+              "type": "if_else",
+              "if_indent": 8,
+              "then_statements": [
+                {
+                  "condition": "",
+                  "type": "case_when",
+                  "case_indent": 12,
+                  "when_clauses": [
+                    {
+                      "type": "when_statement",
+                      "when_indent": 16,
+                      "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')",
+                      "then_statements": [
+                        {
+                          "type": "update_statement",
+                          "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.PROD_FAM_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
+                          "statement_indent": 20
+                        }
+                      ]
+                    },
+                    {
+                      "type": "when_statement",
+                      "when_indent": 16,
+                      "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')",
+                      "then_statements": [
+                        {
+                          "type": "update_statement",
+                          "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
+                          "statement_indent": 20
+                        }
+                      ]
+                    }
+                  ],
+                  "else_statements": [
+                    {
+                      "type": "null_statement",
+                      "sql_statement": "NULL;",
+                      "statement_indent": 20
+                    }
+                  ]
+                },
+                {
+                  "type": "function_calling",
+                  "function_name": "CALL GMD.GMD_UTIL_THEMES$UPD_THEME_DESC_JOB_PROC",
+                  "parameters": {
+                    "parameter_type": "named",
+                    "positional_params": [],
+                    "named_params": {
+                      "P_PRODUCT_FAMILY_CD": "NEW.PRODUCT_FAMILY_CD::TEXT",
+                      "P_REGISTRAR": "V_USERID::TEXT",
+                      "P_TRG_TABLE": "'PRODUCT_FAMILIES'::TEXT",
+                      "P_TRG_UPD_DATE": "V_TRG_UPD_DATE_STR::TEXT"
+                    },
+                    "raw_text": "P_PRODUCT_FAMILY_CD => NEW.PRODUCT_FAMILY_CD::TEXT, P_REGISTRAR => V_USERID::TEXT, P_TRG_TABLE => 'PRODUCT_FAMILIES'::TEXT, P_TRG_UPD_DATE => V_TRG_UPD_DATE_STR::TEXT"
+                  }
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "type": "return_statement",
+          "sql_statement": "RETURN NULL;",
+          "statement_indent": 4
+        }
+      ],
+      "exception_handlers": []
+    },
+    "conversion_stats": {
+      "select_statement": 0,
+      "insert_statement": 0,
+      "update_statement": 2,
+      "delete_statement": 0,
+      "raise_statement": 0,
+      "assignment": 2,
+      "for_loop": 0,
+      "if_else": 2,
+      "case_when": 1,
+      "begin_end": 1,
+      "exception_handler": 0,
+      "function_calling": 1,
+      "when_statement": 2,
+      "elif_statement": 0,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 1,
+      "return_statement": 1
+    }
+  },
+  "metadata": {
+    "parse_timestamp": "2025-08-28T12:28:36.746152",
+    "parser_version": "1.0",
+    "file_details": {
+      "filename": "trigger5.sql",
+      "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\trigger5.sql",
+      "filesize": 1538,
+      "file_extension": ".sql",
+      "last_modified": 1755022148.5598378,
+      "created_time": 1755020521.3942647,
+      "is_file": true,
+      "is_readable": true
+    }
+  }
+}

@@ -1,0 +1,332 @@
+{
+    "on_insert": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''MDM_V_NEW_MEDICINE_PROPOSALS_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_EVOLVED_THEME_NO V_NEW_MEDICINE_PROPOSALS.EVOLVED_THEME_NO%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PROPOSAL_ID numeric;"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_ACTIVE VARCHAR2(1) := ''A'';"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_EVOLVED VARCHAR2(1) := ''E'';"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_TERMINATED VARCHAR2(1) := ''T'';"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n  V_EVOLVED_THEME_NO := :NEW.EVOLVED_THEME_NO;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME) THEN\n    RAISE V_NO_UPDATE_TO_EVOLVED;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED) THEN\n    RAISE V_NO_UPDATE_EVOLVED_TO_TERMINATED;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL) THEN\n    V_EVOLVED_THEME_NO := NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL) THEN\n    RAISE V_EXPLORATORY_THEMENO_NOT_NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    V_PROPOSAL_ID := PREDMD.SEQ_NMP_PROPOSAL_ID.nextval;"
+        },
+        {
+            "type": "sql",
+            "sql": "INSERT INTO V_NEW_MEDICINE_PROPOSALS( PROPOSAL_ID, EXPLORATORY_THEME_NO, PROPOSAL_NAME, PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID, FIREWALL_ID ) VALUES ( V_PROPOSAL_ID, :NEW.EXPLORATORY_THEME_NO, :NEW.PROPOSAL_NAME, :NEW.PROPOSAL_STATUS_CD, :NEW.EVOLVED_THEME_NO, :NEW.MOLECULE_TYPE_ID, :NEW.PHARMACOLOGICAL_TYPE_ID, :NEW.FIREWALL_ID );"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.PARTNER_ID IS NOT NULL THEN\n      MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA(V_PROPOSAL_ID, :NEW.PARTNER_ID);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN DUP_VAL_ON_INDEX THEN\n    RAISE_APPLICATION_ERROR(-20600, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_NO_UPDATE_EVOLVED_TO_TERMINATED THEN\n    RAISE_APPLICATION_ERROR(-20800, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_NO_UPDATE_TO_EVOLVED THEN\n    RAISE_APPLICATION_ERROR(-20900, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_EXPLORATORY_THEMENO_NOT_NULL THEN\n    RAISE_APPLICATION_ERROR(-20940, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_update": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''MDM_V_NEW_MEDICINE_PROPOSALS_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_EVOLVED_THEME_NO V_NEW_MEDICINE_PROPOSALS.EVOLVED_THEME_NO%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PROPOSAL_ID numeric;"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_ACTIVE VARCHAR2(1) := ''A'';"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_EVOLVED VARCHAR2(1) := ''E'';"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_TERMINATED VARCHAR2(1) := ''T'';"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n  V_EVOLVED_THEME_NO := :NEW.EVOLVED_THEME_NO;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME) THEN\n    RAISE V_NO_UPDATE_TO_EVOLVED;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED) THEN\n    RAISE V_NO_UPDATE_EVOLVED_TO_TERMINATED;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL) THEN\n    V_EVOLVED_THEME_NO := NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL) THEN\n    RAISE V_EXPLORATORY_THEMENO_NOT_NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    V_PROPOSAL_ID := PREDMD.SEQ_NMP_PROPOSAL_ID.nextval;"
+        },
+        {
+            "type": "sql",
+            "sql": "INSERT INTO V_NEW_MEDICINE_PROPOSALS( PROPOSAL_ID, EXPLORATORY_THEME_NO, PROPOSAL_NAME, PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID, FIREWALL_ID ) VALUES ( V_PROPOSAL_ID, :NEW.EXPLORATORY_THEME_NO, :NEW.PROPOSAL_NAME, :NEW.PROPOSAL_STATUS_CD, :NEW.EVOLVED_THEME_NO, :NEW.MOLECULE_TYPE_ID, :NEW.PHARMACOLOGICAL_TYPE_ID, :NEW.FIREWALL_ID );"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.PARTNER_ID IS NOT NULL THEN\n      MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA(V_PROPOSAL_ID, :NEW.PARTNER_ID);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN DUP_VAL_ON_INDEX THEN\n    RAISE_APPLICATION_ERROR(-20600, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_NO_UPDATE_EVOLVED_TO_TERMINATED THEN\n    RAISE_APPLICATION_ERROR(-20800, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_NO_UPDATE_TO_EVOLVED THEN\n    RAISE_APPLICATION_ERROR(-20900, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_EXPLORATORY_THEMENO_NOT_NULL THEN\n    RAISE_APPLICATION_ERROR(-20940, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_delete": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(100) := ''MDM_V_NEW_MEDICINE_PROPOSALS_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "V_EVOLVED_THEME_NO V_NEW_MEDICINE_PROPOSALS.EVOLVED_THEME_NO%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PROPOSAL_ID numeric;"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_ACTIVE VARCHAR2(1) := ''A'';"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_EVOLVED VARCHAR2(1) := ''E'';"
+        },
+        {
+            "type": "sql",
+            "sql": "C_PROPOSAL_STATUS_TERMINATED VARCHAR2(1) := ''T'';"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n  V_EVOLVED_THEME_NO := :NEW.EVOLVED_THEME_NO;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME) THEN\n    RAISE V_NO_UPDATE_TO_EVOLVED;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED) THEN\n    RAISE V_NO_UPDATE_EVOLVED_TO_TERMINATED;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL) THEN\n    V_EVOLVED_THEME_NO := NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF (:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL) THEN\n    RAISE V_EXPLORATORY_THEMENO_NOT_NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF TRUE THEN\n    V_PROPOSAL_ID := PREDMD.SEQ_NMP_PROPOSAL_ID.nextval;"
+        },
+        {
+            "type": "sql",
+            "sql": "INSERT INTO V_NEW_MEDICINE_PROPOSALS( PROPOSAL_ID, EXPLORATORY_THEME_NO, PROPOSAL_NAME, PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID, FIREWALL_ID ) VALUES ( V_PROPOSAL_ID, :NEW.EXPLORATORY_THEME_NO, :NEW.PROPOSAL_NAME, :NEW.PROPOSAL_STATUS_CD, :NEW.EVOLVED_THEME_NO, :NEW.MOLECULE_TYPE_ID, :NEW.PHARMACOLOGICAL_TYPE_ID, :NEW.FIREWALL_ID );"
+        },
+        {
+            "type": "sql",
+            "sql": "IF :NEW.PARTNER_ID IS NOT NULL THEN\n      MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA(V_PROPOSAL_ID, :NEW.PARTNER_ID);"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN DUP_VAL_ON_INDEX THEN\n    RAISE_APPLICATION_ERROR(-20600, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_NO_UPDATE_EVOLVED_TO_TERMINATED THEN\n    RAISE_APPLICATION_ERROR(-20800, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_NO_UPDATE_TO_EVOLVED THEN\n    RAISE_APPLICATION_ERROR(-20900, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN V_EXPLORATORY_THEMENO_NOT_NULL THEN\n    RAISE_APPLICATION_ERROR(-20940, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ]
+}
