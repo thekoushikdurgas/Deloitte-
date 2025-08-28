@@ -182,14 +182,14 @@ def process_files(
             debug("Source path: %s", src_path)
             debug("Output path: %s", out_path)
             
-            # Log file details if available
-            try:
-                file_details = OracleTriggerAnalyzer.extract_file_details(src_path)
-                file_size = file_details.get("filesize", 0)
-                total_file_size += file_size
-                debug("File size: %d bytes", file_size)
-            except Exception as e:
-                debug("Could not extract file details: %s", str(e))
+            # # Log file details if available
+            # try:
+            #     file_details = OracleTriggerAnalyzer.extract_file_details(src_path)
+            #     file_size = file_details.get("filesize", 0)
+            #     total_file_size += file_size
+            #     debug("File size: %d bytes", file_size)
+            # except Exception as e:
+            #     debug("Could not extract file details: %s", str(e))
 
 
             # Run the processor function
@@ -243,7 +243,7 @@ def sql_to_json_processor(src_path: str, out_path: str, file_name: str) -> None:
     debug("Creating OracleTriggerAnalyzer instance from file...")
     print(f"Reading SQL file: {src_path}")
     try:
-        analyzer = OracleTriggerAnalyzer.from_file(src_path)
+        analyzer = OracleTriggerAnalyzer(src_path)
         debug("OracleTriggerAnalyzer created successfully with file details")
         debug("File details: %s", analyzer.file_details.get("filename", "unknown"))
     except FileNotFoundError as e:

@@ -33,10 +33,7 @@ def sql_to_json_processor(src_path: str, out_path: str, file_name: str) -> None:
         out_path (str): Path to the output JSON file
         file_name (str): Trigger number extracted from filename
     """
-
-    with open(src_path, "r", encoding="utf-8") as f:
-        sql_content: str = f.read()
-    analyzer = OracleTriggerAnalyzer(sql_content)
+    analyzer = OracleTriggerAnalyzer(src_path)
     json_content: Dict[str, Any] = analyzer.to_json()
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(json_content, f, indent=2)

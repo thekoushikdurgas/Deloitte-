@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Tuple
 import pandas as pd
 from numpy import copy
 from utilities.common import (
+    append_to_excel_sheet,
     logger,
     main_excel_file,
     setup_logging,
@@ -33,7 +34,7 @@ class OracleTriggerAnalyzer:
     - Finally, `to_json()` emits a dict with `declarations`, `main`, and `sql_comments`.
     """
 
-    def __init__(self, sql_content: str, file_details: Dict[str, Any] = None):
+    def __init__(self, filepath: str, encoding: str = 'utf-8'):
         """
         Initialize the OracleTriggerAnalyzer with SQL content.
 
@@ -54,8 +55,18 @@ class OracleTriggerAnalyzer:
         start_time = time.time()
         debug(
             "Initializing OracleTriggerAnalyzer with %d characters of SQL",
-            len(sql_content),
+            len(filepath),
         )
+        
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"File not found: {filepath}")
+        
+        # Extract file details
+        file_details = self.extract_file_details(filepath)
+        
+        # Read file content
+        with open(filepath, 'r', encoding=encoding) as f:
+            sql_content = f.read()
 
         self.sql_content: str = sql_content
         self.file_details: Dict[str, Any] = file_details or {}
@@ -67,6 +78,7 @@ class OracleTriggerAnalyzer:
         self.exceptions: List[Dict[str, Any]] = []
         self.sql_comments: List[str] = []
         self.structured_lines: List[Dict[str, Any]] = []
+        self.rest_string_list: List = []
         self.strng_convert_json: Dict = {
             "select_statement": 0,
             "insert_statement": 0,
@@ -163,7 +175,7 @@ class OracleTriggerAnalyzer:
         )
     def load_function_name(self):
         """
-        Load function name from the excel file (utilities\oracle_postgresql_mappings.xlsx) in sheet "function_list".
+        Load function name from the excel file (utilities/oracle_postgresql_mappings.xlsx) in sheet "function_list".
         """
         function_list = pd.read_excel(main_excel_file, sheet_name="function_list")
         function_name = function_list["function_name"].tolist()
@@ -2010,16 +2022,15 @@ class OracleTriggerAnalyzer:
 
         # Process main_section_lines
         extract_rest_strings_from_item(self.main_section_lines)
-
+        # print(f'rest_strings_list {rest_strings_list}')	
+        self.rest_string_list = rest_strings_list
         # rest_strings_list to covert like ("filename","line","line_no") and add to available_rest_strings
-        available_rest_strings = pd.read_excel(main_excel_file, sheet_name="non_parse")
+        dataframe_rest_strings = pd.DataFrame(columns=["filename", "line", "line_no"])
         for i in rest_strings_list:
-            available_rest_strings.append({"filename": self.file_details["filename"], "line": i["line"], "line_no": i["line_no"]})
-        # print(available_rest_strings)
+            dataframe_rest_strings.append({"filename": self.file_details["filename"], "line": i["line"], "line_no": i["line_no"]})
+        print(dataframe_rest_strings)
         
-        # Save to Excel while preserving other sheets
-        with pd.ExcelWriter(main_excel_file, mode='a', if_sheet_exists='replace') as writer:
-            available_rest_strings.to_excel(writer, sheet_name="non_parse", index=False)
+        append_to_excel_sheet(dataframe_rest_strings, sheet_name="non_parse")
 
     def to_json(self):
         """
@@ -2046,6 +2057,7 @@ class OracleTriggerAnalyzer:
             "main": self.main_section_lines,
             "sql_comments": self.sql_comments,
             # "sql_lines": self.structured_lines,
+            "rest_string_list": self.rest_string_list,
         }
 
         # # Step 5: Add additional metadata to the result
@@ -2078,8 +2090,8 @@ class OracleTriggerAnalyzer:
 
         return datetime.now().isoformat()
 
-    @staticmethod
-    def extract_file_details(filepath: str) -> Dict[str, Any]:
+
+    def extract_file_details(self,filepath: str) -> Dict[str, Any]:
         """
         Extract file details from a file path.
         
@@ -2113,36 +2125,36 @@ class OracleTriggerAnalyzer:
                 "error": f"Could not extract file details: {str(e)}"
             }
 
-    @classmethod
-    def from_file(cls, filepath: str, encoding: str = 'utf-8') -> 'OracleTriggerAnalyzer':
-        """
-        Create an OracleTriggerAnalyzer instance from a file.
+    # @classmethod
+    # def from_file(cls, filepath: str, encoding: str = 'utf-8') -> 'OracleTriggerAnalyzer':
+    #     """
+    #     Create an OracleTriggerAnalyzer instance from a file.
         
-        Args:
-            filepath (str): Path to the SQL file
-            encoding (str): File encoding (default: 'utf-8')
+    #     Args:
+    #         filepath (str): Path to the SQL file
+    #         encoding (str): File encoding (default: 'utf-8')
             
-        Returns:
-            OracleTriggerAnalyzer: Analyzer instance with file details
+    #     Returns:
+    #         OracleTriggerAnalyzer: Analyzer instance with file details
             
-        Raises:
-            FileNotFoundError: If the file doesn't exist
-            UnicodeDecodeError: If the file can't be decoded with the specified encoding
-        """
-        import os
+    #     Raises:
+    #         FileNotFoundError: If the file doesn't exist
+    #         UnicodeDecodeError: If the file can't be decoded with the specified encoding
+    #     """
+    #     import os
         
-        if not os.path.exists(filepath):
-            raise FileNotFoundError(f"File not found: {filepath}")
+    #     if not os.path.exists(filepath):
+    #         raise FileNotFoundError(f"File not found: {filepath}")
         
-        # Extract file details
-        file_details = cls.extract_file_details(filepath)
+    #     # Extract file details
+    #     file_details = cls.extract_file_details(filepath)
         
-        # Read file content
-        with open(filepath, 'r', encoding=encoding) as f:
-            sql_content = f.read()
+    #     # Read file content
+    #     with open(filepath, 'r', encoding=encoding) as f:
+    #         sql_content = f.read()
         
-        # Create analyzer instance with file details
-        return cls(sql_content, file_details)
+    #     # Create analyzer instance with file details
+    #     return cls(sql_content, file_details)
 
     def format_values(self, values: str):
         """

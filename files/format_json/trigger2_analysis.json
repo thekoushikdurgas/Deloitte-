@@ -66,26 +66,33 @@
   },
   "main": {
     "type": "begin_end",
+    "begin_line_no": 18,
     "begin_indent": 0,
     "begin_end_statements": [
       {
         "type": "select_statement",
         "sql_statement": "SELECT MANUAL_SHORT_DESC INTO V_MANUAL_SHORT_DESC FROM GMD.THEMES WHERE THEME_NO = NVL(:NEW.THEME_NO, :OLD.THEME_NO);",
+        "statement_line_no": 21,
         "statement_indent": 4
       },
       {
         "condition": " (DELETING) ",
         "type": "if_else",
+        "if_line_no": 27,
+        "then_line_no": 27,
         "if_indent": 4,
+        "end_if_line_no": 58,
         "then_statements": [
           {
             "type": "update_statement",
             "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'N' WHERE TMM.THEME_NO = :OLD.THEME_NO AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID;",
+            "statement_line_no": 33,
             "statement_indent": 8
           },
           {
             "type": "update_statement",
             "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO - 1 WHERE TMM.THEME_NO = :OLD.THEME_NO AND TMM.MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO AND TMM.VALID_IND = 'Y';",
+            "statement_line_no": 41,
             "statement_indent": 8
           },
           {
@@ -110,21 +117,29 @@
       {
         "condition": " (INSERTING OR UPDATING) ",
         "type": "if_else",
+        "if_line_no": 60,
+        "then_line_no": 60,
         "if_indent": 4,
+        "end_if_line_no": 401,
         "then_statements": [
           {
             "type": "select_statement",
             "sql_statement": "SELECT COUNT (*) INTO V_COUNT_T_MAPPINGS FROM V_THEME_MOLECULE_MAP TMM WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.VALID_IND = 'Y';",
+            "statement_line_no": 61,
             "statement_indent": 8
           },
           {
             "condition": " (:NEW.MOLECULE_ID IS NULL) ",
             "type": "if_else",
+            "if_line_no": 68,
+            "then_line_no": 68,
             "if_indent": 8,
+            "end_if_line_no": 87,
             "then_statements": [
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE ERR_MOLEC_ID_MISSING;",
+                "statement_line_no": 69,
                 "statement_indent": 12
               }
             ],
@@ -134,16 +149,23 @@
           {
             "condition": " (UPDATING) ",
             "type": "if_else",
+            "if_line_no": 89,
+            "then_line_no": 89,
             "if_indent": 8,
+            "end_if_line_no": 93,
             "then_statements": [
               {
                 "condition": " (:NEW.MOLECULE_SEQ_NO > V_COUNT_T_MAPPINGS) ",
                 "type": "if_else",
+                "if_line_no": 90,
+                "then_line_no": 90,
                 "if_indent": 12,
+                "end_if_line_no": 92,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE ERR_UPD_INV_MAP;",
+                    "statement_line_no": 91,
                     "statement_indent": 16
                   }
                 ],
@@ -157,21 +179,29 @@
           {
             "condition": " (:NEW.MOLECULE_ID <> NVL (:OLD.MOLECULE_ID, '-1')) ",
             "type": "if_else",
+            "if_line_no": 98,
+            "then_line_no": 98,
             "if_indent": 8,
+            "end_if_line_no": 122,
             "then_statements": [
               {
                 "type": "select_statement",
                 "sql_statement": "SELECT COUNT (*) INTO V_COUNT_T_MOL_MAP FROM V_THEME_MOLECULE_MAP TMM WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID AND TMM.VALID_IND = 'Y';",
+                "statement_line_no": 99,
                 "statement_indent": 12
               },
               {
                 "condition": " (V_COUNT_T_MOL_MAP > 0) ",
                 "type": "if_else",
+                "if_line_no": 107,
+                "then_line_no": 107,
                 "if_indent": 12,
+                "end_if_line_no": 109,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE ERR_MAP_EXISTS;",
+                    "statement_line_no": 108,
                     "statement_indent": 16
                   }
                 ],
@@ -181,18 +211,23 @@
               {
                 "type": "select_statement",
                 "sql_statement": "SELECT COUNT (*) INTO V_COUNT_T_MOL_MAP FROM V_THEME_MOLECULE_MAP TMM WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID AND TMM.VALID_IND = 'N';",
+                "statement_line_no": 111,
                 "statement_indent": 12
               },
               {
                 "condition": " (V_COUNT_T_MOL_MAP > 0) ",
                 "type": "if_else",
+                "if_line_no": 119,
+                "then_line_no": 119,
                 "if_indent": 12,
+                "end_if_line_no": 121,
                 "then_statements": [
                   {
                     "type": "assignment",
                     "variable_name": "INVALID_MAPPING_EXISTS",
                     "assignment_operator": ":=",
                     "expression": "TRUE;",
+                    "assignment_line_no": 120,
                     "assignment_indent": 16
                   }
                 ],
@@ -206,26 +241,37 @@
           {
             "condition": " (INSERTING) ",
             "type": "if_else",
+            "if_line_no": 124,
+            "then_line_no": 124,
             "if_indent": 8,
+            "end_if_line_no": 201,
             "then_statements": [
               {
                 "condition": "",
                 "type": "case_when",
+                "case_line_no": 125,
                 "case_indent": 12,
+                "end_case_line_no": 200,
                 "when_clauses": [
                   {
                     "type": "when_statement",
+                    "when_line_no": 126,
                     "when_indent": 16,
                     "condition": ":NEW.MOLECULE_SEQ_NO = V_COUNT_T_MAPPINGS + 1",
+                    "then_line_no": 126,
                     "then_statements": [
                       {
                         "condition": " (INVALID_MAPPING_EXISTS) ",
                         "type": "if_else",
+                        "if_line_no": 127,
+                        "then_line_no": 127,
                         "if_indent": 20,
+                        "end_if_line_no": 152,
                         "then_statements": [
                           {
                             "type": "update_statement",
                             "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'Y', TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;",
+                            "statement_line_no": 130,
                             "statement_indent": 24
                           }
                         ],
@@ -234,6 +280,7 @@
                           {
                             "type": "insert_statement",
                             "sql_statement": "INSERT INTO THEME_MOLECULE_MAP TMM ( TMM.THEME_NO, TMM.MOLECULE_ID, TMM.MOLECULE_SEQ_NO, TMM.MOLECULE_MAP_CHAR, TMM.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, :NEW.MOLECULE_SEQ_NO, :NEW.MOLECULE_MAP_CHAR, 'Y' );",
+                            "statement_line_no": 139,
                             "statement_indent": 24
                           }
                         ]
@@ -242,22 +289,29 @@
                   },
                   {
                     "type": "when_statement",
+                    "when_line_no": 156,
                     "when_indent": 16,
                     "condition": ":NEW.MOLECULE_SEQ_NO < V_COUNT_T_MAPPINGS + 1",
+                    "then_line_no": 156,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO + 1 WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_SEQ_NO >= :NEW.MOLECULE_SEQ_NO AND TMM.VALID_IND = 'Y';",
+                        "statement_line_no": 158,
                         "statement_indent": 20
                       },
                       {
                         "condition": " (INVALID_MAPPING_EXISTS) ",
                         "type": "if_else",
+                        "if_line_no": 167,
+                        "then_line_no": 167,
                         "if_indent": 20,
+                        "end_if_line_no": 192,
                         "then_statements": [
                           {
                             "type": "update_statement",
                             "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'Y', TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;",
+                            "statement_line_no": 170,
                             "statement_indent": 24
                           }
                         ],
@@ -266,6 +320,7 @@
                           {
                             "type": "insert_statement",
                             "sql_statement": "INSERT INTO THEME_MOLECULE_MAP TMM ( TMM.THEME_NO, TMM.MOLECULE_ID, TMM.MOLECULE_SEQ_NO, TMM.MOLECULE_MAP_CHAR, TMM.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, :NEW.MOLECULE_SEQ_NO, :NEW.MOLECULE_MAP_CHAR, 'Y' );",
+                            "statement_line_no": 179,
                             "statement_indent": 24
                           }
                         ]
@@ -277,6 +332,7 @@
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE ERR_INS_INV_MAP;",
+                    "statement_line_no": 199,
                     "statement_indent": 20
                   }
                 ]
@@ -288,21 +344,31 @@
           {
             "condition": " (UPDATING) ",
             "type": "if_else",
+            "if_line_no": 202,
+            "then_line_no": 202,
             "if_indent": 8,
+            "end_if_line_no": 393,
             "then_statements": [
               {
                 "condition": " (:NEW.MOLECULE_ID IS NOT NULL) ",
                 "type": "if_else",
+                "if_line_no": 203,
+                "then_line_no": 203,
                 "if_indent": 12,
+                "end_if_line_no": 289,
                 "then_statements": [
                   {
                     "condition": " (:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO AND :NEW.MOLECULE_MAP_CHAR <> :OLD.MOLECULE_MAP_CHAR) ",
                     "type": "if_else",
+                    "if_line_no": 204,
+                    "then_line_no": 204,
                     "if_indent": 16,
+                    "end_if_line_no": 211,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.MOLECULE_MAP_CHAR = :NEW.MOLECULE_MAP_CHAR WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;",
+                        "statement_line_no": 205,
                         "statement_indent": 20
                       }
                     ],
@@ -312,21 +378,29 @@
                   {
                     "condition": " (:NEW.MOLECULE_ID = :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO) ",
                     "type": "if_else",
+                    "if_line_no": 213,
+                    "then_line_no": 213,
                     "if_indent": 16,
+                    "end_if_line_no": 285,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'N' WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID;",
+                        "statement_line_no": 222,
                         "statement_indent": 20
                       },
                       {
                         "condition": " (:OLD.MOLECULE_SEQ_NO < :NEW.MOLECULE_SEQ_NO) ",
                         "type": "if_else",
+                        "if_line_no": 228,
+                        "then_line_no": 228,
                         "if_indent": 20,
+                        "end_if_line_no": 250,
                         "then_statements": [
                           {
                             "type": "update_statement",
                             "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO - 1 WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO AND TMM.VALID_IND = 'Y' AND TMM.MOLECULE_SEQ_NO <= :NEW.MOLECULE_SEQ_NO;",
+                            "statement_line_no": 231,
                             "statement_indent": 24
                           }
                         ],
@@ -335,6 +409,7 @@
                           {
                             "type": "update_statement",
                             "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO + 1 WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.VALID_IND = 'Y' AND TMM.MOLECULE_SEQ_NO >= :NEW.MOLECULE_SEQ_NO AND TMM.MOLECULE_SEQ_NO < :OLD.MOLECULE_SEQ_NO;",
+                            "statement_line_no": 242,
                             "statement_indent": 24
                           }
                         ]
@@ -342,11 +417,15 @@
                       {
                         "condition": " (INVALID_MAPPING_EXISTS) ",
                         "type": "if_else",
+                        "if_line_no": 254,
+                        "then_line_no": 254,
                         "if_indent": 20,
+                        "end_if_line_no": 280,
                         "then_statements": [
                           {
                             "type": "update_statement",
                             "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'Y', TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO, TMM.MOLECULE_MAP_CHAR =: NEW.MOLECULE_MAP_CHAR WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;",
+                            "statement_line_no": 257,
                             "statement_indent": 24
                           }
                         ],
@@ -355,6 +434,7 @@
                           {
                             "type": "insert_statement",
                             "sql_statement": "INSERT INTO THEME_MOLECULE_MAP TMM ( TMM.THEME_NO, TMM.MOLECULE_ID, TMM.MOLECULE_SEQ_NO, TMM.MOLECULE_MAP_CHAR, TMM.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, :NEW.MOLECULE_SEQ_NO, :NEW.MOLECULE_MAP_CHAR, 'Y' );",
+                            "statement_line_no": 267,
                             "statement_indent": 24
                           }
                         ]
@@ -370,26 +450,35 @@
               {
                 "condition": " (:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID AND :NEW.MOLECULE_SEQ_NO <> :OLD.MOLECULE_SEQ_NO) ",
                 "type": "if_else",
+                "if_line_no": 291,
+                "then_line_no": 291,
                 "if_indent": 12,
+                "end_if_line_no": 351,
                 "then_statements": [
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'N' WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID;",
+                    "statement_line_no": 302,
                     "statement_indent": 16
                   },
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.MOLECULE_SEQ_NO = TMM.MOLECULE_SEQ_NO - 1 WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_SEQ_NO > :OLD.MOLECULE_SEQ_NO AND TMM.MOLECULE_SEQ_NO <= :NEW.MOLECULE_SEQ_NO AND TMM.VALID_IND = 'Y';",
+                    "statement_line_no": 310,
                     "statement_indent": 16
                   },
                   {
                     "condition": " (INVALID_MAPPING_EXISTS) ",
                     "type": "if_else",
+                    "if_line_no": 320,
+                    "then_line_no": 320,
                     "if_indent": 16,
+                    "end_if_line_no": 346,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'Y', TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO, TMM.MOLECULE_MAP_CHAR =:NEW.MOLECULE_MAP_CHAR WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;",
+                        "statement_line_no": 323,
                         "statement_indent": 20
                       }
                     ],
@@ -398,6 +487,7 @@
                       {
                         "type": "insert_statement",
                         "sql_statement": "INSERT INTO THEME_MOLECULE_MAP TMM ( TMM.THEME_NO, TMM.MOLECULE_ID, TMM.MOLECULE_SEQ_NO, TMM.MOLECULE_MAP_CHAR, TMM.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, :NEW.MOLECULE_SEQ_NO, :NEW.MOLECULE_MAP_CHAR, 'Y' );",
+                        "statement_line_no": 333,
                         "statement_indent": 20
                       }
                     ]
@@ -409,21 +499,29 @@
               {
                 "condition": " (:NEW.MOLECULE_ID <> :OLD.MOLECULE_ID) AND :NEW.MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO ",
                 "type": "if_else",
+                "if_line_no": 352,
+                "then_line_no": 352,
                 "if_indent": 12,
+                "end_if_line_no": 392,
                 "then_statements": [
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'N' WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :OLD.MOLECULE_ID AND MOLECULE_SEQ_NO = :OLD.MOLECULE_SEQ_NO;",
+                    "statement_line_no": 355,
                     "statement_indent": 16
                   },
                   {
                     "condition": " (INVALID_MAPPING_EXISTS) ",
                     "type": "if_else",
+                    "if_line_no": 363,
+                    "then_line_no": 363,
                     "if_indent": 16,
+                    "end_if_line_no": 387,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE THEME_MOLECULE_MAP TMM SET TMM.VALID_IND = 'Y', TMM.MOLECULE_SEQ_NO = :NEW.MOLECULE_SEQ_NO, TMM.MOLECULE_MAP_CHAR =:NEW.MOLECULE_MAP_CHAR WHERE TMM.THEME_NO = :NEW.THEME_NO AND TMM.MOLECULE_ID = :NEW.MOLECULE_ID;",
+                        "statement_line_no": 366,
                         "statement_indent": 20
                       }
                     ],
@@ -432,6 +530,7 @@
                       {
                         "type": "insert_statement",
                         "sql_statement": "INSERT INTO THEME_MOLECULE_MAP TMM ( TMM.THEME_NO, TMM.MOLECULE_ID, TMM.MOLECULE_SEQ_NO, TMM.MOLECULE_MAP_CHAR ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, :NEW.MOLECULE_SEQ_NO, :NEW.MOLECULE_MAP_CHAR );",
+                        "statement_line_no": 376,
                         "statement_indent": 20
                       }
                     ]
@@ -466,16 +565,21 @@
       {
         "type": "select_statement",
         "sql_statement": "SELECT COUNT (*) INTO V_SEQ_NO_DUPLICATE_CNT FROM ( SELECT MOLECULE_SEQ_NO FROM THEME_MOLECULE_MAP TMM WHERE TMM.THEME_NO = :NEW.THEME_NO AND VALID_IND = 'Y' GROUP BY MOLECULE_SEQ_NO HAVING COUNT (*) > 1 );",
+        "statement_line_no": 403,
         "statement_indent": 4
       },
       {
         "condition": " (V_SEQ_NO_DUPLICATE_CNT > 0) ",
         "type": "if_else",
+        "if_line_no": 419,
+        "then_line_no": 419,
         "if_indent": 4,
+        "end_if_line_no": 421,
         "then_statements": [
           {
             "type": "raise_statement",
             "sql_statement": "RAISE ERR_INV_MOL_SEQUENCE;",
+            "statement_line_no": 420,
             "statement_indent": 8
           }
         ],
@@ -487,7 +591,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_MAP_EXISTS",
+        "when_line_no": 440,
         "when_indent": 4,
+        "then_line_no": 440,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -507,7 +613,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_MOLEC_ID_MISSING",
+        "when_line_no": 442,
         "when_indent": 4,
+        "then_line_no": 442,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -527,7 +635,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_UPD_INV_MAP",
+        "when_line_no": 444,
         "when_indent": 4,
+        "then_line_no": 444,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -547,7 +657,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_INS_INV_MAP",
+        "when_line_no": 446,
         "when_indent": 4,
+        "then_line_no": 446,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -567,7 +679,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_INV_MOL_SEQUENCE",
+        "when_line_no": 448,
         "when_indent": 4,
+        "then_line_no": 448,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -584,7 +698,9 @@
           }
         ]
       }
-    ]
+    ],
+    "exception_line_no": 439,
+    "end_line_no": 465
   },
   "sql_comments": [
     "/*\n        DELETE FROM theme_molecule_map tmm\n              WHERE     tmm.theme_no = :old.theme_no\n                    AND tmm.molecule_id = :old.molecule_id;\n        */",
@@ -661,6 +777,7 @@
     "---------------------------------------- INSERTING or UPDATING",
     "-- Sanity check => each seq_no may appear only once for valid Mappings"
   ],
+  "rest_string_list": [],
   "conversion_stats": {
     "declaration_count": 13,
     "comment_count": 73,
@@ -689,7 +806,7 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-08-28T12:28:35.904153",
+    "parse_timestamp": "2025-08-28T19:30:09.204338",
     "parser_version": "1.0",
     "file_details": {
       "filename": "trigger2.sql",

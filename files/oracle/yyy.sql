@@ -69,10 +69,11 @@ BEGIN
             AND COMPANY_CD = V_LEGAL_COMPANY_CD;
  
         --if count is 0 then no valid legal company => return error
-        IF CNTR = 0 AND (NVL(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) NOT IN ('D', 'A', 'L')
+        IF CNTR = 0 AND (NVL(:NEW.COMPANY_TYPE_CD, :OLD.COMPANY_TYPE_CD) NOT IN ('D', 'A', 'L') --DE are allowed to have null on Legal Company Code field/ AE are allowed to use the same code as Compnay code for Legal Company Code
         OR (:NEW.COMPANY_TYPE_CD = 'D'
         AND :NEW.CBC_GBE_SCOPE = 'Y'
-        AND V_LEGAL_COMPANY_CD <> :NEW.COMPANY_CD)) THEN --DE in CBC are allowed to use Legal Company Code
+        AND V_LEGAL_COMPANY_CD <> :NEW.COMPANY_CD)) --DE in CBC are allowed to use Legal Company Code
+        THEN
             RAISE INVALID_LEGAL_COMP;
         END IF;
 
