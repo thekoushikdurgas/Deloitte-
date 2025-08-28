@@ -236,36 +236,47 @@
   },
   "main": {
     "type": "begin_end",
+    "begin_line_no": 51,
     "begin_indent": 0,
     "begin_end_statements": [
       {
         "type": "select_statement",
         "sql_statement": "SELECT NVL(TXO_SECURITY.GET_USERID, USER) INTO V_USERID FROM DUAL;",
+        "statement_line_no": 54,
         "statement_indent": 3
       },
       {
         "type": "select_statement",
         "sql_statement": "SELECT COUNT(*) INTO V_IS_ADMIN_CNT FROM TXO_USERS_ROLES_MAP WHERE ROLE_ID IN (315) AND USERID = V_USERID;",
+        "statement_line_no": 61,
         "statement_indent": 3
       },
       {
         "type": "select_statement",
         "sql_statement": "SELECT NEW_RG_NO INTO V_NEW_RG_NO FROM ( SELECT NEW_RG_NO FROM ( SELECT ROWNUM AS NEW_RG_NO FROM DUAL CONNECT BY 1 = 1 AND ROWNUM <= 6999 ) WHERE NEW_RG_NO > 5999 MINUS SELECT TO_NUMBER(RG_NO) FROM V_THEME_MOLECULES ) WHERE ROWNUM = 1;",
+        "statement_line_no": 70,
         "statement_indent": 3
       },
       {
         "condition": " (:NEW.IN_PREP_IND = 'Y') ",
         "type": "if_else",
+        "if_line_no": 95,
+        "then_line_no": 96,
         "if_indent": 3,
+        "end_if_line_no": 111,
         "then_statements": [
           {
             "condition": " (:NEW.PORTF_PROJ_CD <> 'Y') ",
             "type": "if_else",
+            "if_line_no": 97,
+            "then_line_no": 97,
             "if_indent": 6,
+            "end_if_line_no": 99,
             "then_statements": [
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE IN_PREP_NOT_PORTF_PROJ;",
+                "statement_line_no": 98,
                 "statement_indent": 9
               }
             ],
@@ -275,11 +286,15 @@
           {
             "condition": " (:NEW.STATUS_DESC <> 'CLOSED' AND V_IS_ADMIN_CNT = 0) ",
             "type": "if_else",
+            "if_line_no": 101,
+            "then_line_no": 102,
             "if_indent": 6,
+            "end_if_line_no": 104,
             "then_statements": [
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE IN_PREP_NOT_CLOSED;",
+                "statement_line_no": 103,
                 "statement_indent": 9
               }
             ],
@@ -289,7 +304,10 @@
           {
             "condition": " (:NEW.MOLECULE_ID IS NULL) ",
             "type": "if_else",
+            "if_line_no": 106,
+            "then_line_no": 106,
             "if_indent": 6,
+            "end_if_line_no": 110,
             "then_statements": [
               {
                 "type": "function_calling",
@@ -314,15 +332,20 @@
       {
         "condition": " (:NEW.MOLECULE_ID IS NOT NULL) ",
         "type": "if_else",
+        "if_line_no": 115,
+        "then_line_no": 115,
         "if_indent": 3,
+        "end_if_line_no": 145,
         "then_statements": [
           {
             "type": "begin_end",
+            "begin_line_no": 116,
             "begin_indent": 6,
             "begin_end_statements": [
               {
                 "type": "select_statement",
                 "sql_statement": "SELECT RG_NO, M.COMPARATOR_IND INTO V_MOLECULE_RG_NO, V_COMPARATOR_IND FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y';",
+                "statement_line_no": 117,
                 "statement_indent": 9
               }
             ],
@@ -330,30 +353,42 @@
               {
                 "type": "exception_handler",
                 "exception_name": "NO_DATA_FOUND",
+                "when_line_no": 127,
                 "when_indent": 9,
+                "then_line_no": 127,
                 "exception_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE INVALID_MOLECULE_ID;",
+                    "statement_line_no": 128,
                     "statement_indent": 12
                   }
                 ]
               }
-            ]
+            ],
+            "exception_line_no": 126,
+            "end_line_no": 129
           },
           {
             "condition": " (V_MOLECULE_RG_NO IS NULL) ",
             "type": "if_else",
+            "if_line_no": 131,
+            "then_line_no": 131,
             "if_indent": 6,
+            "end_if_line_no": 144,
             "then_statements": [
               {
                 "condition": " (V_COMPARATOR_IND = 'Y') ",
                 "type": "if_else",
+                "if_line_no": 132,
+                "then_line_no": 132,
                 "if_indent": 9,
+                "end_if_line_no": 143,
                 "then_statements": [
                   {
                     "type": "null_statement",
                     "sql_statement": "NULL;",
+                    "statement_line_no": 133,
                     "statement_indent": 12
                   }
                 ],
@@ -362,6 +397,7 @@
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE V_THEME_MOLECULES SET RG_NO = V_NEW_RG_NO WHERE MOLECULE_ID = :NEW.MOLECULE_ID;",
+                    "statement_line_no": 137,
                     "statement_indent": 12
                   },
                   {
@@ -369,6 +405,7 @@
                     "variable_name": "v_bonus",
                     "assignment_operator": ":=",
                     "expression": "CASE WHEN :NEW.salary > 50000 THEN :NEW.salary * 0.1 ELSE 0 END;",
+                    "assignment_line_no": 142,
                     "assignment_indent": 12
                   }
                 ]
@@ -386,6 +423,7 @@
         "variable_name": "V_ODG_NO",
         "assignment_operator": ":=",
         "expression": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 1, 2);",
+        "assignment_line_no": 150,
         "assignment_indent": 3
       },
       {
@@ -393,6 +431,7 @@
         "variable_name": "V_RESGRP_CD",
         "assignment_operator": ":=",
         "expression": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 4, 2);",
+        "assignment_line_no": 151,
         "assignment_indent": 3
       },
       {
@@ -400,6 +439,7 @@
         "variable_name": "V_RESLIN_CD",
         "assignment_operator": ":=",
         "expression": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 7, 2);",
+        "assignment_line_no": 152,
         "assignment_indent": 3
       },
       {
@@ -407,16 +447,21 @@
         "variable_name": "V_RESLIN_DESC",
         "assignment_operator": ":=",
         "expression": "SUBSTR(:NEW.RESLIN_DESC_CONCAT, 12, LENGTH(:NEW.RESLIN_DESC_CONCAT));",
+        "assignment_line_no": 153,
         "assignment_indent": 3
       },
       {
         "condition": " (:NEW.STATUS_DESC IS NOT NULL) ",
         "type": "if_else",
+        "if_line_no": 154,
+        "then_line_no": 154,
         "if_indent": 3,
+        "end_if_line_no": 163,
         "then_statements": [
           {
             "type": "select_statement",
             "sql_statement": "SELECT STATUS_CD INTO V_STATUS_CD FROM MDM_V_THEME_STATUS WHERE STATE_DESC = :NEW.STATUS_DESC;",
+            "statement_line_no": 155,
             "statement_indent": 6
           }
         ],
@@ -427,6 +472,7 @@
             "variable_name": "V_STATUS_CD",
             "assignment_operator": ":=",
             "expression": "NULL;",
+            "assignment_line_no": 162,
             "assignment_indent": 6
           }
         ]
@@ -434,11 +480,15 @@
       {
         "condition": " (:NEW.DBA_DESC_CONCAT IS NOT NULL) ",
         "type": "if_else",
+        "if_line_no": 165,
+        "then_line_no": 165,
         "if_indent": 3,
+        "end_if_line_no": 176,
         "then_statements": [
           {
             "type": "select_statement",
             "sql_statement": "SELECT DBA_CD INTO V_DBA_CD FROM MDM_V_DISEASE_BIOLOGY_AREAS WHERE DBA_SHORT_DESC || ' - ' || DBA_DESC = :NEW.DBA_DESC_CONCAT;",
+            "statement_line_no": 166,
             "statement_indent": 6
           }
         ],
@@ -449,6 +499,7 @@
             "variable_name": "V_DBA_CD",
             "assignment_operator": ":=",
             "expression": "NULL;",
+            "assignment_line_no": 175,
             "assignment_indent": 6
           }
         ]
@@ -458,18 +509,23 @@
         "variable_name": "V_MOLEC_IN_LIC_PRTNR",
         "assignment_operator": ":=",
         "expression": "GMD_UTIL_THEMES.GET_MOLEC_IN_LIC_PRTNR(:NEW.MOLECULE_ID);",
+        "assignment_line_no": 178,
         "assignment_indent": 3
       },
       {
         "condition": " (:NEW.OFFICIAL_IND = 'N') ",
         "type": "if_else",
+        "if_line_no": 179,
+        "then_line_no": 179,
         "if_indent": 3,
+        "end_if_line_no": 183,
         "then_statements": [
           {
             "type": "assignment",
             "variable_name": "V_TRADEMARK_NO",
             "assignment_operator": ":=",
             "expression": ":NEW.TRADEMARK_NO;",
+            "assignment_line_no": 180,
             "assignment_indent": 6
           }
         ],
@@ -480,6 +536,7 @@
             "variable_name": "V_TRADEMARK_NO",
             "assignment_operator": ":=",
             "expression": ":OLD.TRADEMARK_NO;",
+            "assignment_line_no": 182,
             "assignment_indent": 6
           }
         ]
@@ -489,16 +546,21 @@
         "variable_name": "V_THEME_DESC_PROPOSAL",
         "assignment_operator": ":=",
         "expression": "GMD_UTIL_THEMES.GET_THEME_SHORT_NAME(P_THEME_NO_PORTF => :NEW.THEME_NO, P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => NULL, P_TRADEMARK_NO_PORTF => V_TRADEMARK_NO, P_TRUNC_DESC_LENGTH => 'N');",
+        "assignment_line_no": 185,
         "assignment_indent": 3
       },
       {
         "condition": " (:NEW.MANUAL_SHORT_DESC IS NULL AND LENGTH(V_THEME_DESC_PROPOSAL) > 30) ",
         "type": "if_else",
+        "if_line_no": 186,
+        "then_line_no": 187,
         "if_indent": 3,
+        "end_if_line_no": 189,
         "then_statements": [
           {
             "type": "raise_statement",
             "sql_statement": "RAISE THEME_DESC_PROPOSAL_TOO_LONG;",
+            "statement_line_no": 188,
             "statement_indent": 6
           }
         ],
@@ -510,21 +572,29 @@
         "variable_name": "V_SHORT_NAME",
         "assignment_operator": ":=",
         "expression": "COALESCE(:NEW.MANUAL_SHORT_DESC, V_THEME_DESC_PROPOSAL);",
+        "assignment_line_no": 191,
         "assignment_indent": 3
       },
       {
         "condition": " (INSERTING) ",
         "type": "if_else",
+        "if_line_no": 192,
+        "then_line_no": 192,
         "if_indent": 3,
+        "end_if_line_no": 656,
         "then_statements": [
           {
             "condition": " (:NEW.IN_PREP_IND = 'N' AND V_IS_ADMIN_CNT = 0) ",
             "type": "if_else",
+            "if_line_no": 193,
+            "then_line_no": 194,
             "if_indent": 6,
+            "end_if_line_no": 196,
             "then_statements": [
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE ADMIN_UPDATE_ONLY;",
+                "statement_line_no": 195,
                 "statement_indent": 9
               }
             ],
@@ -536,21 +606,29 @@
             "variable_name": "V_MOLECULE_ID",
             "assignment_operator": ":=",
             "expression": ":NEW.MOLECULE_ID;",
+            "assignment_line_no": 201,
             "assignment_indent": 6
           },
           {
             "condition": " (:NEW.PORTF_PROJ_CD = 'Y' AND :NEW.MOLECULE_ID IS NULL) ",
             "type": "if_else",
+            "if_line_no": 202,
+            "then_line_no": 203,
             "if_indent": 6,
+            "end_if_line_no": 247,
             "then_statements": [
               {
                 "condition": " (NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) IS NULL) ",
                 "type": "if_else",
+                "if_line_no": 204,
+                "then_line_no": 204,
                 "if_indent": 9,
+                "end_if_line_no": 246,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE PORTF_PROJ_MOL_CRE_ERR;",
+                    "statement_line_no": 205,
                     "statement_indent": 12
                   }
                 ],
@@ -559,16 +637,19 @@
                   {
                     "type": "insert_statement",
                     "sql_statement": "INSERT INTO MDM_V_THEME_MOLECULES_MTN( MOLECULE_DESC, VALID_IND, RG_NO, CANCER_IMMUNOTHERAPY_IND, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID ) VALUES ( NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL), 'Y', V_NEW_RG_NO, 'N', C_MOLECULE_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID );",
+                    "statement_line_no": 207,
                     "statement_indent": 12
                   },
                   {
                     "type": "select_statement",
                     "sql_statement": "SELECT MOLECULE_ID INTO V_MOLECULE_ID FROM V_THEME_MOLECULES WHERE MOLECULE_DESC = NVL(:NEW.MANUAL_SHORT_DESC, :NEW.THEME_DESC_PROPOSAL) AND VALID_IND = 'Y' AND RG_NO = V_NEW_RG_NO AND CANCER_IMMUNOTHERAPY_IND = 'N' AND MOLECULE_TYPE_ID = C_MOLECULE_TYPE_ID AND PHARMACOLOGICAL_TYPE_ID = C_PHARMACOLOGICAL_TYPE_ID;",
+                    "statement_line_no": 222,
                     "statement_indent": 12
                   },
                   {
                     "type": "insert_statement",
                     "sql_statement": "INSERT INTO THEME_MOLECULE_MAP TMMAP( TMMAP.THEME_NO, TMMAP.MOLECULE_ID, TMMAP.MOLECULE_SEQ_NO, TMMAP.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' );",
+                    "statement_line_no": 235,
                     "statement_indent": 12
                   }
                 ]
@@ -580,21 +661,29 @@
           {
             "condition": " LENGTH(:NEW.THEME_NO)",
             "type": "case_when",
+            "case_line_no": 249,
             "case_indent": 6,
+            "end_case_line_no": 276,
             "when_clauses": [
               {
                 "type": "when_statement",
+                "when_line_no": 250,
                 "when_indent": 9,
                 "condition": "4",
+                "then_line_no": 250,
                 "then_statements": [
                   {
                     "condition": " (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9) ",
                     "type": "if_else",
+                    "if_line_no": 251,
+                    "then_line_no": 258,
                     "if_indent": 12,
+                    "end_if_line_no": 260,
                     "then_statements": [
                       {
                         "type": "raise_statement",
                         "sql_statement": "RAISE INVALID_THEME_NO;",
+                        "statement_line_no": 259,
                         "statement_indent": 15
                       }
                     ],
@@ -605,17 +694,23 @@
               },
               {
                 "type": "when_statement",
+                "when_line_no": 261,
                 "when_indent": 9,
                 "condition": "5",
+                "then_line_no": 261,
                 "then_statements": [
                   {
                     "condition": " (SUBSTR(:NEW.THEME_NO, 1, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 2, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 3, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 4, 1) NOT BETWEEN 0 AND 9 OR SUBSTR(:NEW.THEME_NO, 5, 1) NOT BETWEEN 0 AND 9) ",
                     "type": "if_else",
+                    "if_line_no": 262,
+                    "then_line_no": 271,
                     "if_indent": 12,
+                    "end_if_line_no": 273,
                     "then_statements": [
                       {
                         "type": "raise_statement",
                         "sql_statement": "RAISE INVALID_THEME_NO;",
+                        "statement_line_no": 272,
                         "statement_indent": 15
                       }
                     ],
@@ -629,6 +724,7 @@
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE INVALID_THEME_NO;",
+                "statement_line_no": 275,
                 "statement_indent": 12
               }
             ]
@@ -638,21 +734,27 @@
             "variable_name": "V_COUNTER",
             "assignment_operator": ":=",
             "expression": "NULL;",
+            "assignment_line_no": 278,
             "assignment_indent": 6
           },
           {
             "type": "select_statement",
             "sql_statement": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM ( SELECT THEME_NO FROM V_THEMES UNION ALL SELECT THEME_NO FROM GMD.THEMES_ARCHIVE )                  T WHERE T.THEME_NO = :NEW.THEME_NO;",
+            "statement_line_no": 281,
             "statement_indent": 6
           },
           {
             "condition": " (V_COUNTER > 0) ",
             "type": "if_else",
+            "if_line_no": 298,
+            "then_line_no": 298,
             "if_indent": 6,
+            "end_if_line_no": 300,
             "then_statements": [
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE THEME_NO_CANNOT_BE_INSERTED;",
+                "statement_line_no": 299,
                 "statement_indent": 9
               }
             ],
@@ -664,6 +766,7 @@
             "variable_name": "V_COUNTER",
             "assignment_operator": ":=",
             "expression": "NULL;",
+            "assignment_line_no": 302,
             "assignment_indent": 6
           },
           {
@@ -671,16 +774,21 @@
             "variable_name": "V_D_REGISTRAT_DATE",
             "assignment_operator": ":=",
             "expression": "SYSDATE;",
+            "assignment_line_no": 303,
             "assignment_indent": 6
           },
           {
             "condition": " (:NEW.OFFICIAL_IND = 'N') ",
             "type": "if_else",
+            "if_line_no": 306,
+            "then_line_no": 306,
             "if_indent": 6,
+            "end_if_line_no": 308,
             "then_statements": [
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE INSERTSMUSTBEOFFICIAL;",
+                "statement_line_no": 307,
                 "statement_indent": 9
               }
             ],
@@ -690,16 +798,23 @@
           {
             "condition": " (UPPER(:NEW.PORTF_PROJ_CD) = 'N') ",
             "type": "if_else",
+            "if_line_no": 310,
+            "then_line_no": 310,
             "if_indent": 6,
+            "end_if_line_no": 315,
             "then_statements": [
               {
                 "condition": " (:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0) ",
                 "type": "if_else",
+                "if_line_no": 311,
+                "then_line_no": 312,
                 "if_indent": 9,
+                "end_if_line_no": 314,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE THEMEDESCRIPTIONMANDATORY;",
+                    "statement_line_no": 313,
                     "statement_indent": 12
                   }
                 ],
@@ -713,23 +828,31 @@
           {
             "condition": " (UPPER(:NEW.PORTF_PROJ_CD) = 'Y') ",
             "type": "if_else",
+            "if_line_no": 319,
+            "then_line_no": 319,
             "if_indent": 6,
+            "end_if_line_no": 344,
             "then_statements": [
               {
                 "type": "assignment",
                 "variable_name": "V_DESCRIPTION",
                 "assignment_operator": ":=",
                 "expression": "GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO( P_THEME_NO_PORTF => NULL, P_MOLECULE_ID_PORTF => V_MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR, P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO, P_SHORT_NAME_PORTF => :NEW.SHORT_NAME, P_TRUNC_DESC_LENGTH => 'N' );",
+                "assignment_line_no": 320,
                 "assignment_indent": 9
               },
               {
                 "condition": " (LENGTH(V_DESCRIPTION) > 90) ",
                 "type": "if_else",
+                "if_line_no": 333,
+                "then_line_no": 333,
                 "if_indent": 9,
+                "end_if_line_no": 335,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE DESCRIPTION_TOO_LONG;",
+                    "statement_line_no": 334,
                     "statement_indent": 12
                   }
                 ],
@@ -741,6 +864,7 @@
                 "variable_name": "V_DESCRIPTION",
                 "assignment_operator": ":=",
                 "expression": "TRIM(V_DESCRIPTION);",
+                "assignment_line_no": 337,
                 "assignment_indent": 9
               },
               {
@@ -748,6 +872,7 @@
                 "variable_name": "V_PORTF_PROJ_CD",
                 "assignment_operator": ":=",
                 "expression": "'Y';",
+                "assignment_line_no": 338,
                 "assignment_indent": 9
               }
             ],
@@ -758,6 +883,7 @@
                 "variable_name": "V_DESCRIPTION",
                 "assignment_operator": ":=",
                 "expression": ":NEW.THEME_DESC;",
+                "assignment_line_no": 342,
                 "assignment_indent": 9
               },
               {
@@ -765,6 +891,7 @@
                 "variable_name": "V_PORTF_PROJ_CD",
                 "assignment_operator": ":=",
                 "expression": "'N';",
+                "assignment_line_no": 343,
                 "assignment_indent": 9
               }
             ]
@@ -774,21 +901,27 @@
             "variable_name": "V_COUNTER",
             "assignment_operator": ":=",
             "expression": "NULL;",
+            "assignment_line_no": 346,
             "assignment_indent": 6
           },
           {
             "type": "select_statement",
             "sql_statement": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM V_THEMES T WHERE T.THEME_DESC = V_DESCRIPTION;",
+            "statement_line_no": 347,
             "statement_indent": 6
           },
           {
             "condition": " (V_COUNTER > 0) ",
             "type": "if_else",
+            "if_line_no": 353,
+            "then_line_no": 353,
             "if_indent": 6,
+            "end_if_line_no": 355,
             "then_statements": [
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE THEME_DESC_NOT_UNIQUE;",
+                "statement_line_no": 354,
                 "statement_indent": 9
               }
             ],
@@ -800,6 +933,7 @@
             "variable_name": "V_COUNTER",
             "assignment_operator": ":=",
             "expression": "NULL;",
+            "assignment_line_no": 357,
             "assignment_indent": 6
           },
           {
@@ -807,6 +941,7 @@
             "variable_name": "V_VALID_TO",
             "assignment_operator": ":=",
             "expression": "TO_DATE('09.09.9999', 'DD.MM.YYYY');",
+            "assignment_line_no": 358,
             "assignment_indent": 6
           },
           {
@@ -814,21 +949,27 @@
             "variable_name": "V_SHORT_NAME",
             "assignment_operator": ":=",
             "expression": "NVL(:NEW.MANUAL_SHORT_DESC, SUBSTR(V_DESCRIPTION, 1, 30));",
+            "assignment_line_no": 359,
             "assignment_indent": 6
           },
           {
             "type": "insert_statement",
             "sql_statement": "INSERT INTO GMD.THEMES( THEME_NO, REGISTRAT_DATE, ODG_NO, RESGRP_CD, RESLIN_CD, THEME_DESC, SHORT_NAME, STATUS_CD, DBA_CD, IN_PREP_IND, PROD_SHORT_CD, TRADEMARK_NO, BIO_ACTIVITY, APPLICANT, CONTACT, REGISTRAR, LINE_EXT_INFO, PORTF_PROJ_CD, CO_DEV_PRTNR, TECHNOLOGY_PRTNR, OFFICIAL_IND, CO_MAR_PRTNR, VALID_TO, PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC ) VALUES ( :NEW.THEME_NO, V_D_REGISTRAT_DATE, V_ODG_NO, V_RESGRP_CD, V_RESLIN_CD, V_DESCRIPTION, V_SHORT_NAME, V_STATUS_CD, V_DBA_CD, :NEW.IN_PREP_IND, :NEW.PROD_SHORT_CD, :NEW.TRADEMARK_NO, :NEW.BIO_ACTIVITY, :NEW.APPLICANT, :NEW.CONTACT, TXO_UTIL.GET_USERID, :NEW.LINE_EXT_INFO, V_PORTF_PROJ_CD, :NEW.CO_DEV_PRTNR, :NEW.TECHNOLOGY_PRTNR, :NEW.OFFICIAL_IND, :NEW.CO_MAR_PRTNR, V_VALID_TO, :NEW.PORTF_DA_GROUP_ID, :NEW.MANUAL_SHORT_DESC );",
+            "statement_line_no": 360,
             "statement_indent": 6
           },
           {
             "condition": " (:OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL) ",
             "type": "if_else",
+            "if_line_no": 413,
+            "then_line_no": 414,
             "if_indent": 6,
+            "end_if_line_no": 428,
             "then_statements": [
               {
                 "type": "insert_statement",
                 "sql_statement": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, V_MOLECULE_ID, 1, 'Y' );",
+                "statement_line_no": 417,
                 "statement_indent": 9
               }
             ],
@@ -839,17 +980,23 @@
         "if_elses": [
           {
             "type": "elif_statement",
+            "elif_line_no": 432,
             "elif_indent": 3,
             "condition": "(UPDATING)",
+            "then_line_no": 432,
             "then_statements": [
               {
                 "condition": " (:OLD.IN_PREP_IND = 'N' OR (:OLD.IN_PREP_IND = 'Y' AND :NEW.IN_PREP_IND = 'N')) AND V_IS_ADMIN_CNT = 0 ",
                 "type": "if_else",
+                "if_line_no": 435,
+                "then_line_no": 437,
                 "if_indent": 6,
+                "end_if_line_no": 439,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE ADMIN_UPDATE_ONLY;",
+                    "statement_line_no": 438,
                     "statement_indent": 9
                   }
                 ],
@@ -859,11 +1006,15 @@
               {
                 "condition": " (:NEW.THEME_NO <> :OLD.THEME_NO) ",
                 "type": "if_else",
+                "if_line_no": 441,
+                "then_line_no": 441,
                 "if_indent": 6,
+                "end_if_line_no": 443,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE THEME_NO_ONLY_INSERT;",
+                    "statement_line_no": 442,
                     "statement_indent": 9
                   }
                 ],
@@ -873,13 +1024,17 @@
               {
                 "condition": " (:NEW.OFFICIAL_IND = 'N') ",
                 "type": "if_else",
+                "if_line_no": 449,
+                "then_line_no": 449,
                 "if_indent": 6,
+                "end_if_line_no": 456,
                 "then_statements": [
                   {
                     "type": "assignment",
                     "variable_name": "V_D_REGISTRAT_DATE",
                     "assignment_operator": ":=",
                     "expression": "TO_DATE(:OLD.REGISTRAT_DATE, 'dd-mm-yyyy');",
+                    "assignment_line_no": 452,
                     "assignment_indent": 9
                   }
                 ],
@@ -890,6 +1045,7 @@
                     "variable_name": "V_D_REGISTRAT_DATE",
                     "assignment_operator": ":=",
                     "expression": "SYSDATE;",
+                    "assignment_line_no": 455,
                     "assignment_indent": 9
                   }
                 ]
@@ -897,13 +1053,17 @@
               {
                 "condition": " (UPPER(:NEW.PORTF_PROJ_CD) = 'Y' AND(V_STATUS_CD <> 'C' OR:NEW.IN_PREP_IND = 'Y')) UPPER(:NEW.PORTF_PROJ_CD) ",
                 "type": "if_else",
+                "if_line_no": 458,
+                "then_line_no": 460,
                 "if_indent": 6,
+                "end_if_line_no": 484,
                 "then_statements": [
                   {
                     "type": "assignment",
                     "variable_name": "V_DESCRIPTION",
                     "assignment_operator": ":=",
                     "expression": "GMD.GMD_UTIL_THEMES.GET_THEME_DESC_PORTFOLIO( P_THEME_NO_PORTF => :NEW.THEME_NO, P_MOLECULE_ID_PORTF => :NEW.MOLECULE_ID, P_PROD_SHORT_CD_PORTF => :NEW.PROD_SHORT_CD, P_ODG_NO_PORT => V_ODG_NO, P_RESGRP_CD_PORT => V_RESGRP_CD, P_RESLIN_CD_PORT => V_RESLIN_CD, P_LINE_EXT_INFO_PORT => :NEW.LINE_EXT_INFO, P_IN_LIC_PRTNR_PORTF => V_MOLEC_IN_LIC_PRTNR, P_TRADEMARK_NO_PORTF => :NEW.TRADEMARK_NO, P_SHORT_NAME_PORTF => :NEW.SHORT_NAME, P_TRUNC_DESC_LENGTH => 'N' );",
+                    "assignment_line_no": 461,
                     "assignment_indent": 9
                   },
                   {
@@ -911,6 +1071,7 @@
                     "variable_name": "V_DESCRIPTION",
                     "assignment_operator": ":=",
                     "expression": "TRIM(V_DESCRIPTION);",
+                    "assignment_line_no": 474,
                     "assignment_indent": 9
                   },
                   {
@@ -918,6 +1079,7 @@
                     "variable_name": "V_PORTF_PROJ_CD",
                     "assignment_operator": ":=",
                     "expression": "'Y';",
+                    "assignment_line_no": 475,
                     "assignment_indent": 9
                   }
                 ],
@@ -926,11 +1088,15 @@
                   {
                     "condition": " (:NEW.THEME_DESC IS NULL OR LENGTH(:NEW.THEME_DESC) = 0) ",
                     "type": "if_else",
+                    "if_line_no": 477,
+                    "then_line_no": 478,
                     "if_indent": 9,
+                    "end_if_line_no": 483,
                     "then_statements": [
                       {
                         "type": "raise_statement",
                         "sql_statement": "RAISE THEMEDESCRIPTIONMANDATORY;",
+                        "statement_line_no": 479,
                         "statement_indent": 12
                       }
                     ],
@@ -941,6 +1107,7 @@
                         "variable_name": "V_DESCRIPTION",
                         "assignment_operator": ":=",
                         "expression": ":NEW.THEME_DESC;",
+                        "assignment_line_no": 481,
                         "assignment_indent": 12
                       },
                       {
@@ -948,6 +1115,7 @@
                         "variable_name": "V_PORTF_PROJ_CD",
                         "assignment_operator": ":=",
                         "expression": ":NEW.PORTF_PROJ_CD;",
+                        "assignment_line_no": 482,
                         "assignment_indent": 12
                       }
                     ]
@@ -957,11 +1125,15 @@
               {
                 "condition": " (LENGTH(V_DESCRIPTION) > 90) ",
                 "type": "if_else",
+                "if_line_no": 486,
+                "then_line_no": 486,
                 "if_indent": 6,
+                "end_if_line_no": 488,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE DESCRIPTION_TOO_LONG;",
+                    "statement_line_no": 487,
                     "statement_indent": 9
                   }
                 ],
@@ -973,21 +1145,27 @@
                 "variable_name": "V_COUNTER",
                 "assignment_operator": ":=",
                 "expression": "NULL;",
+                "assignment_line_no": 493,
                 "assignment_indent": 6
               },
               {
                 "type": "select_statement",
                 "sql_statement": "SELECT COUNT(T.THEME_NO) INTO V_COUNTER FROM V_THEMES T WHERE T.THEME_DESC = V_DESCRIPTION AND T.THEME_NO <> :NEW.THEME_NO;",
+                "statement_line_no": 494,
                 "statement_indent": 6
               },
               {
                 "condition": " (V_COUNTER > 0) ",
                 "type": "if_else",
+                "if_line_no": 501,
+                "then_line_no": 501,
                 "if_indent": 6,
+                "end_if_line_no": 503,
                 "then_statements": [
                   {
                     "type": "raise_statement",
                     "sql_statement": "RAISE THEME_DESC_NOT_UNIQUE;",
+                    "statement_line_no": 502,
                     "statement_indent": 9
                   }
                 ],
@@ -999,16 +1177,21 @@
                 "variable_name": "V_COUNTER",
                 "assignment_operator": ":=",
                 "expression": "NULL;",
+                "assignment_line_no": 505,
                 "assignment_indent": 6
               },
               {
                 "condition": " (:NEW.OFFICIAL_IND = 'N') ",
                 "type": "if_else",
+                "if_line_no": 508,
+                "then_line_no": 508,
                 "if_indent": 6,
+                "end_if_line_no": 581,
                 "then_statements": [
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE GMD.THEMES SET ODG_NO = V_ODG_NO, RESGRP_CD = V_RESGRP_CD, RESLIN_CD = V_RESLIN_CD, THEME_DESC = V_DESCRIPTION, SHORT_NAME = V_SHORT_NAME, STATUS_CD = V_STATUS_CD, DBA_CD = V_DBA_CD, IN_PREP_IND = :NEW.IN_PREP_IND, PROD_SHORT_CD = :NEW.PROD_SHORT_CD, TRADEMARK_NO = :NEW.TRADEMARK_NO, BIO_ACTIVITY = :NEW.BIO_ACTIVITY, APPLICANT = :NEW.APPLICANT, CONTACT = :NEW.CONTACT, LINE_EXT_INFO = :NEW.LINE_EXT_INFO, PORTF_PROJ_CD = V_PORTF_PROJ_CD, CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR, TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR, OFFICIAL_IND = :NEW.OFFICIAL_IND, CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR, PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC WHERE THEME_NO = :NEW.THEME_NO AND TO_DATE(REGISTRAT_DATE, 'DD-MM-YYYY') = V_D_REGISTRAT_DATE;",
+                    "statement_line_no": 509,
                     "statement_indent": 9
                   }
                 ],
@@ -1019,21 +1202,27 @@
                     "variable_name": "V_COUNTER",
                     "assignment_operator": ":=",
                     "expression": "NULL;",
+                    "assignment_line_no": 539,
                     "assignment_indent": 9
                   },
                   {
                     "type": "select_statement",
                     "sql_statement": "SELECT COUNT(*) INTO V_COUNTER FROM V_THEMES T WHERE TRUNC(T.REGISTRAT_DATE) = TRUNC(SYSDATE) AND T.THEME_NO = :NEW.THEME_NO;",
+                    "statement_line_no": 542,
                     "statement_indent": 9
                   },
                   {
                     "condition": " (V_COUNTER > 0) ",
                     "type": "if_else",
+                    "if_line_no": 549,
+                    "then_line_no": 549,
                     "if_indent": 9,
+                    "end_if_line_no": 551,
                     "then_statements": [
                       {
                         "type": "raise_statement",
                         "sql_statement": "RAISE ONLYONEOFFICIALCHANGEPERDAY;",
+                        "statement_line_no": 550,
                         "statement_indent": 12
                       }
                     ],
@@ -1045,11 +1234,13 @@
                     "variable_name": "V_COUNTER",
                     "assignment_operator": ":=",
                     "expression": "NULL;",
+                    "assignment_line_no": 553,
                     "assignment_indent": 9
                   },
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE GMD.THEMES SET ODG_NO = V_ODG_NO, RESGRP_CD = V_RESGRP_CD, RESLIN_CD = V_RESLIN_CD, THEME_DESC = V_DESCRIPTION, SHORT_NAME = V_SHORT_NAME, STATUS_CD = V_STATUS_CD, DBA_CD = V_DBA_CD, IN_PREP_IND = :NEW.IN_PREP_IND, PROD_SHORT_CD = :NEW.PROD_SHORT_CD, TRADEMARK_NO = :NEW.TRADEMARK_NO, BIO_ACTIVITY = :NEW.BIO_ACTIVITY, APPLICANT = :NEW.APPLICANT, CONTACT = :NEW.CONTACT, LINE_EXT_INFO = :NEW.LINE_EXT_INFO, PORTF_PROJ_CD = V_PORTF_PROJ_CD, CO_DEV_PRTNR = :NEW.CO_DEV_PRTNR, TECHNOLOGY_PRTNR = :NEW.TECHNOLOGY_PRTNR, OFFICIAL_IND = :NEW.OFFICIAL_IND, CO_MAR_PRTNR = :NEW.CO_MAR_PRTNR, REGISTRAT_DATE = SYSDATE, REGISTRAR = V_USERID, PORTF_DA_GROUP_ID = :NEW.PORTF_DA_GROUP_ID, MANUAL_SHORT_DESC = :NEW.MANUAL_SHORT_DESC WHERE THEME_NO = :NEW.THEME_NO;",
+                    "statement_line_no": 554,
                     "statement_indent": 9
                   }
                 ]
@@ -1057,50 +1248,65 @@
               {
                 "condition": "",
                 "type": "case_when",
+                "case_line_no": 586,
                 "case_indent": 6,
+                "end_case_line_no": 637,
                 "when_clauses": [
                   {
                     "type": "when_statement",
+                    "when_line_no": 587,
                     "when_indent": 9,
                     "condition": ":OLD.MOLECULE_ID IS NULL AND :NEW.MOLECULE_ID IS NOT NULL",
+                    "then_line_no": 587,
                     "then_statements": [
                       {
                         "type": "insert_statement",
                         "sql_statement": "INSERT INTO MDM_V_THEME_MOLECULE_MAP_MTN A( A.THEME_NO, A.MOLECULE_ID, A.MOLECULE_SEQ_NO, A.VALID_IND ) VALUES ( :NEW.THEME_NO, :NEW.MOLECULE_ID, 1, 'Y' );",
+                        "statement_line_no": 590,
                         "statement_indent": 12
                       }
                     ]
                   },
                   {
                     "type": "when_statement",
+                    "when_line_no": 601,
                     "when_indent": 9,
                     "condition": ":OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NOT NULL",
+                    "then_line_no": 601,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.MOLECULE_ID = :NEW.MOLECULE_ID, A.VALID_IND = 'Y' WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
+                        "statement_line_no": 604,
                         "statement_indent": 12
                       }
                     ]
                   },
                   {
                     "type": "when_statement",
+                    "when_line_no": 612,
                     "when_indent": 9,
                     "condition": ":OLD.MOLECULE_ID IS NOT NULL AND :NEW.MOLECULE_ID IS NULL",
+                    "then_line_no": 612,
                     "then_statements": [
                       {
                         "type": "select_statement",
                         "sql_statement": "SELECT COUNT(*) INTO V_SEC_MOL_CNT FROM MDM_V_THEME_MOLECULE_MAP_MTN A WHERE A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO > 1 AND A.VALID_IND = 'Y';",
+                        "statement_line_no": 613,
                         "statement_indent": 12
                       },
                       {
                         "condition": " (V_SEC_MOL_CNT > 0) ",
                         "type": "if_else",
+                        "if_line_no": 621,
+                        "then_line_no": 621,
                         "if_indent": 12,
+                        "end_if_line_no": 634,
                         "then_statements": [
                           {
                             "type": "raise_statement",
                             "sql_statement": "RAISE SEC_MOL_LIST_NOT_EMPTY;",
+                            "statement_line_no": 622,
                             "statement_indent": 15
                           }
                         ],
@@ -1109,6 +1315,7 @@
                           {
                             "type": "update_statement",
                             "sql_statement": "UPDATE MDM_V_THEME_MOLECULE_MAP A SET A.VALID_IND = 'N' WHERE A.MOLECULE_ID = :OLD.MOLECULE_ID AND A.THEME_NO = :NEW.THEME_NO AND A.MOLECULE_SEQ_NO = 1 AND A.VALID_IND = 'Y';",
+                            "statement_line_no": 626,
                             "statement_indent": 15
                           }
                         ]
@@ -1120,6 +1327,7 @@
                   {
                     "type": "null_statement",
                     "sql_statement": "NULL;",
+                    "statement_line_no": 636,
                     "statement_indent": 12
                   }
                 ]
@@ -1132,26 +1340,37 @@
       {
         "condition": " (INSERTING OR UPDATING) ",
         "type": "if_else",
+        "if_line_no": 660,
+        "then_line_no": 661,
         "if_indent": 3,
+        "end_if_line_no": 747,
         "then_statements": [
           {
             "condition": " (:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NULL) ",
             "type": "if_else",
+            "if_line_no": 662,
+            "then_line_no": 663,
             "if_indent": 6,
+            "end_if_line_no": 720,
             "then_statements": [
               {
                 "type": "select_statement",
                 "sql_statement": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID AND PROPOSAL_STATUS_CD = 'E';",
+                "statement_line_no": 666,
                 "statement_indent": 9
               },
               {
                 "condition": " (V_EVOLVED_NMP_CNT = 0) ",
                 "type": "if_else",
+                "if_line_no": 677,
+                "then_line_no": 677,
                 "if_indent": 9,
+                "end_if_line_no": 686,
                 "then_statements": [
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'E', EVOLVED_THEME_NO = :NEW.THEME_NO, PROPOSAL_NAME = V_SHORT_NAME, REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID;",
+                    "statement_line_no": 678,
                     "statement_indent": 12
                   }
                 ],
@@ -1164,11 +1383,15 @@
               {
                 "condition": " (:NEW.PROPOSAL_ID IS NULL AND :OLD.PROPOSAL_ID IS NOT NULL) ",
                 "type": "if_else",
+                "if_line_no": 688,
+                "then_line_no": 689,
                 "if_indent": 9,
+                "end_if_line_no": 719,
                 "then_statements": [
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'A', EVOLVED_THEME_NO = NULL WHERE PROPOSAL_ID = :OLD.PROPOSAL_ID;",
+                    "statement_line_no": 690,
                     "statement_indent": 12
                   }
                 ],
@@ -1177,16 +1400,21 @@
                   {
                     "condition": " (:NEW.PROPOSAL_ID IS NOT NULL AND :OLD.PROPOSAL_ID IS NOT NULL AND :NEW.PROPOSAL_ID <> :OLD.PROPOSAL_ID) ",
                     "type": "if_else",
+                    "if_line_no": 697,
+                    "then_line_no": 699,
                     "if_indent": 12,
+                    "end_if_line_no": 718,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'A', EVOLVED_THEME_NO = NULL WHERE PROPOSAL_ID = :OLD.PROPOSAL_ID;",
+                        "statement_line_no": 702,
                         "statement_indent": 15
                       },
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN SET PROPOSAL_STATUS_CD = 'E', EVOLVED_THEME_NO = :NEW.THEME_NO, PROPOSAL_NAME = V_SHORT_NAME, REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID;",
+                        "statement_line_no": 710,
                         "statement_indent": 15
                       }
                     ],
@@ -1200,21 +1428,29 @@
           {
             "condition": " (NVL(:NEW.PROPOSAL_ID, 0) = NVL(:OLD.PROPOSAL_ID, 0) AND NVL(:OLD.SHORT_NAME, '-') <> NVL(V_SHORT_NAME, '-')) ",
             "type": "if_else",
+            "if_line_no": 724,
+            "then_line_no": 725,
             "if_indent": 6,
+            "end_if_line_no": 746,
             "then_statements": [
               {
                 "type": "select_statement",
                 "sql_statement": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN NMP WHERE NMP.EVOLVED_THEME_NO =:NEW.THEME_NO AND NMP.PROPOSAL_STATUS_CD = 'E';",
+                "statement_line_no": 728,
                 "statement_indent": 9
               },
               {
                 "condition": " (V_EVOLVED_NMP_CNT > 0) ",
                 "type": "if_else",
+                "if_line_no": 735,
+                "then_line_no": 735,
                 "if_indent": 9,
+                "end_if_line_no": 745,
                 "then_statements": [
                   {
                     "type": "update_statement",
                     "sql_statement": "UPDATE MDM_V_NEW_MEDICINE_PROPOSALS_MTN NMP SET NMP.PROPOSAL_NAME = V_SHORT_NAME, NMP.REASON_FOR_CHANGE = '** Automatic update of proposal_name after short_name change in evolved theme **' WHERE NMP.EVOLVED_THEME_NO =:NEW.THEME_NO AND NMP.PROPOSAL_STATUS_CD = 'E';",
+                    "statement_line_no": 738,
                     "statement_indent": 12
                   }
                 ],
@@ -1232,16 +1468,23 @@
       {
         "condition": " (INSERTING AND :NEW.THEME_NO IS NOT NULL AND GMD_UTIL_THEMES.GET_THEMES_RANGE_AUTOMATIC_NMP(:NEW.THEME_NO) = 'Y') ",
         "type": "if_else",
+        "if_line_no": 751,
+        "then_line_no": 753,
         "if_indent": 3,
+        "end_if_line_no": 803,
         "then_statements": [
           {
             "condition": " (:NEW.PROPOSAL_ID IS NOT NULL) ",
             "type": "if_else",
+            "if_line_no": 754,
+            "then_line_no": 754,
             "if_indent": 6,
+            "end_if_line_no": 763,
             "then_statements": [
               {
                 "type": "select_statement",
                 "sql_statement": "SELECT COUNT(*) INTO V_EVOLVED_NMP_CNT FROM MDM_V_NEW_MEDICINE_PROPOSALS_MTN WHERE PROPOSAL_ID = :NEW.PROPOSAL_ID AND PROPOSAL_NAME = V_SHORT_NAME AND PROPOSAL_STATUS_CD = 'E';",
+                "statement_line_no": 755,
                 "statement_indent": 9
               }
             ],
@@ -1251,20 +1494,28 @@
           {
             "condition": " (:NEW.PROPOSAL_ID IS NULL OR (:NEW.PROPOSAL_ID IS NOT NULL AND V_EVOLVED_NMP_CNT = 0)) ",
             "type": "if_else",
+            "if_line_no": 767,
+            "then_line_no": 769,
             "if_indent": 6,
+            "end_if_line_no": 802,
             "then_statements": [
               {
                 "condition": " (:NEW.MOLECULE_ID IS NOT NULL) ",
                 "type": "if_else",
+                "if_line_no": 770,
+                "then_line_no": 770,
                 "if_indent": 9,
+                "end_if_line_no": 785,
                 "then_statements": [
                   {
                     "type": "begin_end",
+                    "begin_line_no": 771,
                     "begin_indent": 12,
                     "begin_end_statements": [
                       {
                         "type": "select_statement",
                         "sql_statement": "SELECT PHARMACOLOGICAL_TYPE_ID, MOLECULE_TYPE_ID INTO V_PHARMACOLOGICAL_TYPE_ID, V_MOLECULE_TYPE_ID FROM V_THEME_MOLECULES M WHERE MOLECULE_ID = :NEW.MOLECULE_ID AND M.VALID_IND = 'Y';",
+                        "statement_line_no": 772,
                         "statement_indent": 15
                       }
                     ],
@@ -1272,16 +1523,21 @@
                       {
                         "type": "exception_handler",
                         "exception_name": "NO_DATA_FOUND",
+                        "when_line_no": 782,
                         "when_indent": 15,
+                        "then_line_no": 782,
                         "exception_statements": [
                           {
                             "type": "raise_statement",
                             "sql_statement": "RAISE INVALID_MOLECULE_ID;",
+                            "statement_line_no": 783,
                             "statement_indent": 18
                           }
                         ]
                       }
-                    ]
+                    ],
+                    "exception_line_no": 781,
+                    "end_line_no": 784
                   }
                 ],
                 "if_elses": [],
@@ -1290,6 +1546,7 @@
               {
                 "type": "insert_statement",
                 "sql_statement": "INSERT INTO MDM_V_NEW_MEDICINE_PROPOSALS_MTN ( PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, PROPOSAL_NAME, PHARMACOLOGICAL_TYPE_ID, MOLECULE_TYPE_ID, REASON_FOR_CHANGE ) VALUES ( 'E', :NEW.THEME_NO, V_SHORT_NAME, NVL(V_PHARMACOLOGICAL_TYPE_ID, C_PHARMACOLOGICAL_TYPE_ID), NVL(V_MOLECULE_TYPE_ID, C_MOLECULE_TYPE_ID), '** Automatic creation of nmp for early development themes **' );",
+                "statement_line_no": 787,
                 "statement_indent": 9
               }
             ],
@@ -1305,7 +1562,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ADMIN_UPDATE_ONLY",
+        "when_line_no": 825,
         "when_indent": 3,
+        "then_line_no": 825,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1325,7 +1584,9 @@
       {
         "type": "exception_handler",
         "exception_name": "IN_PREP_NOT_PORTF_PROJ",
+        "when_line_no": 827,
         "when_indent": 3,
+        "then_line_no": 827,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1345,7 +1606,9 @@
       {
         "type": "exception_handler",
         "exception_name": "IN_PREP_NOT_CLOSED",
+        "when_line_no": 829,
         "when_indent": 3,
+        "then_line_no": 829,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1365,7 +1628,9 @@
       {
         "type": "exception_handler",
         "exception_name": "INVALID_MOLECULE_ID",
+        "when_line_no": 831,
         "when_indent": 3,
+        "then_line_no": 831,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1385,7 +1650,9 @@
       {
         "type": "exception_handler",
         "exception_name": "SEC_MOL_LIST_NOT_EMPTY",
+        "when_line_no": 833,
         "when_indent": 3,
+        "then_line_no": 833,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1405,7 +1672,9 @@
       {
         "type": "exception_handler",
         "exception_name": "INVALID_THEME_NO",
+        "when_line_no": 835,
         "when_indent": 3,
+        "then_line_no": 835,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1425,7 +1694,9 @@
       {
         "type": "exception_handler",
         "exception_name": "DELETE_NO_MORE_POSSIBLE",
+        "when_line_no": 837,
         "when_indent": 3,
+        "then_line_no": 837,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1445,7 +1716,9 @@
       {
         "type": "exception_handler",
         "exception_name": "THEME_NO_ONLY_INSERT",
+        "when_line_no": 839,
         "when_indent": 3,
+        "then_line_no": 839,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1465,7 +1738,9 @@
       {
         "type": "exception_handler",
         "exception_name": "DESCRIPTION_TOO_LONG",
+        "when_line_no": 841,
         "when_indent": 3,
+        "then_line_no": 841,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1485,7 +1760,9 @@
       {
         "type": "exception_handler",
         "exception_name": "THEME_DESC_PROPOSAL_TOO_LONG",
+        "when_line_no": 845,
         "when_indent": 3,
+        "then_line_no": 845,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1505,7 +1782,9 @@
       {
         "type": "exception_handler",
         "exception_name": "THEME_DESC_ALT_TOO_LONG",
+        "when_line_no": 849,
         "when_indent": 3,
+        "then_line_no": 849,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1525,7 +1804,9 @@
       {
         "type": "exception_handler",
         "exception_name": "THEME_NO_CANNOT_BE_INSERTED",
+        "when_line_no": 853,
         "when_indent": 3,
+        "then_line_no": 853,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1545,7 +1826,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ONLYONEOFFICIALCHANGEPERDAY",
+        "when_line_no": 855,
         "when_indent": 3,
+        "then_line_no": 855,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1565,7 +1848,9 @@
       {
         "type": "exception_handler",
         "exception_name": "INSERTSMUSTBEOFFICIAL",
+        "when_line_no": 857,
         "when_indent": 3,
+        "then_line_no": 857,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1585,7 +1870,9 @@
       {
         "type": "exception_handler",
         "exception_name": "THEMEDESCRIPTIONMANDATORY",
+        "when_line_no": 859,
         "when_indent": 3,
+        "then_line_no": 859,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1605,7 +1892,9 @@
       {
         "type": "exception_handler",
         "exception_name": "THEME_DESC_NOT_UNIQUE",
+        "when_line_no": 861,
         "when_indent": 3,
+        "then_line_no": 861,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1625,7 +1914,9 @@
       {
         "type": "exception_handler",
         "exception_name": "PORTF_PROJ_MOL_CRE_ERR",
+        "when_line_no": 863,
         "when_indent": 3,
+        "then_line_no": 863,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1645,7 +1936,9 @@
       {
         "type": "exception_handler",
         "exception_name": "DEBUGGING",
+        "when_line_no": 865,
         "when_indent": 3,
+        "then_line_no": 865,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -1662,7 +1955,9 @@
           }
         ]
       }
-    ]
+    ],
+    "exception_line_no": 824,
+    "end_line_no": 870
   },
   "sql_comments": [
     "-- Other Program",
@@ -1729,11 +2024,9 @@
     "-- set variable",
     "-- is_from_theme_validity_check := TRUE;"
   ],
-  "rest_strings": [],
   "conversion_stats": {
     "declaration_count": 49,
     "comment_count": 63,
-    "rest_string_count": 0,
     "sql_convert_count": {
       "select_statement": 16,
       "insert_statement": 6,
@@ -1759,7 +2052,17 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-08-28T06:26:51.315667",
-    "parser_version": "1.0"
+    "parse_timestamp": "2025-08-28T12:08:27.383788",
+    "parser_version": "1.0",
+    "file_details": {
+      "filename": "trigger1.sql",
+      "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\trigger1.sql",
+      "filesize": 30669,
+      "file_extension": ".sql",
+      "last_modified": 1756244400.3125362,
+      "created_time": 1754566723.5715313,
+      "is_file": true,
+      "is_readable": true
+    }
   }
 }

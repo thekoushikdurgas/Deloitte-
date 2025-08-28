@@ -20,7 +20,7 @@ The logging system is designed to output both to console (for immediate visibili
 and to timestamped log files (for later analysis and debugging).
 """
 
-
+main_excel_file = "utilities/oracle_postgresql_mappings.xlsx"
 # Configure logging system
 def setup_logging(log_dir="output", log_level="INFO"):
     """

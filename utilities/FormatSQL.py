@@ -10,6 +10,7 @@ from typing import Dict, List, Any, Union
 from datetime import datetime
 from utilities.common import (
     logger,
+    main_excel_file,
     setup_logging,
     debug,
     info,
@@ -76,11 +77,34 @@ class FormatSQL:
         """
         self.analysis = analysis
         self.indent_unit = "  "  # 2 spaces for indentation
+        self.json_convert_sql: Dict = {
+            "select_statement": 0,
+            "insert_statement": 0,
+            "update_statement": 0,
+            "delete_statement": 0,
+            "raise_statement": 0,
+            "assignment": 0,
+            "for_loop": 0,
+            "if_else": 0,
+            "case_when": 0,
+            "begin_end": 1,
+            "exception_handler": 0,
+            "function_calling": 0,
+            "when_statement": 0,
+            "elif_statement": 0,
+            "fetch_statement": 0,
+            "open_statement": 0,
+            "exit_statement": 0,
+            "close_statement": 0,
+            "merge_statement": 0,
+            "null_statement": 0,
+            "return_statement": 0,
+        }
         
         # Load mappings from Excel file
         self.func_mapping = self.load_mapping("function_mappings")
         self.type_mapping = self.load_mapping("data_type_mappings")
-        self.exception_mapping = self.load_mapping("exception_mappings")
+        # self.exception_mapping = self.load_mapping("exception_mappings")
         
         # Validate analysis structure
         if not isinstance(analysis, dict):
@@ -106,7 +130,7 @@ class FormatSQL:
         Returns:
             Dict[str, str]: Mapping dictionary with Oracle keys and PostgreSQL values
         """
-        mapping_file = "utilities/oracle_postgresql_mappings.xlsx"
+        mapping_file = main_excel_file
         
         try:
             if os.path.exists(mapping_file):
@@ -284,10 +308,15 @@ class FormatSQL:
         # Combine all lines into the final SQL string
         result = "\n".join(lines)
         debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
-        
+        if self.analysis['conversion_stats'] is None:
+            print(f"sql_convert_count: {self.analysis['conversion_stats']}")
+        final_sql = {
+            "sql": result,
+            "json_convert_sql": self.json_convert_sql
+        }
         duration = time.time() - start_time
         debug(f"{db_type} SQL generation: {len(lines)} lines generated in {duration:.3f}s")
-        return result
+        return final_sql
 
     # -----------------------------
     # Declaration Rendering Methods
@@ -464,6 +493,8 @@ class FormatSQL:
             
             statement_type = statement.get("type", "")
             logger.debug(f"Rendering statement type: {statement_type}")
+            if statement_type in self.json_convert_sql:
+                self.json_convert_sql[statement_type] += 1
             
             try:
                 if statement_type == "if_else":
@@ -491,9 +522,11 @@ class FormatSQL:
                 elif statement_type == "null_statement":
                     statement_lines = self._render_null_statement(statement, indent_level, db_type)
                 elif statement_type == "return_statement":
+                    # print(statement)
                     statement_lines = self._render_return_statement(statement, indent_level, db_type)
                 else:
                     # Fallback for unknown statement types
+                    # print(statement)
                     statement_lines = self._render_unknown_statement(statement, indent_level, db_type)
                 
                 lines.extend(statement_lines)
@@ -538,6 +571,8 @@ class FormatSQL:
         if_elses = node.get("if_elses", [])
         for elif_stmt in if_elses:
             elif_condition = elif_stmt.get("condition", "")
+            if elif_condition:
+                self.json_convert_sql['elif_statement'] += 1
             if db_type == "PostgreSQL":
                 elif_condition = self._apply_function_mappings(elif_condition)
             
@@ -591,6 +626,8 @@ class FormatSQL:
             lines.append(self._indent(f"WHEN {when_condition} THEN", indent_level))
             
             when_statements = when_clause.get("then_statements", [])
+            if when_statements:
+                self.json_convert_sql['when_statement'] += 1
             if when_statements:
                 when_lines = self._render_statement_list(when_statements, indent_level + 1, db_type)
                 lines.extend(when_lines)
@@ -826,10 +863,12 @@ class FormatSQL:
         lines: List[str] = []
         
         exception_name = handler.get("exception_name", "")
-        if db_type == "PostgreSQL":
-            # Apply exception mapping for PostgreSQL
-            mapped_exception = self.exception_mapping.get(exception_name.upper(), exception_name)
-            exception_name = mapped_exception
+        if exception_name:
+            self.json_convert_sql['exception_handler'] += 1
+        # if db_type == "PostgreSQL":
+        #     # Apply exception mapping for PostgreSQL
+        #     mapped_exception = self.exception_mapping.get(exception_name.upper(), exception_name)
+        #     exception_name = mapped_exception
         
         lines.append(self._indent(f"WHEN {exception_name} THEN", indent_level))
         

@@ -69,8 +69,9 @@ def convert_complex_structure_to_sql(complex_structure):
         debug("Converting complex structure to PostgreSQL SQL")
         analyzer = FormatSQL(complex_structure)
         sql_content = analyzer.to_sql("PostgreSQL")
+        analyzer_sql = sql_content["sql"]
         debug("Successfully converted complex structure to PostgreSQL SQL")
-        return sql_content
+        return analyzer_sql
     except Exception as e:
         error("Failed to convert complex structure to PostgreSQL SQL: %s", str(e))
         # Return a fallback SQL structure
@@ -120,6 +121,7 @@ def process_files(
     3. Extracts trigger numbers from filenames
     4. Processes each file using the provided processor function
     5. Handles errors gracefully with detailed logging
+    6. Tracks file processing statistics including file details
 
 
     Args:
@@ -159,6 +161,7 @@ def process_files(
     # Process each file
     processed_count = 0
     error_count = 0
+    total_file_size = 0
 
 
     i = 1
@@ -175,6 +178,15 @@ def process_files(
 
             debug("Source path: %s", src_path)
             debug("Output path: %s", out_path)
+            
+            # Log file details if available
+            try:
+                file_details = OracleTriggerAnalyzer.extract_file_details(src_path)
+                file_size = file_details.get("filesize", 0)
+                total_file_size += file_size
+                debug("File size: %d bytes", file_size)
+            except Exception as e:
+                debug("Could not extract file details: %s", str(e))
 
 
             # Run the processor function
@@ -200,6 +212,8 @@ def process_files(
 
     info("=== File processing complete ===")
     info("Successfully processed: %d files", processed_count)
+    if total_file_size > 0:
+        info("Total file size processed: %d bytes (%.2f KB)", total_file_size, total_file_size / 1024)
     if error_count > 0:
         warning("Failed to process: %d files", error_count)
 
@@ -210,10 +224,9 @@ def sql_to_json_processor(src_path: str, out_path: str, file_name: str) -> None:
 
 
     This function:
-    1. Reads the SQL file content
-    2. Creates an OracleTriggerAnalyzer instance
-    3. Generates JSON analysis
-    4. Writes the analysis to the output file
+    1. Creates an OracleTriggerAnalyzer instance directly from the file
+    2. Generates JSON analysis with file details in metadata
+    3. Writes the analysis to the output file
 
 
     Args:
@@ -221,45 +234,39 @@ def sql_to_json_processor(src_path: str, out_path: str, file_name: str) -> None:
         out_path (str): Path to the output JSON file
         file_name (str): Trigger number extracted from filename
     """
-
-    # with open(src_path, "r", encoding="utf-8") as f:
-    #     sql_content: str = f.read()
-    # analyzer = OracleTriggerAnalyzer(sql_content)
-    # json_content: Dict[str, Any] = analyzer.to_json()
-    # with open(out_path, "w", encoding="utf-8") as f:
-    #     json.dump(json_content, f, indent=2)
     debug("=== SQL to JSON processing for trigger %s ===", file_name)
-    # Step 1: Read the SQL file content
-    # info("Reading SQL file: %s", src_path)
+    
+    # Step 1: Create analyzer directly from file (includes file details)
+    debug("Creating OracleTriggerAnalyzer instance from file...")
     print(f"Reading SQL file: {src_path}")
     try:
-        with open(src_path, "r", encoding="utf-8") as f:
-            sql_content: str = f.read()
-        debug("Successfully read %d characters from %s", len(sql_content), src_path)
+        analyzer = OracleTriggerAnalyzer.from_file(src_path)
+        debug("OracleTriggerAnalyzer created successfully with file details")
+        debug("File details: %s", analyzer.file_details.get("filename", "unknown"))
+    except FileNotFoundError as e:
+        error("File not found: %s", src_path)
+        raise
     except UnicodeDecodeError as e:
         error("Unicode decode error reading %s: %s", src_path, str(e))
         raise
-    except Exception as e:
-        error("Error reading file %s: %s", src_path, str(e))
-        raise
-
-
-    # Step 2: Analyze the SQL content
-    debug("Creating OracleTriggerAnalyzer instance...")
-    try:
-        analyzer = OracleTriggerAnalyzer(sql_content)
-        debug("OracleTriggerAnalyzer created successfully")
     except Exception as e:
         error("Failed to create OracleTriggerAnalyzer: %s", str(e))
         raise
 
 
-    # Step 3: Generate JSON analysis
+    # Step 2: Generate JSON analysis
     debug("Generating JSON analysis...")
     try:
         json_content: Dict[str, Any] = analyzer.to_json()
         debug("JSON analysis generated successfully")
         debug("Generated JSON with keys: %s", list(json_content.keys()))
+
+
+        # Log file details from metadata
+        metadata = json_content.get("metadata", {})
+        file_details = metadata.get("file_details", {})
+        if file_details:
+            debug("File details in metadata: %s (%d bytes)", file_details.get("filename", "unknown"), file_details.get("filesize", 0))
 
 
         # Log some statistics about the analysis
@@ -268,13 +275,7 @@ def sql_to_json_processor(src_path: str, out_path: str, file_name: str) -> None:
         constants = len(declarations.get("constants", []))
         exceptions = len(declarations.get("exceptions", []))
         comments = len(json_content.get("sql_comments", []))
-        debug(
-            "Analysis statistics: %d vars, %d consts, %d excs, %d comments",
-            variables,
-            constants,
-            exceptions,
-            comments,
-        )
+        debug("Analysis statistics: %d vars, %d consts, %d excs, %d comments",variables,constants,exceptions,comments,)
 
 
     except Exception as e:
@@ -282,7 +283,7 @@ def sql_to_json_processor(src_path: str, out_path: str, file_name: str) -> None:
         raise
 
 
-    # Step 4: Write to JSON file
+    # Step 3: Write to JSON file
     debug("Writing analysis JSON to: %s", out_path)
     try:
         with open(out_path, "w", encoding="utf-8") as f:
@@ -307,13 +308,14 @@ def read_oracle_triggers_to_json() -> None:
     The conversion workflow:
     1. Locate all Oracle SQL trigger files in the source directory
     2. For each file, extract the trigger number from the filename
-    3. Parse the SQL content using OracleTriggerAnalyzer
-    4. Save the resulting structured JSON to the target directory
+    3. Parse the SQL content using OracleTriggerAnalyzer with file details
+    4. Save the resulting structured JSON to the target directory with metadata
     """
     info("=== Starting Oracle triggers to JSON conversion ===")
     debug("Workflow Phase 1: Convert Oracle SQL files to JSON analysis structure")
     debug("Source directory: files/oracle")
     debug("Target directory: %s", FORMAT_JSON_DIR)
+    debug("File details will be included in metadata for each processed file")
    
     # Process all files using the processor function
     process_files(
@@ -326,7 +328,7 @@ def read_oracle_triggers_to_json() -> None:
    
     # Log successful completion
     info("=== Oracle triggers to JSON conversion complete ===")
-    debug("Phase 1 complete: Oracle SQL files converted to JSON analysis structure")
+    debug("Phase 1 complete: Oracle SQL files converted to JSON analysis structure with file metadata")
 
 
 def json_to_sql_processor(src_path: str, out_path: str, file_name: str) -> None:
@@ -390,14 +392,15 @@ def json_to_sql_processor(src_path: str, out_path: str, file_name: str) -> None:
         try:
             render_start_time = time.time()
             sql_content: str = analyzer.to_sql("Oracle")
+            analyzer_sql = sql_content["sql"]
             render_duration = time.time() - render_start_time
             
             debug("SQL rendering completed successfully")
-            debug(f"Rendered SQL length: {len(sql_content)} characters")
+            debug(f"Rendered SQL length: {len(analyzer_sql)} characters")
             debug(f"SQL rendering took: {render_duration:.3f} seconds")
             
             # Validate generated SQL
-            sql_validation = validate_generated_sql(sql_content, file_name)
+            sql_validation = validate_generated_sql(analyzer_sql, file_name)
             if not sql_validation["is_valid"]:
                 warning("Generated SQL validation warnings for %s: %s", file_name, sql_validation["warnings"])
             
@@ -410,7 +413,7 @@ def json_to_sql_processor(src_path: str, out_path: str, file_name: str) -> None:
         debug("Writing formatted SQL to: %s", out_path)
         try:
             with open(out_path, "w", encoding="utf-8") as f:
-                f.write(sql_content)
+                f.write(analyzer_sql)
             debug(f"Successfully wrote formatted SQL to {out_path}")
         except Exception as e:
             error(f"Failed to write SQL file {out_path}: {str(e)}")
@@ -883,6 +886,7 @@ def read_json_to_oracle_triggers() -> None:
             debug(f"processing {json_file}")
             analyzer = JSONTOPLJSON(analysis)
             sql_content = analyzer.to_sql()
+            # analyzer_sql = sql_content["sql"]
 
 
             # Save as JSON with the new structure
@@ -947,8 +951,9 @@ def json_to_pl_sql_processor(src_path: str, out_path: str, file_name: str) -> No
     debug("Rendering PostgreSQL SQL from analysis...")
     try:
         sql_content: str = analyzer.to_sql("PostgreSQL")
+        analyzer_sql = sql_content["sql"]
         debug("PostgreSQL SQL rendering completed successfully")
-        debug("Rendered SQL length: %d characters", len(sql_content))
+        debug("Rendered SQL length: %d characters", len(analyzer_sql))
     except Exception as e:
         error("Failed to render PostgreSQL SQL: %s", str(e))
         raise
@@ -958,7 +963,7 @@ def json_to_pl_sql_processor(src_path: str, out_path: str, file_name: str) -> No
     debug("Writing formatted PostgreSQL SQL to: %s", out_path)
     try:
         with open(out_path, "w", encoding="utf-8") as f:
-            f.write(sql_content)
+            f.write(analyzer_sql)
         debug("Successfully wrote formatted PostgreSQL SQL to %s", out_path)
     except Exception as e:
         error("Failed to write PostgreSQL SQL file %s: %s", out_path, str(e))

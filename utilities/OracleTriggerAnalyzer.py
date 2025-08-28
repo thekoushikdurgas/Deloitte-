@@ -4,10 +4,11 @@ import os
 import re
 import time
 from typing import Any, Dict, List, Tuple
-
+import pandas as pd
 from numpy import copy
 from utilities.common import (
     logger,
+    main_excel_file,
     setup_logging,
     debug,
     info,
@@ -32,13 +33,15 @@ class OracleTriggerAnalyzer:
     - Finally, `to_json()` emits a dict with `declarations`, `main`, and `sql_comments`.
     """
 
-    def __init__(self, sql_content: str):
+    def __init__(self, sql_content: str, file_details: Dict[str, Any] = None):
         """
         Initialize the OracleTriggerAnalyzer with SQL content.
 
 
         Args:
             sql_content (str): The raw SQL trigger content to analyze
+            file_details (Dict[str, Any], optional): Dictionary containing file information
+                with keys like 'filename', 'filepath', 'filesize', etc.
 
 
         Process flow:
@@ -55,6 +58,7 @@ class OracleTriggerAnalyzer:
         )
 
         self.sql_content: str = sql_content
+        self.file_details: Dict[str, Any] = file_details or {}
         self.declare_section: List[int] = [0, 0]
         # self.main_section: List[int] = [0, 0]
         self.main_section_lines: Dict = {}
@@ -63,7 +67,6 @@ class OracleTriggerAnalyzer:
         self.exceptions: List[Dict[str, Any]] = []
         self.sql_comments: List[str] = []
         self.structured_lines: List[Dict[str, Any]] = []
-        self.rest_strings_line: List[Dict] = []
         self.strng_convert_json: Dict = {
             "select_statement": 0,
             "insert_statement": 0,
@@ -158,6 +161,13 @@ class OracleTriggerAnalyzer:
             semicolon_lines,
             empty_lines,
         )
+    def load_function_name(self):
+        """
+        Load function name from the excel file (utilities\oracle_postgresql_mappings.xlsx) in sheet "function_list".
+        """
+        function_list = pd.read_excel(main_excel_file, sheet_name="function_list")
+        function_name = function_list["function_name"].tolist()
+        return function_name
 
     def _strip_block_comments(self):
         """
@@ -408,6 +418,7 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed variable: %s", parsed_var["name"])
         except Exception as e:
             logger.debug("Failed to process variable declaration '%s': %s", segment, e)
+            print(f"Failed to process variable declaration '{segment}': {e}")
 
     def _process_constant_declaration(self, segment: str) -> None:
         """
@@ -424,6 +435,7 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed constant: %s", parsed_const["name"])
         except Exception as e:
             logger.debug("Failed to process constant declaration '%s': %s", segment, e)
+            print(f"Failed to process constant declaration '{segment}': {e}")
 
     def _process_exception_declaration(self, segment: str) -> None:
         """
@@ -440,6 +452,7 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed exception: %s", parsed_exc["name"])
         except Exception as e:
             logger.debug("Failed to process exception declaration '%s': %s", segment, e)
+            print(f"Failed to process exception declaration '{segment}': {e}")
 
     def _parse_variable(self, line: str) -> Dict[str, Any]:
         """
@@ -612,11 +625,9 @@ class OracleTriggerAnalyzer:
         self._parse_case_when()
         self._parse_if_else()
         self._parse_for_loop()
-        self._parse_sql_statements()
         self._parse_function_calling_statements()
-
-        # to check how many rest strings are in main section
-        self.rest_strings_line = self.rest_strings()
+        self._parse_sql_statements()
+        self.rest_strings()
 
     def _parse_function_calling_statements(self):
         """
@@ -629,23 +640,12 @@ class OracleTriggerAnalyzer:
         """
         def parse_function_calling_statements(working_lines: List[Dict[str, Any]]):
             function_calling = []
-            function_calling_names = [
-                "RAISE_APPLICATION_ERROR",
-                "DBMS_OUTPUT.PUT_LINE",
-                "TXO_UTIL.SET_WARNING",
-                "MDMAPPL.MDM_UTIL_THEMES.REFRESH_THEME_DESC",
-                "MDM_UTIL_ADDRESSES.MODIFY_COMPANY_ADDRESS",
-                "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_CE_JU",
-                "MDMAPPL.MDM_UTIL_COMPANIES.MODIFYCOMPANYNAME",
-                "MDM_UTIL_COMPANIES.MODIFYCOMPANYMAPPING_MFR",
-                "MDM_UTIL_COMPANIES.MODIFYCOMPANY",
-                "MDMAPPL.MDM_LOAD_NPM_PARTNER_DATA.LOAD_NPM_PARTNER_DATA",
-                'MDMTOOL."mdmt_util_history$write_history"',
-                "GMD.GMD_UTIL_THEMES$UPD_THEME_DESC_JOB_PROC",
-            ]
+            function_calling_names = self.load_function_name()
             i = 0
             logger.debug(f"working_lines: {working_lines}")
             function_calling_i = -1
+            call_type = -1
+            perform_type = -1
             function_calling_name = ""
             while i < len(working_lines):
                 logger.debug(f"i: {i}")
@@ -655,16 +655,43 @@ class OracleTriggerAnalyzer:
                     line_upper = item["line"].strip().upper()
                     if function_calling_i == -1:
                         for name in function_calling_names:
-                            if line_upper.startswith(name) or line_upper.startswith("CALL "+name) or line_upper.startswith("PERFORM "+name):
-                                function_calling_i = i
-                                function_calling_name = name
-                                break
+                            # Handle function names with and without quotes
+                            # name_with_quotes = name.replace("'", "''")  # Escape single quotes
+                            name_patterns = [
+                                name,
+                                f"'{name}'",
+                                f"\"{name}\"",
+                                f"CALL {name}",
+                                f"CALL '{name}'",
+                                f"CALL \"{name}\"",
+                                f"PERFORM {name}",
+                                f"PERFORM '{name}'",
+                                f"PERFORM \"{name}\""
+                            ]
+                            
+                            for pattern in name_patterns:
+                                if line_upper.startswith(pattern.upper()):
+                                    if "CALL " in line_upper:
+                                        call_type = i
+                                    elif "PERFORM " in line_upper:
+                                        perform_type = i
+                                    function_calling_i = i
+                                    function_calling_name = name
+                                    # print(f"function_calling_name: {function_calling_name}")
+                                    break
+                    if call_type != -1:
+                        function_calling_name = "CALL " + function_calling_name
+                    elif perform_type != -1:
+                        function_calling_name = "PERFORM " + function_calling_name
                     if function_calling_i != -1:
                         logger.debug(f"item: {line_upper}")
                         logger.debug(f"function calling start: {item['line_no']}")
                         if line_upper.endswith(";"):
                             logger.debug(f"function calling end: {item['line_no']}")                         
                             function_calling.append(self._parse_function_calling([item],function_calling_name))
+                            function_calling_i = -1  # Reset for next iteration
+                            call_type = -1
+                            perform_type = -1
                         else:
                             for j in range(i + 1, len(working_lines)):
                                 line_info = working_lines[j]
@@ -675,55 +702,9 @@ class OracleTriggerAnalyzer:
                                         function_calling.append(self._parse_function_calling(working_lines[i:j+1],function_calling_name))
                                         i = j
                                         function_calling_i = -1
+                                        call_type = -1
+                                        perform_type = -1
                                         break
-                    # elif line_upper.startswith("DBMS_OUTPUT.PUT_LINE"):
-                    #     logger.debug(f"item: {line_upper}")
-                    #     logger.debug(f"function calling start: {item['line_no']}")
-                    #     if line_upper.endswith(";"):
-                    #         logger.debug(f"function calling end: {item['line_no']}")                         
-                    #         function_calling.append(self._parse_function_calling([item],"dbms_output.put_line"))
-                    #     else:
-                    #         for j in range(i + 1, len(working_lines)):
-                    #             line_info = working_lines[j]
-                    #             if "line" in line_info:
-                    #                 line_upper = line_info["line"].strip().upper()
-                    #                 if line_upper.endswith(";"):
-                    #                     logger.debug(f"function calling end: {line_info['line_no']}")                          
-                    #                     function_calling.append(self._parse_function_calling(working_lines[i:j+1],"dbms_output.put_line"))
-                    #                     i = j
-                    #                     break
-                    # elif line_upper.startswith("TXO_UTIL.SET_WARNING"):
-                    #     logger.debug(f"item: {line_upper}")
-                    #     logger.debug(f"function calling start: {item['line_no']}")
-                    #     if line_upper.endswith(";"):
-                    #         logger.debug(f"function calling end: {item['line_no']}")                         
-                    #         function_calling.append(self._parse_function_calling([item],"txo_util.set_warning"))
-                    #     else:
-                    #         for j in range(i + 1, len(working_lines)):
-                    #             line_info = working_lines[j]
-                    #             if "line" in line_info:
-                    #                 line_upper = line_info["line"].strip().upper()
-                    #                 if line_upper.endswith(";"):
-                    #                     logger.debug(f"function calling end: {line_info['line_no']}")                          
-                    #                     function_calling.append(self._parse_function_calling(working_lines[i:j+1],"txo_util.set_warning"))
-                    #                     i = j
-                    #                     break
-                    # elif line_upper.startswith("MDMAPPL.MDM_UTIL_THEMES.REFRESH_THEME_DESC"):
-                    #     logger.debug(f"item: {line_upper}")
-                    #     logger.debug(f"function calling start: {item['line_no']}")
-                    #     if line_upper.endswith(";"):
-                    #         logger.debug(f"function calling end: {item['line_no']}")                         
-                    #         function_calling.append(self._parse_function_calling([item],"mdappl.mdm_util_themes.refresh_theme_desc"))
-                    #     else:
-                    #         for j in range(i + 1, len(working_lines)):
-                    #             line_info = working_lines[j]
-                    #             if "line" in line_info:
-                    #                 line_upper = line_info["line"].strip().upper()
-                    #                 if line_upper.endswith(";"):
-                    #                     logger.debug(f"function calling end: {line_info['line_no']}")                          
-                    #                     function_calling.append(self._parse_function_calling(working_lines[i:j+1],"mdappl.mdm_util_themes.refresh_theme_desc"))
-                    #                     i = j
-                    #                     break
                     else:
                         function_calling.append(item)
                 # Handle nested structures (begin_end blocks, exception handlers, etc.)
@@ -788,9 +769,19 @@ class OracleTriggerAnalyzer:
             }
         """
         def parse_sql_statements(working_lines: List[Dict[str, Any]]):
+            STMT_TYPE_MAP = {
+                "SELECT": "select_statement",
+                "INSERT": "insert_statement",
+                "UPDATE": "update_statement",
+                "DELETE": "delete_statement",
+                "RAISE": "raise_statement",
+                "NULL": "null_statement",
+                "RETURN": "return_statement",
+            }
             sql_statements = []
             i = 0
-            stmt_type_type = ""
+            stmt_i = -1
+            stmt_type = ""
             logger.debug(f"working_lines: {working_lines}")
             while i < len(working_lines):
                 logger.debug(f"i: {i}")
@@ -798,183 +789,50 @@ class OracleTriggerAnalyzer:
                 if "line" in item:
                     logger.debug(f"item: {item['line']} || {item['line_no']} || {item['indent']}")
                     line_upper = item["line"].strip().upper()
-                    if line_upper.startswith("SELECT ") or line_upper == "SELECT":
-                        stmt_type_type = "select_statement"
-                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
+                    for type_name, type_value in STMT_TYPE_MAP.items():
+                        name_patterns = [
+                                type_name,
+                                f"{type_name} ",
+                                f"{type_name};",
+                        ]
+                        for pattern in name_patterns:
+                            if line_upper.startswith(pattern.upper()):
+                                logger.debug(f"stmt start: {item['line_no']} || {type_value} || {pattern}")
+                                stmt_i = i
+                                stmt_type = type_value
+                                logger.debug(f"stmt start: {item['line_no']} || {stmt_type}")
+                                break
+                    if stmt_i != -1:
+                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type}")
                         if line_upper.endswith(";"):
-                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                            sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
+                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type}")                         
+                            sql_statements.append(self._parse_sql_statement([item], stmt_type))
+                            stmt_i = -1
                         else:
                             for j in range(i + 1, len(working_lines)):
                                 line_info = working_lines[j]
                                 line_upper = line_info["line"].strip().upper()
                                 if line_upper.endswith(";"):
-                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                                    sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
+                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type}")                         
+                                    sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type))
+                                    stmt_i = -1
                                     i = j
                                     break
-                    elif line_upper.startswith("INSERT ") or line_upper == "INSERT":
-                        stmt_type_type = "insert_statement"
-                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                        if line_upper.endswith(";"):
-                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                            sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                        else:
-                            for j in range(i + 1, len(working_lines)):
-                                line_info = working_lines[j]
-                                line_upper = line_info["line"].strip().upper()
-                                if line_upper.endswith(";"):
-                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                                    sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                                    i = j
-                                    break
-                    elif line_upper.startswith("UPDATE ") or line_upper == "UPDATE":
-                        stmt_type_type = "update_statement"
-                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                        if line_upper.endswith(";"):
-                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                            sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                        else:
-                            for j in range(i + 1, len(working_lines)):
-                                line_info = working_lines[j]
-                                line_upper = line_info["line"].strip().upper()
-                                if line_upper.endswith(";"):
-                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                                    sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                                    i = j
-                                    break
-                    elif line_upper.startswith("DELETE ") or line_upper == "DELETE":
-                        stmt_type_type = "delete_statement"
-                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                        if line_upper.endswith(";"):
-                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                            sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                        else:
-                            for j in range(i + 1, len(working_lines)):
-                                line_info = working_lines[j]
-                                line_upper = line_info["line"].strip().upper()
-                                if line_upper.endswith(";"):
-                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                                    sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                                    i = j
-                                    break
-                    elif line_upper.startswith("RAISE ") or line_upper == "RAISE":
-                        stmt_type_type = "raise_statement"
-                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                        if line_upper.endswith(";"):
-                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                            sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                        else:
-                            for j in range(i + 1, len(working_lines)):
-                                line_info = working_lines[j]
-                                line_upper = line_info["line"].strip().upper()
-                                if line_upper.endswith(";"):
-                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                                    sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                                    i = j
-                                    break
-                    elif line_upper.startswith("NULL ") or line_upper == "NULL" or line_upper == "NULL;":
-                        stmt_type_type = "null_statement"
-                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                        if line_upper.endswith(";"):
-                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                            sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                        else:
-                            for j in range(i + 1, len(working_lines)):
-                                line_info = working_lines[j]
-                                line_upper = line_info["line"].strip().upper()
-                                if line_upper.endswith(";"):
-                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                                    sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                                    i = j
-                                    break
-                    elif line_upper.startswith("RETURN ") or line_upper == "RETURN":
-                        stmt_type_type = "return_statement"
-                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                        if line_upper.endswith(";"):
-                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                            sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                        else:
-                            for j in range(i + 1, len(working_lines)):
-                                line_info = working_lines[j]
-                                line_upper = line_info["line"].strip().upper()
-                                if line_upper.endswith(";"):
-                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                                    sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                                    i = j
-                                    break
-                    # elif line_upper.startswith("FETCH ") or line_upper == "FETCH":
-                    #     stmt_type_type = "fetch_statement"
-                    #     logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                    #     if line_upper.endswith(";"):
-                    #         logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                    #         sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                    #     else:
-                    #         for j in range(i + 1, len(working_lines)):
-                    #             line_info = working_lines[j]
-                    #             line_upper = line_info["line"].strip().upper()
-                    #             if line_upper.endswith(";"):
-                    #                 logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                    #                 sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                    #                 i = j
-                    #                 break
-                    # elif line_upper.startswith("OPEN ") or line_upper == "OPEN":
-                    #     stmt_type_type = "open_statement"
-                    #     logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                    #     if line_upper.endswith(";"):
-                    #         logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                    #         sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                    #     else:
-                    #         for j in range(i + 1, len(working_lines)):
-                    #             line_info = working_lines[j]
-                    #             line_upper = line_info["line"].strip().upper()
-                    #             if line_upper.endswith(";"):
-                    #                 logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                    #                 sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                    #                 i = j
-                    #                 break
-                    # elif line_upper.startswith("MERGE ") or line_upper == "MERGE":
-                    #     stmt_type_type = "merge_statement"
-                    #     logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                    #     if line_upper.endswith(";"):
-                    #         logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                    #         sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                    #     else:
-                    #         for j in range(i + 1, len(working_lines)):
-                    #             line_info = working_lines[j]
-                    #             line_upper = line_info["line"].strip().upper()
-                    #             if line_upper.endswith(";"):
-                    #                 logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                    #                 sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                    #                 i = j
-                    #                 break
-                    # elif line_upper.startswith("CLOSE ") or line_upper == "CLOSE":
-                    #     stmt_type_type = "close_statement"
-                    #     logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
-                    #     if line_upper.endswith(";"):
-                    #         logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
-                    #         sql_statements.append(self._parse_sql_statement([item], stmt_type_type))
-                    #     else:
-                    #         for j in range(i + 1, len(working_lines)):
-                    #             line_info = working_lines[j]
-                    #             line_upper = line_info["line"].strip().upper()
-                    #             if line_upper.endswith(";"):
-                    #                 logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
-                    #                 sql_statements.append(self._parse_sql_statement(working_lines[i:j+1], stmt_type_type))
-                    #                 i = j
-                    #                 break
                     elif ":=" in line_upper:
-                        logger.debug(f"stmt start: {item['line_no']} || {stmt_type_type}")
+                        stmt_type = "assignment"
+                        logger.debug(f"stmt start: {item['line_no']} || assignment")
                         if line_upper.endswith(";"):
-                            logger.debug(f"stmt end: {item['line_no']} || {stmt_type_type}")                         
+                            logger.debug(f"stmt end: {item['line_no']} || assignment")                         
                             sql_statements.append(self._parse_assignment_statement([item]))
+                            stmt_i = -1
                         else:
                             for j in range(i + 1, len(working_lines)):
                                 line_info = working_lines[j]
                                 line_upper = line_info["line"].strip().upper()
                                 if line_upper.endswith(";"):
-                                    logger.debug(f"stmt end: {line_info['line_no']} || {stmt_type_type}")                         
+                                    logger.debug(f"stmt end: {line_info['line_no']} || assignment")                         
                                     sql_statements.append(self._parse_assignment_statement(working_lines[i:j+1]))
+                                    stmt_i = -1
                                     i = j
                                     break
                     else:
@@ -1022,14 +880,14 @@ class OracleTriggerAnalyzer:
             if "exception_statements" in handler:
                 self.main_section_lines['exception_handlers'][k]["exception_statements"] = parse_sql_statements(handler["exception_statements"])
 
-    def _parse_sql_statement(self, working_lines: List[Dict[str, Any]], stmt_type_type: str):
+    def _parse_sql_statement(self, working_lines: List[Dict[str, Any]], stmt_type: str):
         """
         Parse SQL statements from the main section of SQL.
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
         """
         sql_statement = {
-            "type": stmt_type_type,
+            "type": stmt_type,
             "sql_statement": self.combine_lines(working_lines),
             "statement_line_no": working_lines[0]["line_no"],
             "statement_indent": working_lines[0]["indent"],
@@ -1802,9 +1660,9 @@ class OracleTriggerAnalyzer:
         # Remove trailing semicolon if present
         combined_line = combined_line.rstrip(";").strip()
 
-        # Extract the function name
-        if not combined_line.upper().startswith(function_name.upper()):
-            return combined_line
+        # # Extract the function name
+        # if not combined_line.upper().startswith(function_name.upper()):
+        #     return combined_line
 
         # Find the opening parenthesis after function name
         open_paren_pos = combined_line.find("(")
@@ -1828,6 +1686,7 @@ class OracleTriggerAnalyzer:
             "function_name": function_name,
             "parameters": parameters,
         }
+        # print(f"function_calling: {result}")
 
         return result
 
@@ -2145,6 +2004,7 @@ class OracleTriggerAnalyzer:
                     rest_strings_list.append(item)
 
                 if "type" in item:
+                    # print(f"item: {item}")
                     self.strng_convert_json[item["type"]] += 1
                 # Recursively process all values in the dictionary
                 for value in item.values():
@@ -2158,7 +2018,12 @@ class OracleTriggerAnalyzer:
         # Process main_section_lines
         extract_rest_strings_from_item(self.main_section_lines)
 
-        return rest_strings_list
+        # rest_strings_list to covert like ("filename","line","line_no") and add to available_rest_strings
+        available_rest_strings = pd.read_excel(main_excel_file, sheet_name="non_parse")
+        for i in rest_strings_list:
+            available_rest_strings.append({"filename": self.file_details["filename"], "line": i["line"], "line_no": i["line_no"]})
+        # print(available_rest_strings)
+        available_rest_strings.to_excel(main_excel_file, sheet_name="non_parse", index=False)
 
     def to_json(self):
         """
@@ -2184,7 +2049,6 @@ class OracleTriggerAnalyzer:
             },
             "main": self.main_section_lines,
             "sql_comments": self.sql_comments,
-            "rest_strings": self.rest_strings_line,
             # "sql_lines": self.structured_lines,
         }
 
@@ -2198,24 +2062,18 @@ class OracleTriggerAnalyzer:
             + len(self.constants)
             + len(self.exceptions),
             "comment_count": len(self.sql_comments),
-            "rest_string_count": len(self.rest_strings_line),
             "sql_convert_count": self.strng_convert_json,
         }
 
-        # Include parse timestamp
+        # Include parse timestamp and file details
         result["metadata"] = {
             "parse_timestamp": self._get_timestamp(),
             "parser_version": "1.0",  # Increment when making significant parser changes
+            "file_details": self.file_details,
         }
 
         # Log detailed statistics for troubleshooting
-        logger.debug(
-            "JSON conversion complete: %d vars, %d consts, %d excs, %d comments",
-            len(self.variables),
-            len(self.constants),
-            len(self.exceptions),
-            len(self.sql_comments),
-        )
+        logger.debug(f"JSON conversion complete: {len(self.variables)} vars, {len(self.constants)} consts, {len(self.exceptions)} excs, {len(self.sql_comments)} comments")
         return result
 
     def _get_timestamp(self):
@@ -2223,6 +2081,72 @@ class OracleTriggerAnalyzer:
         from datetime import datetime
 
         return datetime.now().isoformat()
+
+    @staticmethod
+    def extract_file_details(filepath: str) -> Dict[str, Any]:
+        """
+        Extract file details from a file path.
+        
+        Args:
+            filepath (str): Path to the file
+            
+        Returns:
+            Dict[str, Any]: Dictionary containing file details
+        """
+        import os
+        from pathlib import Path
+        
+        try:
+            file_path = Path(filepath)
+            stat = file_path.stat()
+            
+            return {
+                "filename": file_path.name,
+                "filepath": str(file_path.absolute()),
+                "filesize": stat.st_size,
+                "file_extension": file_path.suffix,
+                "last_modified": stat.st_mtime,
+                "created_time": stat.st_ctime,
+                "is_file": file_path.is_file(),
+                "is_readable": os.access(filepath, os.R_OK),
+            }
+        except (OSError, ValueError) as e:
+            return {
+                "filename": os.path.basename(filepath) if filepath else "unknown",
+                "filepath": filepath,
+                "error": f"Could not extract file details: {str(e)}"
+            }
+
+    @classmethod
+    def from_file(cls, filepath: str, encoding: str = 'utf-8') -> 'OracleTriggerAnalyzer':
+        """
+        Create an OracleTriggerAnalyzer instance from a file.
+        
+        Args:
+            filepath (str): Path to the SQL file
+            encoding (str): File encoding (default: 'utf-8')
+            
+        Returns:
+            OracleTriggerAnalyzer: Analyzer instance with file details
+            
+        Raises:
+            FileNotFoundError: If the file doesn't exist
+            UnicodeDecodeError: If the file can't be decoded with the specified encoding
+        """
+        import os
+        
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"File not found: {filepath}")
+        
+        # Extract file details
+        file_details = cls.extract_file_details(filepath)
+        
+        # Read file content
+        with open(filepath, 'r', encoding=encoding) as f:
+            sql_content = f.read()
+        
+        # Create analyzer instance with file details
+        return cls(sql_content, file_details)
 
     def format_values(self, values: str):
         """

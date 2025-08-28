@@ -649,6 +649,70 @@ class JSONTOPLJSON:
             json_path = f"main.begin_end_statements.{r}.begin_end_statements"
             self.after_parse_on_delete["begin_end_statements"][r] = (process_on_delete_json(begin_end_item, json_path, "on_delete"))
 
+    def rest_strings(self,sql_json) -> Dict:
+        """
+        Find all "rest string" content in various statement types within the JSON structure.
+
+
+        This method recursively searches through:
+        - begin_end_statements
+        - exception_statements
+        - then_statements
+        - else_statements
+
+
+        Returns:
+            List[str]: List of all rest string content found
+        """
+        strng_convert_json: Dict = {
+            "select_statement": 0,
+            "insert_statement": 0,
+            "update_statement": 0,
+            "delete_statement": 0,
+            "raise_statement": 0,
+            "assignment": 0,
+            "for_loop": 0,
+            "if_else": 0,
+            "case_when": 0,
+            "begin_end": 0,
+            "exception_handler": 0,
+            "function_calling": 0,
+            "when_statement": 0,
+            "elif_statement": 0,
+            "fetch_statement": 0,
+            "open_statement": 0,
+            "exit_statement": 0,
+            "close_statement": 0,
+            "merge_statement": 0,
+            "null_statement": 0,
+            "return_statement": 0,
+        }
+
+        def extract_rest_strings_from_item(item):
+            """Recursively extract rest strings from any item"""
+            if isinstance(item, dict):
+                # # Check for "indent" field which contains rest string content
+                # if "indent" in item:
+                #     print(item["line"])
+                #     rest_strings_list.append(item)
+
+                if "type" in item:
+                    # print(f"item: {item}")
+                    strng_convert_json[item["type"]] += 1
+                # Recursively process all values in the dictionary
+                for value in item.values():
+                    extract_rest_strings_from_item(value)
+
+            elif isinstance(item, list):
+                # Recursively process all items in the list
+                for sub_item in item:
+                    extract_rest_strings_from_item(sub_item)
+
+        # Process main_section_lines
+        extract_rest_strings_from_item(sql_json)
+
+        return strng_convert_json
+
     def to_sql(self):
         """
         Clean the JSON data by removing conditional statements that don't apply to specific operations,
@@ -694,16 +758,20 @@ class JSONTOPLJSON:
         converted = {
             "on_insert": {
                 "declarations": self.declarations,
-                "main": self.after_parse_on_insert
+                "main": self.after_parse_on_insert,
+                "conversion_stats": self.rest_strings(self.after_parse_on_insert),
             },
             "on_update": {
                 "declarations": self.declarations,
-                "main": self.after_parse_on_update
+                "main": self.after_parse_on_update,
+                "conversion_stats": self.rest_strings(self.after_parse_on_update),
             },
             "on_delete": {
                 "declarations": self.declarations,
-                "main": self.after_parse_on_delete
-            }
+                "main": self.after_parse_on_delete,
+                "conversion_stats": self.rest_strings(self.after_parse_on_delete),
+            },
+            "metadata" : self.json_data['metadata']
         }
 
         # Step 4: Convert to JSON string
