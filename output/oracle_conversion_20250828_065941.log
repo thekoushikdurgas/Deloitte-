@@ -1,0 +1,11 @@
+2025-08-28 06:59:41,408 - root - DEBUG - [common.py:105] - Starting main conversion workflow
+2025-08-28 06:59:41,408 - root - INFO - [common.py:110] - === Starting Oracle Trigger Conversion Process ===
+2025-08-28 06:59:41,409 - root - INFO - [common.py:110] - Logging to: output\oracle_conversion_20250828_065941.log
+2025-08-28 06:59:41,410 - root - DEBUG - [common.py:105] - Logging system initialized
+2025-08-28 06:59:41,414 - root - DEBUG - [common.py:105] - Loading function_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:59:41,930 - root - DEBUG - [common.py:105] - Loaded 116 function_mappings mappings from Excel
+2025-08-28 06:59:41,931 - root - DEBUG - [common.py:105] - Loading data_type_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:59:41,969 - root - DEBUG - [common.py:105] - Loaded 42 data_type_mappings mappings from Excel
+2025-08-28 06:59:41,970 - root - DEBUG - [common.py:105] - Loading exception_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:59:41,996 - root - DEBUG - [common.py:105] - Loaded 52 exception_mappings mappings from Excel
+2025-08-28 06:59:41,996 - root - ERROR - [common.py:120] - Error: Analysis must be a dictionary

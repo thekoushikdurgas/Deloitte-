@@ -3,35 +3,7 @@ import os
 import logging
 import time
 from datetime import datetime
-from typing import Optional, Any, Tuple, Dict, List, Union
-from pathlib import Path
-from contextlib import contextmanager
-
-
-# Custom exceptions for better error handling
-class OracleAnalysisError(Exception):
-    """Base exception for Oracle trigger analysis errors."""
-    pass
-
-
-class ParseError(OracleAnalysisError):
-    """Exception raised when parsing SQL content fails."""
-    pass
-
-
-class ValidationError(OracleAnalysisError):
-    """Exception raised when data validation fails."""
-    pass
-
-
-class ConversionError(OracleAnalysisError):
-    """Exception raised when conversion between formats fails."""
-    pass
-
-
-class FileOperationError(OracleAnalysisError):
-    """Exception raised when file operations fail."""
-    pass
+from typing import Optional, Any, Tuple
 
 
 """

@@ -2,19 +2,55 @@
     "on_insert": [
         {
             "type": "sql",
-            "sql": "DO $$\nDECLARE\n  V_USERID TEXT;\n  V_TRG_UPD_DATE_STR TEXT;\nBEGIN\n  IF TG_OP = '' THEN\n    IF COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X') THEN\n      CASE\n        WHEN  THEN\n          UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.PROD_FAM_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;\n        WHEN  THEN\n          UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;\n        ELSE\n          NULL;\n      END CASE;\n    END IF;\n  END IF;\n  RETURN NULL;\nEND;\nEND $$;"
+            "sql": "-- Failed to convert complex structure\n-- Error: 'str' object has no attribute 'get'\nCREATE OR REPLACE FUNCTION trigger_function()\nRETURNS TRIGGER AS $$\nBEGIN\n    -- Placeholder for failed conversion\n    RAISE NOTICE 'Trigger function placeholder';"
+        },
+        {
+            "type": "sql",
+            "sql": "RETURN NEW;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
         }
     ],
     "on_update": [
         {
             "type": "sql",
-            "sql": "DO $$\nDECLARE\n  V_USERID TEXT;\n  V_TRG_UPD_DATE_STR TEXT;\nBEGIN\n  IF TG_OP = '' THEN\n    IF COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X') THEN\n      CASE\n        WHEN  THEN\n          UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.PROD_FAM_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;\n        WHEN  THEN\n          UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;\n        ELSE\n          NULL;\n      END CASE;\n    END IF;\n  END IF;\n  RETURN NULL;\nEND;\nEND $$;"
+            "sql": "-- Failed to convert complex structure\n-- Error: 'str' object has no attribute 'get'\nCREATE OR REPLACE FUNCTION trigger_function()\nRETURNS TRIGGER AS $$\nBEGIN\n    -- Placeholder for failed conversion\n    RAISE NOTICE 'Trigger function placeholder';"
+        },
+        {
+            "type": "sql",
+            "sql": "RETURN NEW;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
         }
     ],
     "on_delete": [
         {
             "type": "sql",
-            "sql": "DO $$\nDECLARE\n  V_USERID TEXT;\n  V_TRG_UPD_DATE_STR TEXT;\nBEGIN\n  IF TG_OP = '' THEN\n    IF COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X') THEN\n      CASE\n        WHEN  THEN\n          UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.PROD_FAM_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;\n        WHEN  THEN\n          UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;\n        ELSE\n          NULL;\n      END CASE;\n    END IF;\n  END IF;\n  RETURN NULL;\nEND;\nEND $$;"
+            "sql": "-- Failed to convert complex structure\n-- Error: 'str' object has no attribute 'get'\nCREATE OR REPLACE FUNCTION trigger_function()\nRETURNS TRIGGER AS $$\nBEGIN\n    -- Placeholder for failed conversion\n    RAISE NOTICE 'Trigger function placeholder';"
+        },
+        {
+            "type": "sql",
+            "sql": "RETURN NEW;"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
         }
     ]
 }

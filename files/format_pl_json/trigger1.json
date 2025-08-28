@@ -579,7 +579,7 @@
               "else_statements": []
             },
             {
-              "condition": " LENGTH(:NEW.THEME_NO)",
+              "condition": "LENGTH(:NEW.THEME_NO)",
               "type": "case_when",
               "case_indent": 6,
               "when_clauses": [
@@ -2246,7 +2246,7 @@
               "else_statements": []
             },
             {
-              "condition": " LENGTH(:NEW.THEME_NO)",
+              "condition": "LENGTH(:NEW.THEME_NO)",
               "type": "case_when",
               "case_indent": 6,
               "when_clauses": [
@@ -3913,7 +3913,7 @@
               "else_statements": []
             },
             {
-              "condition": " LENGTH(:NEW.THEME_NO)",
+              "condition": "LENGTH(:NEW.THEME_NO)",
               "type": "case_when",
               "case_indent": 6,
               "when_clauses": [

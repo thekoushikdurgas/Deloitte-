@@ -1,0 +1,59 @@
+2025-08-28 06:54:10,000 - root - DEBUG - [common.py:105] - Loading function_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,364 - root - DEBUG - [common.py:105] - Loaded 116 function_mappings mappings from Excel
+2025-08-28 06:54:10,365 - root - DEBUG - [common.py:105] - Loading data_type_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,381 - root - DEBUG - [common.py:105] - Loaded 42 data_type_mappings mappings from Excel
+2025-08-28 06:54:10,381 - root - DEBUG - [common.py:105] - Loading exception_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,399 - root - DEBUG - [common.py:105] - Loaded 52 exception_mappings mappings from Excel
+2025-08-28 06:54:10,400 - utilities.FormatSQL - DEBUG - [FormatSQL.py:92] - FORMATOracleTriggerAnalyzer initialized successfully
+2025-08-28 06:54:10,402 - root - DEBUG - [common.py:105] - Loading function_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,419 - root - DEBUG - [common.py:105] - Loaded 116 function_mappings mappings from Excel
+2025-08-28 06:54:10,420 - root - DEBUG - [common.py:105] - Loading data_type_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,437 - root - DEBUG - [common.py:105] - Loaded 42 data_type_mappings mappings from Excel
+2025-08-28 06:54:10,437 - root - DEBUG - [common.py:105] - Loading exception_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,457 - root - DEBUG - [common.py:105] - Loaded 52 exception_mappings mappings from Excel
+2025-08-28 06:54:10,457 - utilities.FormatSQL - DEBUG - [FormatSQL.py:92] - FORMATOracleTriggerAnalyzer initialized successfully
+2025-08-28 06:54:10,457 - utilities.FormatSQL - DEBUG - [FormatSQL.py:242] - SQL generation: Converting JSON analysis to formatted Oracle SQL
+2025-08-28 06:54:10,457 - root - DEBUG - [common.py:105] - Analysis contains 1 variables, 0 constants, 0 exceptions
+2025-08-28 06:54:10,457 - root - DEBUG - [common.py:105] - Adding header comments with timestamp for Oracle
+2025-08-28 06:54:10,457 - root - DEBUG - [common.py:105] - Starting declarations section rendering
+2025-08-28 06:54:10,457 - utilities.FormatSQL - DEBUG - [FormatSQL.py:299] - === Rendering Oracle declarations ===
+2025-08-28 06:54:10,457 - utilities.FormatSQL - DEBUG - [FormatSQL.py:309] - Rendering 1 variables
+2025-08-28 06:54:10,457 - utilities.FormatSQL - DEBUG - [FormatSQL.py:400] - === Oracle declarations complete ===
+2025-08-28 06:54:10,458 - root - DEBUG - [common.py:105] - Generated 2 lines of declarations
+2025-08-28 06:54:10,458 - root - DEBUG - [common.py:105] - Declarations rendering took 0.000s
+2025-08-28 06:54:10,458 - root - DEBUG - [common.py:105] - Starting main execution block rendering
+2025-08-28 06:54:10,458 - utilities.FormatSQL - DEBUG - [FormatSQL.py:419] - === Rendering main block for Oracle ===
+2025-08-28 06:54:10,458 - utilities.FormatSQL - DEBUG - [FormatSQL.py:428] - Processing 1 statements in main block
+2025-08-28 06:54:10,458 - utilities.FormatSQL - DEBUG - [FormatSQL.py:478] - Rendering statement type: assignment
+2025-08-28 06:54:10,458 - utilities.FormatSQL - DEBUG - [FormatSQL.py:448] - === Main block complete for Oracle ===
+2025-08-28 06:54:10,458 - root - DEBUG - [common.py:105] - Generated 3 lines in main execution block
+2025-08-28 06:54:10,458 - root - DEBUG - [common.py:105] - Main block rendering took 0.000s
+2025-08-28 06:54:10,458 - root - DEBUG - [common.py:105] - Adding footer comments
+2025-08-28 06:54:10,458 - root - DEBUG - [common.py:105] - Final SQL contains 11 lines, 173 characters
+2025-08-28 06:54:10,458 - root - DEBUG - [common.py:105] - Oracle SQL generation: 11 lines generated in 0.001s
+2025-08-28 06:54:10,459 - root - DEBUG - [common.py:105] - Loading function_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,484 - root - DEBUG - [common.py:105] - Loaded 116 function_mappings mappings from Excel
+2025-08-28 06:54:10,484 - root - DEBUG - [common.py:105] - Loading data_type_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,503 - root - DEBUG - [common.py:105] - Loaded 42 data_type_mappings mappings from Excel
+2025-08-28 06:54:10,504 - root - DEBUG - [common.py:105] - Loading exception_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:54:10,523 - root - DEBUG - [common.py:105] - Loaded 52 exception_mappings mappings from Excel
+2025-08-28 06:54:10,523 - utilities.FormatSQL - DEBUG - [FormatSQL.py:92] - FORMATOracleTriggerAnalyzer initialized successfully
+2025-08-28 06:54:10,523 - utilities.FormatSQL - DEBUG - [FormatSQL.py:242] - SQL generation: Converting JSON analysis to formatted PostgreSQL SQL
+2025-08-28 06:54:10,523 - root - DEBUG - [common.py:105] - Analysis contains 1 variables, 0 constants, 0 exceptions
+2025-08-28 06:54:10,523 - root - DEBUG - [common.py:105] - Adding header comments with timestamp for PostgreSQL
+2025-08-28 06:54:10,524 - root - DEBUG - [common.py:105] - Starting declarations section rendering
+2025-08-28 06:54:10,524 - utilities.FormatSQL - DEBUG - [FormatSQL.py:299] - === Rendering PostgreSQL declarations ===
+2025-08-28 06:54:10,524 - utilities.FormatSQL - DEBUG - [FormatSQL.py:351] - Rendering 1 variables
+2025-08-28 06:54:10,524 - utilities.FormatSQL - DEBUG - [FormatSQL.py:400] - === PostgreSQL declarations complete ===
+2025-08-28 06:54:10,524 - root - DEBUG - [common.py:105] - Generated 3 lines of declarations
+2025-08-28 06:54:10,524 - root - DEBUG - [common.py:105] - Declarations rendering took 0.000s
+2025-08-28 06:54:10,524 - root - DEBUG - [common.py:105] - Starting main execution block rendering
+2025-08-28 06:54:10,524 - utilities.FormatSQL - DEBUG - [FormatSQL.py:419] - === Rendering main block for PostgreSQL ===
+2025-08-28 06:54:10,524 - utilities.FormatSQL - DEBUG - [FormatSQL.py:428] - Processing 1 statements in main block
+2025-08-28 06:54:10,525 - utilities.FormatSQL - DEBUG - [FormatSQL.py:478] - Rendering statement type: assignment
+2025-08-28 06:54:10,535 - utilities.FormatSQL - DEBUG - [FormatSQL.py:448] - === Main block complete for PostgreSQL ===
+2025-08-28 06:54:10,535 - root - DEBUG - [common.py:105] - Generated 4 lines in main execution block
+2025-08-28 06:54:10,535 - root - DEBUG - [common.py:105] - Main block rendering took 0.011s
+2025-08-28 06:54:10,536 - root - DEBUG - [common.py:105] - Adding footer comments
+2025-08-28 06:54:10,536 - root - DEBUG - [common.py:105] - Final SQL contains 13 lines, 218 characters
+2025-08-28 06:54:10,536 - root - DEBUG - [common.py:105] - PostgreSQL SQL generation: 13 lines generated in 0.012s

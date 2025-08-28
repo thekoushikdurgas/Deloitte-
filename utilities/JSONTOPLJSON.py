@@ -289,17 +289,33 @@ class JSONTOPLJSON:
                         )
 
                 elif item["type"] == "case_when":
+                    # Process main case condition
+                    if "condition" in item and item["condition"]:
+                        main_case_condition = self.process_condition(item["condition"], condition_type)
+                        if main_case_condition:
+                            # If condition should be removed for this operation, return None
+                            debug(f"case_when main condition removal: {json_path}.case_when.condition")
+                            return None
+                        else:
+                            # Modify the condition for PostgreSQL compatibility
+                            item["condition"] = self.modify_condition(item["condition"])
 
-                    #     logger.debug(f"delete path: {json_path}.case_when")
-                    #     # return None
-                    # Process IF statements in when_clauses (then_statements and else_statements)
+                    # Process when clauses conditions and statements
                     if "when_clauses" in item:
                         for clause_index, clause in enumerate(item["when_clauses"]):
-
-                            #         clause["when_value"], condition_type
-                            #     ):
-                            #         logger.debug(f"delete path: {json_path}.when_value")
-                            #         # return None
+                            # Process when clause condition
+                            if "condition" in clause and clause["condition"]:
+                                when_condition_result = self.process_condition(clause["condition"], condition_type)
+                                if when_condition_result:
+                                    # If condition should be removed, skip this when clause
+                                    debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
+                                    continue
+                                else:
+                                    # Modify the when condition for PostgreSQL compatibility
+                                    clause["condition"] = self.modify_condition(clause["condition"])
+                            
+                            # Process then_statements within when clauses
+                            if "then_statements" in clause:
                                 for i, item1 in enumerate(clause["then_statements"]):
                                     clause["then_statements"][i] = (
                                         process_on_insert_json(
@@ -424,18 +440,33 @@ class JSONTOPLJSON:
                         )
 
                 elif item["type"] == "case_when":
+                    # Process main case condition
+                    if "condition" in item and item["condition"]:
+                        main_case_condition = self.process_condition(item["condition"], condition_type)
+                        if main_case_condition:
+                            # If condition should be removed for this operation, return None
+                            debug(f"case_when main condition removal: {json_path}.case_when.condition")
+                            return None
+                        else:
+                            # Modify the condition for PostgreSQL compatibility
+                            item["condition"] = self.modify_condition(item["condition"])
 
-                    #     logger.debug(f"delete path: {json_path}.case_when")
-                    #     # return None
-                    # Process IF statements in when_clauses (then_statements and else_statements)
+                    # Process when clauses conditions and statements
                     if "when_clauses" in item:
                         for clause_index, clause in enumerate(item["when_clauses"]):
+                            # Process when clause condition
+                            if "condition" in clause and clause["condition"]:
+                                when_condition_result = self.process_condition(clause["condition"], condition_type)
+                                if when_condition_result:
+                                    # If condition should be removed, skip this when clause
+                                    debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
+                                    continue
+                                else:
+                                    # Modify the when condition for PostgreSQL compatibility
+                                    clause["condition"] = self.modify_condition(clause["condition"])
+                            
+                            # Process then_statements within when clauses
                             if "then_statements" in clause:
-
-                                #     clause["when_value"], condition_type
-                                # ):
-                                #     logger.debug(f"delete path: {json_path}.when_value")
-                                #     # return None
                                 for i, item1 in enumerate(clause["then_statements"]):
                                     clause["then_statements"][i] = (
                                         process_on_update_json(
@@ -559,16 +590,33 @@ class JSONTOPLJSON:
                         )
 
                 elif item["type"] == "case_when":
+                    # Process main case condition
+                    if "condition" in item and item["condition"]:
+                        main_case_condition = self.process_condition(item["condition"], condition_type)
+                        if main_case_condition:
+                            # If condition should be removed for this operation, return None
+                            debug(f"case_when main condition removal: {json_path}.case_when.condition")
+                            return None
+                        else:
+                            # Modify the condition for PostgreSQL compatibility
+                            item["condition"] = self.modify_condition(item["condition"])
 
-                    # logger.debug(f"delete path: {json_path}.case_when")
-                    # return None
-                    # Process IF statements in when_clauses (then_statements and else_statements)
+                    # Process when clauses conditions and statements
                     if "when_clauses" in item:
                         for clause_index, clause in enumerate(item["when_clauses"]):
+                            # Process when clause condition
+                            if "condition" in clause and clause["condition"]:
+                                when_condition_result = self.process_condition(clause["condition"], condition_type)
+                                if when_condition_result:
+                                    # If condition should be removed, skip this when clause
+                                    debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
+                                    continue
+                                else:
+                                    # Modify the when condition for PostgreSQL compatibility
+                                    clause["condition"] = self.modify_condition(clause["condition"])
+                            
+                            # Process then_statements within when clauses
                             if "then_statements" in clause:
-
-                                # logger.debug(f"delete path: {json_path}.when_value")
-                                # return None
                                 for i, item1 in enumerate(clause["then_statements"]):
                                     clause["then_statements"][i] = (
                                         process_on_delete_json(

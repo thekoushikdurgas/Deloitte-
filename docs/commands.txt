@@ -1,0 +1,5 @@
+Learn, understand, and analyse @OracleTriggerAnalyzer.py  deeply, and then create a markdown file for how the code parses the SQL to JSON format
+
+ what is the difference b/w this SQL @trigger1.sql @trigger2.sql @trigger5.sql @trigger3.sql @trigger4.sql @trigger6.sql @yyy.sql @zzz.sql  and @trigger1_analysis.sql @trigger2_analysis.sql @trigger3_analysis.sql @trigger4_analysis.sql @trigger5_analysis.sql @trigger6_analysis.sql @yyy_analysis.sql @zzz_analysis.sql
+
+

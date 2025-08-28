@@ -38,9 +38,8 @@ from utilities.common import (
 
 
 from utilities.OracleTriggerAnalyzer import OracleTriggerAnalyzer
-from utilities.FORMATOracleTriggerAnalyzer import FORMATOracleTriggerAnalyzer
+from utilities.FormatSQL import FormatSQL
 from utilities.JSONTOPLJSON import JSONTOPLJSON
-from utilities.FORMATPostsqlTriggerAnalyzer import FORMATPostsqlTriggerAnalyzer
 
 
 from datetime import datetime
@@ -66,9 +65,25 @@ def convert_complex_structure_to_sql(complex_structure):
     Returns:
         str: The PostgreSQL SQL string
     """
-    analyzer = FORMATPostsqlTriggerAnalyzer(complex_structure)
-    sql_content = analyzer.to_sql()
-    return sql_content
+    try:
+        debug("Converting complex structure to PostgreSQL SQL")
+        analyzer = FormatSQL(complex_structure)
+        sql_content = analyzer.to_sql("PostgreSQL")
+        debug("Successfully converted complex structure to PostgreSQL SQL")
+        return sql_content
+    except Exception as e:
+        error("Failed to convert complex structure to PostgreSQL SQL: %s", str(e))
+        # Return a fallback SQL structure
+        return f"""-- Failed to convert complex structure
+-- Error: {str(e)}
+CREATE OR REPLACE FUNCTION trigger_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Placeholder for failed conversion
+    RAISE NOTICE 'Trigger function placeholder';
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;"""
 def ensure_dir(directory: str) -> None:
     """
     Ensure that the specified directory exists, creating it if necessary.
@@ -321,9 +336,10 @@ def json_to_sql_processor(src_path: str, out_path: str, file_name: str) -> None:
 
     This function:
     1. Reads the JSON analysis file
-    2. Creates a FORMATOracleTriggerAnalyzer instance
-    3. Renders the SQL content
-    4. Writes the formatted SQL to the output file
+    2. Validates the JSON structure and content
+    3. Creates a FORMATOracleTriggerAnalyzer instance
+    4. Renders the SQL content with enhanced error handling
+    5. Writes the formatted SQL to the output file
 
 
     Args:
@@ -348,23 +364,43 @@ def json_to_sql_processor(src_path: str, out_path: str, file_name: str) -> None:
     except Exception as e:
         error("Error reading JSON file %s: %s", src_path, str(e))
         raise
+
+    # Step 1.5: Enhanced JSON validation
     if "error" not in analysis:
+        debug("Validating JSON structure...")
+        validation_result = validate_json_structure(analysis, file_name)
+        if not validation_result["is_valid"]:
+            error("JSON validation failed for %s: %s", file_name, validation_result["errors"])
+            raise ValueError(f"Invalid JSON structure: {validation_result['errors']}")
+        
+        debug("JSON validation passed")
+        
         # Step 2: Render the SQL
-        debug("Creating FORMATOracleTriggerAnalyzer instance...")
+        debug("Creating FormatSQL instance...")
         try:
-            analyzer = FORMATOracleTriggerAnalyzer(analysis)
-            debug("FORMATOracleTriggerAnalyzer created successfully")
+            analyzer = FormatSQL(analysis)
+            debug("FormatSQL created successfully")
         except Exception as e:
-            error("Failed to create FORMATOracleTriggerAnalyzer: %s", str(e))
+            error("Failed to create FormatSQL: %s", str(e))
             raise
 
 
-        # Step 3: Generate SQL content
+        # Step 3: Generate SQL content with performance monitoring
         debug("Rendering SQL from analysis...")
         try:
-            sql_content: str = analyzer.to_sql()
+            render_start_time = time.time()
+            sql_content: str = analyzer.to_sql("Oracle")
+            render_duration = time.time() - render_start_time
+            
             debug("SQL rendering completed successfully")
             debug(f"Rendered SQL length: {len(sql_content)} characters")
+            debug(f"SQL rendering took: {render_duration:.3f} seconds")
+            
+            # Validate generated SQL
+            sql_validation = validate_generated_sql(sql_content, file_name)
+            if not sql_validation["is_valid"]:
+                warning("Generated SQL validation warnings for %s: %s", file_name, sql_validation["warnings"])
+            
         except Exception as e:
             error("Failed to render SQL: %s", str(e))
             raise
@@ -395,6 +431,16 @@ def render_oracle_sql_from_analysis() -> None:
     converting them to formatted SQL files in the files/format_sql directory.
     """
     info("=== Starting JSON analysis to formatted Oracle SQL conversion ===")
+    
+    # Track conversion statistics
+    conversion_stats = {
+        "total_files": 0,
+        "successful_conversions": 0,
+        "failed_conversions": 0,
+        "validation_warnings": 0,
+        "comparison_results": []
+    }
+    
     process_files(
         source_dir=FORMAT_JSON_DIR,
         target_dir="files/format_sql",
@@ -402,7 +448,311 @@ def render_oracle_sql_from_analysis() -> None:
         output_suffix=".sql",
         processor_func=json_to_sql_processor,
     )
+    
+    # Perform comparison with original files
+    info("=== Starting comparison with original files ===")
+    comparison_stats = perform_comparison_analysis()
+    conversion_stats.update(comparison_stats)
+    
+    # Log final statistics
+    info("=== Conversion Statistics ===")
+    info("Total files processed: %d", conversion_stats["total_files"])
+    info("Successful conversions: %d", conversion_stats["successful_conversions"])
+    info("Failed conversions: %d", conversion_stats["failed_conversions"])
+    info("Files with validation warnings: %d", conversion_stats["validation_warnings"])
+    
+    if conversion_stats["comparison_results"]:
+        info("=== Comparison Results ===")
+        for result in conversion_stats["comparison_results"]:
+            if result["warnings"]:
+                warning("File %s: %s", result["file_name"], "; ".join(result["warnings"]))
+            else:
+                info("File %s: Conversion successful", result["file_name"])
+    
     info("=== JSON analysis to formatted Oracle SQL conversion complete ===")
+
+
+def validate_json_structure(analysis: Dict[str, Any], file_name: str) -> Dict[str, Any]:
+    """
+    Validate the JSON structure for proper SQL generation.
+    
+    Args:
+        analysis (Dict[str, Any]): The JSON analysis data
+        file_name (str): Name of the file being processed
+        
+    Returns:
+        Dict[str, Any]: Validation result with is_valid flag and errors list
+    """
+    validation_result = {
+        "is_valid": True,
+        "errors": [],
+        "warnings": []
+    }
+    
+    # Check required top-level sections
+    required_sections = ["declarations", "main"]
+    for section in required_sections:
+        if section not in analysis:
+            validation_result["is_valid"] = False
+            validation_result["errors"].append(f"Missing required section: {section}")
+    
+    if not validation_result["is_valid"]:
+        return validation_result
+    
+    # Validate declarations section
+    declarations = analysis.get("declarations", {})
+    if not isinstance(declarations, dict):
+        validation_result["is_valid"] = False
+        validation_result["errors"].append("Declarations section must be a dictionary")
+    else:
+        # Check declaration subsections
+        decl_sections = ["variables", "constants", "exceptions"]
+        for decl_section in decl_sections:
+            if decl_section in declarations:
+                if not isinstance(declarations[decl_section], list):
+                    validation_result["is_valid"] = False
+                    validation_result["errors"].append(f"Declarations.{decl_section} must be a list")
+    
+    # Validate main section
+    main = analysis.get("main", {})
+    if not isinstance(main, dict):
+        validation_result["is_valid"] = False
+        validation_result["errors"].append("Main section must be a dictionary")
+    else:
+        # Check main section type
+        main_type = main.get("type")
+        if main_type != "begin_end":
+            validation_result["warnings"].append(f"Main section type '{main_type}' may not be fully supported")
+        
+        # Check for required main subsections
+        if "begin_end_statements" not in main:
+            validation_result["warnings"].append("Main section missing begin_end_statements")
+    
+    # Check for conversion statistics
+    if "conversion_stats" in analysis:
+        stats = analysis["conversion_stats"]
+        if isinstance(stats, dict) and "sql_convert_count" in stats:
+            sql_counts = stats["sql_convert_count"]
+            if isinstance(sql_counts, dict):
+                total_statements = sum(sql_counts.values())
+                debug(f"JSON contains {total_statements} total statements")
+                
+                # Check for potentially problematic statement types
+                problematic_types = ["unknown_statement"]
+                for prob_type in problematic_types:
+                    if prob_type in sql_counts and sql_counts[prob_type] > 0:
+                        validation_result["warnings"].append(
+                            f"Found {sql_counts[prob_type]} {prob_type} statements that may not render correctly"
+                        )
+    
+    return validation_result
+
+
+def validate_generated_sql(sql_content: str, file_name: str) -> Dict[str, Any]:
+    """
+    Validate the generated SQL content for basic syntax and structure.
+    
+    Args:
+        sql_content (str): The generated SQL content
+        file_name (str): Name of the file being processed
+        
+    Returns:
+        Dict[str, Any]: Validation result with is_valid flag and warnings list
+    """
+    validation_result = {
+        "is_valid": True,
+        "warnings": []
+    }
+    
+    if not sql_content or not sql_content.strip():
+        validation_result["is_valid"] = False
+        validation_result["warnings"].append("Generated SQL content is empty")
+        return validation_result
+    
+    # Check for basic SQL structure (works for both Oracle and PostgreSQL)
+    lines = sql_content.split('\n')
+    
+    # Check for CREATE FUNCTION or CREATE OR REPLACE FUNCTION
+    has_create_function = any('CREATE' in line.upper() and 'FUNCTION' in line.upper() for line in lines)
+    if not has_create_function:
+        validation_result["warnings"].append("Missing CREATE FUNCTION statement")
+    
+    # Check for BEGIN section
+    has_begin = any('BEGIN' in line.upper() for line in lines)
+    if not has_begin:
+        validation_result["warnings"].append("Missing BEGIN section")
+    
+    # Check for END section
+    has_end = any('END;' in line.upper() for line in lines)
+    if not has_end:
+        validation_result["warnings"].append("Missing END; section")
+    
+    # Check for balanced BEGIN/END pairs
+    begin_count = sum(1 for line in lines if 'BEGIN' in line.upper())
+    end_count = sum(1 for line in lines if 'END;' in line.upper())
+    if begin_count != end_count:
+        validation_result["warnings"].append(f"Unbalanced BEGIN/END pairs: {begin_count} BEGIN, {end_count} END")
+    
+    # Check for proper semicolon usage
+    semicolon_count = sql_content.count(';')
+    if semicolon_count < 5:  # Lower threshold for PostgreSQL
+        validation_result["warnings"].append(f"Low semicolon count ({semicolon_count}) may indicate incomplete statements")
+    
+    # Check for common SQL keywords
+    sql_keywords = ['IF', 'THEN', 'ELSE', 'CASE', 'WHEN', 'LOOP', 'EXCEPTION', 'RETURN', 'SELECT', 'INSERT', 'UPDATE', 'DELETE']
+    missing_keywords = []
+    for keyword in sql_keywords:
+        if keyword not in sql_content.upper():
+            missing_keywords.append(keyword)
+    
+    if len(missing_keywords) > 8:  # If more than 8 keywords are missing
+        validation_result["warnings"].append(f"Many SQL keywords missing: {missing_keywords[:5]}...")
+    
+    # Check for PostgreSQL-specific elements
+    if 'LANGUAGE plpgsql' in sql_content.upper():
+        validation_result["warnings"].append("PostgreSQL-specific syntax detected")
+    
+    # Check for Oracle-specific elements
+    if 'DECLARE' in sql_content.upper() and 'LANGUAGE plpgsql' not in sql_content.upper():
+        validation_result["warnings"].append("Oracle-specific syntax detected")
+    
+    return validation_result
+
+
+def compare_original_and_generated(original_path: str, generated_path: str, file_name: str) -> Dict[str, Any]:
+    """
+    Compare original SQL with generated SQL to identify differences.
+    
+    Args:
+        original_path (str): Path to original SQL file
+        generated_path (str): Path to generated SQL file
+        file_name (str): Name of the file being compared
+        
+    Returns:
+        Dict[str, Any]: Comparison result with statistics and differences
+    """
+    comparison_result = {
+        "original_lines": 0,
+        "generated_lines": 0,
+        "line_differences": 0,
+        "structural_differences": [],
+        "warnings": []
+    }
+    
+    try:
+        # Read original SQL
+        with open(original_path, "r", encoding="utf-8") as f:
+            original_content = f.read()
+        
+        # Read generated SQL
+        with open(generated_path, "r", encoding="utf-8") as f:
+            generated_content = f.read()
+        
+        # Basic line count comparison
+        original_lines = original_content.split('\n')
+        generated_lines = generated_content.split('\n')
+        
+        comparison_result["original_lines"] = len(original_lines)
+        comparison_result["generated_lines"] = len(generated_lines)
+        
+        # Count non-empty lines
+        original_non_empty = len([line for line in original_lines if line.strip()])
+        generated_non_empty = len([line for line in generated_lines if line.strip()])
+        
+        # Calculate difference percentage
+        if original_non_empty > 0:
+            diff_percentage = abs(original_non_empty - generated_non_empty) / original_non_empty * 100
+            if diff_percentage > 20:  # More than 20% difference
+                comparison_result["warnings"].append(
+                    f"Significant line count difference: {diff_percentage:.1f}%"
+                )
+        
+        # Check for structural elements
+        structural_elements = {
+            "DECLARE": ("DECLARE", "Declaration section"),
+            "BEGIN": ("BEGIN", "Begin section"),
+            "EXCEPTION": ("EXCEPTION", "Exception handling"),
+            "END;": ("END;", "End statement")
+        }
+        
+        for element, (keyword, description) in structural_elements.items():
+            original_has = keyword in original_content.upper()
+            generated_has = keyword in generated_content.upper()
+            
+            if original_has != generated_has:
+                comparison_result["structural_differences"].append(
+                    f"{description}: {'Missing' if not generated_has else 'Extra'} in generated"
+                )
+        
+        debug(f"Comparison complete for {file_name}: {comparison_result['original_lines']} original, {comparison_result['generated_lines']} generated lines")
+        
+    except Exception as e:
+        comparison_result["warnings"].append(f"Comparison failed: {str(e)}")
+    
+    return comparison_result
+
+
+def perform_comparison_analysis() -> Dict[str, Any]:
+    """
+    Perform comparison analysis between original and generated SQL files.
+    
+    Returns:
+        Dict[str, Any]: Comparison statistics
+    """
+    comparison_stats = {
+        "total_files": 0,
+        "successful_conversions": 0,
+        "failed_conversions": 0,
+        "validation_warnings": 0,
+        "comparison_results": []
+    }
+    
+    try:
+        # Get list of original SQL files
+        oracle_dir = "files/oracle"
+        format_sql_dir = "files/format_sql"
+        
+        if not os.path.exists(oracle_dir) or not os.path.exists(format_sql_dir):
+            warning("Cannot perform comparison: missing directories")
+            return comparison_stats
+        
+        original_files = [f for f in os.listdir(oracle_dir) if f.endswith(".sql")]
+        generated_files = [f for f in os.listdir(format_sql_dir) if f.endswith(".sql")]
+        
+        comparison_stats["total_files"] = len(original_files)
+        
+        for original_file in original_files:
+            # Find corresponding generated file
+            base_name = original_file.replace(".sql", "")
+            generated_file = f"{base_name}_analysis.sql"  # Match the actual generated filename
+            
+            if generated_file in generated_files:
+                original_path = os.path.join(oracle_dir, original_file)
+                generated_path = os.path.join(format_sql_dir, generated_file)
+                
+                try:
+                    comparison_result = compare_original_and_generated(
+                        original_path, generated_path, original_file
+                    )
+                    comparison_result["file_name"] = original_file
+                    comparison_stats["comparison_results"].append(comparison_result)
+                    
+                    if not comparison_result["warnings"]:
+                        comparison_stats["successful_conversions"] += 1
+                    else:
+                        comparison_stats["validation_warnings"] += 1
+                        
+                except Exception as e:
+                    error("Comparison failed for %s: %s", original_file, str(e))
+                    comparison_stats["failed_conversions"] += 1
+            else:
+                warning("No generated file found for %s", original_file)
+                comparison_stats["failed_conversions"] += 1
+        
+    except Exception as e:
+        error("Comparison analysis failed: %s", str(e))
+    
+    return comparison_stats
 
 
 # def validate_conversion() -> None:
@@ -549,13 +899,13 @@ def read_json_to_oracle_triggers() -> None:
 
 def json_to_pl_sql_processor(src_path: str, out_path: str, file_name: str) -> None:
     """
-    Process a JSON analysis file to formatted SQL.
+    Process a JSON analysis file to formatted PostgreSQL SQL.
 
 
     This function:
     1. Reads the JSON analysis file
-    2. Creates a FORMATPostsqlTriggerAnalyzer instance
-    3. Renders the SQL content
+    2. Creates a FormatSQL instance
+    3. Renders the PostgreSQL SQL content
     4. Writes the formatted SQL to the output file
 
 
@@ -564,7 +914,7 @@ def json_to_pl_sql_processor(src_path: str, out_path: str, file_name: str) -> No
         out_path (str): Path to the output SQL file
         file_name (str): Trigger number extracted from filename
     """
-    debug("=== JSON to SQL processing for trigger %s ===", file_name)
+    debug("=== JSON to PostgreSQL SQL processing for trigger %s ===", file_name)
 
 
     # Step 1: Read the JSON file
@@ -584,38 +934,38 @@ def json_to_pl_sql_processor(src_path: str, out_path: str, file_name: str) -> No
 
 
     # Step 2: Render the SQL
-    debug("Creating FORMATPostsqlTriggerAnalyzer instance...")
+    debug("Creating FormatSQL instance...")
     try:
-        analyzer = FORMATPostsqlTriggerAnalyzer(analysis)
-        debug("FORMATPostsqlTriggerAnalyzer created successfully")
+        analyzer = FormatSQL(analysis)
+        debug("FormatSQL created successfully")
     except Exception as e:
-        error("Failed to create FORMATPostsqlTriggerAnalyzer: %s", str(e))
+        error("Failed to create FormatSQL: %s", str(e))
         raise
 
 
     # Step 3: Generate SQL content
-    debug("Rendering SQL from analysis...")
+    debug("Rendering PostgreSQL SQL from analysis...")
     try:
-        sql_content: str = analyzer.to_sql()
-        debug("SQL rendering completed successfully")
-        debug("Rendered SQL length: {len(sql_content)} characters")
+        sql_content: str = analyzer.to_sql("PostgreSQL")
+        debug("PostgreSQL SQL rendering completed successfully")
+        debug("Rendered SQL length: %d characters", len(sql_content))
     except Exception as e:
-        error("Failed to render SQL: %s", str(e))
+        error("Failed to render PostgreSQL SQL: %s", str(e))
         raise
 
 
     # Step 4: Write to SQL file
-    debug("Writing formatted SQL to: %s", out_path)
+    debug("Writing formatted PostgreSQL SQL to: %s", out_path)
     try:
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(sql_content)
-        debug(f"Successfully wrote formatted SQL to {out_path}")
+        debug("Successfully wrote formatted PostgreSQL SQL to %s", out_path)
     except Exception as e:
-        error("Failed to write SQL file %s: %s", out_path, str(e))
+        error("Failed to write PostgreSQL SQL file %s: %s", out_path, str(e))
         raise
 
 
-    debug("=== JSON to SQL processing complete for trigger %s ===", file_name)
+    debug("=== JSON to PostgreSQL SQL processing complete for trigger %s ===", file_name)
 
 
 def read_json_to_postsql_triggers() -> None:
@@ -635,6 +985,24 @@ def read_json_to_postsql_triggers() -> None:
         processor_func=convert_pl_json_to_postgresql_format,
     )
     info("=== PL/JSON to PostgreSQL format conversion complete ===")
+
+
+def convert_json_analysis_to_postgresql_sql() -> None:
+    """
+    Convert JSON analysis files directly to PostgreSQL SQL.
+    
+    This function processes all _analysis.json files in the files/format_json directory,
+    converting them directly to PostgreSQL SQL files in the files/format_plsql directory.
+    """
+    info("=== Starting JSON analysis to PostgreSQL SQL conversion ===")
+    process_files(
+        source_dir=FORMAT_JSON_DIR,
+        target_dir="files/format_plsql",
+        file_pattern=ANALYSIS_JSON_SUFFIX,
+        output_suffix="_postgresql.sql",
+        processor_func=json_to_pl_sql_processor,
+    )
+    info("=== JSON analysis to PostgreSQL SQL conversion complete ===")
 
 
 def convert_pl_json_to_postgresql_format(
@@ -680,30 +1048,35 @@ def convert_pl_json_to_postgresql_format(
             # Create the expected PostgreSQL format structure
             postgresql_format = {"on_insert": [], "on_update": [], "on_delete": []}
 
-
             # Convert the PL/JSON structure to PostgreSQL format
             # The PL/JSON files have on_insert, on_update, on_delete arrays with complex objects
             # We need to convert these to simple SQL strings
-
 
             # Handle on_insert
             if "on_insert" in pl_json_data and pl_json_data["on_insert"]:
                 # Convert the complex structure to a simple SQL string
                 sql_content = convert_complex_structure_to_sql(pl_json_data["on_insert"])
-                postgresql_format["on_insert"].append({"type": "sql", "sql": sql_content})
-
+                # Split into individual statements for better handling
+                statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
+                for stmt in statements:
+                    if stmt:
+                        postgresql_format["on_insert"].append({"type": "sql", "sql": stmt + ";"})
 
             # Handle on_update
             if "on_update" in pl_json_data and pl_json_data["on_update"]:
                 sql_content = convert_complex_structure_to_sql(pl_json_data["on_update"])
-                postgresql_format["on_update"].append({"type": "sql", "sql": sql_content})
-
+                statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
+                for stmt in statements:
+                    if stmt:
+                        postgresql_format["on_update"].append({"type": "sql", "sql": stmt + ";"})
 
             # Handle on_delete
             if "on_delete" in pl_json_data and pl_json_data["on_delete"]:
                 sql_content = convert_complex_structure_to_sql(pl_json_data["on_delete"])
-                postgresql_format["on_delete"].append({"type": "sql", "sql": sql_content})
-
+                statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
+                for stmt in statements:
+                    if stmt:
+                        postgresql_format["on_delete"].append({"type": "sql", "sql": stmt + ";"})
 
             debug("PostgreSQL format conversion completed")
 
@@ -972,18 +1345,32 @@ def main() -> None:
         debug(f"Step 6 completed in {step6_duration:.2f} seconds")
 
 
-        # Step 7: Generate final PostgreSQL SQL files
-        # -----------------------------------------
-        info("Step 7: Converting PostgreSQL format JSON to final SQL...")
-        debug("Starting Step 7: PostgreSQL JSON → SQL output files")
+        # Step 7: Convert JSON analysis directly to PostgreSQL SQL
+        # ------------------------------------------------------
+        info("Step 7: Converting JSON analysis directly to PostgreSQL SQL...")
+        debug("Starting Step 7: JSON analysis → PostgreSQL SQL")
         step7_start = time.time()
+       
+        # Convert JSON analysis directly to PostgreSQL SQL
+        convert_json_analysis_to_postgresql_sql()
+       
+        step7_duration = time.time() - step7_start
+        info("✓ Direct PostgreSQL SQL conversion complete! (Duration: %.2f seconds)", step7_duration)
+        debug(f"Step 7 completed in {step7_duration:.2f} seconds")
+
+
+        # Step 8: Generate final PostgreSQL SQL files
+        # -----------------------------------------
+        info("Step 8: Converting PostgreSQL format JSON to final SQL...")
+        debug("Starting Step 8: PostgreSQL JSON → SQL output files")
+        step8_start = time.time()
        
         # Generate the final PostgreSQL SQL files
         convert_postgresql_format_files_to_sql()
        
-        step7_duration = time.time() - step7_start
-        info("✓ Final SQL generation complete! (Duration: %.2f seconds)", step7_duration)
-        debug(f"Step 7 completed in {step7_duration:.2f} seconds")
+        step8_duration = time.time() - step8_start
+        info("✓ Final SQL generation complete! (Duration: %.2f seconds)", step8_duration)
+        debug(f"Step 8 completed in {step8_duration:.2f} seconds")
 
 
         # Final summary
@@ -1000,7 +1387,8 @@ def main() -> None:
         # info("  - Step 4 (Validation):              %.2f seconds (%.1f%%)", step4_duration, step4_duration/total_duration*100)
         info("  - Step 5 (JSON → PL/JSON):          %.2f seconds (%.1f%%)", step5_duration, step5_duration/total_duration*100)
         info("  - Step 6 (PL/JSON → PostgreSQL):    %.2f seconds (%.1f%%)", step6_duration, step6_duration/total_duration*100)
-        info("  - Step 7 (PostgreSQL JSON → SQL):   %.2f seconds (%.1f%%)", step7_duration, step7_duration/total_duration*100)
+        info("  - Step 7 (JSON → PostgreSQL SQL):   %.2f seconds (%.1f%%)", step7_duration, step7_duration/total_duration*100)
+        info("  - Step 8 (PostgreSQL JSON → SQL):   %.2f seconds (%.1f%%)", step8_duration, step8_duration/total_duration*100)
        
         debug("Main conversion workflow completed successfully")
 

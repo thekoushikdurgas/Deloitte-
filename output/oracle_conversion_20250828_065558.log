@@ -1,0 +1,7 @@
+2025-08-28 06:55:58,621 - root - DEBUG - [common.py:105] - Loading function_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:55:59,033 - root - DEBUG - [common.py:105] - Loaded 116 function_mappings mappings from Excel
+2025-08-28 06:55:59,033 - root - DEBUG - [common.py:105] - Loading data_type_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:55:59,049 - root - DEBUG - [common.py:105] - Loaded 42 data_type_mappings mappings from Excel
+2025-08-28 06:55:59,049 - root - DEBUG - [common.py:105] - Loading exception_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-08-28 06:55:59,065 - root - DEBUG - [common.py:105] - Loaded 52 exception_mappings mappings from Excel
+2025-08-28 06:55:59,066 - FormatSQL - DEBUG - [FormatSQL.py:92] - FORMATOracleTriggerAnalyzer initialized successfully

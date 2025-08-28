@@ -782,6 +782,9 @@ class OracleTriggerAnalyzer:
             "UPDATE": "update_statement",
             "DELETE": "delete_statement",
             "RAISE": "raise_statement",
+            "NULL": "null_statement",
+            "RETURN": "return_statement",
+            ":=": "assignment",
             }
         """
         def parse_sql_statements(working_lines: List[Dict[str, Any]]):
