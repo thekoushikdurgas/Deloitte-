@@ -2028,7 +2028,7 @@ class OracleTriggerAnalyzer:
         dataframe_rest_strings = pd.DataFrame(columns=["filename", "line", "line_no"])
         for i in rest_strings_list:
             dataframe_rest_strings.append({"filename": self.file_details["filename"], "line": i["line"], "line_no": i["line_no"]})
-        print(dataframe_rest_strings)
+        # print(dataframe_rest_strings)
         
         append_to_excel_sheet(dataframe_rest_strings, sheet_name="non_parse")
 
