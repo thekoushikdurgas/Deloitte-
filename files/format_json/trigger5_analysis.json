@@ -17,7 +17,6 @@
   },
   "main": {
     "type": "begin_end",
-    "begin_line_no": 4,
     "begin_indent": 0,
     "begin_end_statements": [
       {
@@ -25,7 +24,6 @@
         "variable_name": "V_USERID",
         "assignment_operator": ":=",
         "expression": "COALESCE(NEW.UPD_USER, OLD.UPD_USER);",
-        "assignment_line_no": 5,
         "assignment_indent": 4
       },
       {
@@ -33,58 +31,43 @@
         "variable_name": "V_TRG_UPD_DATE_STR",
         "assignment_operator": ":=",
         "expression": "TO_CHAR(COALESCE(NEW.UPD_DATE, OLD.UPD_DATE), 'YYYY-MM-DD');",
-        "assignment_line_no": 6,
         "assignment_indent": 4
       },
       {
         "condition": " TG_OP = 'UPDATE' ",
         "type": "if_else",
-        "if_line_no": 7,
-        "then_line_no": 7,
         "if_indent": 4,
-        "end_if_line_no": 33,
         "then_statements": [
           {
             "condition": " COALESCE (OLD.PROD_FAM_NAME_STATUS_CD, 'X') <> COALESCE (NEW.PROD_FAM_NAME_STATUS_CD, 'X') OR OLD.PROD_FAM_NAME <> NEW.PROD_FAM_NAME OR COALESCE(OLD.ACT_SUBSTANCE_NAME, 'X') <> COALESCE(NEW.ACT_SUBSTANCE_NAME, 'X') ",
             "type": "if_else",
-            "if_line_no": 8,
-            "then_line_no": 8,
             "if_indent": 8,
-            "end_if_line_no": 32,
             "then_statements": [
               {
                 "condition": "",
                 "type": "case_when",
-                "case_line_no": 9,
                 "case_indent": 12,
-                "end_case_line_no": 24,
                 "when_clauses": [
                   {
                     "type": "when_statement",
-                    "when_line_no": 10,
                     "when_indent": 16,
                     "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('T', 'R')",
-                    "then_line_no": 10,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.PROD_FAM_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
-                        "statement_line_no": 11,
                         "statement_indent": 20
                       }
                     ]
                   },
                   {
                     "type": "when_statement",
-                    "when_line_no": 16,
                     "when_indent": 16,
                     "condition": "NEW.PROD_FAM_NAME_STATUS_CD IN ('G', 'I')",
-                    "then_line_no": 16,
                     "then_statements": [
                       {
                         "type": "update_statement",
                         "sql_statement": "UPDATE GMD.THEME_MOLECULES SET MOLECULE_DESC = NEW.ACT_SUBSTANCE_NAME WHERE PRODUCT_FAMILY_CD = NEW.PRODUCT_FAMILY_CD;",
-                        "statement_line_no": 17,
                         "statement_indent": 20
                       }
                     ]
@@ -94,7 +77,6 @@
                   {
                     "type": "null_statement",
                     "sql_statement": "NULL;",
-                    "statement_line_no": 23,
                     "statement_indent": 20
                   }
                 ]
@@ -125,13 +107,10 @@
       {
         "type": "return_statement",
         "sql_statement": "RETURN NULL;",
-        "statement_line_no": 35,
         "statement_indent": 4
       }
     ],
-    "exception_handlers": [],
-    "exception_line_no": -1,
-    "end_line_no": 36
+    "exception_handlers": []
   },
   "sql_comments": [],
   "rest_string_list": [],

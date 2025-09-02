@@ -1,0 +1,63 @@
+2025-09-02 14:02:20,301 - root - DEBUG - [common.py:105] - Starting main conversion workflow
+2025-09-02 14:02:20,301 - root - INFO - [common.py:110] - === Starting Oracle Trigger Conversion Process ===
+2025-09-02 14:02:20,301 - root - INFO - [common.py:110] - Logging to: output\oracle_conversion_20250902_140220.log
+2025-09-02 14:02:20,301 - root - DEBUG - [common.py:105] - Logging system initialized
+2025-09-02 14:02:20,301 - root - INFO - [common.py:110] - Step 1: Converting Oracle SQL files to JSON analysis...
+2025-09-02 14:02:20,302 - root - DEBUG - [common.py:105] - Starting Step 1: Oracle SQL → JSON conversion
+2025-09-02 14:02:20,302 - root - INFO - [common.py:110] - === Starting Oracle triggers to JSON conversion ===
+2025-09-02 14:02:20,303 - root - DEBUG - [common.py:105] - Workflow Phase 1: Convert Oracle SQL files to JSON analysis structure
+2025-09-02 14:02:20,303 - root - DEBUG - [common.py:105] - Source directory: files/oracle
+2025-09-02 14:02:20,303 - root - DEBUG - [common.py:105] - Target directory: files/format_json
+2025-09-02 14:02:20,303 - root - DEBUG - [common.py:105] - File details will be included in metadata for each processed file
+2025-09-02 14:02:20,303 - root - INFO - [common.py:110] - === Starting file processing ===
+2025-09-02 14:02:20,303 - root - INFO - [common.py:110] - Source directory: 'files/oracle'
+2025-09-02 14:02:20,303 - root - INFO - [common.py:110] - Target directory: 'files/format_json'
+2025-09-02 14:02:20,304 - root - INFO - [common.py:110] - File pattern: '.sql'
+2025-09-02 14:02:20,304 - root - INFO - [common.py:110] - Output suffix: '_analysis.json'
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - Ensuring target directory exists...
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - Directory already exists: files/format_json
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - Found 1 files in source directory
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - Files matching pattern '.sql': ['zzz.sql']
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - === Processing file 1/1: zzz.sql ===
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - Source path: files/oracle\zzz.sql
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - Output path: files/format_json\zzz_analysis.json
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - === SQL to JSON processing for trigger zzz.sql ===
+2025-09-02 14:02:20,304 - root - DEBUG - [common.py:105] - Creating OracleTriggerAnalyzer instance from file...
+2025-09-02 14:02:20,305 - root - DEBUG - [common.py:105] - Initializing OracleTriggerAnalyzer with 20 characters of SQL
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:106] - structured lines conversion 0 lines processed
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:109] - SQL section parsing
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:322] - structured lines conversion
+2025-09-02 14:02:20,305 - root - DEBUG - [common.py:105] - Converting SQL content to structured lines
+2025-09-02 14:02:20,305 - root - DEBUG - [common.py:105] - Structured lines conversion complete: 23 total, 6 with semicolons, 1 empty lines skipped
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:324] - structured lines conversion
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:261] - Block comment stripping complete: 2 comments extracted, 17 lines cleaned
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:328] - Removed block comments from main section
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:305] - Inline comment stripping complete: 0 comments extracted, 17 lines cleaned
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:332] - Removed inline comments from main section
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:344] - Found DECLARE at line 3
+2025-09-02 14:02:20,305 - root - DEBUG - [OracleTriggerAnalyzer.py:348] - Found BEGIN at line 4
+2025-09-02 14:02:20,306 - root - DEBUG - [OracleTriggerAnalyzer.py:358] - DECLARE section: lines 3-3
+2025-09-02 14:02:20,306 - root - DEBUG - [OracleTriggerAnalyzer.py:386] - Starting declaration parsing
+2025-09-02 14:02:20,306 - root - DEBUG - [OracleTriggerAnalyzer.py:1442] - Starting top-level BEGIN blocks parsing
+2025-09-02 14:02:20,306 - root - DEBUG - [OracleTriggerAnalyzer.py:1487] - Begin line: {'indent': 8, 'line': '        BEGIN', 'line_no': 6} 1
+2025-09-02 14:02:20,306 - root - DEBUG - [OracleTriggerAnalyzer.py:1497] - End line: {'indent': 8, 'line': '        END;', 'line_no': 19} 8
+2025-09-02 14:02:20,306 - root - DEBUG - [OracleTriggerAnalyzer.py:111] - SQL section parsing
+2025-09-02 14:02:20,306 - root - DEBUG - [OracleTriggerAnalyzer.py:114] - OracleTriggerAnalyzer initialization 0.0012347698211669922 seconds
+2025-09-02 14:02:20,306 - root - DEBUG - [common.py:105] - OracleTriggerAnalyzer created successfully with file details
+2025-09-02 14:02:20,306 - root - DEBUG - [common.py:105] - File details: zzz.sql
+2025-09-02 14:02:20,306 - root - DEBUG - [common.py:105] - Generating JSON analysis...
+2025-09-02 14:02:20,306 - root - DEBUG - [OracleTriggerAnalyzer.py:2065] - JSON conversion complete: 0 vars, 0 consts, 0 excs, 2 comments
+2025-09-02 14:02:20,306 - root - DEBUG - [common.py:105] - JSON analysis generated successfully
+2025-09-02 14:02:20,306 - root - DEBUG - [common.py:105] - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_string_list', 'conversion_stats', 'metadata']
+2025-09-02 14:02:20,306 - root - DEBUG - [common.py:105] - File details in metadata: zzz.sql (679 bytes)
+2025-09-02 14:02:20,306 - root - DEBUG - [common.py:105] - Analysis statistics: 0 vars, 0 consts, 0 excs, 2 comments
+2025-09-02 14:02:20,306 - root - DEBUG - [common.py:105] - Writing analysis JSON to: files/format_json\zzz_analysis.json
+2025-09-02 14:02:20,307 - root - DEBUG - [common.py:105] - Successfully wrote analysis JSON to files/format_json\zzz_analysis.json
+2025-09-02 14:02:20,307 - root - DEBUG - [common.py:105] - === SQL to JSON processing complete for trigger zzz.sql ===
+2025-09-02 14:02:20,307 - root - DEBUG - [common.py:105] - ✓ Created zzz_analysis.json
+2025-09-02 14:02:20,307 - root - INFO - [common.py:110] - === File processing complete ===
+2025-09-02 14:02:20,307 - root - INFO - [common.py:110] - Successfully processed: 1 files
+2025-09-02 14:02:20,307 - root - INFO - [common.py:110] - === Oracle triggers to JSON conversion complete ===
+2025-09-02 14:02:20,307 - root - DEBUG - [common.py:105] - Phase 1 complete: Oracle SQL files converted to JSON analysis structure with file metadata
+2025-09-02 14:02:20,307 - root - INFO - [common.py:110] - ✓ JSON conversion complete! (Duration: 0.01 seconds)
+2025-09-02 14:02:20,308 - root - DEBUG - [common.py:105] - Step 1 completed in 0.01 seconds

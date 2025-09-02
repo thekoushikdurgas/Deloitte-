@@ -361,7 +361,7 @@ class OracleTriggerAnalyzer:
             logger.debug("No DECLARE section found")
 
         # Process declarations if DECLARE section exists
-        if self.declare_section[0] > 0:
+        if self.declare_section[0] > 0 and self.declare_section[1] >= self.declare_section[0]:
             self._parse_declarations()
 
         # Process main section if main section exists
@@ -1372,11 +1372,11 @@ class OracleTriggerAnalyzer:
                     line_upper = line_info["line"].strip().upper()
                     if line_upper.startswith("WHEN") and line_info["indent"] == when_line_indent:
                         i -= 1
-                        logger.debug(working_lines[when_i], working_lines[i])
+                        # logger.debug(working_lines[when_i] working_lines[i])
                         case_when_statement["when_clauses"].append(self._parse_case_when_then_statements(working_lines[when_i : i + 1]))
                         break
                     if line_upper.startswith("ELSE") and line_info["indent"] == when_line_indent:
-                        logger.debug(working_lines[when_i], working_lines[i - 1])
+                        # logger.debug(working_lines[when_i], working_lines[i - 1])
                         case_when_statement["when_clauses"].append(self._parse_case_when_then_statements(working_lines[when_i:i]))
                         logger.debug(working_lines[i + 1], working_lines[-1])
                         case_when_statement["else_statements"] = working_lines[i + 1 : len(working_lines)-1]
@@ -1490,36 +1490,19 @@ class OracleTriggerAnalyzer:
                         while i < len(working_lines):
                             item = working_lines[i]
                             line_upper = item["line"].strip().upper()
-                            if (
-                                line_upper.startswith("EXCEPTION")
-                                and item["indent"] == begin_line_indent
-                            ):
+                            if line_upper.startswith("EXCEPTION") and item["indent"] == begin_line_indent:
                                 logger.debug(f"Exception line: {item} {i}")
                                 exception_i = i
-                                while i < len(working_lines):
-                                    item = working_lines[i]
-                                    line_upper = item["line"].strip().upper()
-                                    if (
-                                        line_upper.endswith("END;")
-                                        and item["indent"] == begin_line_indent
-                                    ):
+                            if line_upper.endswith("END;") and item["indent"] == begin_line_indent:
                                         logger.debug(f"End line: {item} {i}")
                                         begin_end_statements.append(
                                             {
                                                 "type": "begin_end",
-                                                "begin_line_no": working_lines[begin_i][
-                                                    "line_no"
-                                                ],
+                                                "begin_line_no": working_lines[begin_i]["line_no"],
                                                 "begin_indent": begin_line_indent,
-                                                "begin_end_statements": parse_begin_end_statements(
-                                                    working_lines[begin_i + 1 : exception_i]
-                                                ),
-                                                "exception_handlers": self._parse_exception_handlers(
-                                                    working_lines[exception_i + 1 : i]
-                                                ),
-                                                "exception_line_no": working_lines[
-                                                    exception_i
-                                                ]["line_no"],
+                                                "begin_end_statements": parse_begin_end_statements(working_lines[begin_i + 1 : exception_i] if exception_i != -1 else working_lines[begin_i + 1 : i]),
+                                                "exception_handlers": self._parse_exception_handlers(working_lines[exception_i + 1 : i]) if exception_i != -1 else [],
+                                                "exception_line_no": working_lines[exception_i]["line_no"] if exception_i != -1 else -1,
                                                 "end_line_no": item["line_no"],
                                             }
                                         )
@@ -1527,8 +1510,6 @@ class OracleTriggerAnalyzer:
                                         begin_line_indent = -1
                                         exception_i = -1
                                         break
-                                    i += 1
-                                break
                             i += 1
                     else:
                         begin_end_statements.append(item)
@@ -2024,13 +2005,13 @@ class OracleTriggerAnalyzer:
         extract_rest_strings_from_item(self.main_section_lines)
         # print(f'rest_strings_list {rest_strings_list}')	
         self.rest_string_list = rest_strings_list
-        # rest_strings_list to covert like ("filename","line","line_no") and add to available_rest_strings
-        dataframe_rest_strings = pd.DataFrame(columns=["filename", "line", "line_no"])
-        for i in rest_strings_list:
-            dataframe_rest_strings.append({"filename": self.file_details["filename"], "line": i["line"], "line_no": i["line_no"]})
-        # print(dataframe_rest_strings)
+        # # rest_strings_list to covert like ("filename","line","line_no") and add to available_rest_strings
+        # dataframe_rest_strings = pd.DataFrame(columns=["filename", "line", "line_no"])
+        # for i in rest_strings_list:
+        #     dataframe_rest_strings._append({"filename": self.file_details["filename"], "line": i["line"], "line_no": i["line_no"]},ignore_index=True)
+        # # print(dataframe_rest_strings)
         
-        append_to_excel_sheet(dataframe_rest_strings, sheet_name="non_parse")
+        # append_to_excel_sheet(dataframe_rest_strings, sheet_name="non_parse")
 
     def to_json(self):
         """
@@ -2189,3 +2170,6 @@ class OracleTriggerAnalyzer:
         #     else:
         #         formatted_msg = "'" + formatted_msg + "'"
         return formatted_msg
+
+
+

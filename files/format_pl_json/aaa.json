@@ -1,0 +1,388 @@
+{
+  "on_insert": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "V_SAPINST_NO",
+          "data_type": "V_BPA_SAP_USAGES.SAPINST_NO%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "CNTR",
+          "data_type": "PLS_INTEGER",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": [
+        {
+          "name": "ERR_UPD_PK",
+          "type": "EXCEPTION"
+        }
+      ]
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "condition": ":NEW.SAPINST_NO != :OLD.SAPINST_NO OR :NEW.ACCOUNT_GROUP_CD != :OLD.ACCOUNT_GROUP_CD",
+              "type": "if_else",
+              "if_indent": 8,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE ERR_UPD_PK;",
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "type": "insert_statement",
+              "sql_statement": "INSERT INTO CORE.V_ACCOUNT_GROUPS_LOCAL ( SAPINST_NO, ACCOUNT_GROUP_CD, ACCOUNT_GROUP_DESC, ONE_TIME_ACCOUNT_IND, EMPLOYEE_IND, NUMBER_RANGE_CD, IGNORE_FOR_DNB, VALID_IND ) VALUES ( :NEW.SAPINST_NO , :NEW.ACCOUNT_GROUP_CD, :NEW.ACCOUNT_GROUP_DESC, :NEW.ONE_TIME_ACCOUNT_IND, :NEW.EMPLOYEE_IND, :NEW.NUMBER_RANGE_CD, :NEW.IGNORE_FOR_DNB, :NEW.VALID_IND );",
+              "statement_indent": 8
+            }
+          ],
+          "if_elses": [
+            {
+              "type": "elif_statement",
+              "elif_indent": 4,
+              "condition": "UPDATING",
+              "then_statements": [
+                {
+                  "type": "update_statement",
+                  "sql_statement": "UPDATE CORE.V_ACCOUNT_GROUPS_LOCAL SET EMPLOYEE_IND = :NEW.EMPLOYEE_IND, ACCOUNT_GROUP_DESC = :NEW.ACCOUNT_GROUP_DESC, ONE_TIME_ACCOUNT_IND = :NEW.ONE_TIME_ACCOUNT_IND, IGNORE_FOR_DNB = :NEW.IGNORE_FOR_DNB, VALID_IND = :NEW.VALID_IND WHERE ACCOUNT_GROUP_CD = :NEW.ACCOUNT_GROUP_CD AND SAPINST_NO = :NEW.SAPINST_NO;",
+                  "statement_indent": 8
+                }
+              ]
+            }
+          ],
+          "else_statements": []
+        }
+      ],
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_UPD_PK",
+          "when_indent": 4,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20112",
+                  "'account_groups_local_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20112, 'account_groups_local_IOF'"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "conversion_stats": {
+      "select_statement": 0,
+      "insert_statement": 1,
+      "update_statement": 1,
+      "delete_statement": 0,
+      "raise_statement": 1,
+      "assignment": 0,
+      "for_loop": 0,
+      "if_else": 3,
+      "case_when": 0,
+      "begin_end": 1,
+      "exception_handler": 1,
+      "function_calling": 1,
+      "when_statement": 0,
+      "elif_statement": 1,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 0,
+      "return_statement": 0
+    }
+  },
+  "on_update": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "V_SAPINST_NO",
+          "data_type": "V_BPA_SAP_USAGES.SAPINST_NO%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "CNTR",
+          "data_type": "PLS_INTEGER",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": [
+        {
+          "name": "ERR_UPD_PK",
+          "type": "EXCEPTION"
+        }
+      ]
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "condition": ":NEW.SAPINST_NO != :OLD.SAPINST_NO OR :NEW.ACCOUNT_GROUP_CD != :OLD.ACCOUNT_GROUP_CD",
+              "type": "if_else",
+              "if_indent": 8,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE ERR_UPD_PK;",
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "type": "insert_statement",
+              "sql_statement": "INSERT INTO CORE.V_ACCOUNT_GROUPS_LOCAL ( SAPINST_NO, ACCOUNT_GROUP_CD, ACCOUNT_GROUP_DESC, ONE_TIME_ACCOUNT_IND, EMPLOYEE_IND, NUMBER_RANGE_CD, IGNORE_FOR_DNB, VALID_IND ) VALUES ( :NEW.SAPINST_NO , :NEW.ACCOUNT_GROUP_CD, :NEW.ACCOUNT_GROUP_DESC, :NEW.ONE_TIME_ACCOUNT_IND, :NEW.EMPLOYEE_IND, :NEW.NUMBER_RANGE_CD, :NEW.IGNORE_FOR_DNB, :NEW.VALID_IND );",
+              "statement_indent": 8
+            }
+          ],
+          "if_elses": [
+            {
+              "type": "elif_statement",
+              "elif_indent": 4,
+              "condition": "UPDATING",
+              "then_statements": [
+                {
+                  "type": "update_statement",
+                  "sql_statement": "UPDATE CORE.V_ACCOUNT_GROUPS_LOCAL SET EMPLOYEE_IND = :NEW.EMPLOYEE_IND, ACCOUNT_GROUP_DESC = :NEW.ACCOUNT_GROUP_DESC, ONE_TIME_ACCOUNT_IND = :NEW.ONE_TIME_ACCOUNT_IND, IGNORE_FOR_DNB = :NEW.IGNORE_FOR_DNB, VALID_IND = :NEW.VALID_IND WHERE ACCOUNT_GROUP_CD = :NEW.ACCOUNT_GROUP_CD AND SAPINST_NO = :NEW.SAPINST_NO;",
+                  "statement_indent": 8
+                }
+              ]
+            }
+          ],
+          "else_statements": []
+        }
+      ],
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_UPD_PK",
+          "when_indent": 4,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20112",
+                  "'account_groups_local_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20112, 'account_groups_local_IOF'"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "conversion_stats": {
+      "select_statement": 0,
+      "insert_statement": 1,
+      "update_statement": 1,
+      "delete_statement": 0,
+      "raise_statement": 1,
+      "assignment": 0,
+      "for_loop": 0,
+      "if_else": 3,
+      "case_when": 0,
+      "begin_end": 1,
+      "exception_handler": 1,
+      "function_calling": 1,
+      "when_statement": 0,
+      "elif_statement": 1,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 0,
+      "return_statement": 0
+    }
+  },
+  "on_delete": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "V_SAPINST_NO",
+          "data_type": "V_BPA_SAP_USAGES.SAPINST_NO%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "CNTR",
+          "data_type": "PLS_INTEGER",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": [
+        {
+          "name": "ERR_UPD_PK",
+          "type": "EXCEPTION"
+        }
+      ]
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "condition": ":NEW.SAPINST_NO != :OLD.SAPINST_NO OR :NEW.ACCOUNT_GROUP_CD != :OLD.ACCOUNT_GROUP_CD",
+              "type": "if_else",
+              "if_indent": 8,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE ERR_UPD_PK;",
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_indent": 4,
+          "then_statements": [
+            {
+              "type": "insert_statement",
+              "sql_statement": "INSERT INTO CORE.V_ACCOUNT_GROUPS_LOCAL ( SAPINST_NO, ACCOUNT_GROUP_CD, ACCOUNT_GROUP_DESC, ONE_TIME_ACCOUNT_IND, EMPLOYEE_IND, NUMBER_RANGE_CD, IGNORE_FOR_DNB, VALID_IND ) VALUES ( :NEW.SAPINST_NO , :NEW.ACCOUNT_GROUP_CD, :NEW.ACCOUNT_GROUP_DESC, :NEW.ONE_TIME_ACCOUNT_IND, :NEW.EMPLOYEE_IND, :NEW.NUMBER_RANGE_CD, :NEW.IGNORE_FOR_DNB, :NEW.VALID_IND );",
+              "statement_indent": 8
+            }
+          ],
+          "if_elses": [
+            {
+              "type": "elif_statement",
+              "elif_indent": 4,
+              "condition": "UPDATING",
+              "then_statements": [
+                {
+                  "type": "update_statement",
+                  "sql_statement": "UPDATE CORE.V_ACCOUNT_GROUPS_LOCAL SET EMPLOYEE_IND = :NEW.EMPLOYEE_IND, ACCOUNT_GROUP_DESC = :NEW.ACCOUNT_GROUP_DESC, ONE_TIME_ACCOUNT_IND = :NEW.ONE_TIME_ACCOUNT_IND, IGNORE_FOR_DNB = :NEW.IGNORE_FOR_DNB, VALID_IND = :NEW.VALID_IND WHERE ACCOUNT_GROUP_CD = :NEW.ACCOUNT_GROUP_CD AND SAPINST_NO = :NEW.SAPINST_NO;",
+                  "statement_indent": 8
+                }
+              ]
+            }
+          ],
+          "else_statements": []
+        }
+      ],
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_UPD_PK",
+          "when_indent": 4,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20112",
+                  "'account_groups_local_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20112, 'account_groups_local_IOF'"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "conversion_stats": {
+      "select_statement": 0,
+      "insert_statement": 1,
+      "update_statement": 1,
+      "delete_statement": 0,
+      "raise_statement": 1,
+      "assignment": 0,
+      "for_loop": 0,
+      "if_else": 3,
+      "case_when": 0,
+      "begin_end": 1,
+      "exception_handler": 1,
+      "function_calling": 1,
+      "when_statement": 0,
+      "elif_statement": 1,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 0,
+      "return_statement": 0
+    }
+  },
+  "metadata": {
+    "parse_timestamp": "2025-08-28T19:32:16.016195",
+    "parser_version": "1.0",
+    "file_details": {
+      "filename": "aaa.sql",
+      "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\aaa.sql",
+      "filesize": 1978,
+      "file_extension": ".sql",
+      "last_modified": 1756389150.8638816,
+      "created_time": 1756388259.2402747,
+      "is_file": true,
+      "is_readable": true
+    }
+  }
+}

@@ -22,29 +22,21 @@
   },
   "main": {
     "type": "begin_end",
-    "begin_line_no": 7,
     "begin_indent": 0,
     "begin_end_statements": [
       {
         "condition": " (UPDATING) ",
         "type": "if_else",
-        "if_line_no": 8,
-        "then_line_no": 8,
         "if_indent": 4,
-        "end_if_line_no": 12,
         "then_statements": [
           {
             "condition": " :NEW.SAPINST_NO != :OLD.SAPINST_NO OR :NEW.ACCOUNT_GROUP_CD != :OLD.ACCOUNT_GROUP_CD ",
             "type": "if_else",
-            "if_line_no": 9,
-            "then_line_no": 9,
             "if_indent": 8,
-            "end_if_line_no": 11,
             "then_statements": [
               {
                 "type": "raise_statement",
                 "sql_statement": "RAISE ERR_UPD_PK;",
-                "statement_line_no": 10,
                 "statement_indent": 12
               }
             ],
@@ -58,30 +50,23 @@
       {
         "condition": " INSERTING ",
         "type": "if_else",
-        "if_line_no": 14,
-        "then_line_no": 14,
         "if_indent": 4,
-        "end_if_line_no": 51,
         "then_statements": [
           {
             "type": "insert_statement",
             "sql_statement": "INSERT INTO CORE.V_ACCOUNT_GROUPS_LOCAL ( SAPINST_NO, ACCOUNT_GROUP_CD, ACCOUNT_GROUP_DESC, ONE_TIME_ACCOUNT_IND, EMPLOYEE_IND, NUMBER_RANGE_CD, IGNORE_FOR_DNB, VALID_IND ) VALUES ( :NEW.SAPINST_NO , :NEW.ACCOUNT_GROUP_CD, :NEW.ACCOUNT_GROUP_DESC, :NEW.ONE_TIME_ACCOUNT_IND, :NEW.EMPLOYEE_IND, :NEW.NUMBER_RANGE_CD, :NEW.IGNORE_FOR_DNB, :NEW.VALID_IND );",
-            "statement_line_no": 15,
             "statement_indent": 8
           }
         ],
         "if_elses": [
           {
             "type": "elif_statement",
-            "elif_line_no": 35,
             "elif_indent": 4,
             "condition": "UPDATING",
-            "then_line_no": 35,
             "then_statements": [
               {
                 "type": "update_statement",
                 "sql_statement": "UPDATE CORE.V_ACCOUNT_GROUPS_LOCAL SET EMPLOYEE_IND = :NEW.EMPLOYEE_IND, ACCOUNT_GROUP_DESC = :NEW.ACCOUNT_GROUP_DESC, ONE_TIME_ACCOUNT_IND = :NEW.ONE_TIME_ACCOUNT_IND, IGNORE_FOR_DNB = :NEW.IGNORE_FOR_DNB, VALID_IND = :NEW.VALID_IND WHERE ACCOUNT_GROUP_CD = :NEW.ACCOUNT_GROUP_CD AND SAPINST_NO = :NEW.SAPINST_NO;",
-                "statement_line_no": 36,
                 "statement_indent": 8
               }
             ]
@@ -94,9 +79,7 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_UPD_PK",
-        "when_line_no": 53,
         "when_indent": 4,
-        "then_line_no": 53,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -113,9 +96,7 @@
           }
         ]
       }
-    ],
-    "exception_line_no": 52,
-    "end_line_no": 55
+    ]
   },
   "sql_comments": [
     "-- ,v_sapinst_no"

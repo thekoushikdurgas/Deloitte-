@@ -2,7 +2,7 @@
     "on_insert": [
         {
             "type": "sql",
-            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   CNTR integer;"
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:57\n\nDO $$\nDECLARE\n   CNTR integer;"
         },
         {
             "type": "sql",
@@ -392,7 +392,7 @@
     "on_update": [
         {
             "type": "sql",
-            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   CNTR integer;"
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:57\n\nDO $$\nDECLARE\n   CNTR integer;"
         },
         {
             "type": "sql",
@@ -782,7 +782,7 @@
     "on_delete": [
         {
             "type": "sql",
-            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-08-28 12:28:40\n\nDO $$\nDECLARE\n   CNTR integer;"
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:57\n\nDO $$\nDECLARE\n   CNTR integer;"
         },
         {
             "type": "sql",

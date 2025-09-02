@@ -1,0 +1,164 @@
+{
+    "on_insert": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:55\n\nDO $$\nDECLARE\nBEGIN\n  IF TRUE THEN\n    IF :NEW.XRT_CD NOT LIKE 'G0%' THEN\n      INSERT INTO CER_EXCHANGE_RATES ( XRT_CD, CURRENCY_CD, RATE_PERIOD, PLAN_PERIOD, RATE, SCALING_FACTOR, VALID_IND ) VALUES ( :NEW.XRT_CD, :NEW.CURRENCY_CD, :NEW.RATE_PERIOD, COALESCE(:NEW.PLAN_PERIOD, '-'), :NEW.RATE, :NEW.SCALING_FACTOR, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      INSERT INTO CER_V_CENTRAL_GOV_RATES ( XRT_CD, CURRENCY_CD_1, CURRENCY_CD_2, RATE_PERIOD, RATE, SCALING_FACTOR, VALID_IND ) VALUES ( :NEW.XRT_CD, :NEW.CURRENCY_CD, :NEW.CURRENCY_CD_2, :NEW.RATE_PERIOD, :NEW.RATE, :NEW.SCALING_FACTOR, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSIF (UPDATING) THEN\n    IF  :NEW.XRT_CD != :OLD.XRT_CD OR :NEW.CURRENCY_CD != :OLD.CURRENCY_CD OR :NEW.RATE_PERIOD != :OLD.RATE_PERIOD OR COALESCE(:NEW.PLAN_PERIOD, '-') != COALESCE(:OLD.PLAN_PERIOD, '-')  THEN\n      RAISE E_UPD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF  :NEW.XRT_CD NOT LIKE 'G0%'  THEN\n      UPDATE CER_EXCHANGE_RATES SET RATE = :NEW.RATE, SCALING_FACTOR = :NEW.SCALING_FACTOR, VALID_IND = :NEW.VALID_IND WHERE XRT_CD = :NEW.XRT_CD AND CURRENCY_CD = :NEW.CURRENCY_CD AND RATE_PERIOD = :NEW.RATE_PERIOD AND PLAN_PERIOD = :NEW.PLAN_PERIOD;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      UPDATE CER_V_CENTRAL_GOV_RATES SET RATE = :NEW.RATE, SCALING_FACTOR = :NEW.SCALING_FACTOR, VALID_IND = :NEW.VALID_IND WHERE XRT_CD = :NEW.XRT_CD AND CURRENCY_CD_1 = :NEW.CURRENCY_CD AND CURRENCY_CD_2 = :NEW.CURRENCY_CD_2 AND RATE_PERIOD = :NEW.RATE_PERIOD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN E_UPD THEN\n    RAISE_APPLICATION_ERROR(-20101, 'CER_V_EXCHANGE_RATES_IOF');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_update": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:55\n\nDO $$\nDECLARE\nBEGIN\n  IF TRUE THEN\n    IF :NEW.XRT_CD NOT LIKE 'G0%' THEN\n      INSERT INTO CER_EXCHANGE_RATES ( XRT_CD, CURRENCY_CD, RATE_PERIOD, PLAN_PERIOD, RATE, SCALING_FACTOR, VALID_IND ) VALUES ( :NEW.XRT_CD, :NEW.CURRENCY_CD, :NEW.RATE_PERIOD, COALESCE(:NEW.PLAN_PERIOD, '-'), :NEW.RATE, :NEW.SCALING_FACTOR, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      INSERT INTO CER_V_CENTRAL_GOV_RATES ( XRT_CD, CURRENCY_CD_1, CURRENCY_CD_2, RATE_PERIOD, RATE, SCALING_FACTOR, VALID_IND ) VALUES ( :NEW.XRT_CD, :NEW.CURRENCY_CD, :NEW.CURRENCY_CD_2, :NEW.RATE_PERIOD, :NEW.RATE, :NEW.SCALING_FACTOR, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSIF (UPDATING) THEN\n    IF  :NEW.XRT_CD != :OLD.XRT_CD OR :NEW.CURRENCY_CD != :OLD.CURRENCY_CD OR :NEW.RATE_PERIOD != :OLD.RATE_PERIOD OR COALESCE(:NEW.PLAN_PERIOD, '-') != COALESCE(:OLD.PLAN_PERIOD, '-')  THEN\n      RAISE E_UPD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF  :NEW.XRT_CD NOT LIKE 'G0%'  THEN\n      UPDATE CER_EXCHANGE_RATES SET RATE = :NEW.RATE, SCALING_FACTOR = :NEW.SCALING_FACTOR, VALID_IND = :NEW.VALID_IND WHERE XRT_CD = :NEW.XRT_CD AND CURRENCY_CD = :NEW.CURRENCY_CD AND RATE_PERIOD = :NEW.RATE_PERIOD AND PLAN_PERIOD = :NEW.PLAN_PERIOD;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      UPDATE CER_V_CENTRAL_GOV_RATES SET RATE = :NEW.RATE, SCALING_FACTOR = :NEW.SCALING_FACTOR, VALID_IND = :NEW.VALID_IND WHERE XRT_CD = :NEW.XRT_CD AND CURRENCY_CD_1 = :NEW.CURRENCY_CD AND CURRENCY_CD_2 = :NEW.CURRENCY_CD_2 AND RATE_PERIOD = :NEW.RATE_PERIOD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN E_UPD THEN\n    RAISE_APPLICATION_ERROR(-20101, 'CER_V_EXCHANGE_RATES_IOF');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_delete": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:55\n\nDO $$\nDECLARE\nBEGIN\n  IF TRUE THEN\n    IF :NEW.XRT_CD NOT LIKE 'G0%' THEN\n      INSERT INTO CER_EXCHANGE_RATES ( XRT_CD, CURRENCY_CD, RATE_PERIOD, PLAN_PERIOD, RATE, SCALING_FACTOR, VALID_IND ) VALUES ( :NEW.XRT_CD, :NEW.CURRENCY_CD, :NEW.RATE_PERIOD, COALESCE(:NEW.PLAN_PERIOD, '-'), :NEW.RATE, :NEW.SCALING_FACTOR, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      INSERT INTO CER_V_CENTRAL_GOV_RATES ( XRT_CD, CURRENCY_CD_1, CURRENCY_CD_2, RATE_PERIOD, RATE, SCALING_FACTOR, VALID_IND ) VALUES ( :NEW.XRT_CD, :NEW.CURRENCY_CD, :NEW.CURRENCY_CD_2, :NEW.RATE_PERIOD, :NEW.RATE, :NEW.SCALING_FACTOR, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSIF (UPDATING) THEN\n    IF  :NEW.XRT_CD != :OLD.XRT_CD OR :NEW.CURRENCY_CD != :OLD.CURRENCY_CD OR :NEW.RATE_PERIOD != :OLD.RATE_PERIOD OR COALESCE(:NEW.PLAN_PERIOD, '-') != COALESCE(:OLD.PLAN_PERIOD, '-')  THEN\n      RAISE E_UPD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF  :NEW.XRT_CD NOT LIKE 'G0%'  THEN\n      UPDATE CER_EXCHANGE_RATES SET RATE = :NEW.RATE, SCALING_FACTOR = :NEW.SCALING_FACTOR, VALID_IND = :NEW.VALID_IND WHERE XRT_CD = :NEW.XRT_CD AND CURRENCY_CD = :NEW.CURRENCY_CD AND RATE_PERIOD = :NEW.RATE_PERIOD AND PLAN_PERIOD = :NEW.PLAN_PERIOD;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      UPDATE CER_V_CENTRAL_GOV_RATES SET RATE = :NEW.RATE, SCALING_FACTOR = :NEW.SCALING_FACTOR, VALID_IND = :NEW.VALID_IND WHERE XRT_CD = :NEW.XRT_CD AND CURRENCY_CD_1 = :NEW.CURRENCY_CD AND CURRENCY_CD_2 = :NEW.CURRENCY_CD_2 AND RATE_PERIOD = :NEW.RATE_PERIOD;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN E_UPD THEN\n    RAISE_APPLICATION_ERROR(-20101, 'CER_V_EXCHANGE_RATES_IOF');"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ]
+}

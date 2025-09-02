@@ -2823,14 +2823,14 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-08-28T12:28:37.682956",
+    "parse_timestamp": "2025-08-28T19:32:19.444601",
     "parser_version": "1.0",
     "file_details": {
       "filename": "yyy.sql",
       "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\yyy.sql",
-      "filesize": 15992,
+      "filesize": 16135,
       "file_extension": ".sql",
-      "last_modified": 1755802859.1215167,
+      "last_modified": 1756387920.123882,
       "created_time": 1755787351.1251388,
       "is_file": true,
       "is_readable": true

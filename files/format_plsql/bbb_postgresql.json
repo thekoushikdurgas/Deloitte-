@@ -1,0 +1,440 @@
+{
+    "on_insert": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:55\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(40) := ''BPA_POST_CD_RULES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_RULE_ID V_BPA_POSTAL_CODE_RULES.RULE_ID%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PATTERN_ID V_BPA_POSTAL_CODE_PATTERNS.PATTERN_ID%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PATTERN V_BPA_POSTAL_CODE_PATTERNS.PATTERN%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ALLOWED_PATTERN VARCHAR2(30) := ''^[A|9|-| ]*$'';"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n  V_PATTERN := :NEW.PATTERN;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n  WHEN V_PATTERN IS NOT NULL THEN\n    IF :NEW.RULE_FLAG = 'N' THEN\n      RAISE ERR_NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF NOT OWA_PATTERN.MATCH (V_PATTERN, V_ALLOWED_PATTERN) THEN\n      RAISE ERR_POSTAL_CODE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n    IF :NEW.RULE_FLAG = 'M' THEN\n      RAISE ERR_POSTAL_CODE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM V_BPA_POSTAL_CODE_RULES WHERE COUNTRY_CD = :NEW.COUNTRY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n    SELECT COALESCE (MAX (RULE_ID) + 1, 1) INTO V_RULE_ID FROM V_BPA_POSTAL_CODE_RULES;"
+        },
+        {
+            "type": "sql",
+            "sql": "INSERT INTO V_BPA_POSTAL_CODE_RULES ( RULE_ID, COUNTRY_CD, RULE_FLAG ) VALUES ( V_RULE_ID, UPPER (:NEW.COUNTRY_CD), :NEW.RULE_FLAG );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n    V_RULE_ID := :NEW.RULE_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COALESCE (MAX (PATTERN_ID) + 1, 1) INTO V_PATTERN_ID FROM V_BPA_POSTAL_CODE_PATTERNS;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_PATTERN IS NOT NULL THEN\n    INSERT INTO V_BPA_POSTAL_CODE_PATTERNS ( PATTERN_ID, RULE_ID, PATTERN, DESCRIPTION, VALID_IND ) VALUES ( V_PATTERN_ID, V_RULE_ID, V_PATTERN, :NEW.DESCRIPTION, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSIF UPDATING THEN\n    IF  :OLD.RULE_FLAG != :NEW.RULE_FLAG  THEN\n      UPDATE V_BPA_POSTAL_CODE_RULES SET RULE_FLAG = :NEW.RULE_FLAG WHERE RULE_ID = V_RULE_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF  :NEW.PATTERN_ID IS NOT NULL  THEN\n      IF  V_PATTERN IS NOT NULL  THEN\n        UPDATE V_BPA_POSTAL_CODE_PATTERNS SET PATTERN = V_PATTERN, DESCRIPTION = :NEW.DESCRIPTION, VALID_IND = :NEW.VALID_IND WHERE PATTERN_ID = :NEW.PATTERN_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        DELETE FROM V_BPA_POSTAL_CODE_PATTERNS WHERE PATTERN_ID = :NEW.PATTERN_ID AND PATTERN = :OLD.PATTERN;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      IF  V_PATTERN IS NOT NULL  THEN\n        INSERT INTO V_BPA_POSTAL_CODE_PATTERNS ( PATTERN_ID, RULE_ID, PATTERN, VALID_IND ) VALUES ( V_PATTERN_ID, V_RULE_ID, V_PATTERN, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_DEL THEN\n    RAISE_APPLICATION_ERROR(-20112, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NULL THEN\n    RAISE_APPLICATION_ERROR(-20114, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_POSTAL_CODE THEN\n    RAISE_APPLICATION_ERROR(-20119, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_update": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:55\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(40) := ''BPA_POST_CD_RULES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_RULE_ID V_BPA_POSTAL_CODE_RULES.RULE_ID%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PATTERN_ID V_BPA_POSTAL_CODE_PATTERNS.PATTERN_ID%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PATTERN V_BPA_POSTAL_CODE_PATTERNS.PATTERN%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ALLOWED_PATTERN VARCHAR2(30) := ''^[A|9|-| ]*$'';"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n  V_PATTERN := :NEW.PATTERN;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n  WHEN V_PATTERN IS NOT NULL THEN\n    IF :NEW.RULE_FLAG = 'N' THEN\n      RAISE ERR_NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF NOT OWA_PATTERN.MATCH (V_PATTERN, V_ALLOWED_PATTERN) THEN\n      RAISE ERR_POSTAL_CODE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n    IF :NEW.RULE_FLAG = 'M' THEN\n      RAISE ERR_POSTAL_CODE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM V_BPA_POSTAL_CODE_RULES WHERE COUNTRY_CD = :NEW.COUNTRY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n    SELECT COALESCE (MAX (RULE_ID) + 1, 1) INTO V_RULE_ID FROM V_BPA_POSTAL_CODE_RULES;"
+        },
+        {
+            "type": "sql",
+            "sql": "INSERT INTO V_BPA_POSTAL_CODE_RULES ( RULE_ID, COUNTRY_CD, RULE_FLAG ) VALUES ( V_RULE_ID, UPPER (:NEW.COUNTRY_CD), :NEW.RULE_FLAG );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n    V_RULE_ID := :NEW.RULE_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COALESCE (MAX (PATTERN_ID) + 1, 1) INTO V_PATTERN_ID FROM V_BPA_POSTAL_CODE_PATTERNS;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_PATTERN IS NOT NULL THEN\n    INSERT INTO V_BPA_POSTAL_CODE_PATTERNS ( PATTERN_ID, RULE_ID, PATTERN, DESCRIPTION, VALID_IND ) VALUES ( V_PATTERN_ID, V_RULE_ID, V_PATTERN, :NEW.DESCRIPTION, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSIF UPDATING THEN\n    IF  :OLD.RULE_FLAG != :NEW.RULE_FLAG  THEN\n      UPDATE V_BPA_POSTAL_CODE_RULES SET RULE_FLAG = :NEW.RULE_FLAG WHERE RULE_ID = V_RULE_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF  :NEW.PATTERN_ID IS NOT NULL  THEN\n      IF  V_PATTERN IS NOT NULL  THEN\n        UPDATE V_BPA_POSTAL_CODE_PATTERNS SET PATTERN = V_PATTERN, DESCRIPTION = :NEW.DESCRIPTION, VALID_IND = :NEW.VALID_IND WHERE PATTERN_ID = :NEW.PATTERN_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        DELETE FROM V_BPA_POSTAL_CODE_PATTERNS WHERE PATTERN_ID = :NEW.PATTERN_ID AND PATTERN = :OLD.PATTERN;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      IF  V_PATTERN IS NOT NULL  THEN\n        INSERT INTO V_BPA_POSTAL_CODE_PATTERNS ( PATTERN_ID, RULE_ID, PATTERN, VALID_IND ) VALUES ( V_PATTERN_ID, V_RULE_ID, V_PATTERN, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_DEL THEN\n    RAISE_APPLICATION_ERROR(-20112, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NULL THEN\n    RAISE_APPLICATION_ERROR(-20114, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_POSTAL_CODE THEN\n    RAISE_APPLICATION_ERROR(-20119, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ],
+    "on_delete": [
+        {
+            "type": "sql",
+            "sql": "-- Generated from JSON analysis for PostgreSQL\n-- Generated on: 2025-09-02 13:53:55\n\nDO $$\nDECLARE\n   V_TRIGGER_NAME VARCHAR2(40) := ''BPA_POST_CD_RULES_IOF'';"
+        },
+        {
+            "type": "sql",
+            "sql": "CNTR integer;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_RULE_ID V_BPA_POSTAL_CODE_RULES.RULE_ID%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PATTERN_ID V_BPA_POSTAL_CODE_PATTERNS.PATTERN_ID%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_PATTERN V_BPA_POSTAL_CODE_PATTERNS.PATTERN%TYPE;"
+        },
+        {
+            "type": "sql",
+            "sql": "V_ALLOWED_PATTERN VARCHAR2(30) := ''^[A|9|-| ]*$'';"
+        },
+        {
+            "type": "sql",
+            "sql": "BEGIN\n  V_PATTERN := :NEW.PATTERN;"
+        },
+        {
+            "type": "sql",
+            "sql": "CASE\n  WHEN V_PATTERN IS NOT NULL THEN\n    IF :NEW.RULE_FLAG = 'N' THEN\n      RAISE ERR_NULL;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF NOT OWA_PATTERN.MATCH (V_PATTERN, V_ALLOWED_PATTERN) THEN\n      RAISE ERR_POSTAL_CODE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n    IF :NEW.RULE_FLAG = 'M' THEN\n      RAISE ERR_POSTAL_CODE;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END CASE;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COUNT (*) INTO CNTR FROM V_BPA_POSTAL_CODE_RULES WHERE COUNTRY_CD = :NEW.COUNTRY_CD;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF CNTR = 0 THEN\n    SELECT COALESCE (MAX (RULE_ID) + 1, 1) INTO V_RULE_ID FROM V_BPA_POSTAL_CODE_RULES;"
+        },
+        {
+            "type": "sql",
+            "sql": "INSERT INTO V_BPA_POSTAL_CODE_RULES ( RULE_ID, COUNTRY_CD, RULE_FLAG ) VALUES ( V_RULE_ID, UPPER (:NEW.COUNTRY_CD), :NEW.RULE_FLAG );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n    V_RULE_ID := :NEW.RULE_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "SELECT COALESCE (MAX (PATTERN_ID) + 1, 1) INTO V_PATTERN_ID FROM V_BPA_POSTAL_CODE_PATTERNS;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF V_PATTERN IS NOT NULL THEN\n    INSERT INTO V_BPA_POSTAL_CODE_PATTERNS ( PATTERN_ID, RULE_ID, PATTERN, DESCRIPTION, VALID_IND ) VALUES ( V_PATTERN_ID, V_RULE_ID, V_PATTERN, :NEW.DESCRIPTION, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSIF UPDATING THEN\n    IF  :OLD.RULE_FLAG != :NEW.RULE_FLAG  THEN\n      UPDATE V_BPA_POSTAL_CODE_RULES SET RULE_FLAG = :NEW.RULE_FLAG WHERE RULE_ID = V_RULE_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "IF  :NEW.PATTERN_ID IS NOT NULL  THEN\n      IF  V_PATTERN IS NOT NULL  THEN\n        UPDATE V_BPA_POSTAL_CODE_PATTERNS SET PATTERN = V_PATTERN, DESCRIPTION = :NEW.DESCRIPTION, VALID_IND = :NEW.VALID_IND WHERE PATTERN_ID = :NEW.PATTERN_ID;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n        DELETE FROM V_BPA_POSTAL_CODE_PATTERNS WHERE PATTERN_ID = :NEW.PATTERN_ID AND PATTERN = :OLD.PATTERN;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "ELSE\n      IF  V_PATTERN IS NOT NULL  THEN\n        INSERT INTO V_BPA_POSTAL_CODE_PATTERNS ( PATTERN_ID, RULE_ID, PATTERN, VALID_IND ) VALUES ( V_PATTERN_ID, V_RULE_ID, V_PATTERN, :NEW.VALID_IND );"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "END IF;"
+        },
+        {
+            "type": "sql",
+            "sql": "EXCEPTION\n  WHEN ERR_DEL THEN\n    RAISE_APPLICATION_ERROR(-20112, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_NULL THEN\n    RAISE_APPLICATION_ERROR(-20114, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "WHEN ERR_POSTAL_CODE THEN\n    RAISE_APPLICATION_ERROR(-20119, V_TRIGGER_NAME);"
+        },
+        {
+            "type": "sql",
+            "sql": "END;"
+        },
+        {
+            "type": "sql",
+            "sql": "$$ LANGUAGE plpgsql;"
+        },
+        {
+            "type": "sql",
+            "sql": "-- End of generated PostgreSQL SQL;"
+        }
+    ]
+}

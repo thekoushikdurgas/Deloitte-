@@ -54,7 +54,6 @@
   },
   "main": {
     "type": "begin_end",
-    "begin_line_no": 12,
     "begin_indent": 0,
     "begin_end_statements": [
       {
@@ -62,21 +61,16 @@
         "variable_name": "V_EVOLVED_THEME_NO",
         "assignment_operator": ":=",
         "expression": ":NEW.EVOLVED_THEME_NO;",
-        "assignment_line_no": 13,
         "assignment_indent": 4
       },
       {
         "condition": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED AND(:NEW.EVOLVED_THEME_NO IS NULL OR :NEW.EVOLVED_THEME_NO = :OLD.EVOLVED_THEME_NO) AND :NEW.MOLECULE_TYPE_ID = :OLD.MOLECULE_TYPE_ID AND :NEW.PHARMACOLOGICAL_TYPE_ID = :OLD.PHARMACOLOGICAL_TYPE_ID AND :NEW.PROPOSAL_NAME = :OLD.PROPOSAL_NAME) ",
         "type": "if_else",
-        "if_line_no": 18,
-        "then_line_no": 18,
         "if_indent": 4,
-        "end_if_line_no": 20,
         "then_statements": [
           {
             "type": "raise_statement",
             "sql_statement": "RAISE V_NO_UPDATE_TO_EVOLVED;",
-            "statement_line_no": 19,
             "statement_indent": 8
           }
         ],
@@ -86,15 +80,11 @@
       {
         "condition": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_TERMINATED AND :OLD.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_EVOLVED) ",
         "type": "if_else",
-        "if_line_no": 24,
-        "then_line_no": 24,
         "if_indent": 4,
-        "end_if_line_no": 26,
         "then_statements": [
           {
             "type": "raise_statement",
             "sql_statement": "RAISE V_NO_UPDATE_EVOLVED_TO_TERMINATED;",
-            "statement_line_no": 25,
             "statement_indent": 8
           }
         ],
@@ -104,17 +94,13 @@
       {
         "condition": " (:NEW.PROPOSAL_STATUS_CD = C_PROPOSAL_STATUS_ACTIVE AND :OLD.EVOLVED_THEME_NO IS NOT NULL) ",
         "type": "if_else",
-        "if_line_no": 30,
-        "then_line_no": 30,
         "if_indent": 4,
-        "end_if_line_no": 32,
         "then_statements": [
           {
             "type": "assignment",
             "variable_name": "V_EVOLVED_THEME_NO",
             "assignment_operator": ":=",
             "expression": "NULL;",
-            "assignment_line_no": 31,
             "assignment_indent": 8
           }
         ],
@@ -124,15 +110,11 @@
       {
         "condition": " (:NEW.EXPLORATORY_THEME_NO IS NULL AND :OLD.EXPLORATORY_THEME_NO IS NOT NULL) ",
         "type": "if_else",
-        "if_line_no": 36,
-        "then_line_no": 36,
         "if_indent": 4,
-        "end_if_line_no": 38,
         "then_statements": [
           {
             "type": "raise_statement",
             "sql_statement": "RAISE V_EXPLORATORY_THEMENO_NOT_NULL;",
-            "statement_line_no": 37,
             "statement_indent": 8
           }
         ],
@@ -142,32 +124,24 @@
       {
         "condition": " (INSERTING) ",
         "type": "if_else",
-        "if_line_no": 40,
-        "then_line_no": 40,
         "if_indent": 4,
-        "end_if_line_no": 79,
         "then_statements": [
           {
             "type": "assignment",
             "variable_name": "V_PROPOSAL_ID",
             "assignment_operator": ":=",
             "expression": "PREDMD.SEQ_NMP_PROPOSAL_ID.NEXTVAL;",
-            "assignment_line_no": 41,
             "assignment_indent": 8
           },
           {
             "type": "insert_statement",
             "sql_statement": "INSERT INTO V_NEW_MEDICINE_PROPOSALS( PROPOSAL_ID, EXPLORATORY_THEME_NO, PROPOSAL_NAME, PROPOSAL_STATUS_CD, EVOLVED_THEME_NO, MOLECULE_TYPE_ID, PHARMACOLOGICAL_TYPE_ID, FIREWALL_ID ) VALUES ( V_PROPOSAL_ID, :NEW.EXPLORATORY_THEME_NO, :NEW.PROPOSAL_NAME, :NEW.PROPOSAL_STATUS_CD, :NEW.EVOLVED_THEME_NO, :NEW.MOLECULE_TYPE_ID, :NEW.PHARMACOLOGICAL_TYPE_ID, :NEW.FIREWALL_ID );",
-            "statement_line_no": 42,
             "statement_indent": 8
           },
           {
             "condition": " :NEW.PARTNER_ID IS NOT NULL ",
             "type": "if_else",
-            "if_line_no": 61,
-            "then_line_no": 61,
             "if_indent": 8,
-            "end_if_line_no": 63,
             "then_statements": [
               {
                 "type": "function_calling",
@@ -195,9 +169,7 @@
       {
         "type": "exception_handler",
         "exception_name": "DUP_VAL_ON_INDEX",
-        "when_line_no": 81,
         "when_indent": 4,
-        "then_line_no": 81,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -217,9 +189,7 @@
       {
         "type": "exception_handler",
         "exception_name": "V_NO_UPDATE_EVOLVED_TO_TERMINATED",
-        "when_line_no": 83,
         "when_indent": 4,
-        "then_line_no": 83,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -239,9 +209,7 @@
       {
         "type": "exception_handler",
         "exception_name": "V_NO_UPDATE_TO_EVOLVED",
-        "when_line_no": 85,
         "when_indent": 4,
-        "then_line_no": 85,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -261,9 +229,7 @@
       {
         "type": "exception_handler",
         "exception_name": "V_EXPLORATORY_THEMENO_NOT_NULL",
-        "when_line_no": 87,
         "when_indent": 4,
-        "then_line_no": 87,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -280,9 +246,7 @@
           }
         ]
       }
-    ],
-    "exception_line_no": 80,
-    "end_line_no": 89
+    ]
   },
   "sql_comments": [
     "-- status update to evolved is only allowed from the themes screen",

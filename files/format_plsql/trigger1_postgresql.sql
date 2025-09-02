@@ -1,9 +1,9 @@
 -- PostgreSQL Trigger for trigger1_postgresql.json
--- Generated on: 2025-08-28 12:28:40
+-- Generated on: 2025-09-02 13:53:58
 
 -- ON INSERT
 -- Generated from JSON analysis for PostgreSQL
--- Generated on: 2025-08-28 12:28:38
+-- Generated on: 2025-09-02 13:53:56
 
 DO $$
 DECLARE
@@ -362,7 +362,7 @@ $$ LANGUAGE plpgsql;
 
 -- ON UPDATE
 -- Generated from JSON analysis for PostgreSQL
--- Generated on: 2025-08-28 12:28:39
+-- Generated on: 2025-09-02 13:53:56
 
 DO $$
 DECLARE
@@ -721,7 +721,7 @@ $$ LANGUAGE plpgsql;
 
 -- ON DELETE
 -- Generated from JSON analysis for PostgreSQL
--- Generated on: 2025-08-28 12:28:39
+-- Generated on: 2025-09-02 13:53:56
 
 DO $$
 DECLARE

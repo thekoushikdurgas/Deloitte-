@@ -1177,108 +1177,108 @@ def main() -> None:
         info("✓ JSON conversion complete! (Duration: %.2f seconds)", step1_duration)
         debug(f"Step 1 completed in {step1_duration:.2f} seconds")
 
-        # Step 2: Convert JSON back to SQL
-        # -------------------------------
-        info("Step 2: Converting JSON analysis back to formatted SQL...")
-        debug("Starting Step 2: JSON analysis → formatted Oracle SQL")
-        step2_start = time.time()
+        # # Step 2: Convert JSON back to SQL
+        # # -------------------------------
+        # info("Step 2: Converting JSON analysis back to formatted SQL...")
+        # debug("Starting Step 2: JSON analysis → formatted Oracle SQL")
+        # step2_start = time.time()
        
-        # Generate formatted SQL from the JSON analysis
-        render_oracle_sql_from_analysis()
+        # # Generate formatted SQL from the JSON analysis
+        # render_oracle_sql_from_analysis()
        
-        step2_duration = time.time() - step2_start
-        info("✓ SQL formatting complete! (Duration: %.2f seconds)", step2_duration)
-        debug(f"Step 2 completed in {step2_duration:.2f} seconds")
+        # step2_duration = time.time() - step2_start
+        # info("✓ SQL formatting complete! (Duration: %.2f seconds)", step2_duration)
+        # debug(f"Step 2 completed in {step2_duration:.2f} seconds")
 
 
-        # Step 3: Clean JSON files
-        # -----------------------
-        info("Step 3: Cleaning JSON files...")
-        debug("Starting Step 3: Cleaning and optimizing JSON files")
-        step3_start = time.time()
+        # # Step 3: Clean JSON files
+        # # -----------------------
+        # info("Step 3: Cleaning JSON files...")
+        # debug("Starting Step 3: Cleaning and optimizing JSON files")
+        # step3_start = time.time()
        
-        # Remove line numbers and other metadata from JSON files
-        clean_json_files()
+        # # Remove line numbers and other metadata from JSON files
+        # clean_json_files()
        
-        step3_duration = time.time() - step3_start
-        info("✓ JSON cleaning complete! (Duration: %.2f seconds)", step3_duration)
-        debug(f"Step 3 completed in {step3_duration:.2f} seconds")
+        # step3_duration = time.time() - step3_start
+        # info("✓ JSON cleaning complete! (Duration: %.2f seconds)", step3_duration)
+        # debug(f"Step 3 completed in {step3_duration:.2f} seconds")
 
 
-        # Step 5: Convert JSON to PL/JSON
-        # ------------------------------
-        info("Step 5: Converting JSON to PL/JSON...")
-        debug("Starting Step 5: JSON → PostgreSQL-compatible PL/JSON")
-        step5_start = time.time()
+        # # Step 5: Convert JSON to PL/JSON
+        # # ------------------------------
+        # info("Step 5: Converting JSON to PL/JSON...")
+        # debug("Starting Step 5: JSON → PostgreSQL-compatible PL/JSON")
+        # step5_start = time.time()
        
-        # Transform JSON to operation-specific structure for PostgreSQL
-        read_json_to_oracle_triggers()
+        # # Transform JSON to operation-specific structure for PostgreSQL
+        # read_json_to_oracle_triggers()
        
-        step5_duration = time.time() - step5_start
-        info("✓ PL/JSON conversion complete! (Duration: %.2f seconds)", step5_duration)
-        debug(f"Step 5 completed in {step5_duration:.2f} seconds")
+        # step5_duration = time.time() - step5_start
+        # info("✓ PL/JSON conversion complete! (Duration: %.2f seconds)", step5_duration)
+        # debug(f"Step 5 completed in {step5_duration:.2f} seconds")
 
 
-        # Step 6: Convert PL/JSON to PostgreSQL format
-        # ------------------------------------------
-        info("Step 6: Converting PL/JSON to PostgreSQL format...")
-        debug("Starting Step 6: PL/JSON → PostgreSQL format JSON")
-        step6_start = time.time()
+        # # Step 6: Convert PL/JSON to PostgreSQL format
+        # # ------------------------------------------
+        # info("Step 6: Converting PL/JSON to PostgreSQL format...")
+        # debug("Starting Step 6: PL/JSON → PostgreSQL format JSON")
+        # step6_start = time.time()
        
-        # Convert PL/JSON to PostgreSQL trigger structure
-        read_json_to_postsql_triggers()
+        # # Convert PL/JSON to PostgreSQL trigger structure
+        # read_json_to_postsql_triggers()
        
-        step6_duration = time.time() - step6_start
-        info("✓ PostgreSQL format conversion complete! (Duration: %.2f seconds)", step6_duration)
-        debug(f"Step 6 completed in {step6_duration:.2f} seconds")
+        # step6_duration = time.time() - step6_start
+        # info("✓ PostgreSQL format conversion complete! (Duration: %.2f seconds)", step6_duration)
+        # debug(f"Step 6 completed in {step6_duration:.2f} seconds")
 
 
-        # Step 7: Convert JSON analysis directly to PostgreSQL SQL
-        # ------------------------------------------------------
-        info("Step 7: Converting JSON analysis directly to PostgreSQL SQL...")
-        debug("Starting Step 7: JSON analysis → PostgreSQL SQL")
-        step7_start = time.time()
+        # # Step 7: Convert JSON analysis directly to PostgreSQL SQL
+        # # ------------------------------------------------------
+        # info("Step 7: Converting JSON analysis directly to PostgreSQL SQL...")
+        # debug("Starting Step 7: JSON analysis → PostgreSQL SQL")
+        # step7_start = time.time()
        
-        # Convert JSON analysis directly to PostgreSQL SQL
-        convert_json_analysis_to_postgresql_sql()
+        # # Convert JSON analysis directly to PostgreSQL SQL
+        # convert_json_analysis_to_postgresql_sql()
        
-        step7_duration = time.time() - step7_start
-        info("✓ Direct PostgreSQL SQL conversion complete! (Duration: %.2f seconds)", step7_duration)
-        debug(f"Step 7 completed in {step7_duration:.2f} seconds")
+        # step7_duration = time.time() - step7_start
+        # info("✓ Direct PostgreSQL SQL conversion complete! (Duration: %.2f seconds)", step7_duration)
+        # debug(f"Step 7 completed in {step7_duration:.2f} seconds")
 
 
-        # Step 8: Generate final PostgreSQL SQL files
-        # -----------------------------------------
-        info("Step 8: Converting PostgreSQL format JSON to final SQL...")
-        debug("Starting Step 8: PostgreSQL JSON → SQL output files")
-        step8_start = time.time()
+        # # Step 8: Generate final PostgreSQL SQL files
+        # # -----------------------------------------
+        # info("Step 8: Converting PostgreSQL format JSON to final SQL...")
+        # debug("Starting Step 8: PostgreSQL JSON → SQL output files")
+        # step8_start = time.time()
        
-        # Generate the final PostgreSQL SQL files
-        convert_postgresql_format_files_to_sql()
+        # # Generate the final PostgreSQL SQL files
+        # convert_postgresql_format_files_to_sql()
        
-        step8_duration = time.time() - step8_start
-        info("✓ Final SQL generation complete! (Duration: %.2f seconds)", step8_duration)
-        debug(f"Step 8 completed in {step8_duration:.2f} seconds")
+        # step8_duration = time.time() - step8_start
+        # info("✓ Final SQL generation complete! (Duration: %.2f seconds)", step8_duration)
+        # debug(f"Step 8 completed in {step8_duration:.2f} seconds")
 
 
-        # Final summary
-        # ------------
-        total_duration = time.time() - start_time
-        info("=== Batch conversion finished successfully ===")
-        info("Total execution time: %.2f seconds", total_duration)
+        # # Final summary
+        # # ------------
+        # total_duration = time.time() - start_time
+        # info("=== Batch conversion finished successfully ===")
+        # info("Total execution time: %.2f seconds", total_duration)
        
-        # Detailed performance breakdown
-        info("Performance breakdown by step:")
-        info("  - Step 1 (SQL → JSON):              %.2f seconds (%.1f%%)", step1_duration, step1_duration/total_duration*100)
-        info("  - Step 2 (JSON → Oracle SQL):       %.2f seconds (%.1f%%)", step2_duration, step2_duration/total_duration*100)
-        info("  - Step 3 (JSON cleaning):           %.2f seconds (%.1f%%)", step3_duration, step3_duration/total_duration*100)
-        # info("  - Step 4 (Validation):              %.2f seconds (%.1f%%)", step4_duration, step4_duration/total_duration*100)
-        info("  - Step 5 (JSON → PL/JSON):          %.2f seconds (%.1f%%)", step5_duration, step5_duration/total_duration*100)
-        info("  - Step 6 (PL/JSON → PostgreSQL):    %.2f seconds (%.1f%%)", step6_duration, step6_duration/total_duration*100)
-        info("  - Step 7 (JSON → PostgreSQL SQL):   %.2f seconds (%.1f%%)", step7_duration, step7_duration/total_duration*100)
-        info("  - Step 8 (PostgreSQL JSON → SQL):   %.2f seconds (%.1f%%)", step8_duration, step8_duration/total_duration*100)
+        # # Detailed performance breakdown
+        # info("Performance breakdown by step:")
+        # info("  - Step 1 (SQL → JSON):              %.2f seconds (%.1f%%)", step1_duration, step1_duration/total_duration*100)
+        # info("  - Step 2 (JSON → Oracle SQL):       %.2f seconds (%.1f%%)", step2_duration, step2_duration/total_duration*100)
+        # info("  - Step 3 (JSON cleaning):           %.2f seconds (%.1f%%)", step3_duration, step3_duration/total_duration*100)
+        # # info("  - Step 4 (Validation):              %.2f seconds (%.1f%%)", step4_duration, step4_duration/total_duration*100)
+        # info("  - Step 5 (JSON → PL/JSON):          %.2f seconds (%.1f%%)", step5_duration, step5_duration/total_duration*100)
+        # info("  - Step 6 (PL/JSON → PostgreSQL):    %.2f seconds (%.1f%%)", step6_duration, step6_duration/total_duration*100)
+        # info("  - Step 7 (JSON → PostgreSQL SQL):   %.2f seconds (%.1f%%)", step7_duration, step7_duration/total_duration*100)
+        # info("  - Step 8 (PostgreSQL JSON → SQL):   %.2f seconds (%.1f%%)", step8_duration, step8_duration/total_duration*100)
        
-        debug("Main conversion workflow completed successfully")
+        # debug("Main conversion workflow completed successfully")
 
 
     except KeyboardInterrupt:
