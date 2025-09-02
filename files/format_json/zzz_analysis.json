@@ -43,7 +43,7 @@
         "if_line_no": 11,
         "then_line_no": 11,
         "if_indent": 4,
-        "end_if_line_no": 197,
+        "end_if_line_no": 196,
         "then_statements": [
           {
             "indent": 8,
@@ -215,23 +215,20 @@
                 "line": "MDM_UTIL_IRTT.MAINTAIN_IRTT_ROLES ();",
                 "line_no": 191,
                 "filename": "zzz.sql"
-              },
-              {
-                "indent": 8,
-                "line": "ELSIF (DELETING) THEN",
-                "line_no": 192,
-                "filename": "zzz.sql"
-              },
+              }
+            ]
+          },
+          {
+            "type": "elif_statement",
+            "elif_line_no": 192,
+            "elif_indent": 4,
+            "condition": "(DELETING)",
+            "then_line_no": 192,
+            "then_statements": [
               {
                 "indent": 12,
                 "line": "HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');",
                 "line_no": 195,
-                "filename": "zzz.sql"
-              },
-              {
-                "indent": 8,
-                "line": "END IF;",
-                "line_no": 196,
                 "filename": "zzz.sql"
               }
             ]
@@ -244,9 +241,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_EVENT_ID_REQUIRED",
-        "when_line_no": 199,
+        "when_line_no": 198,
         "when_indent": 4,
-        "then_line_no": 199,
+        "then_line_no": 198,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -266,9 +263,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
-        "when_line_no": 201,
+        "when_line_no": 200,
         "when_indent": 4,
-        "then_line_no": 201,
+        "then_line_no": 200,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -288,9 +285,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_DATE_RANGE_OVERLAP",
-        "when_line_no": 203,
+        "when_line_no": 202,
         "when_indent": 4,
-        "then_line_no": 203,
+        "then_line_no": 202,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -310,9 +307,9 @@
       {
         "type": "exception_handler",
         "exception_name": "ERR_DO_NOT_MODIFY_PAST_DATA",
-        "when_line_no": 205,
+        "when_line_no": 204,
         "when_indent": 4,
-        "then_line_no": 205,
+        "then_line_no": 204,
         "exception_statements": [
           {
             "type": "function_calling",
@@ -330,8 +327,8 @@
         ]
       }
     ],
-    "exception_line_no": 198,
-    "end_line_no": 207
+    "exception_line_no": 197,
+    "end_line_no": 206
   },
   "sql_comments": [
     "-- Not supported!",
@@ -374,21 +371,9 @@
       "filename": "zzz.sql"
     },
     {
-      "indent": 8,
-      "line": "ELSIF (DELETING) THEN",
-      "line_no": 192,
-      "filename": "zzz.sql"
-    },
-    {
       "indent": 12,
       "line": "HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');",
       "line_no": 195,
-      "filename": "zzz.sql"
-    },
-    {
-      "indent": 8,
-      "line": "END IF;",
-      "line_no": 196,
       "filename": "zzz.sql"
     }
   ],
@@ -409,7 +394,7 @@
       "exception_handler": 4,
       "function_calling": 5,
       "when_statement": 0,
-      "elif_statement": 1,
+      "elif_statement": 2,
       "fetch_statement": 0,
       "open_statement": 0,
       "exit_statement": 0,
@@ -421,14 +406,14 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-09-03T01:50:21.822602",
+    "parse_timestamp": "2025-09-03T04:34:17.133501",
     "parser_version": "1.0",
     "file_details": {
       "filename": "zzz.sql",
       "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\zzz.sql",
-      "filesize": 7251,
+      "filesize": 7230,
       "file_extension": ".sql",
-      "last_modified": 1756844415.2012346,
+      "last_modified": 1756844504.884048,
       "created_time": 1756173936.5202713,
       "is_file": true,
       "is_readable": true

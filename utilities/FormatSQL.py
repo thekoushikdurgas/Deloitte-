@@ -310,7 +310,10 @@ class FormatSQL:
             # ["DO $$", "DECLARE", *lines, "$$ LANGUAGE plpgsql;"])
             # lines.append("DO $$")
             #     lines.append("$$ LANGUAGE plpgsql;")
-        result = "DO $$ " + " ".join([line.strip() for line in lines]) + " $$ LANGUAGE plpgsql;"
+        if db_type == "PostgreSQL":
+            result = "DO $$ " + " ".join([line.strip() for line in lines]) + " $$ LANGUAGE plpgsql;"
+        elif db_type == "Oracle":
+            result = "\n".join(lines)
         debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
         if self.analysis['conversion_stats'] is None:
             logger.debug(f"sql_convert_count: {self.analysis['conversion_stats']}")

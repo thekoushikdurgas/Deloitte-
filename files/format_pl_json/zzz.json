@@ -44,7 +44,7 @@
           "if_line_no": 11,
           "then_line_no": 11,
           "if_indent": 4,
-          "end_if_line_no": 197,
+          "end_if_line_no": 196,
           "then_statements": [
             {
               "indent": 8,
@@ -61,9 +61,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_EVENT_ID_REQUIRED",
-          "when_line_no": 199,
+          "when_line_no": 198,
           "when_indent": 4,
-          "then_line_no": 199,
+          "then_line_no": 198,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -83,9 +83,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
-          "when_line_no": 201,
+          "when_line_no": 200,
           "when_indent": 4,
-          "then_line_no": 201,
+          "then_line_no": 200,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -105,9 +105,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DATE_RANGE_OVERLAP",
-          "when_line_no": 203,
+          "when_line_no": 202,
           "when_indent": 4,
-          "then_line_no": 203,
+          "then_line_no": 202,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -127,9 +127,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DO_NOT_MODIFY_PAST_DATA",
-          "when_line_no": 205,
+          "when_line_no": 204,
           "when_indent": 4,
-          "then_line_no": 205,
+          "then_line_no": 204,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -147,8 +147,8 @@
           ]
         }
       ],
-      "exception_line_no": 198,
-      "end_line_no": 207
+      "exception_line_no": 197,
+      "end_line_no": 206
     },
     "conversion_stats": {
       "select_statement": 0,
@@ -219,7 +219,7 @@
           "if_line_no": 11,
           "then_line_no": 11,
           "if_indent": 4,
-          "end_if_line_no": 197,
+          "end_if_line_no": 196,
           "then_statements": [
             {
               "condition": ":NEW.EVENT_ID IS NULL",
@@ -376,24 +376,6 @@
               "line": "MDM_UTIL_IRTT.MAINTAIN_IRTT_ROLES ();",
               "line_no": 191,
               "filename": "zzz.sql"
-            },
-            {
-              "indent": 8,
-              "line": "ELSIF (DELETING) THEN",
-              "line_no": 192,
-              "filename": "zzz.sql"
-            },
-            {
-              "indent": 12,
-              "line": "HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');",
-              "line_no": 195,
-              "filename": "zzz.sql"
-            },
-            {
-              "indent": 8,
-              "line": "END IF;",
-              "line_no": 196,
-              "filename": "zzz.sql"
             }
           ],
           "if_elses": [],
@@ -404,9 +386,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_EVENT_ID_REQUIRED",
-          "when_line_no": 199,
+          "when_line_no": 198,
           "when_indent": 4,
-          "then_line_no": 199,
+          "then_line_no": 198,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -426,9 +408,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
-          "when_line_no": 201,
+          "when_line_no": 200,
           "when_indent": 4,
-          "then_line_no": 201,
+          "then_line_no": 200,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -448,9 +430,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DATE_RANGE_OVERLAP",
-          "when_line_no": 203,
+          "when_line_no": 202,
           "when_indent": 4,
-          "then_line_no": 203,
+          "then_line_no": 202,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -470,9 +452,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DO_NOT_MODIFY_PAST_DATA",
-          "when_line_no": 205,
+          "when_line_no": 204,
           "when_indent": 4,
-          "then_line_no": 205,
+          "then_line_no": 204,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -490,8 +472,8 @@
           ]
         }
       ],
-      "exception_line_no": 198,
-      "end_line_no": 207
+      "exception_line_no": 197,
+      "end_line_no": 206
     },
     "conversion_stats": {
       "select_statement": 4,
@@ -555,14 +537,33 @@
       "type": "begin_end",
       "begin_line_no": 10,
       "begin_indent": 0,
-      "begin_end_statements": [],
+      "begin_end_statements": [
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_line_no": 11,
+          "then_line_no": 11,
+          "if_indent": 4,
+          "end_if_line_no": 196,
+          "then_statements": [
+            {
+              "indent": 12,
+              "line": "HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');",
+              "line_no": 195,
+              "filename": "zzz.sql"
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        }
+      ],
       "exception_handlers": [
         {
           "type": "exception_handler",
           "exception_name": "ERR_EVENT_ID_REQUIRED",
-          "when_line_no": 199,
+          "when_line_no": 198,
           "when_indent": 4,
-          "then_line_no": 199,
+          "then_line_no": 198,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -582,9 +583,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
-          "when_line_no": 201,
+          "when_line_no": 200,
           "when_indent": 4,
-          "then_line_no": 201,
+          "then_line_no": 200,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -604,9 +605,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DATE_RANGE_OVERLAP",
-          "when_line_no": 203,
+          "when_line_no": 202,
           "when_indent": 4,
-          "then_line_no": 203,
+          "then_line_no": 202,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -626,9 +627,9 @@
         {
           "type": "exception_handler",
           "exception_name": "ERR_DO_NOT_MODIFY_PAST_DATA",
-          "when_line_no": 205,
+          "when_line_no": 204,
           "when_indent": 4,
-          "then_line_no": 205,
+          "then_line_no": 204,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -646,8 +647,8 @@
           ]
         }
       ],
-      "exception_line_no": 198,
-      "end_line_no": 207
+      "exception_line_no": 197,
+      "end_line_no": 206
     },
     "conversion_stats": {
       "select_statement": 0,
@@ -657,7 +658,7 @@
       "raise_statement": 0,
       "assignment": 0,
       "for_loop": 0,
-      "if_else": 0,
+      "if_else": 1,
       "case_when": 0,
       "begin_end": 1,
       "exception_handler": 4,
@@ -674,14 +675,14 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-09-03T01:50:21.822602",
+    "parse_timestamp": "2025-09-03T04:34:17.133501",
     "parser_version": "1.0",
     "file_details": {
       "filename": "zzz.sql",
       "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\zzz.sql",
-      "filesize": 7251,
+      "filesize": 7230,
       "file_extension": ".sql",
-      "last_modified": 1756844415.2012346,
+      "last_modified": 1756844504.884048,
       "created_time": 1756173936.5202713,
       "is_file": true,
       "is_readable": true

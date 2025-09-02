@@ -1,0 +1,6 @@
+2025-09-03 04:55:08,921 - root - INFO - [common.py:110] - Saved Excel sheet: data_type_mappings
+2025-09-03 04:55:33,848 - root - INFO - [common.py:110] - Saved Excel sheet: data_type_mappings
+2025-09-03 04:55:50,247 - root - INFO - [common.py:110] - Created new mapping sheet: data_type_mappings
+2025-09-03 04:56:29,271 - root - INFO - [common.py:110] - Saved Excel sheet: function_mappings
+2025-09-03 04:57:22,013 - root - INFO - [common.py:110] - Saved Excel sheet: function_list
+2025-09-03 04:57:31,377 - root - INFO - [common.py:110] - Saved Excel sheet: function_mappings
