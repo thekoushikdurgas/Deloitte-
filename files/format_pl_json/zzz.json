@@ -3,43 +3,54 @@
     "declarations": {
       "variables": [
         {
-          "name": "V_TRIGGER_NAME",
-          "data_type": "VARCHAR2(100)",
-          "default_value": "'GLOBAL_CPY_PREFIXES_IOF'"
+          "name": "V_KEY_CONTACTS_LIST",
+          "data_type": "IRTT_MULTIROW_REC_C",
+          "default_value": null
+        },
+        {
+          "name": "L_ERROR_COUNTER",
+          "data_type": "PLS_INTEGER",
+          "default_value": null
         }
       ],
       "constants": [],
       "exceptions": [
         {
-          "name": "ERR_UPD",
+          "name": "ERR_EVENT_ID_REQUIRED",
           "type": "EXCEPTION"
         },
         {
-          "name": "ERR_DEL",
+          "name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "ERR_DATE_RANGE_OVERLAP",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "ERR_DO_NOT_MODIFY_PAST_DATA",
           "type": "EXCEPTION"
         }
       ]
     },
     "main": {
       "type": "begin_end",
+      "begin_line_no": 10,
       "begin_indent": 0,
       "begin_end_statements": [
         {
           "condition": "TRUE",
           "type": "if_else",
+          "if_line_no": 11,
+          "then_line_no": 11,
           "if_indent": 4,
+          "end_if_line_no": 197,
           "then_statements": [
             {
-              "type": "begin_end",
-              "begin_indent": 8,
-              "begin_end_statements": [
-                {
-                  "type": "insert_statement",
-                  "sql_statement": "INSERT INTO V_GLOBAL_CPY_PREFIXES ( GS1_COMP_PREFIX_NO, GS1_ORG_COUNTRY_CD, GCP_OWNER_COMP_CD, GTIN_ALLOC_TYPE_PRIM_CD, GTIN_ALLOC_TYPE_SEC_CD, GTIN_ALLOC_TYPE_TER_CD, SSCC_RELEVANCY_IND, GLOBAL_CHANGE_ID, REASON_FOR_CHANGE, VALID_IND ) VALUES ( :NEW.GS1_COMP_PREFIX_NO, :NEW.GS1_ORG_COUNTRY_CD, :NEW.GCP_OWNER_COMP_CD, :NEW.GTIN_ALLOC_TYPE_PRIM_CD, :NEW.GTIN_ALLOC_TYPE_SEC_CD, :NEW.GTIN_ALLOC_TYPE_TER_CD, :NEW.SSCC_RELEVANCY_IND, :NEW.GLOBAL_CHANGE_ID, :NEW.REASON_FOR_CHANGE, :NEW.VALID_IND );",
-                  "statement_indent": 12
-                }
-              ],
-              "exception_handlers": []
+              "indent": 8,
+              "line": "HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>INSERTING not supported!');",
+              "line_no": 14,
+              "filename": "zzz.sql"
             }
           ],
           "if_elses": [],
@@ -49,8 +60,54 @@
       "exception_handlers": [
         {
           "type": "exception_handler",
-          "exception_name": "ERR_UPD",
+          "exception_name": "ERR_EVENT_ID_REQUIRED",
+          "when_line_no": 199,
           "when_indent": 4,
+          "then_line_no": 199,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
+          "when_line_no": 201,
+          "when_indent": 4,
+          "then_line_no": 201,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_DATE_RANGE_OVERLAP",
+          "when_line_no": 203,
+          "when_indent": 4,
+          "then_line_no": 203,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -59,18 +116,20 @@
                 "parameter_type": "positional",
                 "positional_params": [
                   "-20105",
-                  "V_TRIGGER_NAME"
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
                 ],
                 "named_params": {},
-                "raw_text": "-20105, V_TRIGGER_NAME"
+                "raw_text": "-20105, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
               }
             }
           ]
         },
         {
           "type": "exception_handler",
-          "exception_name": "ERR_DEL",
+          "exception_name": "ERR_DO_NOT_MODIFY_PAST_DATA",
+          "when_line_no": 205,
           "when_indent": 4,
+          "then_line_no": 205,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -78,20 +137,22 @@
               "parameters": {
                 "parameter_type": "positional",
                 "positional_params": [
-                  "-20110",
-                  "V_TRIGGER_NAME"
+                  "-20108",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
                 ],
                 "named_params": {},
-                "raw_text": "-20110, V_TRIGGER_NAME"
+                "raw_text": "-20108, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
               }
             }
           ]
         }
-      ]
+      ],
+      "exception_line_no": 198,
+      "end_line_no": 207
     },
     "conversion_stats": {
       "select_statement": 0,
-      "insert_statement": 1,
+      "insert_statement": 0,
       "update_statement": 0,
       "delete_statement": 0,
       "raise_statement": 0,
@@ -99,9 +160,9 @@
       "for_loop": 0,
       "if_else": 1,
       "case_when": 0,
-      "begin_end": 2,
-      "exception_handler": 2,
-      "function_calling": 2,
+      "begin_end": 1,
+      "exception_handler": 4,
+      "function_calling": 4,
       "when_statement": 0,
       "elif_statement": 0,
       "fetch_statement": 0,
@@ -117,40 +178,61 @@
     "declarations": {
       "variables": [
         {
-          "name": "V_TRIGGER_NAME",
-          "data_type": "VARCHAR2(100)",
-          "default_value": "'GLOBAL_CPY_PREFIXES_IOF'"
+          "name": "V_KEY_CONTACTS_LIST",
+          "data_type": "IRTT_MULTIROW_REC_C",
+          "default_value": null
+        },
+        {
+          "name": "L_ERROR_COUNTER",
+          "data_type": "PLS_INTEGER",
+          "default_value": null
         }
       ],
       "constants": [],
       "exceptions": [
         {
-          "name": "ERR_UPD",
+          "name": "ERR_EVENT_ID_REQUIRED",
           "type": "EXCEPTION"
         },
         {
-          "name": "ERR_DEL",
+          "name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "ERR_DATE_RANGE_OVERLAP",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "ERR_DO_NOT_MODIFY_PAST_DATA",
           "type": "EXCEPTION"
         }
       ]
     },
     "main": {
       "type": "begin_end",
+      "begin_line_no": 10,
       "begin_indent": 0,
       "begin_end_statements": [
         {
           "condition": "TRUE",
           "type": "if_else",
+          "if_line_no": 11,
+          "then_line_no": 11,
           "if_indent": 4,
+          "end_if_line_no": 197,
           "then_statements": [
             {
-              "condition": ":NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO",
+              "condition": ":NEW.EVENT_ID IS NULL",
               "type": "if_else",
+              "if_line_no": 18,
+              "then_line_no": 18,
               "if_indent": 8,
+              "end_if_line_no": 20,
               "then_statements": [
                 {
                   "type": "raise_statement",
-                  "sql_statement": "RAISE ERR_UPD;",
+                  "sql_statement": "RAISE ERR_EVENT_ID_REQUIRED;",
+                  "statement_line_no": 19,
                   "statement_indent": 12
                 }
               ],
@@ -158,9 +240,160 @@
               "else_statements": []
             },
             {
-              "type": "update_statement",
-              "sql_statement": "UPDATE V_GLOBAL_CPY_PREFIXES SET GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD, GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD, GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD, GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD, GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD, SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND, GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID, REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE, VALID_IND = :NEW.VALID_IND WHERE GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;",
+              "type": "select_statement",
+              "sql_statement": "SELECT IRTT_MULTIROW_REC_T( UPPER(XT.USERID), TO_DATE(XT.VALID_FROM, MDM_UTIL_IRTT.CO_DD_MM_YYYY), TO_DATE(XT.VALID_TO, MDM_UTIL_IRTT.CO_DD_MM_YYYY)) BULK COLLECT INTO V_KEY_CONTACTS_LIST FROM XMLTABLE ('/rows/row' PASSING XMLTYPE (:NEW.KEY_CONTACTS_LIST) COLUMNS USERID VARCHAR2 (20) PATH 'field[1]', VALID_FROM VARCHAR2 (20) PATH 'field[2]', VALID_TO VARCHAR2 (20) PATH 'field[3]' ) XT;",
+              "statement_line_no": 25,
               "statement_indent": 8
+            },
+            {
+              "type": "assignment",
+              "variable_name": "L_ERROR_COUNTER",
+              "assignment_operator": ":=",
+              "expression": "0;",
+              "assignment_line_no": 40,
+              "assignment_indent": 8
+            },
+            {
+              "for_expression": "( FOR R1 IN ( SELECT B.VALUE_CD AS USER_ID, B.DATE_FROM AS VALID_FROM, B.DATE_UNTIL AS VALID_UNTIL, E.USERID, E.TERMINATIONDAY FROM TABLE(V_KEY_CONTACTS_LIST) B LEFT OUTER JOIN V_ROCHE_EMPLOYEES_ALL E ON E.USERID = B. VALUE_CD )",
+              "type": "for_loop",
+              "for_line_no": 41,
+              "for_indent": 8,
+              "end_for_line_no": 80,
+              "loop_variable": "R1",
+              "for_statements": []
+            },
+            {
+              "condition": "(L_ERROR_COUNTER > 0)",
+              "type": "if_else",
+              "if_line_no": 84,
+              "then_line_no": 84,
+              "if_indent": 8,
+              "end_if_line_no": 86,
+              "then_statements": [
+                {
+                  "type": "function_calling",
+                  "function_name": "RAISE_APPLICATION_ERROR",
+                  "parameters": {
+                    "parameter_type": "positional",
+                    "positional_params": [
+                      "-20000",
+                      "'Correct your input, please.'"
+                    ],
+                    "named_params": {},
+                    "raw_text": "-20000, 'Correct your input, please.'"
+                  }
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT COUNT(1) INTO L_ERROR_COUNTER FROM TABLE(V_KEY_CONTACTS_LIST) XT WHERE XT.DATE_FROM > NVL(XT.DATE_UNTIL, XT.DATE_FROM);",
+              "statement_line_no": 91,
+              "statement_indent": 8
+            },
+            {
+              "condition": "L_ERROR_COUNTER > 0",
+              "type": "if_else",
+              "if_line_no": 99,
+              "then_line_no": 99,
+              "if_indent": 8,
+              "end_if_line_no": 101,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE ERR_DATE_FROM_AFTER_DATE_UNTIL;",
+                  "statement_line_no": 100,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT COUNT(CHK) INTO L_ERROR_COUNTER FROM ( SELECT XT.DATE_FROM, XT.DATE_UNTIL, WHEN XT.DATE_FROM <= LAG(NVL(XT.DATE_UNTIL, XT.DATE_FROM + 1)) OVER (ORDER BY XT.DATE_FROM) THEN 1 END CHK FROM TABLE(V_KEY_CONTACTS_LIST) XT );",
+              "statement_line_no": 106,
+              "statement_indent": 8
+            },
+            {
+              "condition": "L_ERROR_COUNTER > 0",
+              "type": "if_else",
+              "if_line_no": 123,
+              "then_line_no": 123,
+              "if_indent": 8,
+              "end_if_line_no": 125,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE ERR_DATE_RANGE_OVERLAP;",
+                  "statement_line_no": 124,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT COUNT(1) INTO L_ERROR_COUNTER FROM CFG.CFG_IRTT_EVENT_CONTACTS C LEFT JOIN TABLE(V_KEY_CONTACTS_LIST) XT ON C.USERID = XT.VALUE_CD AND C.VALID_FROM = XT.DATE_FROM WHERE C.EVENT_ID = :NEW.EVENT_ID AND C.VALID_FROM < TRUNC(SYSDATE) AND XT.DATE_FROM IS NULL;",
+              "statement_line_no": 130,
+              "statement_indent": 8
+            },
+            {
+              "condition": "L_ERROR_COUNTER > 0",
+              "type": "if_else",
+              "if_line_no": 143,
+              "then_line_no": 143,
+              "if_indent": 8,
+              "end_if_line_no": 145,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE ERR_DO_NOT_MODIFY_PAST_DATA;",
+                  "statement_line_no": 144,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "type": "delete_statement",
+              "sql_statement": "DELETE FROM CFG.CFG_IRTT_EVENT_CONTACTS A WHERE A.EVENT_ID = :NEW.EVENT_ID AND NOT EXISTS ( SELECT 1 FROM TABLE(V_KEY_CONTACTS_LIST) XT WHERE A.USERID = XT.VALUE_CD AND A.VALID_FROM = XT.DATE_FROM );",
+              "statement_line_no": 149,
+              "statement_indent": 8
+            },
+            {
+              "type": "merge_statement",
+              "sql_statement": "MERGE INTO CFG.CFG_IRTT_EVENT_CONTACTS A USING ( SELECT XT.VALUE_CD USERID, XT.DATE_FROM VALID_FROM, XT.DATE_UNTIL VALID_TO FROM TABLE(V_KEY_CONTACTS_LIST) XT WHERE XT.VALUE_CD IS NOT NULL ) B ON (A.EVENT_ID = :NEW.EVENT_ID AND A.USERID = B.USERID AND A.VALID_FROM = B.VALID_FROM) WHEN MATCHED THEN UPDATE SET A.VALID_TO = B.VALID_TO WHEN NOT MATCHED THEN INSERT( EVENT_ID, USERID, VALID_FROM, VALID_TO ) VALUES( :NEW.EVENT_ID, B.USERID, B.VALID_FROM, B.VALID_TO );",
+              "statement_line_no": 163,
+              "statement_indent": 8
+            },
+            {
+              "indent": 12,
+              "line": "MDM_UTIL_IRTT.MAINTAIN_IRTT_ROLES ();",
+              "line_no": 191,
+              "filename": "zzz.sql"
+            },
+            {
+              "indent": 8,
+              "line": "ELSIF (DELETING) THEN",
+              "line_no": 192,
+              "filename": "zzz.sql"
+            },
+            {
+              "indent": 12,
+              "line": "HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');",
+              "line_no": 195,
+              "filename": "zzz.sql"
+            },
+            {
+              "indent": 8,
+              "line": "END IF;",
+              "line_no": 196,
+              "filename": "zzz.sql"
             }
           ],
           "if_elses": [],
@@ -170,8 +403,54 @@
       "exception_handlers": [
         {
           "type": "exception_handler",
-          "exception_name": "ERR_UPD",
+          "exception_name": "ERR_EVENT_ID_REQUIRED",
+          "when_line_no": 199,
           "when_indent": 4,
+          "then_line_no": 199,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
+          "when_line_no": 201,
+          "when_indent": 4,
+          "then_line_no": 201,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_DATE_RANGE_OVERLAP",
+          "when_line_no": 203,
+          "when_indent": 4,
+          "then_line_no": 203,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -180,18 +459,20 @@
                 "parameter_type": "positional",
                 "positional_params": [
                   "-20105",
-                  "V_TRIGGER_NAME"
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
                 ],
                 "named_params": {},
-                "raw_text": "-20105, V_TRIGGER_NAME"
+                "raw_text": "-20105, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
               }
             }
           ]
         },
         {
           "type": "exception_handler",
-          "exception_name": "ERR_DEL",
+          "exception_name": "ERR_DO_NOT_MODIFY_PAST_DATA",
+          "when_line_no": 205,
           "when_indent": 4,
+          "then_line_no": 205,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -199,37 +480,39 @@
               "parameters": {
                 "parameter_type": "positional",
                 "positional_params": [
-                  "-20110",
-                  "V_TRIGGER_NAME"
+                  "-20108",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
                 ],
                 "named_params": {},
-                "raw_text": "-20110, V_TRIGGER_NAME"
+                "raw_text": "-20108, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
               }
             }
           ]
         }
-      ]
+      ],
+      "exception_line_no": 198,
+      "end_line_no": 207
     },
     "conversion_stats": {
-      "select_statement": 0,
+      "select_statement": 4,
       "insert_statement": 0,
-      "update_statement": 1,
-      "delete_statement": 0,
-      "raise_statement": 1,
-      "assignment": 0,
-      "for_loop": 0,
-      "if_else": 2,
+      "update_statement": 0,
+      "delete_statement": 1,
+      "raise_statement": 4,
+      "assignment": 1,
+      "for_loop": 1,
+      "if_else": 6,
       "case_when": 0,
       "begin_end": 1,
-      "exception_handler": 2,
-      "function_calling": 2,
+      "exception_handler": 4,
+      "function_calling": 5,
       "when_statement": 0,
       "elif_statement": 0,
       "fetch_statement": 0,
       "open_statement": 0,
       "exit_statement": 0,
       "close_statement": 0,
-      "merge_statement": 0,
+      "merge_statement": 1,
       "null_statement": 0,
       "return_statement": 0
     }
@@ -238,47 +521,92 @@
     "declarations": {
       "variables": [
         {
-          "name": "V_TRIGGER_NAME",
-          "data_type": "VARCHAR2(100)",
-          "default_value": "'GLOBAL_CPY_PREFIXES_IOF'"
+          "name": "V_KEY_CONTACTS_LIST",
+          "data_type": "IRTT_MULTIROW_REC_C",
+          "default_value": null
+        },
+        {
+          "name": "L_ERROR_COUNTER",
+          "data_type": "PLS_INTEGER",
+          "default_value": null
         }
       ],
       "constants": [],
       "exceptions": [
         {
-          "name": "ERR_UPD",
+          "name": "ERR_EVENT_ID_REQUIRED",
           "type": "EXCEPTION"
         },
         {
-          "name": "ERR_DEL",
+          "name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "ERR_DATE_RANGE_OVERLAP",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "ERR_DO_NOT_MODIFY_PAST_DATA",
           "type": "EXCEPTION"
         }
       ]
     },
     "main": {
       "type": "begin_end",
+      "begin_line_no": 10,
       "begin_indent": 0,
-      "begin_end_statements": [
-        {
-          "condition": "TRUE",
-          "type": "if_else",
-          "if_indent": 4,
-          "then_statements": [
-            {
-              "type": "raise_statement",
-              "sql_statement": "RAISE ERR_DEL;",
-              "statement_indent": 8
-            }
-          ],
-          "if_elses": [],
-          "else_statements": []
-        }
-      ],
+      "begin_end_statements": [],
       "exception_handlers": [
         {
           "type": "exception_handler",
-          "exception_name": "ERR_UPD",
+          "exception_name": "ERR_EVENT_ID_REQUIRED",
+          "when_line_no": 199,
           "when_indent": 4,
+          "then_line_no": 199,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_DATE_FROM_AFTER_DATE_UNTIL",
+          "when_line_no": 201,
+          "when_indent": 4,
+          "then_line_no": 201,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "ERR_DATE_RANGE_OVERLAP",
+          "when_line_no": 203,
+          "when_indent": 4,
+          "then_line_no": 203,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -287,18 +615,20 @@
                 "parameter_type": "positional",
                 "positional_params": [
                   "-20105",
-                  "V_TRIGGER_NAME"
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
                 ],
                 "named_params": {},
-                "raw_text": "-20105, V_TRIGGER_NAME"
+                "raw_text": "-20105, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
               }
             }
           ]
         },
         {
           "type": "exception_handler",
-          "exception_name": "ERR_DEL",
+          "exception_name": "ERR_DO_NOT_MODIFY_PAST_DATA",
+          "when_line_no": 205,
           "when_indent": 4,
+          "then_line_no": 205,
           "exception_statements": [
             {
               "type": "function_calling",
@@ -306,30 +636,32 @@
               "parameters": {
                 "parameter_type": "positional",
                 "positional_params": [
-                  "-20110",
-                  "V_TRIGGER_NAME"
+                  "-20108",
+                  "'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
                 ],
                 "named_params": {},
-                "raw_text": "-20110, V_TRIGGER_NAME"
+                "raw_text": "-20108, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN'"
               }
             }
           ]
         }
-      ]
+      ],
+      "exception_line_no": 198,
+      "end_line_no": 207
     },
     "conversion_stats": {
       "select_statement": 0,
       "insert_statement": 0,
       "update_statement": 0,
       "delete_statement": 0,
-      "raise_statement": 1,
+      "raise_statement": 0,
       "assignment": 0,
       "for_loop": 0,
-      "if_else": 1,
+      "if_else": 0,
       "case_when": 0,
       "begin_end": 1,
-      "exception_handler": 2,
-      "function_calling": 2,
+      "exception_handler": 4,
+      "function_calling": 4,
       "when_statement": 0,
       "elif_statement": 0,
       "fetch_statement": 0,
@@ -342,14 +674,14 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-09-03T00:45:00.752357",
+    "parse_timestamp": "2025-09-03T01:50:21.822602",
     "parser_version": "1.0",
     "file_details": {
       "filename": "zzz.sql",
       "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\zzz.sql",
-      "filesize": 2345,
+      "filesize": 7251,
       "file_extension": ".sql",
-      "last_modified": 1756825331.388498,
+      "last_modified": 1756844415.2012346,
       "created_time": 1756173936.5202713,
       "is_file": true,
       "is_readable": true

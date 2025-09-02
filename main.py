@@ -35,6 +35,7 @@ from utilities.common import (
     critical,
     alert,
 )
+import pandas as pd
 
 
 from utilities.OracleTriggerAnalyzer import OracleTriggerAnalyzer
@@ -1162,7 +1163,8 @@ def main() -> None:
         info("=== Starting Oracle Trigger Conversion Process ===")
         info("Logging to: %s", log_path)
         debug("Logging system initialized")
-
+        # clean the rest_list.csv file
+        pd.DataFrame(columns=["filename", "line", "line_no"]).to_csv("utilities/rest_list.csv",mode='w',index=False)
 
         # Step 1: Convert SQL to JSON
         # --------------------------
@@ -1191,18 +1193,18 @@ def main() -> None:
         debug(f"Step 2 completed in {step2_duration:.2f} seconds")
 
 
-        # Step 3: Clean JSON files
-        # -----------------------
-        info("Step 3: Cleaning JSON files...")
-        debug("Starting Step 3: Cleaning and optimizing JSON files")
-        step3_start = time.time()
+        # # Step 3: Clean JSON files
+        # # -----------------------
+        # info("Step 3: Cleaning JSON files...")
+        # debug("Starting Step 3: Cleaning and optimizing JSON files")
+        # step3_start = time.time()
        
-        # Remove line numbers and other metadata from JSON files
-        clean_json_files()
+        # # Remove line numbers and other metadata from JSON files
+        # clean_json_files()
        
-        step3_duration = time.time() - step3_start
-        info("✓ JSON cleaning complete! (Duration: %.2f seconds)", step3_duration)
-        debug(f"Step 3 completed in {step3_duration:.2f} seconds")
+        # step3_duration = time.time() - step3_start
+        # info("✓ JSON cleaning complete! (Duration: %.2f seconds)", step3_duration)
+        # debug(f"Step 3 completed in {step3_duration:.2f} seconds")
 
 
         # Step 5: Convert JSON to PL/JSON
@@ -1271,7 +1273,7 @@ def main() -> None:
         info("Performance breakdown by step:")
         info("  - Step 1 (SQL → JSON):              %.2f seconds (%.1f%%)", step1_duration, step1_duration/total_duration*100)
         info("  - Step 2 (JSON → Oracle SQL):       %.2f seconds (%.1f%%)", step2_duration, step2_duration/total_duration*100)
-        info("  - Step 3 (JSON cleaning):           %.2f seconds (%.1f%%)", step3_duration, step3_duration/total_duration*100)
+        # info("  - Step 3 (JSON cleaning):           %.2f seconds (%.1f%%)", step3_duration, step3_duration/total_duration*100)
         # info("  - Step 4 (Validation):              %.2f seconds (%.1f%%)", step4_duration, step4_duration/total_duration*100)
         info("  - Step 5 (JSON → PL/JSON):          %.2f seconds (%.1f%%)", step5_duration, step5_duration/total_duration*100)
         info("  - Step 6 (PL/JSON → PostgreSQL):    %.2f seconds (%.1f%%)", step6_duration, step6_duration/total_duration*100)
