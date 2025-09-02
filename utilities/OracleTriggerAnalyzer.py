@@ -892,6 +892,7 @@ class OracleTriggerAnalyzer:
                 "RAISE": "raise_statement",
                 "NULL": "null_statement",
                 "RETURN": "return_statement",
+                "MERGE": "merge_statement",
             }
             sql_statements = []
             i = 0
