@@ -634,13 +634,95 @@ class OracleTriggerAnalyzer:
 
         self._parse_begin_blocks()
         self._parse_begin_end_statements()
+        self._parse_with_statements()
         self._parse_case_when()
         self._parse_if_else()
         self._parse_for_loop()
         self._parse_function_calling_statements()
         self._parse_sql_statements()
         self.rest_strings()
+        
+    def _parse_with_statements(self):
+        """
+        Parse with statements from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+        def parse_with_statements(working_lines: List[Dict[str, Any]]):
+            with_statements = []
+            i = 0
+            while i < len(working_lines):
+                item = working_lines[i]
+                if "line" in item:
+                    line_upper = item["line"].strip().upper()
+                    if line_upper.startswith("WITH "):
+                        logger.debug(f"with_indent: {item['line_no']}")
+                        for j in range(i + 1, len(working_lines)):
+                            line_info = working_lines[j]
+                            if "line" in line_info:
+                                line_upper = line_info["line"].strip().upper()
+                                if line_upper.endswith(")") and line_info["indent"] == item["indent"]:
+                                    logger.debug(f"with_i: {item['line_no']} i: {line_info['line_no']}")
+                                    with_statement = self._parse_with_statement(working_lines[i : j+1])
+                                    with_statements.append(with_statement)
+                                    i = j
+                                    break
+                    else:
+                        with_statements.append(item)
+                elif "type" in item:
+                    if item["type"] == "begin_end":
+                        # Process IF statements in begin_end_statements
+                        if "begin_end_statements" in item:
+                            item["begin_end_statements"] = parse_with_statements(item["begin_end_statements"])
+                        # Process IF statements in exception_handlers
+                        if "exception_handlers" in item:
+                            for handler in item["exception_handlers"]:
+                                if "exception_statements" in handler:
+                                    handler["exception_statements"] = parse_with_statements(handler["exception_statements"])
 
+                    elif item["type"] == "case_when":
+                        if "when_clauses" in item:
+                            for clause in item["when_clauses"]:
+                                if "then_statements" in clause:
+                                    clause["then_statements"] = parse_with_statements(clause["then_statements"])
+                        # Process CASE statements in top-level else_statements
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_with_statements(item["else_statements"])
+
+                    elif item["type"] == "if_else":
+                        # Process CASE statements in then_statements, if_elses, and else_statements
+                        if "then_statements" in item:
+                            item["then_statements"] = parse_with_statements(item["then_statements"])   
+                        if "if_elses" in item:
+                            for elsif_block in item["if_elses"]:
+                                if "then_statements" in elsif_block:
+                                        elsif_block["then_statements"] = parse_with_statements(elsif_block["then_statements"])
+                        if "else_statements" in item:
+                            item["else_statements"] = parse_with_statements(item["else_statements"])
+                    # Process SQL statements in for_loop
+                    elif item["type"] == "for_loop" and "for_statements" in item:
+                        item["for_statements"] = parse_with_statements(item["for_statements"])
+                    with_statements.append(item)
+                i += 1
+            return with_statements
+        self.main_section_lines["begin_end_statements"] = parse_with_statements(self.main_section_lines["begin_end_statements"])
+        for k, handler in enumerate(self.main_section_lines["exception_handlers"]):
+            if "exception_statements" in handler:
+                self.main_section_lines['exception_handlers'][k]["exception_statements"] = parse_with_statements(handler["exception_statements"])
+    def _parse_with_statement(self, working_lines: List[Dict[str, Any]]):
+        """
+        Parse with statement from the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+        with_statement = {
+            "type": "with_statement",
+            "with_line_no": working_lines[0]["line_no"],
+            "with_indent": working_lines[0]["indent"],
+            "with_values": "",
+            "with_statements": "",
+        }
+        return with_statement
     def _parse_function_calling_statements(self):
         """
         Parse function calling statements from the main section of SQL.
@@ -1200,7 +1282,7 @@ class OracleTriggerAnalyzer:
                     else_i = i
                     if elif_i == -1:
                         elif_else_statements['then_statements'] = working_lines[then_i+1:i]
-                    logger.debug(f"else_statements: {working_lines[i+1]["line_no"]}, {working_lines[-1]["line_no"]}")
+                    # logger.debug(f"else_statements: {working_lines[i+1]["line_no"]}, {working_lines[-1]["line_no"]}")
                     elif_else_statements['else_statements'] = working_lines[i + 1 : -1]
                     i = len(working_lines)
             i += 1

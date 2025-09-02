@@ -1,74 +1,551 @@
 {
   "declarations": {
-    "variables": [],
+    "variables": [
+      {
+        "name": "V_HOLIDAY_DESCS",
+        "data_type": "TXO_VARCHAR_COLL",
+        "default_value": null
+      },
+      {
+        "name": "V_COUNTRY_CODES",
+        "data_type": "TXO_VARCHAR_COLL",
+        "default_value": null
+      },
+      {
+        "name": "V_CHK_IS_MULTIVALUE",
+        "data_type": "NUMBER",
+        "default_value": null
+      },
+      {
+        "name": "V_CHK_DISTINCT",
+        "data_type": "NUMBER",
+        "default_value": null
+      }
+    ],
     "constants": [],
-    "exceptions": []
+    "exceptions": [
+      {
+        "name": "ERR_INS",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_UPD",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_UPD2",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_UPD3",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_UPD4",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_DEL",
+        "type": "EXCEPTION"
+      },
+      {
+        "name": "ERR_LEVEL",
+        "type": "EXCEPTION"
+      }
+    ]
   },
   "main": {
     "type": "begin_end",
-    "begin_line_no": 4,
+    "begin_line_no": 15,
     "begin_indent": 0,
     "begin_end_statements": [
       {
-        "condition": " DELETING ",
+        "condition": " (INSERTING OR UPDATING) ",
         "type": "if_else",
-        "if_line_no": 5,
-        "then_line_no": 5,
+        "if_line_no": 19,
+        "then_line_no": 20,
         "if_indent": 4,
-        "end_if_line_no": 20,
+        "end_if_line_no": 182,
         "then_statements": [
           {
-            "type": "begin_end",
-            "begin_line_no": 6,
-            "begin_indent": 8,
-            "begin_end_statements": [
+            "indent": 8,
+            "line": "        WITH C AS (",
+            "line_no": 21
+          },
+          {
+            "type": "select_statement",
+            "sql_statement": "SELECT TRIM(REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL)) COL FROM DUAL CONNECT BY REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL) IS NOT NULL ) SELECT REGEXP_SUBSTR(C.COL, '[^[]+', 1)        HOLIDAY_DESC, REGEXP_SUBSTR(C.COL, '[^[]+[^]]', 1, 2) COUNTRY_CD BULK COLLECT INTO V_HOLIDAY_DESCS, V_COUNTRY_CODES FROM C;",
+            "statement_line_no": 22,
+            "statement_indent": 12
+          },
+          {
+            "type": "select_statement",
+            "sql_statement": "SELECT COUNT(COUNTRY_CD), COUNT(COLUMN_VALUE) - COUNT(DISTINCT COLUMN_VALUE) INTO V_CHK_IS_MULTIVALUE , V_CHK_DISTINCT FROM TABLE (V_COUNTRY_CODES) LEFT JOIN COUNTRIES ON COUNTRY_CD = COLUMN_VALUE         ;",
+            "statement_line_no": 38,
+            "statement_indent": 8
+          },
+          {
+            "condition": " V_CHK_IS_MULTIVALUE >= 1 AND V_CHK_IS_MULTIVALUE != V_HOLIDAY_DESCS.COUNT ",
+            "type": "if_else",
+            "if_line_no": 48,
+            "then_line_no": 48,
+            "if_indent": 8,
+            "end_if_line_no": 52,
+            "then_statements": [
               {
-                "type": "delete_statement",
-                "sql_statement": "DELETE CER.CER_V_RATE_SUBSCRIPTIONS WHERE MEMBER_OF_RSG_CD = :OLD.RSG_CD;",
-                "statement_line_no": 10,
-                "statement_indent": 12
-              },
-              {
-                "type": "delete_statement",
-                "sql_statement": "DELETE CER.CER_V_RATE_SUBSCRIPTION_GROUPS WHERE RSG_CD = :OLD.RSG_CD;",
-                "statement_line_no": 16,
+                "type": "raise_statement",
+                "sql_statement": "RAISE ERR_UPD2;",
+                "statement_line_no": 49,
                 "statement_indent": 12
               }
             ],
-            "exception_handlers": [],
-            "exception_line_no": -1,
-            "end_line_no": 19
+            "if_elses": [],
+            "else_statements": []
+          },
+          {
+            "condition": " V_CHK_DISTINCT > 0 ",
+            "type": "if_else",
+            "if_line_no": 54,
+            "then_line_no": 54,
+            "if_indent": 8,
+            "end_if_line_no": 56,
+            "then_statements": [
+              {
+                "type": "raise_statement",
+                "sql_statement": "RAISE ERR_UPD3;",
+                "statement_line_no": 55,
+                "statement_indent": 12
+              }
+            ],
+            "if_elses": [],
+            "else_statements": []
+          },
+          {
+            "condition": " V_CHK_IS_MULTIVALUE <= 1 ",
+            "type": "if_else",
+            "if_line_no": 58,
+            "then_line_no": 58,
+            "if_indent": 8,
+            "end_if_line_no": 161,
+            "then_statements": [
+              {
+                "type": "begin_end",
+                "begin_line_no": 59,
+                "begin_indent": 12,
+                "begin_end_statements": [
+                  {
+                    "indent": 16,
+                    "line": "                MERGE INTO CFG.CFG_IRTT_HOLIDAYS A USING (",
+                    "line_no": 60
+                  },
+                  {
+                    "type": "select_statement",
+                    "sql_statement": "SELECT HOLIDAY_DATE, HOLIDAY_DESC, GRANTED, COUNTRY_CD, HOLIDAY_REMARKS, VALID_IND FROM ( SELECT :NEW.HOLIDAY_DATE    HOLIDAY_DATE, :NEW.HOLIDAY_NAME    HOLIDAY_DESC, :NEW.GRANTED         GRANTED, :NEW.VALID_FOR_CH    CH, :NEW.VALID_FOR_USA   USA, :NEW.VALID_FOR_UK    UK, :NEW.VALID_FOR_FR    FR, :NEW.VALID_FOR_DE    DE, :NEW.VALID_FOR_JP    JP, :NEW.HOLIDAY_REMARKS HOLIDAY_REMARKS FROM DUAL )  UNPIVOT (VALID_IND FOR COUNTRY_CD IN (CH AS 'CH', USA AS 'US', UK AS 'GB', FR AS 'FR', DE AS 'DE', JP AS 'JP')) ) B ON (A.HOLIDAY_DATE = B.HOLIDAY_DATE AND A.COUNTRY_CD = B.COUNTRY_CD) WHEN MATCHED THEN UPDATE SET A.GRANTED = B.GRANTED, A.VALID_IND = B.VALID_IND, A.HOLIDAY_DESC = B.HOLIDAY_DESC, A.HOLIDAY_REMARKS = B.HOLIDAY_REMARKS WHEN NOT MATCHED THEN INSERT(HOLIDAY_DATE, HOLIDAY_DESC, GRANTED, COUNTRY_CD, HOLIDAY_REMARKS, VALID_IND) VALUES(B.HOLIDAY_DATE, B.HOLIDAY_DESC, B.GRANTED, B.COUNTRY_CD, B.HOLIDAY_REMARKS, B.VALID_IND);",
+                    "statement_line_no": 61,
+                    "statement_indent": 20
+                  }
+                ],
+                "exception_handlers": [
+                  {
+                    "type": "exception_handler",
+                    "exception_name": "OTHERS",
+                    "when_line_no": 92,
+                    "when_indent": 16,
+                    "then_line_no": 92,
+                    "exception_statements": [
+                      {
+                        "condition": " SQLCODE = -1407 AND INSTR(SQLERRM, '\"CFG_IRTT_HOLIDAYS\".\"HOLIDAY_DESC\"') > 0 ",
+                        "type": "if_else",
+                        "if_line_no": 93,
+                        "then_line_no": 93,
+                        "if_indent": 20,
+                        "end_if_line_no": 97,
+                        "then_statements": [
+                          {
+                            "type": "raise_statement",
+                            "sql_statement": "RAISE ERR_INS;",
+                            "statement_line_no": 94,
+                            "statement_indent": 24
+                          }
+                        ],
+                        "if_elses": [],
+                        "else_statements": [
+                          {
+                            "type": "raise_statement",
+                            "sql_statement": "RAISE;",
+                            "statement_line_no": 96,
+                            "statement_indent": 24
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "exception_line_no": 91,
+                "end_line_no": 98
+              }
+            ],
+            "if_elses": [],
+            "else_statements": [
+              {
+                "type": "begin_end",
+                "begin_line_no": 100,
+                "begin_indent": 12,
+                "begin_end_statements": [
+                  {
+                    "indent": 16,
+                    "line": "                MERGE INTO CFG.CFG_IRTT_HOLIDAYS A USING ( WITH HN AS (",
+                    "line_no": 101
+                  },
+                  {
+                    "type": "select_statement",
+                    "sql_statement": "SELECT A.COLUMN_VALUE HOLIDAY_DESC, B.COLUMN_VALUE COUNTRY_CODE FROM ( SELECT COLUMN_VALUE, ROWNUM       RN FROM TABLE(V_HOLIDAY_DESCS) ) A JOIN ( SELECT COLUMN_VALUE, ROWNUM       RN FROM TABLE(V_COUNTRY_CODES) ) B ON A.RN = B.RN ) SELECT HOLIDAY_DATE, DECODE(VALID_IND, 'N', 'N/A', HOLIDAY_DESC) HOLIDAY_DESC, GRANTED, COUNTRY_CD, HOLIDAY_REMARKS, VALID_IND FROM ( SELECT :NEW.HOLIDAY_DATE    HOLIDAY_DATE, :NEW.GRANTED         GRANTED, :NEW.VALID_FOR_CH    CH, :NEW.VALID_FOR_USA   USA, :NEW.VALID_FOR_UK    UK, :NEW.VALID_FOR_FR    FR, :NEW.VALID_FOR_DE    DE, :NEW.VALID_FOR_JP    JP, :NEW.HOLIDAY_REMARKS HOLIDAY_REMARKS FROM DUAL )  UNPIVOT (VALID_IND FOR COUNTRY_CD IN (CH AS 'CH', USA AS 'US', UK AS 'GB', FR AS 'FR', DE AS 'DE', JP AS 'JP')) LEFT JOIN HN ON HN.COUNTRY_CODE = COUNTRY_CD ) B ON (A.HOLIDAY_DATE = B.HOLIDAY_DATE AND A.COUNTRY_CD = B.COUNTRY_CD) WHEN MATCHED THEN UPDATE SET A.GRANTED = B.GRANTED, A.VALID_IND = B.VALID_IND, A.HOLIDAY_DESC = B.HOLIDAY_DESC, A.HOLIDAY_REMARKS = B.HOLIDAY_REMARKS WHEN NOT MATCHED THEN INSERT(HOLIDAY_DATE, HOLIDAY_DESC, GRANTED, COUNTRY_CD, HOLIDAY_REMARKS, VALID_IND) VALUES(B.HOLIDAY_DATE, B.HOLIDAY_DESC, B.GRANTED, B.COUNTRY_CD, B.HOLIDAY_REMARKS, B.VALID_IND);",
+                    "statement_line_no": 102,
+                    "statement_indent": 20
+                  }
+                ],
+                "exception_handlers": [
+                  {
+                    "type": "exception_handler",
+                    "exception_name": "OTHERS",
+                    "when_line_no": 154,
+                    "when_indent": 16,
+                    "then_line_no": 154,
+                    "exception_statements": [
+                      {
+                        "condition": " SQLCODE = -1407 AND INSTR(SQLERRM, '\"CFG_IRTT_HOLIDAYS\".\"HOLIDAY_DESC\"') > 0 ",
+                        "type": "if_else",
+                        "if_line_no": 155,
+                        "then_line_no": 155,
+                        "if_indent": 20,
+                        "end_if_line_no": 159,
+                        "then_statements": [
+                          {
+                            "type": "raise_statement",
+                            "sql_statement": "RAISE ERR_UPD4;",
+                            "statement_line_no": 156,
+                            "statement_indent": 24
+                          }
+                        ],
+                        "if_elses": [],
+                        "else_statements": [
+                          {
+                            "type": "raise_statement",
+                            "sql_statement": "RAISE;",
+                            "statement_line_no": 158,
+                            "statement_indent": 24
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "exception_line_no": 153,
+                "end_line_no": 160
+              }
+            ]
+          },
+          {
+            "condition": " (:NEW.GRANTED != :OLD.GRANTED) ",
+            "type": "if_else",
+            "if_line_no": 166,
+            "then_line_no": 166,
+            "if_indent": 8,
+            "end_if_line_no": 174,
+            "then_statements": [
+              {
+                "indent": 12,
+                "line": "            MDMAPPL.MDM_UTIL_IRTT.REGENERATE_EVENT_DATES_FOR_MONTH(",
+                "line_no": 169
+              },
+              {
+                "indent": 16,
+                "line": "                P_YEAR => EXTRACT(YEAR FROM :NEW.HOLIDAY_DATE),",
+                "line_no": 170
+              },
+              {
+                "indent": 16,
+                "line": "                P_MONTH => EXTRACT(MONTH FROM :NEW.HOLIDAY_DATE),",
+                "line_no": 171
+              },
+              {
+                "indent": 16,
+                "line": "                P_START_EVENT_DATE => :NEW.HOLIDAY_DATE",
+                "line_no": 172
+              },
+              {
+                "indent": 12,
+                "line": "            );",
+                "line_no": 173
+              }
+            ],
+            "if_elses": [],
+            "else_statements": []
           }
         ],
         "if_elses": [],
         "else_statements": []
       }
     ],
-    "exception_handlers": [],
-    "exception_line_no": -1,
-    "end_line_no": 21
+    "exception_handlers": [
+      {
+        "type": "exception_handler",
+        "exception_name": "DUP_VAL_ON_INDEX",
+        "when_line_no": 186,
+        "when_indent": 4,
+        "then_line_no": 186,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20101",
+                "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              ],
+              "named_params": {},
+              "raw_text": "-20101, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+            }
+          }
+        ]
+      },
+      {
+        "type": "exception_handler",
+        "exception_name": "ERR_INS",
+        "when_line_no": 190,
+        "when_indent": 4,
+        "then_line_no": 190,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20102",
+                "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              ],
+              "named_params": {},
+              "raw_text": "-20102, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+            }
+          }
+        ]
+      },
+      {
+        "type": "exception_handler",
+        "exception_name": "ERR_UPD",
+        "when_line_no": 194,
+        "when_indent": 4,
+        "then_line_no": 194,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20103",
+                "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              ],
+              "named_params": {},
+              "raw_text": "-20103, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+            }
+          }
+        ]
+      },
+      {
+        "type": "exception_handler",
+        "exception_name": "ERR_UPD2",
+        "when_line_no": 198,
+        "when_indent": 4,
+        "then_line_no": 198,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20104",
+                "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              ],
+              "named_params": {},
+              "raw_text": "-20104, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+            }
+          }
+        ]
+      },
+      {
+        "type": "exception_handler",
+        "exception_name": "ERR_UPD3",
+        "when_line_no": 202,
+        "when_indent": 4,
+        "then_line_no": 202,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20105",
+                "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              ],
+              "named_params": {},
+              "raw_text": "-20105, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+            }
+          }
+        ]
+      },
+      {
+        "type": "exception_handler",
+        "exception_name": "ERR_UPD4",
+        "when_line_no": 206,
+        "when_indent": 4,
+        "then_line_no": 206,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20106",
+                "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              ],
+              "named_params": {},
+              "raw_text": "-20106, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+            }
+          }
+        ]
+      },
+      {
+        "type": "exception_handler",
+        "exception_name": "ERR_DEL",
+        "when_line_no": 210,
+        "when_indent": 4,
+        "then_line_no": 210,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20107",
+                "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              ],
+              "named_params": {},
+              "raw_text": "-20107, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+            }
+          }
+        ]
+      },
+      {
+        "type": "exception_handler",
+        "exception_name": "ERR_LEVEL",
+        "when_line_no": 214,
+        "when_indent": 4,
+        "then_line_no": 214,
+        "exception_statements": [
+          {
+            "type": "function_calling",
+            "function_name": "RAISE_APPLICATION_ERROR",
+            "parameters": {
+              "parameter_type": "positional",
+              "positional_params": [
+                "-20108",
+                "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              ],
+              "named_params": {},
+              "raw_text": "-20108, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+            }
+          }
+        ]
+      }
+    ],
+    "exception_line_no": 183,
+    "end_line_no": 218
   },
   "sql_comments": [
-    "/*\n       first delete child records in cer_rate_subscriptions\n     */",
-    "/*\n       then delete record in cer_rate_subscription_groups\n     */"
+    "-- v_user_level := txo_security.get_user_level(txo_library.g_auth_mode);",
+    "--",
+    "--",
+    "--do some checks",
+    "--if value is >= 1 then multivalue was sent, otherwise not !",
+    "--Not all descriptions have country codes",
+    "--",
+    "-- Handle changes to GRANTED.",
+    "-- Recreate plant events.",
+    "--WHEN err_ins",
+    "--public holiday already exists",
+    "-- Holiday name cannot be left empty.",
+    "-- Please don't change Holiday Date,",
+    "-- Not all descriptions have country codes.",
+    "-- Country code entered too many times in Holiday name.",
+    "-- Holiday name cannot be left empty for one country code.",
+    "-- Cannot delete public holiday from the past.",
+    "-- Error level."
   ],
-  "rest_string_list": [],
+  "rest_string_list": [
+    {
+      "indent": 8,
+      "line": "        WITH C AS (",
+      "line_no": 21
+    },
+    {
+      "indent": 16,
+      "line": "                MERGE INTO CFG.CFG_IRTT_HOLIDAYS A USING (",
+      "line_no": 60
+    },
+    {
+      "indent": 16,
+      "line": "                MERGE INTO CFG.CFG_IRTT_HOLIDAYS A USING ( WITH HN AS (",
+      "line_no": 101
+    },
+    {
+      "indent": 12,
+      "line": "            MDMAPPL.MDM_UTIL_IRTT.REGENERATE_EVENT_DATES_FOR_MONTH(",
+      "line_no": 169
+    },
+    {
+      "indent": 16,
+      "line": "                P_YEAR => EXTRACT(YEAR FROM :NEW.HOLIDAY_DATE),",
+      "line_no": 170
+    },
+    {
+      "indent": 16,
+      "line": "                P_MONTH => EXTRACT(MONTH FROM :NEW.HOLIDAY_DATE),",
+      "line_no": 171
+    },
+    {
+      "indent": 16,
+      "line": "                P_START_EVENT_DATE => :NEW.HOLIDAY_DATE",
+      "line_no": 172
+    },
+    {
+      "indent": 12,
+      "line": "            );",
+      "line_no": 173
+    }
+  ],
   "conversion_stats": {
-    "declaration_count": 0,
-    "comment_count": 2,
+    "declaration_count": 11,
+    "comment_count": 18,
     "sql_convert_count": {
-      "select_statement": 0,
+      "select_statement": 4,
       "insert_statement": 0,
       "update_statement": 0,
-      "delete_statement": 2,
-      "raise_statement": 0,
+      "delete_statement": 0,
+      "raise_statement": 6,
       "assignment": 0,
       "for_loop": 0,
-      "if_else": 1,
+      "if_else": 7,
       "case_when": 0,
-      "begin_end": 2,
-      "exception_handler": 0,
-      "function_calling": 0,
+      "begin_end": 3,
+      "exception_handler": 10,
+      "function_calling": 8,
       "when_statement": 0,
       "elif_statement": 0,
       "fetch_statement": 0,
@@ -81,14 +558,14 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-09-02T14:02:34.325493",
+    "parse_timestamp": "2025-09-02T15:29:04.696825",
     "parser_version": "1.0",
     "file_details": {
       "filename": "zzz.sql",
       "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\zzz.sql",
-      "filesize": 679,
+      "filesize": 9115,
       "file_extension": ".sql",
-      "last_modified": 1756801322.145319,
+      "last_modified": 1756803533.7555044,
       "created_time": 1756173936.5202713,
       "is_file": true,
       "is_readable": true
