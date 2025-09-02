@@ -101,6 +101,7 @@ class OracleTriggerAnalyzer:
             "merge_statement": 0,
             "null_statement": 0,
             "return_statement": 0,
+            "with_statement": 0,
         }
 
         logger.debug(f"structured lines conversion {len(self.structured_lines)} lines processed",)
@@ -721,8 +722,28 @@ class OracleTriggerAnalyzer:
             "with_indent": working_lines[0]["indent"],
             "with_values": "",
             "with_statements": "",
+            "with_end_line_no": working_lines[-1]["line_no"],
         }
+        as_i = -1
+        if working_lines[0]["line"].strip().upper().endswith("("):
+            with_statement['with_values'] = working_lines[0]["line"].strip()[3:-4]
+            as_i = 0
+        else:
+            with_statement['with_values'] = working_lines[0]["line"].strip()[3:]
+            for j in range(1, len(working_lines)):
+                line_info = working_lines[j]
+                line_upper = line_info["line"].strip().upper()
+                logger.debug(f"line_info : {line_info}")
+                if line_upper.endswith("("):
+                    with_statement['with_values'] += " " + line_info["line"].strip()[:-4]
+                    as_i = j
+                    break
+                with_statement['with_values'] += " " + line_info["line"].strip()
+        with_statement['with_statements'] = self.combine_lines(working_lines[as_i+1:])
+        if with_statement['with_statements'].strip().upper().endswith(")"):
+            with_statement['with_statements'] = with_statement['with_statements'][:-1]
         return with_statement
+    
     def _parse_function_calling_statements(self):
         """
         Parse function calling statements from the main section of SQL.

@@ -68,15 +68,18 @@
         "end_if_line_no": 182,
         "then_statements": [
           {
-            "indent": 8,
-            "line": "        WITH C AS (",
-            "line_no": 21
+            "type": "with_statement",
+            "with_line_no": 21,
+            "with_indent": 8,
+            "with_values": "H C ",
+            "with_statements": "SELECT TRIM(REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL)) COL FROM DUAL CONNECT BY REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL) IS NOT NULL ",
+            "with_end_line_no": 28
           },
           {
             "type": "select_statement",
-            "sql_statement": "SELECT TRIM(REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL)) COL FROM DUAL CONNECT BY REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL) IS NOT NULL ) SELECT REGEXP_SUBSTR(C.COL, '[^[]+', 1)        HOLIDAY_DESC, REGEXP_SUBSTR(C.COL, '[^[]+[^]]', 1, 2) COUNTRY_CD BULK COLLECT INTO V_HOLIDAY_DESCS, V_COUNTRY_CODES FROM C;",
-            "statement_line_no": 22,
-            "statement_indent": 12
+            "sql_statement": "SELECT REGEXP_SUBSTR(C.COL, '[^[]+', 1)        HOLIDAY_DESC, REGEXP_SUBSTR(C.COL, '[^[]+[^]]', 1, 2) COUNTRY_CD BULK COLLECT INTO V_HOLIDAY_DESCS, V_COUNTRY_CODES FROM C;",
+            "statement_line_no": 29,
+            "statement_indent": 8
           },
           {
             "type": "select_statement",
@@ -490,11 +493,6 @@
   ],
   "rest_string_list": [
     {
-      "indent": 8,
-      "line": "        WITH C AS (",
-      "line_no": 21
-    },
-    {
       "indent": 16,
       "line": "                MERGE INTO CFG.CFG_IRTT_HOLIDAYS A USING (",
       "line_no": 60
@@ -554,11 +552,12 @@
       "close_statement": 0,
       "merge_statement": 0,
       "null_statement": 0,
-      "return_statement": 0
+      "return_statement": 0,
+      "with_statement": 1
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-09-02T15:29:04.696825",
+    "parse_timestamp": "2025-09-02T16:32:02.064794",
     "parser_version": "1.0",
     "file_details": {
       "filename": "zzz.sql",
