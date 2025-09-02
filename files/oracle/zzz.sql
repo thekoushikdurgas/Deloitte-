@@ -1,68 +1,61 @@
-CREATE OR REPLACE EDITIONABLE TRIGGER "MDMAPPL"."GLOBAL_CPY_PREFIXES_IOF"
- INSTEAD OF
-  INSERT OR DELETE OR UPDATE
- ON mdmappl.mdm_v_global_cpy_prefixes_mtn
-REFERENCING NEW AS NEW OLD AS OLD
+CREATE OR REPLACE EDITIONABLE TRIGGER "MDMAPPL"."GLOBAL_CPY_PREFIXES_IOF" INSTEAD OF
+    INSERT OR DELETE OR UPDATE ON MDMAPPL.MDM_V_GLOBAL_CPY_PREFIXES_MTN REFERENCING NEW AS NEW OLD AS OLD
 DECLARE
-    v_trigger_name   VARCHAR2 (100) := 'GLOBAL_CPY_PREFIXES_IOF';
-    err_upd          EXCEPTION;
-    err_del          EXCEPTION;
+    V_TRIGGER_NAME VARCHAR2 (100) := 'GLOBAL_CPY_PREFIXES_IOF';
+    ERR_UPD EXCEPTION;
+    ERR_DEL EXCEPTION;
 BEGIN
-    IF INSERTING
-    THEN
+    IF INSERTING THEN
         BEGIN
-            INSERT INTO v_global_cpy_prefixes (gs1_comp_prefix_no
-                                              ,gs1_org_country_cd
-                                              ,gcp_owner_comp_cd
-                                              ,gtin_alloc_type_prim_cd
-                                              ,gtin_alloc_type_sec_cd
-                                              ,gtin_alloc_type_ter_cd
-                                              ,sscc_relevancy_ind
-                                              ,global_change_id
-                                              ,reason_for_change
-                                              ,valid_ind)
-                 VALUES (:new.gs1_comp_prefix_no
-                        ,:new.gs1_org_country_cd
-                        ,:new.gcp_owner_comp_cd
-                        ,:new.gtin_alloc_type_prim_cd
-                        ,:new.gtin_alloc_type_sec_cd
-                        ,:new.gtin_alloc_type_ter_cd
-                        ,:new.sscc_relevancy_ind
-                        ,:new.global_change_id
-                        ,:new.reason_for_change
-                        ,:new.valid_ind);
+            INSERT INTO V_GLOBAL_CPY_PREFIXES (
+                GS1_COMP_PREFIX_NO,
+                GS1_ORG_COUNTRY_CD,
+                GCP_OWNER_COMP_CD,
+                GTIN_ALLOC_TYPE_PRIM_CD,
+                GTIN_ALLOC_TYPE_SEC_CD,
+                GTIN_ALLOC_TYPE_TER_CD,
+                SSCC_RELEVANCY_IND,
+                GLOBAL_CHANGE_ID,
+                REASON_FOR_CHANGE,
+                VALID_IND
+            ) VALUES (
+                :NEW.GS1_COMP_PREFIX_NO,
+                :NEW.GS1_ORG_COUNTRY_CD,
+                :NEW.GCP_OWNER_COMP_CD,
+                :NEW.GTIN_ALLOC_TYPE_PRIM_CD,
+                :NEW.GTIN_ALLOC_TYPE_SEC_CD,
+                :NEW.GTIN_ALLOC_TYPE_TER_CD,
+                :NEW.SSCC_RELEVANCY_IND,
+                :NEW.GLOBAL_CHANGE_ID,
+                :NEW.REASON_FOR_CHANGE,
+                :NEW.VALID_IND
+            );
         END;
-    ELSIF UPDATING
-    THEN
-        IF :new.gs1_comp_prefix_no <> :old.gs1_comp_prefix_no
-        THEN
-            RAISE err_upd;
+    ELSIF UPDATING THEN
+        IF :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO THEN
+            RAISE ERR_UPD;
         END IF;
-
-
-        UPDATE v_global_cpy_prefixes
-           SET gs1_org_country_cd = :new.gs1_org_country_cd
-              ,gcp_owner_comp_cd = :new.gcp_owner_comp_cd
-              ,gtin_alloc_type_prim_cd = :new.gtin_alloc_type_prim_cd
-              ,gtin_alloc_type_sec_cd = :new.gtin_alloc_type_sec_cd
-              ,gtin_alloc_type_ter_cd = :new.gtin_alloc_type_ter_cd
-              ,sscc_relevancy_ind = :new.sscc_relevancy_ind
-              ,global_change_id = :new.global_change_id
-              ,reason_for_change = :new.reason_for_change
-              ,valid_ind = :new.valid_ind
-         WHERE gs1_comp_prefix_no = :new.gs1_comp_prefix_no;
-    ELSIF DELETING
-    THEN
-        RAISE err_del;
+        UPDATE V_GLOBAL_CPY_PREFIXES
+        SET
+            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,
+            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,
+            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,
+            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,
+            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,
+            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,
+            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,
+            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,
+            VALID_IND = :NEW.VALID_IND
+        WHERE
+            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;
+    ELSIF DELETING THEN
+        RAISE ERR_DEL;
     END IF;
 EXCEPTION
-    WHEN err_upd
-    THEN
-        raise_application_error (-20105, v_trigger_name);
-    WHEN err_del
-    THEN
-        raise_application_error (-20110, v_trigger_name);
+    WHEN ERR_UPD THEN
+        RAISE_APPLICATION_ERROR (-20105, V_TRIGGER_NAME);
+    WHEN ERR_DEL THEN
+        RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);
 END;
+
 ALTER TRIGGER "MDMAPPL"."GLOBAL_CPY_PREFIXES_IOF" ENABLE
-
-

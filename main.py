@@ -967,7 +967,7 @@ def convert_pl_json_to_postgresql_format(
                 # statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
                 # for stmt in statements:
                 #     if stmt:
-                postgresql_format["on_insert"].append({"type": "sql", "sql": sql_content.replace("\n", " ").replace("\n", " ").replace("    ", " ")})
+                postgresql_format["on_insert"].append({"type": "sql", "sql": sql_content})
 
             # Handle on_update
             if "on_update" in pl_json_data and pl_json_data["on_update"]:

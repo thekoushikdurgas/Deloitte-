@@ -306,7 +306,11 @@ class FormatSQL:
         # lines.append(f"-- End of generated {db_type} SQL")
         
         # Combine all lines into the final SQL string
-        result = "\n".join(lines)
+        # result = "\n".join([line.strip() for line in lines])
+            # ["DO $$", "DECLARE", *lines, "$$ LANGUAGE plpgsql;"])
+            # lines.append("DO $$")
+            #     lines.append("$$ LANGUAGE plpgsql;")
+        result = "DO $$ " + " ".join([line.strip() for line in lines]) + " $$ LANGUAGE plpgsql;"
         debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
         if self.analysis['conversion_stats'] is None:
             print(f"sql_convert_count: {self.analysis['conversion_stats']}")
@@ -406,7 +410,6 @@ class FormatSQL:
         
         # Handle PostgreSQL structure
         if db_type == "PostgreSQL" and wrap_begin_end:
-            lines.append("DO $$")
             lines.append("DECLARE")
             # Add variable declarations for PostgreSQL
             variables = self.analysis.get("declarations", {}).get("variables", []) or []
@@ -459,7 +462,6 @@ class FormatSQL:
         if wrap_begin_end:
             if db_type == "PostgreSQL":
                 lines.append("END;")
-                lines.append("$$ LANGUAGE plpgsql;")
             else:
                 lines.append(self._indent("END;", indent_level))
         
@@ -691,7 +693,7 @@ class FormatSQL:
         Returns:
             List[str]: List of formatted BEGIN-END block lines
         """
-        return self._render_main_block(node, indent_level, wrap_begin_end=True, db_type=db_type)
+        return self._render_main_block(node, indent_level, wrap_begin_end=False, db_type=db_type)
 
     def _render_sql_statement(self, node: Dict[str, Any], indent_level: int, db_type: str) -> List[str]:
         """

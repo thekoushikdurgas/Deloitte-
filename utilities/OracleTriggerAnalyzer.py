@@ -1180,7 +1180,7 @@ class OracleTriggerAnalyzer:
                                 if line_upper.startswith("END IF;") and line_info["indent"] == item["indent"]:
                                     logger.debug(f"if_i: {item['line_no']} i: {line_info['line_no']}")
                                     logger.debug(f"if_elses working_lines lenght: {len(working_lines[i : j+1])}")
-                                    if_else_statement = self._parse_elif_else_statements(working_lines[i : j+1])
+                                    if_else_statement = self._parse_if_else_statements(working_lines[i : j+1])
                                     if_else_statement["then_statements"] = parse_if_else(if_else_statement["then_statements"])
                                     for elif_clause in if_else_statement["if_elses"]:
                                         elif_clause["then_statements"] = parse_if_else(elif_clause["then_statements"])
@@ -1234,13 +1234,13 @@ class OracleTriggerAnalyzer:
             if "exception_statements" in handler:
                 self.main_section_lines['exception_handlers'][k]["exception_statements"] = parse_if_else(handler["exception_statements"])
 
-    def _parse_elif_else_statements(self, working_lines: List[Dict[str, Any]]):
+    def _parse_if_else_statements(self, working_lines: List[Dict[str, Any]]):
         """
         Parse elif and else statements from the main section of SQL.
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
         """
-        elif_else_statements = {
+        if_else_statements = {
         "condition": "",
         "type": "if_else",
         "if_line_no": working_lines[0]["line_no"],
@@ -1254,31 +1254,31 @@ class OracleTriggerAnalyzer:
         then_i = -1
         elif_line_indent = working_lines[0]["indent"]
         if working_lines[0]["line"].strip().upper().endswith("THEN"):
-            elif_else_statements['condition'] = working_lines[0]["line"].strip()[2:-4]
+            if_else_statements['condition'] = working_lines[0]["line"].strip()[2:-4]
             then_i = 0
         else:
-            elif_else_statements['condition'] = working_lines[0]["line"].strip()[2:]
+            if_else_statements['condition'] = working_lines[0]["line"].strip()[2:]
             for j in range(1, len(working_lines)):
                 line_info = working_lines[j]
                 line_upper = line_info["line"].strip().upper()
                 logger.debug(f"line_info : {line_info}")
                 if line_upper.endswith("THEN"):
-                    elif_else_statements['condition'] += " " + line_info["line"].strip()[:-4]
+                    if_else_statements['condition'] += " " + line_info["line"].strip()[:-4]
                     then_i = j
                     break
-                elif_else_statements['condition'] += " " + line_info["line"].strip()
-        elif_else_statements['then_line_no'] = working_lines[then_i]["line_no"]
+                if_else_statements['condition'] += " " + line_info["line"].strip()
+        if_else_statements['then_line_no'] = working_lines[then_i]["line_no"]
         i = then_i + 1
         elif_i = -1
         else_i = -1
         while i < len(working_lines):
-            line_info = working_lines[i]
-            if "line" in line_info:
-                line_upper = line_info["line"].strip().upper()
-                if line_upper.startswith("ELSIF") and line_info["indent"] == elif_line_indent:
+            item = working_lines[i]
+            if "line" in item:
+                line_upper = item["line"].strip().upper()
+                if line_upper.startswith("ELSIF") and item["indent"] == elif_line_indent:
                     if elif_i == -1:
                         logger.debug(f"then_statements: {0} {i}")
-                        elif_else_statements['then_statements'] = working_lines[then_i+1:i]
+                        if_else_statements['then_statements'].extend(working_lines[then_i+1:i])
                     elif_i = i
                     j = i + 1
                     while j < len(working_lines):
@@ -1287,33 +1287,36 @@ class OracleTriggerAnalyzer:
                         if "line" in line_info:
                             line_upper = line_info["line"].strip().upper()
                             if line_upper.startswith("ELSIF") and line_info["indent"] == elif_line_indent:
-                                logger.debug(working_lines[elif_i],working_lines[j],)
-                                elif_else_statements['if_elses'].append(self._parse_elif_else_then_statements(working_lines[elif_i : j]))
-                                j -= 1
-                                i = j
+                                logger.debug(working_lines[elif_i],working_lines[j])
+                                if_else_statements['if_elses'].append(self._parse_elif_else_then_statements(working_lines[elif_i : j]))
+                                elif_i = j
+                            elif line_upper.startswith("ELSE") and line_info["indent"] == elif_line_indent:
+                                logger.debug(working_lines[elif_i],working_lines[j - 1])
+                                if_else_statements['if_elses'].append(self._parse_elif_else_then_statements(working_lines[elif_i:j]))
+                                logger.debug(working_lines[j + 1],working_lines[-1])
+                                if_else_statements['else_statements'].append(working_lines[j + 1 :])
+                                i = len(working_lines)
                                 break
-                            if line_upper.startswith("ELSE") and line_info["indent"] == elif_line_indent:
-                                logger.debug(working_lines[elif_i],working_lines[j - 1],)
-                                elif_else_statements['if_elses'].append(self._parse_elif_else_then_statements(working_lines[elif_i:j]))
-                                logger.debug(working_lines[j + 1],working_lines[-1],)
-                                elif_else_statements['else_statements'] = working_lines[j + 1 : -1]
+                            elif line_upper.startswith("END IF;") and line_info["indent"] == elif_line_indent:
+                                logger.debug(working_lines[elif_i],working_lines[j])
+                                if_else_statements['if_elses'].append(self._parse_elif_else_then_statements(working_lines[elif_i : j]))
                                 i = len(working_lines)
                                 break
                         j += 1
-                elif line_upper.startswith("ELSE") and line_info["indent"] == elif_line_indent:
+                elif line_upper.startswith("ELSE") and item["indent"] == elif_line_indent:
                     else_i = i
                     if elif_i == -1:
-                        elif_else_statements['then_statements'] = working_lines[then_i+1:i]
+                        if_else_statements['then_statements'].extend(working_lines[then_i+1:i])
                     # logger.debug(f"else_statements: {working_lines[i+1]["line_no"]}, {working_lines[-1]["line_no"]}")
-                    elif_else_statements['else_statements'] = working_lines[i + 1 : -1]
+                    if_else_statements['else_statements'].append(working_lines[i + 1 :])
                     i = len(working_lines)
             i += 1
         if else_i == -1 and elif_i == -1:
             logger.debug(f"else_i: {else_i} elif_i: {elif_i} then_statements: { working_lines[then_i+1:-1]}")
             # if then_i+1 == len(working_lines):
-            elif_else_statements['then_statements'].extend(working_lines[then_i+1:-1])
-        logger.debug(f"elif_else_statements: {elif_else_statements}")
-        return elif_else_statements
+            if_else_statements['then_statements'].extend(working_lines[then_i+1:-1])
+        logger.debug(f"if_else_statements: {if_else_statements}")
+        return if_else_statements
 
     def _parse_elif_else_then_statements(self, working_lines: List[Dict[str, Any]]):
         """
@@ -1322,6 +1325,7 @@ class OracleTriggerAnalyzer:
         Updates self.main_section_lines with parsed blocks.
         """
         elif_else_then_statements = working_lines
+        print(f"elif_else_then_statements: {elif_else_then_statements}")
         logger.debug(elif_else_then_statements)
         condition = ""
         then_i = 0

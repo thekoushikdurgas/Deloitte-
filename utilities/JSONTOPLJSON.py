@@ -59,15 +59,14 @@ class JSONTOPLJSON:
         # Step 1: Define keywords and patterns to remove
         # Keywords to remove (case-insensitive)
         keywords_to_remove = [
-            "INSERTING", "UPDATING", "DELETING", 
-            "INSERT", "UPDATE", "DELETE"
+            "INSERTING", "UPDATING", "DELETING"
         ]
         
         # PostgreSQL TG_OP patterns to remove (case-insensitive)
         tg_op_patterns = [
-            r"TG_OP\s*=\s*['\"]INSERT['\"]",
-            r"TG_OP\s*=\s*['\"]UPDATE['\"]", 
-            r"TG_OP\s*=\s*['\"]DELETE['\"]"
+            r"TG_OP\s*=\s*['\"]INSERTING['\"]",
+            r"TG_OP\s*=\s*['\"]UPDATING['\"]", 
+            r"TG_OP\s*=\s*['\"]DELETING['\"]"
         ]
         
         # Create a copy of the condition to work with
