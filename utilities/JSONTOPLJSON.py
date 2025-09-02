@@ -165,9 +165,9 @@ class JSONTOPLJSON:
         
         # Check for operation-specific keywords in the condition
         condition_dict = {
-            "on_insert": condition.find("INSERTING") != -1 or condition.find("INSERT") != -1,
-            "on_update": condition.find("UPDATING") != -1 or condition.find("UPDATE") != -1,
-            "on_delete": condition.find("DELETING") != -1 or condition.find("DELETE") != -1,
+            "on_insert": condition.find("INSERTING") != -1,
+            "on_update": condition.find("UPDATING") != -1,
+            "on_delete": condition.find("DELETING") != -1,
         }
         
         # Log which operation keywords were found in this condition
@@ -182,6 +182,7 @@ class JSONTOPLJSON:
         # 3. If condition mentions other operations but not this one, keep it (return True)
         
         # Case 1: Condition mentions current operation - remove from current operation's code
+        print(f"condition_dict: {condition_dict} {condition_type} {condition}")
         if condition_dict[condition_type]:
             debug(f"REMOVE: Condition contains {condition_type} keywords")
             return False
@@ -196,458 +197,92 @@ class JSONTOPLJSON:
             debug(f"KEEP: Condition mentions other operations but not {condition_type}")
             return True
 
-    def parse_pl_json_on_insert(self):
-        """parse_pl_json_on_insert function."""
-        def process_on_insert_json(
-            statements, json_path="", condition_type="on_insert"
-        ):
-            """process_on_insert_json function."""
-            item = statements
+    def _process_on_json(self, statements, json_path="", condition_type:str = "on_insert"):
+            """_process_on_json function."""
+            item = []
             # Handle nested structures (begin_end blocks, exception handlers, etc.)
-            if isinstance(item, dict) and "type" in item:
-                if item["type"] == "begin_end":
-                    # Process IF statements in begin_end_statements
-                    if "begin_end_statements" in item:
-                        for i, item1 in enumerate(item["begin_end_statements"]):
-                            item["begin_end_statements"][i] = process_on_insert_json(
-                                item1,
-                                f"{json_path}.begin_end_statements.{i}",
-                                condition_type,
-                            )
+            for statement in statements:
+                if isinstance(statement, dict) and "type" in statement:
+                    if statement["type"] == "begin_end":
+                        # Process IF statements in begin_end_statements
+                        if "begin_end_statements" in statement:
+                            statement["begin_end_statements"] = self._process_on_json(statement["begin_end_statements"],f"{json_path}.begin_end_statements",condition_type,)
 
-                    # Process IF statements in exception_handlers
-                    if "exception_handlers" in item:
-                        for handler_index, handler in enumerate(
-                            item["exception_handlers"]
-                        ):
-                            if "exception_statements" in handler:
-                                for i, item1 in enumerate(
-                                    handler["exception_statements"]
-                                ):
-                                    handler["exception_statements"][i] = (
-                                        process_on_insert_json(
-                                            item1,
-                                            f"{json_path}.exception_handlers.{handler_index}.exception_statements.{i}",
-                                            condition_type,
-                                        )
-                                    )
+                        # Process IF statements in exception_handlers
+                        if "exception_handlers" in statement:
+                            statement["exception_handlers"] = self._process_on_json(statement["exception_handlers"],f"{json_path}.exception_handlers",condition_type,)
+                            for handler_index, handler in enumerate(statement["exception_handlers"]):
+                                if "exception_statements" in handler:
+                                    handler["exception_statements"] = self._process_on_json(handler["exception_statements"],f"{json_path}.exception_handlers.{handler_index}.exception_statements",condition_type,)
 
-                elif item["type"] == "if_else":
-                    # Process IF statements in then_statements, else_if, and else_statements
-                    json_path = f"{json_path}.if_else"
-                    item["condition"] = self.modify_condition(item["condition"])
-                    main_if_else_condition = self.process_condition(
-                        item["condition"], condition_type
-                    )
-                    if "then_statements" in item:
-                        for i, item1 in enumerate(item["then_statements"]):
-                            item["then_statements"][i] = process_on_insert_json(
-                                item1,
-                                f"{json_path}.then_statements.{i}",
-                                condition_type,
-                            )
-                    if "else_statements" in item:
-                        for i, item1 in enumerate(item["else_statements"]):
-                            item["else_statements"][i] = process_on_insert_json(
-                                item1,
-                                f"{json_path}.else_statements.{i}",
-                                condition_type,
-                            )
-                    if "else_if" in item and len(item["else_if"]) > 0:
-                        json_path = f"{json_path}.else_if"
-                        after_parse_else_if = []
-                        for i, else_if_item in enumerate(item["else_if"]):
-                            else_if_item["condition"] = self.modify_condition(else_if_item["condition"])
-                            json_path = f"{json_path}.{i}"
-                            else_if_condition = self.process_condition(
-                                else_if_item["condition"], condition_type
-                            )
-                            if not else_if_condition:
-                                json_path = f"{json_path}.then_statements"
-                                for j, item1 in enumerate(
-                                    else_if_item["then_statements"]
-                                ):
-                                    json_path = f"{json_path}.then_statements.{j}"
-                                    else_if_item["then_statements"][j] = (
-                                        process_on_insert_json(
-                                            item1, json_path, condition_type
-                                        )
-                                    )
-                                after_parse_else_if.append(else_if_item)
-                        item["else_if"] = after_parse_else_if
+                    elif statement["type"] == "if_else":
+                        # Process IF statements in then_statements, if_elses, and else_statements
+                        json_path = f"{json_path}.if_else"
+                        main_if_else_condition = self.process_condition(statement["condition"], condition_type)
+                        statement["condition"] = self.modify_condition(statement["condition"])
+                        if "then_statements" in statement:
+                            statement["then_statements"] = self._process_on_json(statement["then_statements"],f"{json_path}.then_statements",condition_type,)
+                        if "else_statements" in statement:
+                            statement["else_statements"] = self._process_on_json(statement["else_statements"],f"{json_path}.else_statements",condition_type,)
+                        if "if_elses" in statement:
+                            json_path = f"{json_path}.if_elses"
+                            after_parse_if_elses = []
+                            for i, if_elses_item in enumerate(statement["if_elses"]):
+                                if_elses_condition = self.process_condition(if_elses_item["condition"], condition_type)
+                                if_elses_item["condition"] = self.modify_condition(if_elses_item["condition"])
+                                json_path = f"{json_path}.{i}"
+                                if not if_elses_condition:
+                                    json_path = f"{json_path}.then_statements"
+                                    if_elses_item["then_statements"] = self._process_on_json(if_elses_item["then_statements"],f"{json_path}.then_statements",condition_type,)
+                                    after_parse_if_elses.append(if_elses_item)
+                            statement["if_elses"] = after_parse_if_elses
+                        if  main_if_else_condition and len(statement["if_elses"]) == 0:
+                            continue
+                        elif main_if_else_condition and len(statement["if_elses"]) > 0:
+                            statement["condition"] = self.modify_condition(statement["if_elses"][0]["condition"])
+                            statement["then_statements"] = statement["if_elses"][0]["then_statements"]
+                            statement["if_elses"] = statement["if_elses"][1:]
+                        elif main_if_else_condition:
+                            print(f"if_else_delete_path: {json_path}.if_else -- {statement}")
 
-                    if main_if_else_condition and len(item["else_if"]) == 0:
-                        return None
-                    elif main_if_else_condition and len(item["else_if"]) > 0:
-                        item["condition"] = self.modify_condition(item["else_if"][0]["condition"])
-                        item["then_statements"] = item["else_if"][0]["then_statements"]
-                        item["else_if"] = item["else_if"][1:]
+                    elif statement["type"] == "case_when":
+                        # Process main case condition
+                        if "condition" in  statement and  statement["condition"]:
+                            main_case_condition = self.process_condition( statement["condition"], condition_type)
+                            if main_case_condition:
+                                # If condition should be removed for this operation, return None
+                                debug(f"case_when main condition removal: {json_path}.case_when.condition")
+                                return None
+                            else:
+                                # Modify the condition for PostgreSQL compatibility
+                                 statement["condition"] = self.modify_condition( statement["condition"])
 
-                    elif main_if_else_condition:
-                        logger.debug(
-                            f"if_else_delete_path: {json_path}.if_else -- {item}"
-                        )
+                        # Process when clauses conditions and statements
+                        if "when_clauses" in statement:
+                            for clause_index, clause in enumerate(statement["when_clauses"]):
+                                # Process when clause condition
+                                if "condition" in clause and clause["condition"]:
+                                    when_condition_result = self.process_condition(clause["condition"], condition_type)
+                                    if when_condition_result:
+                                        # If condition should be removed, skip this when clause
+                                        debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
+                                        continue
+                                    else:
+                                        # Modify the when condition for PostgreSQL compatibility
+                                        clause["condition"] = self.modify_condition(clause["condition"])
+                                
+                                # Process then_statements within when clauses
+                                if "then_statements" in clause:
+                                    clause["then_statements"] = self._process_on_json(clause["then_statements"],f"{json_path}.then_statements",condition_type,)
+                        if "else_statements" in statement:
+                            statement["else_statements"] = self._process_on_json(statement["else_statements"],f"{json_path}.else_statements",condition_type,)
 
-                elif item["type"] == "case_when":
-                    # Process main case condition
-                    if "condition" in item and item["condition"]:
-                        main_case_condition = self.process_condition(item["condition"], condition_type)
-                        if main_case_condition:
-                            # If condition should be removed for this operation, return None
-                            debug(f"case_when main condition removal: {json_path}.case_when.condition")
-                            return None
-                        else:
-                            # Modify the condition for PostgreSQL compatibility
-                            item["condition"] = self.modify_condition(item["condition"])
-
-                    # Process when clauses conditions and statements
-                    if "when_clauses" in item:
-                        for clause_index, clause in enumerate(item["when_clauses"]):
-                            # Process when clause condition
-                            if "condition" in clause and clause["condition"]:
-                                when_condition_result = self.process_condition(clause["condition"], condition_type)
-                                if when_condition_result:
-                                    # If condition should be removed, skip this when clause
-                                    debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
-                                    continue
-                                else:
-                                    # Modify the when condition for PostgreSQL compatibility
-                                    clause["condition"] = self.modify_condition(clause["condition"])
-                            
-                            # Process then_statements within when clauses
-                            if "then_statements" in clause:
-                                for i, item1 in enumerate(clause["then_statements"]):
-                                    clause["then_statements"][i] = (
-                                        process_on_insert_json(
-                                            item1,
-                                            f"{json_path}.when_clauses.{clause_index}.then_statements.{i}",
-                                            condition_type,
-                                        )
-                                    )
-                    if "else_statements" in item:
-                        for i, item1 in enumerate(item["else_statements"]):
-                            item["else_statements"][i] = process_on_insert_json(
-                                item1,
-                                f"{json_path}.else_statements.{i}",
-                                condition_type,
-                            )
-
-                elif item["type"] == "for_loop":
-                    # Process IF statements in loop_statements
-                    if "loop_statements" in item:
-                        for i, item1 in enumerate(item["loop_statements"]):
-                            item["loop_statements"][i] = process_on_insert_json(
-                                item1,
-                                f"{json_path}.loop_statements.{i}",
-                                condition_type,
-                            )
+                    elif statement["type"] == "for_loop":
+                        # Process IF statements in loop_statements
+                        if "loop_statements" in statement:
+                            statement["loop_statements"] = self._process_on_json(statement["loop_statements"],f"{json_path}.loop_statements",condition_type,)
+                item.append(statement)
             return item
-
-        # for u, main_item in enumerate(self.after_parse_on_insert):
-        logger.debug(f"after_parse_on_insert: {self.after_parse_on_insert["begin_end_statements"]}")
-        for r, begin_end_item in enumerate(self.after_parse_on_insert["begin_end_statements"]):
-            json_path = f"main.begin_end_statements.{r}.begin_end_statements"
-            self.after_parse_on_insert["begin_end_statements"][r] = (process_on_insert_json(begin_end_item, json_path, "on_insert"))
-
-    def parse_pl_json_on_update(self):
-        """parse_pl_json_on_update function."""
-        def process_on_update_json(
-            statements, json_path="", condition_type="on_update"
-        ):
-            """process_on_update_json function."""
-            item = statements
-            # Handle nested structures (begin_end blocks, exception handlers, etc.)
-            if isinstance(item, dict) and "type" in item:
-                if item["type"] == "begin_end":
-                    # Process IF statements in begin_end_statements
-                    if "begin_end_statements" in item:
-                        for i, item1 in enumerate(item["begin_end_statements"]):
-                            item["begin_end_statements"][i] = process_on_update_json(
-                                item1,
-                                f"{json_path}.begin_end_statements.{i}",
-                                condition_type,
-                            )
-
-                    # Process IF statements in exception_handlers
-                    if "exception_handlers" in item:
-                        for handler_index, handler in enumerate(
-                            item["exception_handlers"]
-                        ):
-                            if "exception_statements" in handler:
-                                for i, item1 in enumerate(
-                                    handler["exception_statements"]
-                                ):
-                                    handler["exception_statements"][i] = (
-                                        process_on_update_json(
-                                            item1,
-                                            f"{json_path}.exception_handlers.{handler_index}.exception_statements.{i}",
-                                            condition_type,
-                                        )
-                                    )
-
-                elif item["type"] == "if_else":
-                    # Process IF statements in then_statements, else_if, and else_statements
-                    json_path = f"{json_path}.if_else"
-                    item["condition"] = self.modify_condition(item["condition"])
-                    main_if_else_condition = self.process_condition(
-                        item["condition"], condition_type
-                    )
-                    if "else_if" in item and len(item["else_if"]) > 0:
-                        json_path = f"{json_path}.else_if"
-                        after_parse_else_if = []
-                        for i, else_if_item in enumerate(item["else_if"]):
-                            else_if_item["condition"] = self.modify_condition(else_if_item["condition"])
-                            json_path = f"{json_path}.{i}"
-                            else_if_condition = self.process_condition(
-                                else_if_item["condition"], condition_type
-                            )
-                            if not else_if_condition:
-                                json_path = f"{json_path}.then_statements"
-                                for j, item1 in enumerate(
-                                    else_if_item["then_statements"]
-                                ):
-                                    json_path = f"{json_path}.then_statements.{j}"
-                                    else_if_item["then_statements"][j] = (
-                                        process_on_update_json(
-                                            item1, json_path, condition_type
-                                        )
-                                    )
-                                after_parse_else_if.append(else_if_item)
-                        item["else_if"] = after_parse_else_if
-                    if "then_statements" in item:
-                        for i, item1 in enumerate(item["then_statements"]):
-                            item["then_statements"][i] = process_on_update_json(
-                                item1,
-                                f"{json_path}.then_statements.{i}",
-                                condition_type,
-                            )
-                    if "else_statements" in item:
-                        for i, item1 in enumerate(item["else_statements"]):
-                            item["else_statements"][i] = process_on_update_json(
-                                item1,
-                                f"{json_path}.else_statements.{i}",
-                                condition_type,
-                            )
-                    if main_if_else_condition and len(item["else_if"]) == 0:
-                        return None
-                    elif main_if_else_condition and len(item["else_if"]) > 0:
-                        item["condition"] = self.modify_condition(item["else_if"][0]["condition"])
-                        item["then_statements"] = item["else_if"][0]["then_statements"]
-                        item["else_if"] = item["else_if"][1:]
-                    elif main_if_else_condition:
-                        logger.debug(
-                            f"if_else_delete_path: {json_path}.if_else -- {item}"
-                        )
-
-                elif item["type"] == "case_when":
-                    # Process main case condition
-                    if "condition" in item and item["condition"]:
-                        main_case_condition = self.process_condition(item["condition"], condition_type)
-                        if main_case_condition:
-                            # If condition should be removed for this operation, return None
-                            debug(f"case_when main condition removal: {json_path}.case_when.condition")
-                            return None
-                        else:
-                            # Modify the condition for PostgreSQL compatibility
-                            item["condition"] = self.modify_condition(item["condition"])
-
-                    # Process when clauses conditions and statements
-                    if "when_clauses" in item:
-                        for clause_index, clause in enumerate(item["when_clauses"]):
-                            # Process when clause condition
-                            if "condition" in clause and clause["condition"]:
-                                when_condition_result = self.process_condition(clause["condition"], condition_type)
-                                if when_condition_result:
-                                    # If condition should be removed, skip this when clause
-                                    debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
-                                    continue
-                                else:
-                                    # Modify the when condition for PostgreSQL compatibility
-                                    clause["condition"] = self.modify_condition(clause["condition"])
-                            
-                            # Process then_statements within when clauses
-                            if "then_statements" in clause:
-                                for i, item1 in enumerate(clause["then_statements"]):
-                                    clause["then_statements"][i] = (
-                                        process_on_update_json(
-                                            item1,
-                                            f"{json_path}.when_clauses.{clause_index}.then_statements.{i}",
-                                            condition_type,
-                                        )
-                                    )
-                    if "else_statements" in item:
-                        for i, item1 in enumerate(item["else_statements"]):
-                            item["else_statements"][i] = process_on_update_json(
-                                item1,
-                                f"{json_path}.else_statements.{i}",
-                                condition_type,
-                            )
-
-                elif item["type"] == "for_loop":
-                    # Process IF statements in loop_statements
-                    if "loop_statements" in item:
-                        for i, item1 in enumerate(item["loop_statements"]):
-                            item["loop_statements"][i] = process_on_update_json(
-                                item1,
-                                f"{json_path}.loop_statements.{i}",
-                                condition_type,
-                            )
-            return item
-
-        # for u, main_item in enumerate(self.after_parse_on_update):
-        for r, begin_end_item in enumerate(self.after_parse_on_update["begin_end_statements"]):
-            json_path = f"main.begin_end_statements.{r}.begin_end_statements"
-            self.after_parse_on_update["begin_end_statements"][r] = (process_on_update_json(begin_end_item, json_path, "on_update"))
-
-    def parse_pl_json_on_delete(self):
-        """parse_pl_json_on_delete function."""
-        def process_on_delete_json(
-            statements, json_path="", condition_type="on_delete"
-        ):
-            """process_on_delete_json function."""
-            item = statements
-            # Handle nested structures (begin_end blocks, exception handlers, etc.)
-            if isinstance(item, dict) and "type" in item:
-                if item["type"] == "begin_end":
-                    # Process IF statements in begin_end_statements
-                    if "begin_end_statements" in item:
-                        for i, item1 in enumerate(item["begin_end_statements"]):
-                            item["begin_end_statements"][i] = process_on_delete_json(
-                                item1,
-                                f"{json_path}.begin_end_statements.{i}",
-                                condition_type,
-                            )
-
-                    # Process IF statements in exception_handlers
-                    if "exception_handlers" in item:
-                        for handler_index, handler in enumerate(
-                            item["exception_handlers"]
-                        ):
-                            if "exception_statements" in handler:
-                                for i, item1 in enumerate(
-                                    handler["exception_statements"]
-                                ):
-                                    handler["exception_statements"][i] = (
-                                        process_on_delete_json(
-                                            item1,
-                                            f"{json_path}.exception_handlers.{handler_index}.exception_statements.{i}",
-                                            condition_type,
-                                        )
-                                    )
-
-                elif item["type"] == "if_else":
-                    # Process IF statements in then_statements, else_if, and else_statements
-                    json_path = f"{json_path}.if_else"
-                    item["condition"] = self.modify_condition(item["condition"])
-                    main_if_else_condition = self.process_condition(
-                        item["condition"], condition_type
-                    )
-                    if "else_if" in item and len(item["else_if"]) > 0:
-                        json_path = f"{json_path}.else_if"
-                        after_parse_else_if = []
-                        for i, else_if_item in enumerate(item["else_if"]):
-                            else_if_item["condition"] = self.modify_condition(else_if_item["condition"])
-                            json_path = f"{json_path}.{i}"
-                            else_if_condition = self.process_condition(
-                                else_if_item["condition"], condition_type
-                            )
-                            if not else_if_condition:
-                                json_path = f"{json_path}.then_statements"
-                                for j, item1 in enumerate(
-                                    else_if_item["then_statements"]
-                                ):
-                                    json_path = f"{json_path}.then_statements.{j}"
-                                    else_if_item["then_statements"][j] = (
-                                        process_on_delete_json(
-                                            item1, json_path, condition_type
-                                        )
-                                    )
-                                after_parse_else_if.append(else_if_item)
-                        item["else_if"] = after_parse_else_if
-                    if "then_statements" in item:
-                        for i, item1 in enumerate(item["then_statements"]):
-                            item["then_statements"][i] = process_on_delete_json(
-                                item1,
-                                f"{json_path}.then_statements.{i}",
-                                condition_type,
-                            )
-                    if "else_statements" in item:
-                        for i, item1 in enumerate(item["else_statements"]):
-                            item["else_statements"][i] = process_on_delete_json(
-                                item1,
-                                f"{json_path}.else_statements.{i}",
-                                condition_type,
-                            )
-                    if main_if_else_condition and len(item["else_if"]) == 0:
-                        return None
-                    elif main_if_else_condition and len(item["else_if"]) > 0:
-                        item["condition"] = self.modify_condition(item["else_if"][0]["condition"])
-                        item["then_statements"] = item["else_if"][0]["then_statements"]
-                        item["else_if"] = item["else_if"][1:]
-                    elif main_if_else_condition:
-                        logger.debug(
-                            f"if_else_delete_path: {json_path}.if_else -- {item}"
-                        )
-
-                elif item["type"] == "case_when":
-                    # Process main case condition
-                    if "condition" in item and item["condition"]:
-                        main_case_condition = self.process_condition(item["condition"], condition_type)
-                        if main_case_condition:
-                            # If condition should be removed for this operation, return None
-                            debug(f"case_when main condition removal: {json_path}.case_when.condition")
-                            return None
-                        else:
-                            # Modify the condition for PostgreSQL compatibility
-                            item["condition"] = self.modify_condition(item["condition"])
-
-                    # Process when clauses conditions and statements
-                    if "when_clauses" in item:
-                        for clause_index, clause in enumerate(item["when_clauses"]):
-                            # Process when clause condition
-                            if "condition" in clause and clause["condition"]:
-                                when_condition_result = self.process_condition(clause["condition"], condition_type)
-                                if when_condition_result:
-                                    # If condition should be removed, skip this when clause
-                                    debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
-                                    continue
-                                else:
-                                    # Modify the when condition for PostgreSQL compatibility
-                                    clause["condition"] = self.modify_condition(clause["condition"])
-                            
-                            # Process then_statements within when clauses
-                            if "then_statements" in clause:
-                                for i, item1 in enumerate(clause["then_statements"]):
-                                    clause["then_statements"][i] = (
-                                        process_on_delete_json(
-                                            item1,
-                                            f"{json_path}.when_clauses.{clause_index}.then_statements.{i}",
-                                            condition_type,
-                                        )
-                                    )
-                    if "else_statements" in item:
-                        for i, item1 in enumerate(item["else_statements"]):
-                            item["else_statements"][i] = process_on_delete_json(
-                                item1,
-                                f"{json_path}.else_statements.{i}",
-                                condition_type,
-                            )
-
-                elif item["type"] == "for_loop":
-                    # Process IF statements in loop_statements
-                    if "loop_statements" in item:
-                        for i, item1 in enumerate(item["loop_statements"]):
-                            item["loop_statements"][i] = process_on_delete_json(
-                                item1,
-                                f"{json_path}.loop_statements.{i}",
-                                condition_type,
-                            )
-            return item
-
-        # for u, main_item in enumerate(self.after_parse_on_delete):
-        for r, begin_end_item in enumerate(self.after_parse_on_delete["begin_end_statements"]):
-            json_path = f"main.begin_end_statements.{r}.begin_end_statements"
-            self.after_parse_on_delete["begin_end_statements"][r] = (process_on_delete_json(begin_end_item, json_path, "on_delete"))
 
     def rest_strings(self,sql_json) -> Dict:
         """
@@ -688,24 +323,24 @@ class JSONTOPLJSON:
             "return_statement": 0,
         }
 
-        def extract_rest_strings_from_item(item):
-            """Recursively extract rest strings from any item"""
-            if isinstance(item, dict):
+        def extract_rest_strings_from_item(statement):
+            """Recursively extract rest strings from any statement"""
+            if isinstance(statement, dict):
                 # # Check for "indent" field which contains rest string content
-                # if "indent" in item:
-                #     print(item["line"])
-                #     rest_strings_list.append(item)
+                # if "indent" in statement:
+                #     print(statement["line"])
+                #     rest_strings_list.append(statement)
 
-                if "type" in item:
-                    # print(f"item: {item}")
-                    strng_convert_json[item["type"]] += 1
+                if "type" in statement:
+                    # print(f"statement: {statement}")
+                    strng_convert_json[statement["type"]] += 1
                 # Recursively process all values in the dictionary
-                for value in item.values():
+                for value in statement.values():
                     extract_rest_strings_from_item(value)
 
-            elif isinstance(item, list):
+            elif isinstance(statement, list):
                 # Recursively process all items in the list
-                for sub_item in item:
+                for sub_item in statement:
                     extract_rest_strings_from_item(sub_item)
 
         # Process main_section_lines
@@ -745,13 +380,17 @@ class JSONTOPLJSON:
 
         # Step 2: Process each operation type to filter relevant code
         debug("=== Processing INSERT operations ===")
-        self.parse_pl_json_on_insert()
+        # self.parse_pl_json_on_insert()
+        # logger.debug(f"after_parse_on_insert: {self.after_parse_on_insert["begin_end_statements"]}")
+        self.after_parse_on_insert["begin_end_statements"] = self._process_on_json(self.after_parse_on_insert["begin_end_statements"], "main.begin_end_statements", "on_insert")
         
         debug("=== Processing UPDATE operations ===")
-        self.parse_pl_json_on_update()
+        # self.parse_pl_json_on_update()
+        self.after_parse_on_update["begin_end_statements"] = self._process_on_json(self.after_parse_on_update["begin_end_statements"], "main.begin_end_statements", "on_update")
         
         debug("=== Processing DELETE operations ===")
-        self.parse_pl_json_on_delete()
+        # self.parse_pl_json_on_delete()
+        self.after_parse_on_delete["begin_end_statements"] = self._process_on_json(self.after_parse_on_delete["begin_end_statements"], "main.begin_end_statements", "on_delete")
 
         # Step 3: Combine into final structure
         debug("Building final converted structure")

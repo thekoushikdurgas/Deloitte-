@@ -964,26 +964,26 @@ def convert_pl_json_to_postgresql_format(
                 # Convert the complex structure to a simple SQL string
                 sql_content = convert_complex_structure_to_sql(pl_json_data["on_insert"])
                 # Split into individual statements for better handling
-                statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
-                for stmt in statements:
-                    if stmt:
-                        postgresql_format["on_insert"].append({"type": "sql", "sql": stmt + ";"})
+                # statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
+                # for stmt in statements:
+                #     if stmt:
+                postgresql_format["on_insert"].append({"type": "sql", "sql": sql_content.replace("\n", " ").replace("\n", " ").replace("    ", " ")})
 
             # Handle on_update
             if "on_update" in pl_json_data and pl_json_data["on_update"]:
                 sql_content = convert_complex_structure_to_sql(pl_json_data["on_update"])
-                statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
-                for stmt in statements:
-                    if stmt:
-                        postgresql_format["on_update"].append({"type": "sql", "sql": stmt + ";"})
+                # statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
+                # for stmt in statements:
+                #     if stmt:
+                postgresql_format["on_update"].append({"type": "sql", "sql": sql_content.replace("\n", " ").replace("\n", " ").replace("    ", " ")})
 
             # Handle on_delete
             if "on_delete" in pl_json_data and pl_json_data["on_delete"]:
                 sql_content = convert_complex_structure_to_sql(pl_json_data["on_delete"])
-                statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
-                for stmt in statements:
-                    if stmt:
-                        postgresql_format["on_delete"].append({"type": "sql", "sql": stmt + ";"})
+                # statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
+                # for stmt in statements:
+                #     if stmt:
+                postgresql_format["on_delete"].append({"type": "sql", "sql": sql_content.replace("\n", " ").replace("\n", " ").replace("    ", " ")})
 
             debug("PostgreSQL format conversion completed")
 
@@ -1205,32 +1205,32 @@ def main() -> None:
         # debug(f"Step 3 completed in {step3_duration:.2f} seconds")
 
 
-        # # Step 5: Convert JSON to PL/JSON
-        # # ------------------------------
-        # info("Step 5: Converting JSON to PL/JSON...")
-        # debug("Starting Step 5: JSON → PostgreSQL-compatible PL/JSON")
-        # step5_start = time.time()
+        # Step 5: Convert JSON to PL/JSON
+        # ------------------------------
+        info("Step 5: Converting JSON to PL/JSON...")
+        debug("Starting Step 5: JSON → PostgreSQL-compatible PL/JSON")
+        step5_start = time.time()
        
-        # # Transform JSON to operation-specific structure for PostgreSQL
-        # read_json_to_oracle_triggers()
+        # Transform JSON to operation-specific structure for PostgreSQL
+        read_json_to_oracle_triggers()
        
-        # step5_duration = time.time() - step5_start
-        # info("✓ PL/JSON conversion complete! (Duration: %.2f seconds)", step5_duration)
-        # debug(f"Step 5 completed in {step5_duration:.2f} seconds")
+        step5_duration = time.time() - step5_start
+        info("✓ PL/JSON conversion complete! (Duration: %.2f seconds)", step5_duration)
+        debug(f"Step 5 completed in {step5_duration:.2f} seconds")
 
 
-        # # Step 6: Convert PL/JSON to PostgreSQL format
-        # # ------------------------------------------
-        # info("Step 6: Converting PL/JSON to PostgreSQL format...")
-        # debug("Starting Step 6: PL/JSON → PostgreSQL format JSON")
-        # step6_start = time.time()
+        # Step 6: Convert PL/JSON to PostgreSQL format
+        # ------------------------------------------
+        info("Step 6: Converting PL/JSON to PostgreSQL format...")
+        debug("Starting Step 6: PL/JSON → PostgreSQL format JSON")
+        step6_start = time.time()
        
-        # # Convert PL/JSON to PostgreSQL trigger structure
-        # read_json_to_postsql_triggers()
+        # Convert PL/JSON to PostgreSQL trigger structure
+        read_json_to_postsql_triggers()
        
-        # step6_duration = time.time() - step6_start
-        # info("✓ PostgreSQL format conversion complete! (Duration: %.2f seconds)", step6_duration)
-        # debug(f"Step 6 completed in {step6_duration:.2f} seconds")
+        step6_duration = time.time() - step6_start
+        info("✓ PostgreSQL format conversion complete! (Duration: %.2f seconds)", step6_duration)
+        debug(f"Step 6 completed in {step6_duration:.2f} seconds")
 
 
         # # Step 7: Convert JSON analysis directly to PostgreSQL SQL
@@ -1261,24 +1261,24 @@ def main() -> None:
         # debug(f"Step 8 completed in {step8_duration:.2f} seconds")
 
 
-        # # Final summary
-        # # ------------
-        # total_duration = time.time() - start_time
-        # info("=== Batch conversion finished successfully ===")
-        # info("Total execution time: %.2f seconds", total_duration)
+        # Final summary
+        # ------------
+        total_duration = time.time() - start_time
+        info("=== Batch conversion finished successfully ===")
+        info("Total execution time: %.2f seconds", total_duration)
        
-        # # Detailed performance breakdown
-        # info("Performance breakdown by step:")
-        # info("  - Step 1 (SQL → JSON):              %.2f seconds (%.1f%%)", step1_duration, step1_duration/total_duration*100)
+        # Detailed performance breakdown
+        info("Performance breakdown by step:")
+        info("  - Step 1 (SQL → JSON):              %.2f seconds (%.1f%%)", step1_duration, step1_duration/total_duration*100)
         # info("  - Step 2 (JSON → Oracle SQL):       %.2f seconds (%.1f%%)", step2_duration, step2_duration/total_duration*100)
         # info("  - Step 3 (JSON cleaning):           %.2f seconds (%.1f%%)", step3_duration, step3_duration/total_duration*100)
-        # # info("  - Step 4 (Validation):              %.2f seconds (%.1f%%)", step4_duration, step4_duration/total_duration*100)
-        # info("  - Step 5 (JSON → PL/JSON):          %.2f seconds (%.1f%%)", step5_duration, step5_duration/total_duration*100)
-        # info("  - Step 6 (PL/JSON → PostgreSQL):    %.2f seconds (%.1f%%)", step6_duration, step6_duration/total_duration*100)
+        # info("  - Step 4 (Validation):              %.2f seconds (%.1f%%)", step4_duration, step4_duration/total_duration*100)
+        info("  - Step 5 (JSON → PL/JSON):          %.2f seconds (%.1f%%)", step5_duration, step5_duration/total_duration*100)
+        info("  - Step 6 (PL/JSON → PostgreSQL):    %.2f seconds (%.1f%%)", step6_duration, step6_duration/total_duration*100)
         # info("  - Step 7 (JSON → PostgreSQL SQL):   %.2f seconds (%.1f%%)", step7_duration, step7_duration/total_duration*100)
         # info("  - Step 8 (PostgreSQL JSON → SQL):   %.2f seconds (%.1f%%)", step8_duration, step8_duration/total_duration*100)
        
-        # debug("Main conversion workflow completed successfully")
+        debug("Main conversion workflow completed successfully")
 
 
     except KeyboardInterrupt:

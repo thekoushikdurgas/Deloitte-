@@ -1,34 +1,534 @@
 {
   "on_insert": {
     "declarations": {
-      "variables": [],
+      "variables": [
+        {
+          "name": "V_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "V_MATL_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "V_RECORD_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "P_CLASS",
+          "data_type": "V_MATERIALS.CLASS_CD%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "P_APPROVAL_USER",
+          "data_type": "VARCHAR2(30)",
+          "default_value": null
+        },
+        {
+          "name": "P_APPROVAL_DATE",
+          "data_type": "DATE",
+          "default_value": null
+        },
+        {
+          "name": "V_MARKET_AUTH_NO",
+          "data_type": "COA.COA_MARKET_AUTHS.MARKET_AUTH_NO%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "V_TRIGGER_NAME",
+          "data_type": "VARCHAR2(30)",
+          "default_value": "'COA_V_MARKET_AUTHS_IOF'"
+        }
+      ],
       "constants": [],
-      "exceptions": []
+      "exceptions": [
+        {
+          "name": "E_INSERT_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_UPDATE_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_DELETE_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL_CLASS",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL_NO",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_AUDIT_COMMENT",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_DEFINED_USER",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_CHANGES_USER",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_ALREADY_DELETED",
+          "type": "EXCEPTION"
+        }
+      ]
     },
     "main": {
       "type": "begin_end",
+      "begin_line_no": 22,
       "begin_indent": 0,
       "begin_end_statements": [
         {
-          "indent": 4,
-          "line": "    IF DELETING THEN"
+          "type": "assignment",
+          "variable_name": "V_MARKET_AUTH_NO",
+          "assignment_operator": ":=",
+          "expression": "TRIM (REPLACE ( :NEW.MARKET_AUTH_NO, CHR (9), ''));",
+          "assignment_line_no": 23,
+          "assignment_indent": 4
+        },
+        {
+          "condition": ":OLD._FLAG = 'Y'",
+          "type": "if_else",
+          "if_line_no": 29,
+          "then_line_no": 29,
+          "if_indent": 4,
+          "end_if_line_no": 40,
+          "then_statements": [
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT COUNT (MAU_ID) INTO V_RECORD_COUNT FROM COA_MARKET_AUTHS_HIS A WHERE A.ACTION = 'D' AND A.MAU_ID = :OLD.MAU_ID;",
+              "statement_line_no": 30,
+              "statement_indent": 8
+            },
+            {
+              "condition": "V_RECORD_COUNT > 0",
+              "type": "if_else",
+              "if_line_no": 37,
+              "then_line_no": 37,
+              "if_indent": 8,
+              "end_if_line_no": 39,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_ALREADY_DELETED;",
+                  "statement_line_no": 38,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "condition": ":NEW._FLAG = 'Y'",
+          "type": "if_else",
+          "if_line_no": 47,
+          "then_line_no": 47,
+          "if_indent": 4,
+          "end_if_line_no": 51,
+          "then_statements": [
+            {
+              "condition": "( :NEW.AUDIT_COMMENT = :OLD.AUDIT_COMMENT)",
+              "type": "if_else",
+              "if_line_no": 48,
+              "then_line_no": 48,
+              "if_indent": 8,
+              "end_if_line_no": 50,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_DELETE_COA;",
+                  "statement_line_no": 49,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "type": "begin_end",
+          "begin_line_no": 58,
+          "begin_indent": 4,
+          "begin_end_statements": [
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT CLASS_CD INTO P_CLASS FROM V_MATERIALS WHERE MATL_NO = :NEW.MATL_NO;",
+              "statement_line_no": 59,
+              "statement_indent": 8
+            },
+            {
+              "condition": "P_CLASS NOT IN ('FIN')",
+              "type": "if_else",
+              "if_line_no": 65,
+              "then_line_no": 65,
+              "if_indent": 8,
+              "end_if_line_no": 67,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_MATL_CLASS;",
+                  "statement_line_no": 66,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "exception_handlers": [
+            {
+              "type": "exception_handler",
+              "exception_name": "NO_DATA_FOUND",
+              "when_line_no": 69,
+              "when_indent": 8,
+              "then_line_no": 69,
+              "exception_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_MATL;",
+                  "statement_line_no": 70,
+                  "statement_indent": 12
+                }
+              ]
+            }
+          ],
+          "exception_line_no": 68,
+          "end_line_no": 71
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT COUNT (*) INTO V_MATL_COUNT FROM V_MATERIALS WHERE MATL_NO = :NEW.MATL_NO ;",
+          "statement_line_no": 78,
+          "statement_indent": 4
+        },
+        {
+          "condition": "V_MATL_COUNT = 0",
+          "type": "if_else",
+          "if_line_no": 86,
+          "then_line_no": 86,
+          "if_indent": 4,
+          "end_if_line_no": 88,
+          "then_statements": [
+            {
+              "type": "raise_statement",
+              "sql_statement": "RAISE E_MATL_NO;",
+              "statement_line_no": 87,
+              "statement_indent": 8
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_line_no": 208,
+          "then_line_no": 208,
+          "if_indent": 4,
+          "end_if_line_no": 243,
+          "then_statements": [
+            {
+              "type": "assignment",
+              "variable_name": "V_MATL_COUNT",
+              "assignment_operator": ":=",
+              "expression": "0;",
+              "assignment_line_no": 209,
+              "assignment_indent": 8
+            },
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT COUNT (*) INTO V_MATL_COUNT FROM COA_MARKET_AUTHS WHERE MATL_NO = :NEW.MATL_NO AND COUNTRY_ID = :NEW.COUNTRY_ID;",
+              "statement_line_no": 210,
+              "statement_indent": 8
+            },
+            {
+              "condition": "V_MATL_COUNT = 1",
+              "type": "if_else",
+              "if_line_no": 222,
+              "then_line_no": 222,
+              "if_indent": 8,
+              "end_if_line_no": 224,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_INSERT_COA;",
+                  "statement_line_no": 223,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "type": "insert_statement",
+              "sql_statement": "INSERT INTO COA_MARKET_AUTHS ( MAU_ID, COUNTRY_ID, MATL_NO, MARKET_AUTH_NO, AUDIT_COMMENT, DEFINED_IND, VALID_IND ) VALUES ( :NEW.MAU_ID, :NEW.COUNTRY_ID, :NEW.MATL_NO, V_MARKET_AUTH_NO, :NEW.AUDIT_COMMENT, 'N', :NEW.VALID_IND );",
+              "statement_line_no": 226,
+              "statement_indent": 8
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
         }
       ],
-      "exception_handlers": []
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "E_INSERT_COA",
+          "when_line_no": 247,
+          "when_indent": 4,
+          "then_line_no": 247,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_UPDATE_COA",
+          "when_line_no": 249,
+          "when_indent": 4,
+          "then_line_no": 249,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20102",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20102, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL_CLASS",
+          "when_line_no": 251,
+          "when_indent": 4,
+          "then_line_no": 251,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_CHANGES_USER",
+          "when_line_no": 253,
+          "when_indent": 4,
+          "then_line_no": 253,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20104",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20104, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL_NO",
+          "when_line_no": 255,
+          "when_indent": 4,
+          "then_line_no": 255,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20105",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20105, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_AUDIT_COMMENT",
+          "when_line_no": 257,
+          "when_indent": 4,
+          "then_line_no": 257,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20106",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20106, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_DEFINED_USER",
+          "when_line_no": 259,
+          "when_indent": 4,
+          "then_line_no": 259,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20107",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20107, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_DELETE_COA",
+          "when_line_no": 261,
+          "when_indent": 4,
+          "then_line_no": 261,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20108",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20108, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL",
+          "when_line_no": 263,
+          "when_indent": 4,
+          "then_line_no": 263,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20109",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20109, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_ALREADY_DELETED",
+          "when_line_no": 265,
+          "when_indent": 4,
+          "then_line_no": 265,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20400",
+                  "'This record has already been deleted and cannot be changed anymore'"
+                ],
+                "named_params": {},
+                "raw_text": "-20400, 'This record has already been deleted and cannot be changed anymore'"
+              }
+            }
+          ]
+        }
+      ],
+      "exception_line_no": 246,
+      "end_line_no": 267
     },
     "conversion_stats": {
-      "select_statement": 0,
-      "insert_statement": 0,
+      "select_statement": 4,
+      "insert_statement": 1,
       "update_statement": 0,
       "delete_statement": 0,
-      "raise_statement": 0,
-      "assignment": 0,
+      "raise_statement": 6,
+      "assignment": 2,
       "for_loop": 0,
-      "if_else": 0,
+      "if_else": 8,
       "case_when": 0,
-      "begin_end": 1,
-      "exception_handler": 0,
-      "function_calling": 0,
+      "begin_end": 2,
+      "exception_handler": 11,
+      "function_calling": 10,
       "when_statement": 0,
       "elif_statement": 0,
       "fetch_statement": 0,
@@ -42,34 +542,639 @@
   },
   "on_update": {
     "declarations": {
-      "variables": [],
+      "variables": [
+        {
+          "name": "V_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "V_MATL_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "V_RECORD_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "P_CLASS",
+          "data_type": "V_MATERIALS.CLASS_CD%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "P_APPROVAL_USER",
+          "data_type": "VARCHAR2(30)",
+          "default_value": null
+        },
+        {
+          "name": "P_APPROVAL_DATE",
+          "data_type": "DATE",
+          "default_value": null
+        },
+        {
+          "name": "V_MARKET_AUTH_NO",
+          "data_type": "COA.COA_MARKET_AUTHS.MARKET_AUTH_NO%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "V_TRIGGER_NAME",
+          "data_type": "VARCHAR2(30)",
+          "default_value": "'COA_V_MARKET_AUTHS_IOF'"
+        }
+      ],
       "constants": [],
-      "exceptions": []
+      "exceptions": [
+        {
+          "name": "E_INSERT_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_UPDATE_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_DELETE_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL_CLASS",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL_NO",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_AUDIT_COMMENT",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_DEFINED_USER",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_CHANGES_USER",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_ALREADY_DELETED",
+          "type": "EXCEPTION"
+        }
+      ]
     },
     "main": {
       "type": "begin_end",
+      "begin_line_no": 22,
       "begin_indent": 0,
       "begin_end_statements": [
         {
-          "indent": 4,
-          "line": "    IF DELETING THEN"
+          "type": "assignment",
+          "variable_name": "V_MARKET_AUTH_NO",
+          "assignment_operator": ":=",
+          "expression": "TRIM (REPLACE ( :NEW.MARKET_AUTH_NO, CHR (9), ''));",
+          "assignment_line_no": 23,
+          "assignment_indent": 4
+        },
+        {
+          "condition": ":OLD._FLAG = 'Y'",
+          "type": "if_else",
+          "if_line_no": 29,
+          "then_line_no": 29,
+          "if_indent": 4,
+          "end_if_line_no": 40,
+          "then_statements": [
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT COUNT (MAU_ID) INTO V_RECORD_COUNT FROM COA_MARKET_AUTHS_HIS A WHERE A.ACTION = 'D' AND A.MAU_ID = :OLD.MAU_ID;",
+              "statement_line_no": 30,
+              "statement_indent": 8
+            },
+            {
+              "condition": "V_RECORD_COUNT > 0",
+              "type": "if_else",
+              "if_line_no": 37,
+              "then_line_no": 37,
+              "if_indent": 8,
+              "end_if_line_no": 39,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_ALREADY_DELETED;",
+                  "statement_line_no": 38,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "condition": ":NEW._FLAG = 'Y'",
+          "type": "if_else",
+          "if_line_no": 47,
+          "then_line_no": 47,
+          "if_indent": 4,
+          "end_if_line_no": 51,
+          "then_statements": [
+            {
+              "condition": "( :NEW.AUDIT_COMMENT = :OLD.AUDIT_COMMENT)",
+              "type": "if_else",
+              "if_line_no": 48,
+              "then_line_no": 48,
+              "if_indent": 8,
+              "end_if_line_no": 50,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_DELETE_COA;",
+                  "statement_line_no": 49,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "type": "begin_end",
+          "begin_line_no": 58,
+          "begin_indent": 4,
+          "begin_end_statements": [
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT CLASS_CD INTO P_CLASS FROM V_MATERIALS WHERE MATL_NO = :NEW.MATL_NO;",
+              "statement_line_no": 59,
+              "statement_indent": 8
+            },
+            {
+              "condition": "P_CLASS NOT IN ('FIN')",
+              "type": "if_else",
+              "if_line_no": 65,
+              "then_line_no": 65,
+              "if_indent": 8,
+              "end_if_line_no": 67,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_MATL_CLASS;",
+                  "statement_line_no": 66,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "exception_handlers": [
+            {
+              "type": "exception_handler",
+              "exception_name": "NO_DATA_FOUND",
+              "when_line_no": 69,
+              "when_indent": 8,
+              "then_line_no": 69,
+              "exception_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_MATL;",
+                  "statement_line_no": 70,
+                  "statement_indent": 12
+                }
+              ]
+            }
+          ],
+          "exception_line_no": 68,
+          "end_line_no": 71
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT COUNT (*) INTO V_MATL_COUNT FROM V_MATERIALS WHERE MATL_NO = :NEW.MATL_NO ;",
+          "statement_line_no": 78,
+          "statement_indent": 4
+        },
+        {
+          "condition": "V_MATL_COUNT = 0",
+          "type": "if_else",
+          "if_line_no": 86,
+          "then_line_no": 86,
+          "if_indent": 4,
+          "end_if_line_no": 88,
+          "then_statements": [
+            {
+              "type": "raise_statement",
+              "sql_statement": "RAISE E_MATL_NO;",
+              "statement_line_no": 87,
+              "statement_indent": 8
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "condition": "TRUE",
+          "type": "if_else",
+          "if_line_no": 93,
+          "then_line_no": 93,
+          "if_indent": 4,
+          "end_if_line_no": 205,
+          "then_statements": [
+            {
+              "condition": "( :OLD.MATL_NO <> :NEW.MATL_NO OR :NEW.COUNTRY_ID <> :OLD.COUNTRY_ID)",
+              "type": "if_else",
+              "if_line_no": 99,
+              "then_line_no": 100,
+              "if_indent": 8,
+              "end_if_line_no": 102,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_UPDATE_COA;",
+                  "statement_line_no": 101,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "condition": ":NEW.DEFINED_IND = :OLD.DEFINED_IND",
+              "type": "if_else",
+              "if_line_no": 109,
+              "then_line_no": 109,
+              "if_indent": 8,
+              "end_if_line_no": 113,
+              "then_statements": [
+                {
+                  "condition": ":NEW.AUDIT_COMMENT IS NULL",
+                  "type": "if_else",
+                  "if_line_no": 110,
+                  "then_line_no": 110,
+                  "if_indent": 12,
+                  "end_if_line_no": 112,
+                  "then_statements": [
+                    {
+                      "type": "raise_statement",
+                      "sql_statement": "RAISE E_AUDIT_COMMENT;",
+                      "statement_line_no": 111,
+                      "statement_indent": 16
+                    }
+                  ],
+                  "if_elses": [],
+                  "else_statements": []
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "condition": "( :NEW.DEFINED_IND = 'Y' AND :OLD.DEFINED_IND = 'N') AND (COA_SECURITY.GET_USERID = NVL ( :OLD.UPD_USER, :OLD.INS_USER))",
+              "type": "if_else",
+              "if_line_no": 120,
+              "then_line_no": 121,
+              "if_indent": 8,
+              "end_if_line_no": 123,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_DEFINED_USER;",
+                  "statement_line_no": 122,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "condition": "( :NEW.DEFINED_IND = 'Y' AND :OLD.DEFINED_IND = 'N') AND ( :OLD.MATL_NO <> :NEW.MATL_NO OR :OLD.MARKET_AUTH_NO <> V_MARKET_AUTH_NO OR :OLD.AUDIT_COMMENT <> :NEW.AUDIT_COMMENT OR :OLD.VALID_IND <> :NEW.VALID_IND)",
+              "type": "if_else",
+              "if_line_no": 138,
+              "then_line_no": 142,
+              "if_indent": 8,
+              "end_if_line_no": 144,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_CHANGES_USER;",
+                  "statement_line_no": 143,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            },
+            {
+              "condition": "( :OLD.DEFINED_IND = 'N' AND :NEW.DEFINED_IND = 'Y') AND (COA_SECURITY.GET_USERID <> NVL ( :OLD.UPD_USER, :OLD.INS_USER)) AND ( :OLD.MATL_NO = :NEW.MATL_NO OR :OLD.MARKET_AUTH_NO = V_MARKET_AUTH_NO OR :OLD.AUDIT_COMMENT = :NEW.AUDIT_COMMENT OR :OLD.VALID_IND = :NEW.VALID_IND)",
+              "type": "if_else",
+              "if_line_no": 149,
+              "then_line_no": 153,
+              "if_indent": 8,
+              "end_if_line_no": 204,
+              "then_statements": [
+                {
+                  "type": "assignment",
+                  "variable_name": "P_APPROVAL_USER",
+                  "assignment_operator": ":=",
+                  "expression": "COA_SECURITY.GET_USERID;",
+                  "assignment_line_no": 154,
+                  "assignment_indent": 12
+                },
+                {
+                  "type": "assignment",
+                  "variable_name": "P_APPROVAL_DATE",
+                  "assignment_operator": ":=",
+                  "expression": "SYSDATE;",
+                  "assignment_line_no": 155,
+                  "assignment_indent": 12
+                },
+                {
+                  "type": "update_statement",
+                  "sql_statement": "UPDATE COA_MARKET_AUTHS SET DEFINED_IND = 'Y', DEF_DATE = SYSDATE , DEF_USER = COA_UTIL.GET_CHANGING_USER WHERE MAU_ID = :NEW.MAU_ID;",
+                  "statement_line_no": 156,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": [
+                {
+                  "type": "update_statement",
+                  "sql_statement": "UPDATE COA_MARKET_AUTHS SET COUNTRY_ID = :NEW.COUNTRY_ID, MATL_NO = :NEW.MATL_NO, MARKET_AUTH_NO = V_MARKET_AUTH_NO, AUDIT_COMMENT = :NEW.AUDIT_COMMENT, DEFINED_IND = 'N', VALID_IND = :NEW.VALID_IND, UPD_NO = NVL ( UPD_NO, 0 ) + 1, DEF_DATE = NULL, DEF_USER = NULL WHERE MAU_ID = :NEW.MAU_ID;",
+                  "statement_line_no": 177,
+                  "statement_indent": 12
+                },
+                {
+                  "condition": ":NEW._FLAG = 'Y'",
+                  "type": "if_else",
+                  "if_line_no": 198,
+                  "then_line_no": 198,
+                  "if_indent": 12,
+                  "end_if_line_no": 203,
+                  "then_statements": [
+                    {
+                      "type": "delete_statement",
+                      "sql_statement": "DELETE FROM COA_MARKET_AUTHS WHERE COUNTRY_ID = :NEW.COUNTRY_ID AND MATL_NO = :NEW.MATL_NO;",
+                      "statement_line_no": 199,
+                      "statement_indent": 16
+                    }
+                  ],
+                  "if_elses": [],
+                  "else_statements": []
+                }
+              ]
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
         }
       ],
-      "exception_handlers": []
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "E_INSERT_COA",
+          "when_line_no": 247,
+          "when_indent": 4,
+          "then_line_no": 247,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_UPDATE_COA",
+          "when_line_no": 249,
+          "when_indent": 4,
+          "then_line_no": 249,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20102",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20102, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL_CLASS",
+          "when_line_no": 251,
+          "when_indent": 4,
+          "then_line_no": 251,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_CHANGES_USER",
+          "when_line_no": 253,
+          "when_indent": 4,
+          "then_line_no": 253,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20104",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20104, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL_NO",
+          "when_line_no": 255,
+          "when_indent": 4,
+          "then_line_no": 255,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20105",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20105, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_AUDIT_COMMENT",
+          "when_line_no": 257,
+          "when_indent": 4,
+          "then_line_no": 257,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20106",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20106, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_DEFINED_USER",
+          "when_line_no": 259,
+          "when_indent": 4,
+          "then_line_no": 259,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20107",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20107, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_DELETE_COA",
+          "when_line_no": 261,
+          "when_indent": 4,
+          "then_line_no": 261,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20108",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20108, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL",
+          "when_line_no": 263,
+          "when_indent": 4,
+          "then_line_no": 263,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20109",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20109, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_ALREADY_DELETED",
+          "when_line_no": 265,
+          "when_indent": 4,
+          "then_line_no": 265,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20400",
+                  "'This record has already been deleted and cannot be changed anymore'"
+                ],
+                "named_params": {},
+                "raw_text": "-20400, 'This record has already been deleted and cannot be changed anymore'"
+              }
+            }
+          ]
+        }
+      ],
+      "exception_line_no": 246,
+      "end_line_no": 267
     },
     "conversion_stats": {
-      "select_statement": 0,
+      "select_statement": 3,
       "insert_statement": 0,
-      "update_statement": 0,
-      "delete_statement": 0,
-      "raise_statement": 0,
-      "assignment": 0,
+      "update_statement": 2,
+      "delete_statement": 1,
+      "raise_statement": 9,
+      "assignment": 3,
       "for_loop": 0,
-      "if_else": 0,
+      "if_else": 14,
       "case_when": 0,
-      "begin_end": 1,
-      "exception_handler": 0,
-      "function_calling": 0,
+      "begin_end": 2,
+      "exception_handler": 11,
+      "function_calling": 10,
       "when_statement": 0,
       "elif_statement": 0,
       "fetch_statement": 0,
@@ -83,34 +1188,484 @@
   },
   "on_delete": {
     "declarations": {
-      "variables": [],
+      "variables": [
+        {
+          "name": "V_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "V_MATL_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "V_RECORD_COUNT",
+          "data_type": "INTEGER",
+          "default_value": "0"
+        },
+        {
+          "name": "P_CLASS",
+          "data_type": "V_MATERIALS.CLASS_CD%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "P_APPROVAL_USER",
+          "data_type": "VARCHAR2(30)",
+          "default_value": null
+        },
+        {
+          "name": "P_APPROVAL_DATE",
+          "data_type": "DATE",
+          "default_value": null
+        },
+        {
+          "name": "V_MARKET_AUTH_NO",
+          "data_type": "COA.COA_MARKET_AUTHS.MARKET_AUTH_NO%TYPE",
+          "default_value": null
+        },
+        {
+          "name": "V_TRIGGER_NAME",
+          "data_type": "VARCHAR2(30)",
+          "default_value": "'COA_V_MARKET_AUTHS_IOF'"
+        }
+      ],
       "constants": [],
-      "exceptions": []
+      "exceptions": [
+        {
+          "name": "E_INSERT_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_UPDATE_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_DELETE_COA",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL_CLASS",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_MATL_NO",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_AUDIT_COMMENT",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_DEFINED_USER",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_CHANGES_USER",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "E_ALREADY_DELETED",
+          "type": "EXCEPTION"
+        }
+      ]
     },
     "main": {
       "type": "begin_end",
+      "begin_line_no": 22,
       "begin_indent": 0,
       "begin_end_statements": [
         {
-          "indent": 4,
-          "line": "    IF DELETING THEN"
+          "type": "assignment",
+          "variable_name": "V_MARKET_AUTH_NO",
+          "assignment_operator": ":=",
+          "expression": "TRIM (REPLACE ( :NEW.MARKET_AUTH_NO, CHR (9), ''));",
+          "assignment_line_no": 23,
+          "assignment_indent": 4
+        },
+        {
+          "condition": ":OLD._FLAG = 'Y'",
+          "type": "if_else",
+          "if_line_no": 29,
+          "then_line_no": 29,
+          "if_indent": 4,
+          "end_if_line_no": 40,
+          "then_statements": [
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT COUNT (MAU_ID) INTO V_RECORD_COUNT FROM COA_MARKET_AUTHS_HIS A WHERE A.ACTION = 'D' AND A.MAU_ID = :OLD.MAU_ID;",
+              "statement_line_no": 30,
+              "statement_indent": 8
+            },
+            {
+              "condition": "V_RECORD_COUNT > 0",
+              "type": "if_else",
+              "if_line_no": 37,
+              "then_line_no": 37,
+              "if_indent": 8,
+              "end_if_line_no": 39,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_ALREADY_DELETED;",
+                  "statement_line_no": 38,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "condition": ":NEW._FLAG = 'Y'",
+          "type": "if_else",
+          "if_line_no": 47,
+          "then_line_no": 47,
+          "if_indent": 4,
+          "end_if_line_no": 51,
+          "then_statements": [
+            {
+              "condition": "( :NEW.AUDIT_COMMENT = :OLD.AUDIT_COMMENT)",
+              "type": "if_else",
+              "if_line_no": 48,
+              "then_line_no": 48,
+              "if_indent": 8,
+              "end_if_line_no": 50,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_DELETE_COA;",
+                  "statement_line_no": 49,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
+        },
+        {
+          "type": "begin_end",
+          "begin_line_no": 58,
+          "begin_indent": 4,
+          "begin_end_statements": [
+            {
+              "type": "select_statement",
+              "sql_statement": "SELECT CLASS_CD INTO P_CLASS FROM V_MATERIALS WHERE MATL_NO = :NEW.MATL_NO;",
+              "statement_line_no": 59,
+              "statement_indent": 8
+            },
+            {
+              "condition": "P_CLASS NOT IN ('FIN')",
+              "type": "if_else",
+              "if_line_no": 65,
+              "then_line_no": 65,
+              "if_indent": 8,
+              "end_if_line_no": 67,
+              "then_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_MATL_CLASS;",
+                  "statement_line_no": 66,
+                  "statement_indent": 12
+                }
+              ],
+              "if_elses": [],
+              "else_statements": []
+            }
+          ],
+          "exception_handlers": [
+            {
+              "type": "exception_handler",
+              "exception_name": "NO_DATA_FOUND",
+              "when_line_no": 69,
+              "when_indent": 8,
+              "then_line_no": 69,
+              "exception_statements": [
+                {
+                  "type": "raise_statement",
+                  "sql_statement": "RAISE E_MATL;",
+                  "statement_line_no": 70,
+                  "statement_indent": 12
+                }
+              ]
+            }
+          ],
+          "exception_line_no": 68,
+          "end_line_no": 71
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT COUNT (*) INTO V_MATL_COUNT FROM V_MATERIALS WHERE MATL_NO = :NEW.MATL_NO ;",
+          "statement_line_no": 78,
+          "statement_indent": 4
+        },
+        {
+          "condition": "V_MATL_COUNT = 0",
+          "type": "if_else",
+          "if_line_no": 86,
+          "then_line_no": 86,
+          "if_indent": 4,
+          "end_if_line_no": 88,
+          "then_statements": [
+            {
+              "type": "raise_statement",
+              "sql_statement": "RAISE E_MATL_NO;",
+              "statement_line_no": 87,
+              "statement_indent": 8
+            }
+          ],
+          "if_elses": [],
+          "else_statements": []
         }
       ],
-      "exception_handlers": []
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "E_INSERT_COA",
+          "when_line_no": 247,
+          "when_indent": 4,
+          "then_line_no": 247,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_UPDATE_COA",
+          "when_line_no": 249,
+          "when_indent": 4,
+          "then_line_no": 249,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20102",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20102, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL_CLASS",
+          "when_line_no": 251,
+          "when_indent": 4,
+          "then_line_no": 251,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_CHANGES_USER",
+          "when_line_no": 253,
+          "when_indent": 4,
+          "then_line_no": 253,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20104",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20104, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL_NO",
+          "when_line_no": 255,
+          "when_indent": 4,
+          "then_line_no": 255,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20105",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20105, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_AUDIT_COMMENT",
+          "when_line_no": 257,
+          "when_indent": 4,
+          "then_line_no": 257,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20106",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20106, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_DEFINED_USER",
+          "when_line_no": 259,
+          "when_indent": 4,
+          "then_line_no": 259,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20107",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20107, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_DELETE_COA",
+          "when_line_no": 261,
+          "when_indent": 4,
+          "then_line_no": 261,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20108",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20108, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_MATL",
+          "when_line_no": 263,
+          "when_indent": 4,
+          "then_line_no": 263,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20109",
+                  "V_TRIGGER_NAME"
+                ],
+                "named_params": {},
+                "raw_text": "-20109, V_TRIGGER_NAME"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "E_ALREADY_DELETED",
+          "when_line_no": 265,
+          "when_indent": 4,
+          "then_line_no": 265,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20400",
+                  "'This record has already been deleted and cannot be changed anymore'"
+                ],
+                "named_params": {},
+                "raw_text": "-20400, 'This record has already been deleted and cannot be changed anymore'"
+              }
+            }
+          ]
+        }
+      ],
+      "exception_line_no": 246,
+      "end_line_no": 267
     },
     "conversion_stats": {
-      "select_statement": 0,
+      "select_statement": 3,
       "insert_statement": 0,
       "update_statement": 0,
       "delete_statement": 0,
-      "raise_statement": 0,
-      "assignment": 0,
+      "raise_statement": 5,
+      "assignment": 1,
       "for_loop": 0,
-      "if_else": 0,
+      "if_else": 6,
       "case_when": 0,
-      "begin_end": 1,
-      "exception_handler": 0,
-      "function_calling": 0,
+      "begin_end": 2,
+      "exception_handler": 11,
+      "function_calling": 10,
       "when_statement": 0,
       "elif_statement": 0,
       "fetch_statement": 0,
@@ -123,14 +1678,14 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-09-02T13:53:53.372970",
+    "parse_timestamp": "2025-09-02T19:46:11.912704",
     "parser_version": "1.0",
     "file_details": {
       "filename": "zzz.sql",
       "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\zzz.sql",
-      "filesize": 679,
+      "filesize": 9022,
       "file_extension": ".sql",
-      "last_modified": 1756801322.145319,
+      "last_modified": 1756811985.5342302,
       "created_time": 1756173936.5202713,
       "is_file": true,
       "is_readable": true

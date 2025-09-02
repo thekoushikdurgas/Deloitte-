@@ -99,6 +99,7 @@ class FormatSQL:
             "merge_statement": 0,
             "null_statement": 0,
             "return_statement": 0,
+            "with_statement": 0,
         }
         
         # Load mappings from Excel file
@@ -279,9 +280,9 @@ class FormatSQL:
         
         # Step 1: Add header comment
         debug(f"Adding header comments with timestamp for {db_type}")
-        lines.append(f"-- Generated from JSON analysis for {db_type}")
-        lines.append(f"-- Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        lines.append("")
+        # lines.append(f"-- Generated from JSON analysis for {db_type}")
+        # lines.append(f"-- Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        # lines.append("")
         
         # Step 2: Render declarations
         debug("Starting declarations section rendering")
@@ -301,8 +302,8 @@ class FormatSQL:
         
         # Step 4: Add footer
         debug("Adding footer comments")
-        lines.append("")
-        lines.append(f"-- End of generated {db_type} SQL")
+        # lines.append("")
+        # lines.append(f"-- End of generated {db_type} SQL")
         
         # Combine all lines into the final SQL string
         result = "\n".join(lines)
@@ -442,7 +443,8 @@ class FormatSQL:
         statements = node.get("begin_end_statements", [])
         if statements:
             logger.debug(f"Processing {len(statements)} statements in main block")
-            statement_lines = self._render_statement_list(statements, indent_level + 1, db_type)
+            # print(f"begin_end_statements statements: {len(statements)}")
+            statement_lines = self._render_statement_list(statements, indent_level + 1, db_type, "begin_end_statements")
             lines.extend(statement_lines)
         
         # Process exception handlers
@@ -464,7 +466,7 @@ class FormatSQL:
         logger.debug(f"=== Main block complete for {db_type} ===")
         return lines
 
-    def _render_statement_list(self, statements: List[Dict[str, Any]], indent_level: int, db_type: str) -> List[str]:
+    def _render_statement_list(self, statements: List[Dict[str, Any]], indent_level: int, db_type: str, json_path: str) -> List[str]:
         """
         Render a list of statements with proper indentation and database-specific formatting.
         
@@ -477,16 +479,17 @@ class FormatSQL:
             List[str]: List of formatted statement lines
         """
         lines: List[str] = []
-        
         for statement in statements:
             # Handle case where statement might be a string instead of dict
             if isinstance(statement, str):
                 logger.warning(f"Found string statement instead of dict: {statement[:50]}...")
                 lines.append(self._indent(f"-- String statement: {statement}", indent_level))
                 continue
-            
+            # if json_path == "begin_end_statements":
+            #     print(f"statement: {statement}")
             if not isinstance(statement, dict):
                 logger.warning(f"Found non-dict statement: {type(statement)}")
+                # print(f"Found non-dict statement: {type(statement)} {statement} {json_path} {statement_type}")
                 lines.append(self._indent(f"-- Non-dict statement: {statement}", indent_level))
                 continue
             
@@ -512,12 +515,16 @@ class FormatSQL:
                     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
                 elif statement_type == "delete_statement":
                     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
+                elif statement_type == "merge_statement":
+                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
                 elif statement_type == "assignment":
                     statement_lines = self._render_assignment(statement, indent_level, db_type)
                 elif statement_type == "raise_statement":
                     statement_lines = self._render_raise_statement(statement, indent_level, db_type)
                 elif statement_type == "function_calling":
                     statement_lines = self._render_function_call(statement, indent_level, db_type)
+                elif statement_type == "with_statement":
+                    statement_lines = self._render_with_statement(statement, indent_level, db_type)
                 elif statement_type == "null_statement":
                     statement_lines = self._render_null_statement(statement, indent_level, db_type)
                 elif statement_type == "return_statement":
@@ -563,7 +570,7 @@ class FormatSQL:
         # THEN statements
         then_statements = node.get("then_statements", [])
         if then_statements:
-            then_lines = self._render_statement_list(then_statements, indent_level + 1, db_type)
+            then_lines = self._render_statement_list(then_statements, indent_level + 1, db_type, "then_statements")
             lines.extend(then_lines)
         
         # ELSIF statements
@@ -579,14 +586,14 @@ class FormatSQL:
             
             elif_then_statements = elif_stmt.get("then_statements", [])
             if elif_then_statements:
-                elif_lines = self._render_statement_list(elif_then_statements, indent_level + 1, db_type)
+                elif_lines = self._render_statement_list(elif_then_statements, indent_level + 1, db_type, "if_elses")
                 lines.extend(elif_lines)
         
         # ELSE statements
         else_statements = node.get("else_statements", [])
         if else_statements:
             lines.append(self._indent("ELSE", indent_level))
-            else_lines = self._render_statement_list(else_statements, indent_level + 1, db_type)
+            else_lines = self._render_statement_list(else_statements, indent_level + 1, db_type, "else_statements")
             lines.extend(else_lines)
         
         lines.append(self._indent("END IF;", indent_level))
@@ -628,14 +635,14 @@ class FormatSQL:
             if when_statements:
                 self.json_convert_sql['when_statement'] += 1
             if when_statements:
-                when_lines = self._render_statement_list(when_statements, indent_level + 1, db_type)
+                when_lines = self._render_statement_list(when_statements, indent_level + 1, db_type, "when_clauses")
                 lines.extend(when_lines)
         
         # ELSE statements
         else_statements = node.get("else_statements", [])
         if else_statements:
             lines.append(self._indent("ELSE", indent_level))
-            else_lines = self._render_statement_list(else_statements, indent_level + 1, db_type)
+            else_lines = self._render_statement_list(else_statements, indent_level + 1, db_type, "else_statements")
             lines.extend(else_lines)
         
         lines.append(self._indent("END CASE;", indent_level))
@@ -666,7 +673,7 @@ class FormatSQL:
         # Loop statements
         for_statements = node.get("for_statements", [])
         if for_statements:
-            for_lines = self._render_statement_list(for_statements, indent_level + 1, db_type)
+            for_lines = self._render_statement_list(for_statements, indent_level + 1, db_type, "for_statements")
             lines.extend(for_lines)
         
         lines.append(self._indent("END LOOP;", indent_level))
@@ -847,6 +854,42 @@ class FormatSQL:
         
         return [self._indent(f"-- Unknown statement type: {statement_type}", indent_level)]
 
+    def _render_with_statement(self, node: Dict[str, Any], indent_level: int, db_type: str) -> List[str]:
+        """
+        Render WITH statements captured by the analyzer.
+        
+        Expected node shape from analyzer:
+        - type: "with_statement"
+        - with_values: the CTE name(s) part after WITH up to AS (...
+        - with_statements: the SQL inside the parentheses following AS
+        
+        We will reconstruct a compact form:
+        WITH <with_values> AS (
+          <with_statements>
+        )
+        and leave it as-is for both Oracle and PostgreSQL.
+        """
+        lines: List[str] = []
+        with_values = node.get("with_values", "").strip()
+        with_statements = node.get("with_statements", "").strip()
+
+        # Apply function mappings for PostgreSQL target inside the WITH body
+        if db_type == "PostgreSQL":
+            with_values_mapped = self._apply_function_mappings(with_values)
+            with_body_mapped = self._apply_function_mappings(with_statements)
+        else:
+            with_values_mapped = with_values
+            with_body_mapped = with_statements
+
+        lines.append(self._indent(f"WITH {with_values_mapped} AS (", indent_level))
+        # The body may contain multiple lines; split safely on newlines if present
+        body_lines = with_body_mapped.split("\n") if "\n" in with_body_mapped else [with_body_mapped]
+        for bl in body_lines:
+            if bl.strip():
+                lines.append(self._indent(bl.strip(), indent_level + 1))
+        lines.append(self._indent(")", indent_level))
+        return lines
+
     def _render_exception_handler(self, handler: Dict[str, Any], indent_level: int, db_type: str) -> List[str]:
         """
         Render exception handlers for the specified database type.
@@ -870,7 +913,7 @@ class FormatSQL:
         # Exception statements
         exception_statements = handler.get("exception_statements", [])
         if exception_statements:
-            exception_lines = self._render_statement_list(exception_statements, indent_level + 1, db_type)
+            exception_lines = self._render_statement_list(exception_statements, indent_level + 1, db_type, "exception_statements")
             lines.extend(exception_lines)
         
         return lines
