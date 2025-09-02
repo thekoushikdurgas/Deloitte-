@@ -181,7 +181,7 @@ class JSONTOPLJSON:
         # 3. If condition mentions other operations but not this one, keep it (return True)
         
         # Case 1: Condition mentions current operation - remove from current operation's code
-        print(f"condition_dict: {condition_dict} {condition_type} {condition}")
+        logger.debug(f"condition_dict: {condition_dict} {condition_type} {condition}")
         if condition_dict[condition_type]:
             debug(f"REMOVE: Condition contains {condition_type} keywords")
             return False
@@ -242,7 +242,7 @@ class JSONTOPLJSON:
                             statement["then_statements"] = statement["if_elses"][0]["then_statements"]
                             statement["if_elses"] = statement["if_elses"][1:]
                         elif main_if_else_condition:
-                            print(f"if_else_delete_path: {json_path}.if_else -- {statement}")
+                            logger.debug(f"if_else_delete_path: {json_path}.if_else -- {statement}")
 
                     elif statement["type"] == "case_when":
                         # Process main case condition
@@ -325,13 +325,8 @@ class JSONTOPLJSON:
         def extract_rest_strings_from_item(statement):
             """Recursively extract rest strings from any statement"""
             if isinstance(statement, dict):
-                # # Check for "indent" field which contains rest string content
-                # if "indent" in statement:
-                #     print(statement["line"])
-                #     rest_strings_list.append(statement)
-
                 if "type" in statement:
-                    # print(f"statement: {statement}")
+                    logger.debug(f"statement: {statement}")
                     strng_convert_json[statement["type"]] += 1
                 # Recursively process all values in the dictionary
                 for value in statement.values():

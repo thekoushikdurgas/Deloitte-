@@ -313,7 +313,7 @@ class FormatSQL:
         result = "DO $$ " + " ".join([line.strip() for line in lines]) + " $$ LANGUAGE plpgsql;"
         debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
         if self.analysis['conversion_stats'] is None:
-            print(f"sql_convert_count: {self.analysis['conversion_stats']}")
+            logger.debug(f"sql_convert_count: {self.analysis['conversion_stats']}")
         final_sql = {
             "sql": result,
             "json_convert_sql": self.json_convert_sql
@@ -446,18 +446,18 @@ class FormatSQL:
         statements = node.get("begin_end_statements", [])
         if statements:
             logger.debug(f"Processing {len(statements)} statements in main block")
-            # print(f"begin_end_statements statements: {len(statements)}")
+            logger.debug(f"begin_end_statements statements: {len(statements)}")
             statement_lines = self._render_statement_list(statements, indent_level + 1, db_type, "begin_end_statements")
             lines.extend(statement_lines)
         
-        # Process exception handlers
-        exception_handlers = node.get("exception_handlers", [])
-        if exception_handlers:
-            logger.debug(f"Processing {len(exception_handlers)} exception handlers")
-            lines.append(self._indent("EXCEPTION", indent_level))
-            for handler in exception_handlers:
-                handler_lines = self._render_exception_handler(handler, indent_level + 1, db_type)
-                lines.extend(handler_lines)
+        # # Process exception handlers
+        # exception_handlers = node.get("exception_handlers", [])
+        # if exception_handlers:
+        #     logger.debug(f"Processing {len(exception_handlers)} exception handlers")
+        #     lines.append(self._indent("EXCEPTION", indent_level))
+        #     for handler in exception_handlers:
+        #         handler_lines = self._render_exception_handler(handler, indent_level + 1, db_type)
+        #         lines.extend(handler_lines)
         
         if wrap_begin_end:
             if db_type == "PostgreSQL":
@@ -488,10 +488,10 @@ class FormatSQL:
                 lines.append(self._indent(f"-- String statement: {statement}", indent_level))
                 continue
             # if json_path == "begin_end_statements":
-            #     print(f"statement: {statement}")
+            logger.debug(f"statement: {statement}")
             if not isinstance(statement, dict):
                 logger.warning(f"Found non-dict statement: {type(statement)}")
-                # print(f"Found non-dict statement: {type(statement)} {statement} {json_path} {statement_type}")
+                logger.debug(f"Found non-dict statement: {type(statement)} {statement} {json_path} {statement_type}")
                 lines.append(self._indent(f"-- Non-dict statement: {statement}", indent_level))
                 continue
             
@@ -530,11 +530,11 @@ class FormatSQL:
                 elif statement_type == "null_statement":
                     statement_lines = self._render_null_statement(statement, indent_level, db_type)
                 elif statement_type == "return_statement":
-                    # print(statement)
+                    logger.debug(statement)
                     statement_lines = self._render_return_statement(statement, indent_level, db_type)
                 else:
                     # Fallback for unknown statement types
-                    # print(statement)
+                    logger.debug(statement)
                     statement_lines = self._render_unknown_statement(statement, indent_level, db_type)
                 
                 lines.extend(statement_lines)
@@ -756,7 +756,9 @@ class FormatSQL:
         if sql_statement:
             if db_type == "PostgreSQL":
                 sql_statement = self._apply_function_mappings(sql_statement)
-            return [self._indent(f"{sql_statement}", indent_level)]
+                return [self._indent(f"{sql_statement.replace('RAISE', 'RAISE EXCEPTION')}", indent_level)]
+            else:
+                return [self._indent(f"{sql_statement}", indent_level)]
         return []
 
     def _render_function_call(self, node: Dict[str, Any], indent_level: int, db_type: str) -> List[str]:

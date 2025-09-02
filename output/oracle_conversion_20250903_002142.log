@@ -1,0 +1,696 @@
+2025-09-03 00:21:42,061 - root - DEBUG - [common.py:105] - Starting main conversion workflow
+2025-09-03 00:21:42,061 - root - INFO - [common.py:110] - === Starting Oracle Trigger Conversion Process ===
+2025-09-03 00:21:42,061 - root - INFO - [common.py:110] - Logging to: output\oracle_conversion_20250903_002142.log
+2025-09-03 00:21:42,062 - root - DEBUG - [common.py:105] - Logging system initialized
+2025-09-03 00:21:42,062 - root - INFO - [common.py:110] - Step 1: Converting Oracle SQL files to JSON analysis...
+2025-09-03 00:21:42,062 - root - DEBUG - [common.py:105] - Starting Step 1: Oracle SQL → JSON conversion
+2025-09-03 00:21:42,062 - root - INFO - [common.py:110] - === Starting Oracle triggers to JSON conversion ===
+2025-09-03 00:21:42,064 - root - DEBUG - [common.py:105] - Workflow Phase 1: Convert Oracle SQL files to JSON analysis structure
+2025-09-03 00:21:42,064 - root - DEBUG - [common.py:105] - Source directory: files/oracle
+2025-09-03 00:21:42,064 - root - DEBUG - [common.py:105] - Target directory: files/format_json
+2025-09-03 00:21:42,064 - root - DEBUG - [common.py:105] - File details will be included in metadata for each processed file
+2025-09-03 00:21:42,064 - root - INFO - [common.py:110] - === Starting file processing ===
+2025-09-03 00:21:42,064 - root - INFO - [common.py:110] - Source directory: 'files/oracle'
+2025-09-03 00:21:42,064 - root - INFO - [common.py:110] - Target directory: 'files/format_json'
+2025-09-03 00:21:42,065 - root - INFO - [common.py:110] - File pattern: '.sql'
+2025-09-03 00:21:42,065 - root - INFO - [common.py:110] - Output suffix: '_analysis.json'
+2025-09-03 00:21:42,065 - root - DEBUG - [common.py:105] - Ensuring target directory exists...
+2025-09-03 00:21:42,065 - root - DEBUG - [common.py:105] - Directory already exists: files/format_json
+2025-09-03 00:21:42,065 - root - DEBUG - [common.py:105] - Found 1 files in source directory
+2025-09-03 00:21:42,065 - root - DEBUG - [common.py:105] - Files matching pattern '.sql': ['zzz.sql']
+2025-09-03 00:21:42,065 - root - DEBUG - [common.py:105] - === Processing file 1/1: zzz.sql ===
+2025-09-03 00:21:42,066 - root - DEBUG - [common.py:105] - Source path: files/oracle\zzz.sql
+2025-09-03 00:21:42,066 - root - DEBUG - [common.py:105] - Output path: files/format_json\zzz_analysis.json
+2025-09-03 00:21:42,066 - root - DEBUG - [common.py:105] - === SQL to JSON processing for trigger zzz.sql ===
+2025-09-03 00:21:42,066 - root - DEBUG - [common.py:105] - Creating OracleTriggerAnalyzer instance from file...
+2025-09-03 00:21:42,066 - root - DEBUG - [common.py:105] - Initializing OracleTriggerAnalyzer with 20 characters of SQL
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:106] - structured lines conversion 0 lines processed
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:109] - SQL section parsing
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:322] - structured lines conversion
+2025-09-03 00:21:42,067 - root - DEBUG - [common.py:105] - Converting SQL content to structured lines
+2025-09-03 00:21:42,067 - root - DEBUG - [common.py:105] - Structured lines conversion complete: 60 total, 13 with semicolons, 1 empty lines skipped
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:324] - structured lines conversion
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:261] - Block comment stripping complete: 0 comments extracted, 60 lines cleaned
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:328] - Removed block comments from main section
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:305] - Inline comment stripping complete: 0 comments extracted, 60 lines cleaned
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:332] - Removed inline comments from main section
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:344] - Found DECLARE at line 3
+2025-09-03 00:21:42,067 - root - DEBUG - [OracleTriggerAnalyzer.py:348] - Found BEGIN at line 7
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:358] - DECLARE section: lines 3-6
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:386] - Starting declaration parsing
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:430] - Processed variable: V_TRIGGER_NAME
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:464] - Processed exception: ERR_UPD
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:464] - Processed exception: ERR_DEL
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1549] - Starting top-level BEGIN blocks parsing
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1734] - exception_handler: [{'type': 'exception_handler', 'exception_name': 'ERR_UPD', 'when_line_no': 55, 'when_indent': 4, 'then_line_no': 55, 'exception_statements': [{'indent': 8, 'line': '        RAISE_APPLICATION_ERROR (-20105, V_TRIGGER_NAME);', 'line_no': 56}]}, {'type': 'exception_handler', 'exception_name': 'ERR_DEL', 'when_line_no': 57, 'when_indent': 4, 'then_line_no': 57, 'exception_statements': [{'indent': 8, 'line': '        RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);', 'line_no': 58}]}]
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1594] - Begin line: {'indent': 8, 'line': '        BEGIN', 'line_no': 9} 1
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1604] - End line: {'indent': 8, 'line': '        END;', 'line_no': 33} 25
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 4, 'line': '    IF INSERTING THEN', 'line_no': 8}
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1174] - if_indent: 8
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1180] - if_i: 8 i: 53
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1181] - if_elses working_lines lenght: 22
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1279] - then_statements: 0 2
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 8, 'line': '        IF :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO THEN', 'line_no': 35}
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 8, 'line': '        END IF;', 'line_no': 37}
+2025-09-03 00:21:42,068 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 8, 'line': '        UPDATE V_GLOBAL_CPY_PREFIXES', 'line_no': 38}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 8, 'line': '        SET', 'line_no': 39}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 40}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,', 'line_no': 41}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 42}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 43}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 44}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,', 'line_no': 45}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,', 'line_no': 46}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,', 'line_no': 47}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            VALID_IND = :NEW.VALID_IND', 'line_no': 48}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 8, 'line': '        WHERE', 'line_no': 49}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 12, 'line': '            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;', 'line_no': 50}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 4, 'line': '    ELSIF DELETING THEN', 'line_no': 51}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1289] - {'indent': 4, 'line': '    ELSIF UPDATING THEN', 'line_no': 34}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1328] - [{'indent': 4, 'line': '    ELSIF UPDATING THEN', 'line_no': 34}, {'indent': 8, 'line': '        IF :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO THEN', 'line_no': 35}, {'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}, {'indent': 8, 'line': '        END IF;', 'line_no': 37}, {'indent': 8, 'line': '        UPDATE V_GLOBAL_CPY_PREFIXES', 'line_no': 38}, {'indent': 8, 'line': '        SET', 'line_no': 39}, {'indent': 12, 'line': '            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 40}, {'indent': 12, 'line': '            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,', 'line_no': 41}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 42}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 43}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 44}, {'indent': 12, 'line': '            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,', 'line_no': 45}, {'indent': 12, 'line': '            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,', 'line_no': 46}, {'indent': 12, 'line': '            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,', 'line_no': 47}, {'indent': 12, 'line': '            VALID_IND = :NEW.VALID_IND', 'line_no': 48}, {'indent': 8, 'line': '        WHERE', 'line_no': 49}, {'indent': 12, 'line': '            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;', 'line_no': 50}]
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1331] - elif_else_then_statements[0]: {'indent': 4, 'line': '    ELSIF UPDATING THEN', 'line_no': 34}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1358] - elif_else_then_statements 0: 34 then_i: 34
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1359] - case_when_then_statements: [{'indent': 4, 'line': '    ELSIF UPDATING THEN', 'line_no': 34}, {'indent': 8, 'line': '        IF :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO THEN', 'line_no': 35}, {'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}, {'indent': 8, 'line': '        END IF;', 'line_no': 37}, {'indent': 8, 'line': '        UPDATE V_GLOBAL_CPY_PREFIXES', 'line_no': 38}, {'indent': 8, 'line': '        SET', 'line_no': 39}, {'indent': 12, 'line': '            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 40}, {'indent': 12, 'line': '            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,', 'line_no': 41}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 42}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 43}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 44}, {'indent': 12, 'line': '            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,', 'line_no': 45}, {'indent': 12, 'line': '            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,', 'line_no': 46}, {'indent': 12, 'line': '            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,', 'line_no': 47}, {'indent': 12, 'line': '            VALID_IND = :NEW.VALID_IND', 'line_no': 48}, {'indent': 8, 'line': '        WHERE', 'line_no': 49}, {'indent': 12, 'line': '            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;', 'line_no': 50}]
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1360] - elif_else_then_statements[0]['indent']: 4
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 8, 'line': '        RAISE ERR_DEL;', 'line_no': 52}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1285] - line_info: {'indent': 4, 'line': '    END IF;', 'line_no': 53}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1300] - {'indent': 4, 'line': '    ELSIF DELETING THEN', 'line_no': 51}
+2025-09-03 00:21:42,069 - root - DEBUG - [OracleTriggerAnalyzer.py:1328] - [{'indent': 4, 'line': '    ELSIF DELETING THEN', 'line_no': 51}, {'indent': 8, 'line': '        RAISE ERR_DEL;', 'line_no': 52}]
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1331] - elif_else_then_statements[0]: {'indent': 4, 'line': '    ELSIF DELETING THEN', 'line_no': 51}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1358] - elif_else_then_statements 0: 51 then_i: 51
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1359] - case_when_then_statements: [{'indent': 4, 'line': '    ELSIF DELETING THEN', 'line_no': 51}, {'indent': 8, 'line': '        RAISE ERR_DEL;', 'line_no': 52}]
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1360] - elif_else_then_statements[0]['indent']: 4
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1317] - if_else_statements: {'condition': ' INSERTING ', 'type': 'if_else', 'if_line_no': 8, 'then_line_no': 8, 'if_indent': 4, 'end_if_line_no': 53, 'then_statements': [{'type': 'begin_end', 'begin_line_no': 9, 'begin_indent': 8, 'begin_end_statements': [{'indent': 12, 'line': '            INSERT INTO V_GLOBAL_CPY_PREFIXES (', 'line_no': 10}, {'indent': 16, 'line': '                GS1_COMP_PREFIX_NO,', 'line_no': 11}, {'indent': 16, 'line': '                GS1_ORG_COUNTRY_CD,', 'line_no': 12}, {'indent': 16, 'line': '                GCP_OWNER_COMP_CD,', 'line_no': 13}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 14}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 15}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 16}, {'indent': 16, 'line': '                SSCC_RELEVANCY_IND,', 'line_no': 17}, {'indent': 16, 'line': '                GLOBAL_CHANGE_ID,', 'line_no': 18}, {'indent': 16, 'line': '                REASON_FOR_CHANGE,', 'line_no': 19}, {'indent': 16, 'line': '                VALID_IND', 'line_no': 20}, {'indent': 12, 'line': '            ) VALUES (', 'line_no': 21}, {'indent': 16, 'line': '                :NEW.GS1_COMP_PREFIX_NO,', 'line_no': 22}, {'indent': 16, 'line': '                :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 23}, {'indent': 16, 'line': '                :NEW.GCP_OWNER_COMP_CD,', 'line_no': 24}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 25}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 26}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 27}, {'indent': 16, 'line': '                :NEW.SSCC_RELEVANCY_IND,', 'line_no': 28}, {'indent': 16, 'line': '                :NEW.GLOBAL_CHANGE_ID,', 'line_no': 29}, {'indent': 16, 'line': '                :NEW.REASON_FOR_CHANGE,', 'line_no': 30}, {'indent': 16, 'line': '                :NEW.VALID_IND', 'line_no': 31}, {'indent': 12, 'line': '            );', 'line_no': 32}], 'exception_handlers': [], 'exception_line_no': -1, 'end_line_no': 33}], 'if_elses': [{'type': 'elif_statement', 'elif_line_no': 34, 'elif_indent': 4, 'condition': 'UPDATING', 'then_line_no': 34, 'then_statements': [{'indent': 8, 'line': '        IF :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO THEN', 'line_no': 35}, {'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}, {'indent': 8, 'line': '        END IF;', 'line_no': 37}, {'indent': 8, 'line': '        UPDATE V_GLOBAL_CPY_PREFIXES', 'line_no': 38}, {'indent': 8, 'line': '        SET', 'line_no': 39}, {'indent': 12, 'line': '            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 40}, {'indent': 12, 'line': '            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,', 'line_no': 41}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 42}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 43}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 44}, {'indent': 12, 'line': '            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,', 'line_no': 45}, {'indent': 12, 'line': '            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,', 'line_no': 46}, {'indent': 12, 'line': '            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,', 'line_no': 47}, {'indent': 12, 'line': '            VALID_IND = :NEW.VALID_IND', 'line_no': 48}, {'indent': 8, 'line': '        WHERE', 'line_no': 49}, {'indent': 12, 'line': '            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;', 'line_no': 50}]}, {'type': 'elif_statement', 'elif_line_no': 51, 'elif_indent': 4, 'condition': 'DELETING', 'then_line_no': 51, 'then_statements': [{'indent': 8, 'line': '        RAISE ERR_DEL;', 'line_no': 52}]}], 'else_statements': []}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'type': 'begin_end', 'begin_line_no': 9, 'begin_indent': 8, 'begin_end_statements': [{'indent': 12, 'line': '            INSERT INTO V_GLOBAL_CPY_PREFIXES (', 'line_no': 10}, {'indent': 16, 'line': '                GS1_COMP_PREFIX_NO,', 'line_no': 11}, {'indent': 16, 'line': '                GS1_ORG_COUNTRY_CD,', 'line_no': 12}, {'indent': 16, 'line': '                GCP_OWNER_COMP_CD,', 'line_no': 13}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 14}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 15}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 16}, {'indent': 16, 'line': '                SSCC_RELEVANCY_IND,', 'line_no': 17}, {'indent': 16, 'line': '                GLOBAL_CHANGE_ID,', 'line_no': 18}, {'indent': 16, 'line': '                REASON_FOR_CHANGE,', 'line_no': 19}, {'indent': 16, 'line': '                VALID_IND', 'line_no': 20}, {'indent': 12, 'line': '            ) VALUES (', 'line_no': 21}, {'indent': 16, 'line': '                :NEW.GS1_COMP_PREFIX_NO,', 'line_no': 22}, {'indent': 16, 'line': '                :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 23}, {'indent': 16, 'line': '                :NEW.GCP_OWNER_COMP_CD,', 'line_no': 24}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 25}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 26}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 27}, {'indent': 16, 'line': '                :NEW.SSCC_RELEVANCY_IND,', 'line_no': 28}, {'indent': 16, 'line': '                :NEW.GLOBAL_CHANGE_ID,', 'line_no': 29}, {'indent': 16, 'line': '                :NEW.REASON_FOR_CHANGE,', 'line_no': 30}, {'indent': 16, 'line': '                :NEW.VALID_IND', 'line_no': 31}, {'indent': 12, 'line': '            );', 'line_no': 32}], 'exception_handlers': [], 'exception_line_no': -1, 'end_line_no': 33}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            INSERT INTO V_GLOBAL_CPY_PREFIXES (', 'line_no': 10}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                GS1_COMP_PREFIX_NO,', 'line_no': 11}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                GS1_ORG_COUNTRY_CD,', 'line_no': 12}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                GCP_OWNER_COMP_CD,', 'line_no': 13}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 14}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 15}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 16}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                SSCC_RELEVANCY_IND,', 'line_no': 17}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                GLOBAL_CHANGE_ID,', 'line_no': 18}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                REASON_FOR_CHANGE,', 'line_no': 19}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                VALID_IND', 'line_no': 20}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            ) VALUES (', 'line_no': 21}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.GS1_COMP_PREFIX_NO,', 'line_no': 22}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 23}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.GCP_OWNER_COMP_CD,', 'line_no': 24}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 25}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 26}
+2025-09-03 00:21:42,070 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 27}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.SSCC_RELEVANCY_IND,', 'line_no': 28}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.GLOBAL_CHANGE_ID,', 'line_no': 29}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.REASON_FOR_CHANGE,', 'line_no': 30}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 16, 'line': '                :NEW.VALID_IND', 'line_no': 31}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            );', 'line_no': 32}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 8, 'line': '        IF :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO THEN', 'line_no': 35}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1174] - if_indent: 35
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1180] - if_i: 35 i: 37
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1181] - if_elses working_lines lenght: 3
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1314] - else_i: -1 elif_i: -1 then_statements: [{'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}]
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1317] - if_else_statements: {'condition': ' :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO ', 'type': 'if_else', 'if_line_no': 35, 'then_line_no': 35, 'if_indent': 8, 'end_if_line_no': 37, 'then_statements': [{'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}], 'if_elses': [], 'else_statements': []}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 8, 'line': '        UPDATE V_GLOBAL_CPY_PREFIXES', 'line_no': 38}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 8, 'line': '        SET', 'line_no': 39}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 40}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,', 'line_no': 41}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 42}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 43}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 44}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,', 'line_no': 45}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,', 'line_no': 46}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,', 'line_no': 47}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            VALID_IND = :NEW.VALID_IND', 'line_no': 48}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 8, 'line': '        WHERE', 'line_no': 49}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 12, 'line': '            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;', 'line_no': 50}
+2025-09-03 00:21:42,071 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 8, 'line': '        RAISE ERR_DEL;', 'line_no': 52}
+2025-09-03 00:21:42,072 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 8, 'line': '        RAISE_APPLICATION_ERROR (-20105, V_TRIGGER_NAME);', 'line_no': 56}
+2025-09-03 00:21:42,072 - root - DEBUG - [OracleTriggerAnalyzer.py:1170] - item: {'indent': 8, 'line': '        RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);', 'line_no': 58}
+2025-09-03 00:21:42,379 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: [{'condition': ' INSERTING ', 'type': 'if_else', 'if_line_no': 8, 'then_line_no': 8, 'if_indent': 4, 'end_if_line_no': 53, 'then_statements': [{'type': 'begin_end', 'begin_line_no': 9, 'begin_indent': 8, 'begin_end_statements': [{'indent': 12, 'line': '            INSERT INTO V_GLOBAL_CPY_PREFIXES (', 'line_no': 10}, {'indent': 16, 'line': '                GS1_COMP_PREFIX_NO,', 'line_no': 11}, {'indent': 16, 'line': '                GS1_ORG_COUNTRY_CD,', 'line_no': 12}, {'indent': 16, 'line': '                GCP_OWNER_COMP_CD,', 'line_no': 13}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 14}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 15}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 16}, {'indent': 16, 'line': '                SSCC_RELEVANCY_IND,', 'line_no': 17}, {'indent': 16, 'line': '                GLOBAL_CHANGE_ID,', 'line_no': 18}, {'indent': 16, 'line': '                REASON_FOR_CHANGE,', 'line_no': 19}, {'indent': 16, 'line': '                VALID_IND', 'line_no': 20}, {'indent': 12, 'line': '            ) VALUES (', 'line_no': 21}, {'indent': 16, 'line': '                :NEW.GS1_COMP_PREFIX_NO,', 'line_no': 22}, {'indent': 16, 'line': '                :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 23}, {'indent': 16, 'line': '                :NEW.GCP_OWNER_COMP_CD,', 'line_no': 24}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 25}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 26}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 27}, {'indent': 16, 'line': '                :NEW.SSCC_RELEVANCY_IND,', 'line_no': 28}, {'indent': 16, 'line': '                :NEW.GLOBAL_CHANGE_ID,', 'line_no': 29}, {'indent': 16, 'line': '                :NEW.REASON_FOR_CHANGE,', 'line_no': 30}, {'indent': 16, 'line': '                :NEW.VALID_IND', 'line_no': 31}, {'indent': 12, 'line': '            );', 'line_no': 32}], 'exception_handlers': [], 'exception_line_no': -1, 'end_line_no': 33}], 'if_elses': [{'type': 'elif_statement', 'elif_line_no': 34, 'elif_indent': 4, 'condition': 'UPDATING', 'then_line_no': 34, 'then_statements': [{'condition': ' :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO ', 'type': 'if_else', 'if_line_no': 35, 'then_line_no': 35, 'if_indent': 8, 'end_if_line_no': 37, 'then_statements': [{'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}], 'if_elses': [], 'else_statements': []}, {'indent': 8, 'line': '        UPDATE V_GLOBAL_CPY_PREFIXES', 'line_no': 38}, {'indent': 8, 'line': '        SET', 'line_no': 39}, {'indent': 12, 'line': '            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 40}, {'indent': 12, 'line': '            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,', 'line_no': 41}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 42}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 43}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 44}, {'indent': 12, 'line': '            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,', 'line_no': 45}, {'indent': 12, 'line': '            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,', 'line_no': 46}, {'indent': 12, 'line': '            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,', 'line_no': 47}, {'indent': 12, 'line': '            VALID_IND = :NEW.VALID_IND', 'line_no': 48}, {'indent': 8, 'line': '        WHERE', 'line_no': 49}, {'indent': 12, 'line': '            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;', 'line_no': 50}]}, {'type': 'elif_statement', 'elif_line_no': 51, 'elif_indent': 4, 'condition': 'DELETING', 'then_line_no': 51, 'then_statements': [{'indent': 8, 'line': '        RAISE ERR_DEL;', 'line_no': 52}]}], 'else_statements': []}]
+2025-09-03 00:21:42,379 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 0
+2025-09-03 00:21:42,392 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: [{'type': 'begin_end', 'begin_line_no': 9, 'begin_indent': 8, 'begin_end_statements': [{'indent': 12, 'line': '            INSERT INTO V_GLOBAL_CPY_PREFIXES (', 'line_no': 10}, {'indent': 16, 'line': '                GS1_COMP_PREFIX_NO,', 'line_no': 11}, {'indent': 16, 'line': '                GS1_ORG_COUNTRY_CD,', 'line_no': 12}, {'indent': 16, 'line': '                GCP_OWNER_COMP_CD,', 'line_no': 13}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 14}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 15}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 16}, {'indent': 16, 'line': '                SSCC_RELEVANCY_IND,', 'line_no': 17}, {'indent': 16, 'line': '                GLOBAL_CHANGE_ID,', 'line_no': 18}, {'indent': 16, 'line': '                REASON_FOR_CHANGE,', 'line_no': 19}, {'indent': 16, 'line': '                VALID_IND', 'line_no': 20}, {'indent': 12, 'line': '            ) VALUES (', 'line_no': 21}, {'indent': 16, 'line': '                :NEW.GS1_COMP_PREFIX_NO,', 'line_no': 22}, {'indent': 16, 'line': '                :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 23}, {'indent': 16, 'line': '                :NEW.GCP_OWNER_COMP_CD,', 'line_no': 24}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 25}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 26}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 27}, {'indent': 16, 'line': '                :NEW.SSCC_RELEVANCY_IND,', 'line_no': 28}, {'indent': 16, 'line': '                :NEW.GLOBAL_CHANGE_ID,', 'line_no': 29}, {'indent': 16, 'line': '                :NEW.REASON_FOR_CHANGE,', 'line_no': 30}, {'indent': 16, 'line': '                :NEW.VALID_IND', 'line_no': 31}, {'indent': 12, 'line': '            );', 'line_no': 32}], 'exception_handlers': [], 'exception_line_no': -1, 'end_line_no': 33}]
+2025-09-03 00:21:42,392 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 0
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: [{'indent': 12, 'line': '            INSERT INTO V_GLOBAL_CPY_PREFIXES (', 'line_no': 10}, {'indent': 16, 'line': '                GS1_COMP_PREFIX_NO,', 'line_no': 11}, {'indent': 16, 'line': '                GS1_ORG_COUNTRY_CD,', 'line_no': 12}, {'indent': 16, 'line': '                GCP_OWNER_COMP_CD,', 'line_no': 13}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 14}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 15}, {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 16}, {'indent': 16, 'line': '                SSCC_RELEVANCY_IND,', 'line_no': 17}, {'indent': 16, 'line': '                GLOBAL_CHANGE_ID,', 'line_no': 18}, {'indent': 16, 'line': '                REASON_FOR_CHANGE,', 'line_no': 19}, {'indent': 16, 'line': '                VALID_IND', 'line_no': 20}, {'indent': 12, 'line': '            ) VALUES (', 'line_no': 21}, {'indent': 16, 'line': '                :NEW.GS1_COMP_PREFIX_NO,', 'line_no': 22}, {'indent': 16, 'line': '                :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 23}, {'indent': 16, 'line': '                :NEW.GCP_OWNER_COMP_CD,', 'line_no': 24}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 25}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 26}, {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 27}, {'indent': 16, 'line': '                :NEW.SSCC_RELEVANCY_IND,', 'line_no': 28}, {'indent': 16, 'line': '                :NEW.GLOBAL_CHANGE_ID,', 'line_no': 29}, {'indent': 16, 'line': '                :NEW.REASON_FOR_CHANGE,', 'line_no': 30}, {'indent': 16, 'line': '                :NEW.VALID_IND', 'line_no': 31}, {'indent': 12, 'line': '            );', 'line_no': 32}]
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 0
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            INSERT INTO V_GLOBAL_CPY_PREFIXES (', 'line_no': 10}
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 1
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                GS1_COMP_PREFIX_NO,', 'line_no': 11}
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 2
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                GS1_ORG_COUNTRY_CD,', 'line_no': 12}
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 3
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                GCP_OWNER_COMP_CD,', 'line_no': 13}
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 4
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 14}
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 5
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 15}
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 6
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 16}
+2025-09-03 00:21:42,409 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 7
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                SSCC_RELEVANCY_IND,', 'line_no': 17}
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 8
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                GLOBAL_CHANGE_ID,', 'line_no': 18}
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 9
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                REASON_FOR_CHANGE,', 'line_no': 19}
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 10
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                VALID_IND', 'line_no': 20}
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 11
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            ) VALUES (', 'line_no': 21}
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 12
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.GS1_COMP_PREFIX_NO,', 'line_no': 22}
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 13
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 23}
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 14
+2025-09-03 00:21:42,410 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.GCP_OWNER_COMP_CD,', 'line_no': 24}
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 15
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 25}
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 16
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 26}
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 17
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 27}
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 18
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.SSCC_RELEVANCY_IND,', 'line_no': 28}
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 19
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.GLOBAL_CHANGE_ID,', 'line_no': 29}
+2025-09-03 00:21:42,411 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 20
+2025-09-03 00:21:42,412 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.REASON_FOR_CHANGE,', 'line_no': 30}
+2025-09-03 00:21:42,412 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 21
+2025-09-03 00:21:42,412 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 16, 'line': '                :NEW.VALID_IND', 'line_no': 31}
+2025-09-03 00:21:42,412 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 22
+2025-09-03 00:21:42,412 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            );', 'line_no': 32}
+2025-09-03 00:21:42,459 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: [{'condition': ' :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO ', 'type': 'if_else', 'if_line_no': 35, 'then_line_no': 35, 'if_indent': 8, 'end_if_line_no': 37, 'then_statements': [{'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}], 'if_elses': [], 'else_statements': []}, {'indent': 8, 'line': '        UPDATE V_GLOBAL_CPY_PREFIXES', 'line_no': 38}, {'indent': 8, 'line': '        SET', 'line_no': 39}, {'indent': 12, 'line': '            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 40}, {'indent': 12, 'line': '            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,', 'line_no': 41}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 42}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 43}, {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 44}, {'indent': 12, 'line': '            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,', 'line_no': 45}, {'indent': 12, 'line': '            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,', 'line_no': 46}, {'indent': 12, 'line': '            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,', 'line_no': 47}, {'indent': 12, 'line': '            VALID_IND = :NEW.VALID_IND', 'line_no': 48}, {'indent': 8, 'line': '        WHERE', 'line_no': 49}, {'indent': 12, 'line': '            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;', 'line_no': 50}]
+2025-09-03 00:21:42,459 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 0
+2025-09-03 00:21:42,491 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: [{'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}]
+2025-09-03 00:21:42,491 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 0
+2025-09-03 00:21:42,492 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            RAISE ERR_UPD;', 'line_no': 36}
+2025-09-03 00:21:42,529 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: []
+2025-09-03 00:21:42,529 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 1
+2025-09-03 00:21:42,529 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 8, 'line': '        UPDATE V_GLOBAL_CPY_PREFIXES', 'line_no': 38}
+2025-09-03 00:21:42,529 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 2
+2025-09-03 00:21:42,530 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 8, 'line': '        SET', 'line_no': 39}
+2025-09-03 00:21:42,530 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 3
+2025-09-03 00:21:42,530 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            GS1_ORG_COUNTRY_CD = :NEW.GS1_ORG_COUNTRY_CD,', 'line_no': 40}
+2025-09-03 00:21:42,530 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 4
+2025-09-03 00:21:42,530 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            GCP_OWNER_COMP_CD = :NEW.GCP_OWNER_COMP_CD,', 'line_no': 41}
+2025-09-03 00:21:42,530 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 5
+2025-09-03 00:21:42,530 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_PRIM_CD = :NEW.GTIN_ALLOC_TYPE_PRIM_CD,', 'line_no': 42}
+2025-09-03 00:21:42,530 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 6
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_SEC_CD = :NEW.GTIN_ALLOC_TYPE_SEC_CD,', 'line_no': 43}
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 7
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            GTIN_ALLOC_TYPE_TER_CD = :NEW.GTIN_ALLOC_TYPE_TER_CD,', 'line_no': 44}
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 8
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            SSCC_RELEVANCY_IND = :NEW.SSCC_RELEVANCY_IND,', 'line_no': 45}
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 9
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            GLOBAL_CHANGE_ID = :NEW.GLOBAL_CHANGE_ID,', 'line_no': 46}
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 10
+2025-09-03 00:21:42,531 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            REASON_FOR_CHANGE = :NEW.REASON_FOR_CHANGE,', 'line_no': 47}
+2025-09-03 00:21:42,532 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 11
+2025-09-03 00:21:42,532 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            VALID_IND = :NEW.VALID_IND', 'line_no': 48}
+2025-09-03 00:21:42,532 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 12
+2025-09-03 00:21:42,532 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 8, 'line': '        WHERE', 'line_no': 49}
+2025-09-03 00:21:42,532 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 13
+2025-09-03 00:21:42,532 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 12, 'line': '            GS1_COMP_PREFIX_NO = :NEW.GS1_COMP_PREFIX_NO;', 'line_no': 50}
+2025-09-03 00:21:42,562 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: [{'indent': 8, 'line': '        RAISE ERR_DEL;', 'line_no': 52}]
+2025-09-03 00:21:42,562 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 0
+2025-09-03 00:21:42,563 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 8, 'line': '        RAISE ERR_DEL;', 'line_no': 52}
+2025-09-03 00:21:42,603 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: []
+2025-09-03 00:21:42,646 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: [{'indent': 8, 'line': '        RAISE_APPLICATION_ERROR (-20105, V_TRIGGER_NAME);', 'line_no': 56}]
+2025-09-03 00:21:42,647 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 0
+2025-09-03 00:21:42,647 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 8, 'line': '        RAISE_APPLICATION_ERROR (-20105, V_TRIGGER_NAME);', 'line_no': 56}
+2025-09-03 00:21:42,647 - root - DEBUG - [OracleTriggerAnalyzer.py:801] - item: RAISE_APPLICATION_ERROR (-20105, V_TRIGGER_NAME);
+2025-09-03 00:21:42,648 - root - DEBUG - [OracleTriggerAnalyzer.py:802] - function calling start: 56
+2025-09-03 00:21:42,648 - root - DEBUG - [OracleTriggerAnalyzer.py:804] - function calling end: 56
+2025-09-03 00:21:42,648 - root - DEBUG - [OracleTriggerAnalyzer.py:1752] - combined_line: RAISE_APPLICATION_ERROR (-20105, V_TRIGGER_NAME);
+2025-09-03 00:21:42,682 - root - DEBUG - [OracleTriggerAnalyzer.py:759] - working_lines: [{'indent': 8, 'line': '        RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);', 'line_no': 58}]
+2025-09-03 00:21:42,682 - root - DEBUG - [OracleTriggerAnalyzer.py:765] - i: 0
+2025-09-03 00:21:42,682 - root - DEBUG - [OracleTriggerAnalyzer.py:768] - item: {'indent': 8, 'line': '        RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);', 'line_no': 58}
+2025-09-03 00:21:42,682 - root - DEBUG - [OracleTriggerAnalyzer.py:801] - item: RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);
+2025-09-03 00:21:42,682 - root - DEBUG - [OracleTriggerAnalyzer.py:802] - function calling start: 58
+2025-09-03 00:21:42,682 - root - DEBUG - [OracleTriggerAnalyzer.py:804] - function calling end: 58
+2025-09-03 00:21:42,682 - root - DEBUG - [OracleTriggerAnalyzer.py:1752] - combined_line: RAISE_APPLICATION_ERROR (-20110, V_TRIGGER_NAME);
+2025-09-03 00:21:42,690 - root - DEBUG - [OracleTriggerAnalyzer.py:111] - SQL section parsing
+2025-09-03 00:21:42,690 - root - DEBUG - [OracleTriggerAnalyzer.py:114] - OracleTriggerAnalyzer initialization 0.6245696544647217 seconds
+2025-09-03 00:21:42,691 - root - DEBUG - [common.py:105] - OracleTriggerAnalyzer created successfully with file details
+2025-09-03 00:21:42,691 - root - DEBUG - [common.py:105] - File details: zzz.sql
+2025-09-03 00:21:42,691 - root - DEBUG - [common.py:105] - Generating JSON analysis...
+2025-09-03 00:21:42,691 - root - DEBUG - [OracleTriggerAnalyzer.py:2202] - JSON conversion complete: 1 vars, 0 consts, 2 excs, 0 comments
+2025-09-03 00:21:42,691 - root - DEBUG - [common.py:105] - JSON analysis generated successfully
+2025-09-03 00:21:42,691 - root - DEBUG - [common.py:105] - Generated JSON with keys: ['declarations', 'main', 'sql_comments', 'rest_string_list', 'conversion_stats', 'metadata']
+2025-09-03 00:21:42,691 - root - DEBUG - [common.py:105] - File details in metadata: zzz.sql (2345 bytes)
+2025-09-03 00:21:42,692 - root - DEBUG - [common.py:105] - Analysis statistics: 1 vars, 0 consts, 2 excs, 0 comments
+2025-09-03 00:21:42,692 - root - DEBUG - [common.py:105] - Writing analysis JSON to: files/format_json\zzz_analysis.json
+2025-09-03 00:21:42,695 - root - DEBUG - [common.py:105] - Successfully wrote analysis JSON to files/format_json\zzz_analysis.json
+2025-09-03 00:21:42,695 - root - DEBUG - [common.py:105] - === SQL to JSON processing complete for trigger zzz.sql ===
+2025-09-03 00:21:42,695 - root - DEBUG - [common.py:105] - ✓ Created zzz_analysis.json
+2025-09-03 00:21:42,696 - root - INFO - [common.py:110] - === File processing complete ===
+2025-09-03 00:21:42,697 - root - INFO - [common.py:110] - Successfully processed: 1 files
+2025-09-03 00:21:42,698 - root - INFO - [common.py:110] - === Oracle triggers to JSON conversion complete ===
+2025-09-03 00:21:42,698 - root - DEBUG - [common.py:105] - Phase 1 complete: Oracle SQL files converted to JSON analysis structure with file metadata
+2025-09-03 00:21:42,698 - root - INFO - [common.py:110] - ✓ JSON conversion complete! (Duration: 0.64 seconds)
+2025-09-03 00:21:42,699 - root - DEBUG - [common.py:105] - Step 1 completed in 0.64 seconds
+2025-09-03 00:21:42,699 - root - INFO - [common.py:110] - Step 5: Converting JSON to PL/JSON...
+2025-09-03 00:21:42,699 - root - DEBUG - [common.py:105] - Starting Step 5: JSON → PostgreSQL-compatible PL/JSON
+2025-09-03 00:21:42,700 - root - DEBUG - [common.py:105] - processing zzz_analysis.json
+2025-09-03 00:21:42,700 - root - DEBUG - [common.py:105] - === Starting to_sql() conversion process ===
+2025-09-03 00:21:42,700 - root - DEBUG - [common.py:105] - Creating deep copies of JSON data for each operation type
+2025-09-03 00:21:42,703 - root - DEBUG - [common.py:105] - JSON data structure:
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] -   - Main blocks: 7 items
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] -   - Declarations: 1 variables, 0 constants, 2 exceptions
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] - === Processing INSERT operations ===
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] - Processing condition for on_insert: 'INSERTING'
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] -   - INSERT keywords: True
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,704 - root - DEBUG - [common.py:105] - REMOVE: Condition contains on_insert keywords
+2025-09-03 00:21:42,705 - root - DEBUG - [common.py:105] - Starting condition modification: ' INSERTING '
+2025-09-03 00:21:42,705 - root - DEBUG - [common.py:105] - Stripped condition: 'INSERTING'
+2025-09-03 00:21:42,705 - root - DEBUG - [common.py:105] - Removed keyword 'INSERTING': 'INSERTING' → ''
+2025-09-03 00:21:42,710 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,710 - root - DEBUG - [common.py:105] - Processing condition for on_insert: 'UPDATING'
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] -   - UPDATE keywords: True
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_insert
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Starting condition modification: 'UPDATING'
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Stripped condition: 'UPDATING'
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Removed keyword 'UPDATING': 'UPDATING' → ''
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Processing condition for on_insert: 'DELETING'
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] -   - DELETE keywords: True
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_insert
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Starting condition modification: 'DELETING'
+2025-09-03 00:21:42,711 - root - DEBUG - [common.py:105] - Stripped condition: 'DELETING'
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - Removed keyword 'DELETING': 'DELETING' → ''
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - === Processing UPDATE operations ===
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - Processing condition for on_update: 'INSERTING'
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] -   - INSERT keywords: True
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_update
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - Starting condition modification: ' INSERTING '
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - Stripped condition: 'INSERTING'
+2025-09-03 00:21:42,712 - root - DEBUG - [common.py:105] - Removed keyword 'INSERTING': 'INSERTING' → ''
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] - Processing condition for on_update: 'UPDATING'
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] -   - UPDATE keywords: True
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] - REMOVE: Condition contains on_update keywords
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] - Starting condition modification: 'UPDATING'
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] - Stripped condition: 'UPDATING'
+2025-09-03 00:21:42,713 - root - DEBUG - [common.py:105] - Removed keyword 'UPDATING': 'UPDATING' → ''
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - Processing condition for on_update: ':NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO'
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - KEEP: Condition doesn't contain any operation keywords
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - Starting condition modification: ' :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO '
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - Stripped condition: ':NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO'
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - Final modified condition: ':NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO'
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - Processing condition for on_update: 'DELETING'
+2025-09-03 00:21:42,714 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] -   - DELETE keywords: True
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_update
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Starting condition modification: 'DELETING'
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Stripped condition: 'DELETING'
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Removed keyword 'DELETING': 'DELETING' → ''
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Starting condition modification: 'TRUE'
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Stripped condition: 'TRUE'
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Final modified condition: 'TRUE'
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - === Processing DELETE operations ===
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Processing condition for on_delete: 'INSERTING'
+2025-09-03 00:21:42,715 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,716 - root - DEBUG - [common.py:105] -   - INSERT keywords: True
+2025-09-03 00:21:42,716 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,716 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,716 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_delete
+2025-09-03 00:21:42,716 - root - DEBUG - [common.py:105] - Starting condition modification: ' INSERTING '
+2025-09-03 00:21:42,716 - root - DEBUG - [common.py:105] - Stripped condition: 'INSERTING'
+2025-09-03 00:21:42,717 - root - DEBUG - [common.py:105] - Removed keyword 'INSERTING': 'INSERTING' → ''
+2025-09-03 00:21:42,717 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,717 - root - DEBUG - [common.py:105] - Processing condition for on_delete: 'UPDATING'
+2025-09-03 00:21:42,718 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,718 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,718 - root - DEBUG - [common.py:105] -   - UPDATE keywords: True
+2025-09-03 00:21:42,718 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,718 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_delete
+2025-09-03 00:21:42,718 - root - DEBUG - [common.py:105] - Starting condition modification: 'UPDATING'
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] - Stripped condition: 'UPDATING'
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] - Removed keyword 'UPDATING': 'UPDATING' → ''
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] - Processing condition for on_delete: 'DELETING'
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] -   - DELETE keywords: True
+2025-09-03 00:21:42,719 - root - DEBUG - [common.py:105] - REMOVE: Condition contains on_delete keywords
+2025-09-03 00:21:42,720 - root - DEBUG - [common.py:105] - Starting condition modification: 'DELETING'
+2025-09-03 00:21:42,720 - root - DEBUG - [common.py:105] - Stripped condition: 'DELETING'
+2025-09-03 00:21:42,720 - root - DEBUG - [common.py:105] - Removed keyword 'DELETING': 'DELETING' → ''
+2025-09-03 00:21:42,720 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,720 - root - DEBUG - [common.py:105] - Starting condition modification: 'TRUE'
+2025-09-03 00:21:42,720 - root - DEBUG - [common.py:105] - Stripped condition: 'TRUE'
+2025-09-03 00:21:42,720 - root - DEBUG - [common.py:105] - Final modified condition: 'TRUE'
+2025-09-03 00:21:42,720 - root - DEBUG - [common.py:105] - Building final converted structure
+2025-09-03 00:21:42,721 - root - DEBUG - [common.py:105] - Converting to JSON string
+2025-09-03 00:21:42,721 - root - DEBUG - [common.py:105] - Generated JSON string with 17508 characters
+2025-09-03 00:21:42,721 - root - DEBUG - [common.py:105] - === to_sql() conversion complete ===
+2025-09-03 00:21:42,721 - root - DEBUG - [common.py:105] - === Starting to_sql() conversion process ===
+2025-09-03 00:21:42,721 - root - DEBUG - [common.py:105] - Creating deep copies of JSON data for each operation type
+2025-09-03 00:21:42,722 - root - DEBUG - [common.py:105] - JSON data structure:
+2025-09-03 00:21:42,722 - root - DEBUG - [common.py:105] -   - Main blocks: 7 items
+2025-09-03 00:21:42,722 - root - DEBUG - [common.py:105] -   - Declarations: 1 variables, 0 constants, 2 exceptions
+2025-09-03 00:21:42,722 - root - DEBUG - [common.py:105] - === Processing INSERT operations ===
+2025-09-03 00:21:42,722 - root - DEBUG - [common.py:105] - Processing condition for on_insert: 'INSERTING'
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] -   - INSERT keywords: True
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] - REMOVE: Condition contains on_insert keywords
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] - Starting condition modification: ' INSERTING '
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] - Stripped condition: 'INSERTING'
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] - Removed keyword 'INSERTING': 'INSERTING' → ''
+2025-09-03 00:21:42,723 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,724 - root - DEBUG - [common.py:105] - Processing condition for on_insert: 'UPDATING'
+2025-09-03 00:21:42,724 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,724 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,724 - root - DEBUG - [common.py:105] -   - UPDATE keywords: True
+2025-09-03 00:21:42,724 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,724 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_insert
+2025-09-03 00:21:42,724 - root - DEBUG - [common.py:105] - Starting condition modification: 'UPDATING'
+2025-09-03 00:21:42,724 - root - DEBUG - [common.py:105] - Stripped condition: 'UPDATING'
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Removed keyword 'UPDATING': 'UPDATING' → ''
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Processing condition for on_insert: 'DELETING'
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] -   - DELETE keywords: True
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_insert
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Starting condition modification: 'DELETING'
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Stripped condition: 'DELETING'
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Removed keyword 'DELETING': 'DELETING' → ''
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - === Processing UPDATE operations ===
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Processing condition for on_update: 'INSERTING'
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,725 - root - DEBUG - [common.py:105] -   - INSERT keywords: True
+2025-09-03 00:21:42,726 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,726 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,726 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_update
+2025-09-03 00:21:42,726 - root - DEBUG - [common.py:105] - Starting condition modification: ' INSERTING '
+2025-09-03 00:21:42,726 - root - DEBUG - [common.py:105] - Stripped condition: 'INSERTING'
+2025-09-03 00:21:42,726 - root - DEBUG - [common.py:105] - Removed keyword 'INSERTING': 'INSERTING' → ''
+2025-09-03 00:21:42,726 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,726 - root - DEBUG - [common.py:105] - Processing condition for on_update: 'UPDATING'
+2025-09-03 00:21:42,727 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,727 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,727 - root - DEBUG - [common.py:105] -   - UPDATE keywords: True
+2025-09-03 00:21:42,727 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,727 - root - DEBUG - [common.py:105] - REMOVE: Condition contains on_update keywords
+2025-09-03 00:21:42,727 - root - DEBUG - [common.py:105] - Starting condition modification: 'UPDATING'
+2025-09-03 00:21:42,727 - root - DEBUG - [common.py:105] - Stripped condition: 'UPDATING'
+2025-09-03 00:21:42,727 - root - DEBUG - [common.py:105] - Removed keyword 'UPDATING': 'UPDATING' → ''
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] - Processing condition for on_update: ':NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO'
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] - KEEP: Condition doesn't contain any operation keywords
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] - Starting condition modification: ' :NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO '
+2025-09-03 00:21:42,728 - root - DEBUG - [common.py:105] - Stripped condition: ':NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Final modified condition: ':NEW.GS1_COMP_PREFIX_NO <> :OLD.GS1_COMP_PREFIX_NO'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Processing condition for on_update: 'DELETING'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] -   - DELETE keywords: True
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_update
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Starting condition modification: 'DELETING'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Stripped condition: 'DELETING'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Removed keyword 'DELETING': 'DELETING' → ''
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Starting condition modification: 'TRUE'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Stripped condition: 'TRUE'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Final modified condition: 'TRUE'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - === Processing DELETE operations ===
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Processing condition for on_delete: 'INSERTING'
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] -   - INSERT keywords: True
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,729 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_delete
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Starting condition modification: ' INSERTING '
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Stripped condition: 'INSERTING'
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Removed keyword 'INSERTING': 'INSERTING' → ''
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Processing condition for on_delete: 'UPDATING'
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] -   - UPDATE keywords: True
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] -   - DELETE keywords: False
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - KEEP: Condition mentions other operations but not on_delete
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Starting condition modification: 'UPDATING'
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Stripped condition: 'UPDATING'
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Removed keyword 'UPDATING': 'UPDATING' → ''
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,730 - root - DEBUG - [common.py:105] - Processing condition for on_delete: 'DELETING'
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Operation keywords found in condition:
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] -   - INSERT keywords: False
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] -   - UPDATE keywords: False
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] -   - DELETE keywords: True
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - REMOVE: Condition contains on_delete keywords
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Starting condition modification: 'DELETING'
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Stripped condition: 'DELETING'
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Removed keyword 'DELETING': 'DELETING' → ''
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Condition is empty after processing, returning 'TRUE'
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Starting condition modification: 'TRUE'
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Stripped condition: 'TRUE'
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Final modified condition: 'TRUE'
+2025-09-03 00:21:42,731 - root - DEBUG - [common.py:105] - Building final converted structure
+2025-09-03 00:21:42,732 - root - DEBUG - [common.py:105] - Converting to JSON string
+2025-09-03 00:21:42,732 - root - DEBUG - [common.py:105] - Generated JSON string with 17508 characters
+2025-09-03 00:21:42,732 - root - DEBUG - [common.py:105] - === to_sql() conversion complete ===
+2025-09-03 00:21:42,733 - root - DEBUG - [common.py:105] - Created zzz.json
+2025-09-03 00:21:42,733 - root - INFO - [common.py:110] - ✓ PL/JSON conversion complete! (Duration: 0.03 seconds)
+2025-09-03 00:21:42,734 - root - DEBUG - [common.py:105] - Step 5 completed in 0.03 seconds
+2025-09-03 00:21:42,734 - root - INFO - [common.py:110] - Step 6: Converting PL/JSON to PostgreSQL format...
+2025-09-03 00:21:42,734 - root - DEBUG - [common.py:105] - Starting Step 6: PL/JSON → PostgreSQL format JSON
+2025-09-03 00:21:42,734 - root - INFO - [common.py:110] - === Starting PL/JSON to PostgreSQL format conversion ===
+2025-09-03 00:21:42,734 - root - INFO - [common.py:110] - === Starting file processing ===
+2025-09-03 00:21:42,734 - root - INFO - [common.py:110] - Source directory: 'files/format_pl_json'
+2025-09-03 00:21:42,735 - root - INFO - [common.py:110] - Target directory: 'files/format_plsql'
+2025-09-03 00:21:42,735 - root - INFO - [common.py:110] - File pattern: '.json'
+2025-09-03 00:21:42,735 - root - INFO - [common.py:110] - Output suffix: '_postgresql.json'
+2025-09-03 00:21:42,735 - root - DEBUG - [common.py:105] - Ensuring target directory exists...
+2025-09-03 00:21:42,735 - root - DEBUG - [common.py:105] - Directory already exists: files/format_plsql
+2025-09-03 00:21:42,736 - root - DEBUG - [common.py:105] - Found 1 files in source directory
+2025-09-03 00:21:42,736 - root - DEBUG - [common.py:105] - Files matching pattern '.json': ['zzz.json']
+2025-09-03 00:21:42,736 - root - DEBUG - [common.py:105] - === Processing file 1/1: zzz.json ===
+2025-09-03 00:21:42,736 - root - DEBUG - [common.py:105] - Source path: files/format_pl_json\zzz.json
+2025-09-03 00:21:42,736 - root - DEBUG - [common.py:105] - Output path: files/format_plsql\zzz_postgresql.json
+2025-09-03 00:21:42,737 - root - DEBUG - [common.py:105] - === Converting PL/JSON to PostgreSQL format for trigger zzz.json ===
+2025-09-03 00:21:42,737 - root - DEBUG - [common.py:105] - Reading PL/JSON file: files/format_pl_json\zzz.json
+2025-09-03 00:21:42,738 - root - DEBUG - [common.py:105] - Successfully loaded PL/JSON data with keys: ['on_insert', 'on_update', 'on_delete', 'metadata']
+2025-09-03 00:21:42,738 - root - DEBUG - [common.py:105] - Converting to PostgreSQL format...
+2025-09-03 00:21:42,738 - root - DEBUG - [common.py:105] - Converting complex structure to PostgreSQL SQL
+2025-09-03 00:21:42,738 - root - DEBUG - [common.py:105] - Loading function_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-09-03 00:21:42,772 - root - DEBUG - [common.py:105] - Loaded 116 function_mappings mappings from Excel
+2025-09-03 00:21:42,772 - root - DEBUG - [common.py:105] - Loading data_type_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-09-03 00:21:42,799 - root - DEBUG - [common.py:105] - Loaded 42 data_type_mappings mappings from Excel
+2025-09-03 00:21:42,799 - utilities.FormatSQL - DEBUG - [FormatSQL.py:116] - FORMATOracleTriggerAnalyzer initialized successfully
+2025-09-03 00:21:42,799 - utilities.FormatSQL - DEBUG - [FormatSQL.py:274] - SQL generation: Converting JSON analysis to formatted PostgreSQL SQL
+2025-09-03 00:21:42,799 - root - DEBUG - [common.py:105] - Analysis contains 1 variables, 0 constants, 2 exceptions
+2025-09-03 00:21:42,800 - root - DEBUG - [common.py:105] - Adding header comments with timestamp for PostgreSQL
+2025-09-03 00:21:42,800 - root - DEBUG - [common.py:105] - Starting declarations section rendering
+2025-09-03 00:21:42,800 - utilities.FormatSQL - DEBUG - [FormatSQL.py:339] - === Rendering PostgreSQL declarations ===
+2025-09-03 00:21:42,800 - utilities.FormatSQL - DEBUG - [FormatSQL.py:389] - === PostgreSQL declarations complete ===
+2025-09-03 00:21:42,800 - root - DEBUG - [common.py:105] - Generated 0 lines of declarations
+2025-09-03 00:21:42,800 - root - DEBUG - [common.py:105] - Declarations rendering took 0.000s
+2025-09-03 00:21:42,800 - root - DEBUG - [common.py:105] - Starting main execution block rendering
+2025-09-03 00:21:42,800 - utilities.FormatSQL - DEBUG - [FormatSQL.py:408] - === Rendering main block for PostgreSQL ===
+2025-09-03 00:21:42,800 - utilities.FormatSQL - DEBUG - [FormatSQL.py:417] - Rendering 1 variables for PostgreSQL
+2025-09-03 00:21:42,800 - utilities.FormatSQL - DEBUG - [FormatSQL.py:448] - Processing 1 statements in main block
+2025-09-03 00:21:42,800 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: if_else
+2025-09-03 00:21:42,805 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: begin_end
+2025-09-03 00:21:42,805 - utilities.FormatSQL - DEBUG - [FormatSQL.py:408] - === Rendering main block for PostgreSQL ===
+2025-09-03 00:21:42,805 - utilities.FormatSQL - DEBUG - [FormatSQL.py:448] - Processing 23 statements in main block
+2025-09-03 00:21:42,805 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,805 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,806 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,806 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,807 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,807 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,807 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,807 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,808 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,808 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,808 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,808 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,809 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,809 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,809 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,809 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,809 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,809 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,809 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,810 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,810 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,810 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,810 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,810 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,810 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,811 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,811 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,811 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,811 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,811 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,812 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,812 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,812 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,812 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,812 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,812 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,812 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,813 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,813 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,813 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,813 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,813 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,813 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,813 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,814 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,814 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,814 - utilities.FormatSQL - DEBUG - [FormatSQL.py:468] - === Main block complete for PostgreSQL ===
+2025-09-03 00:21:42,814 - utilities.FormatSQL - DEBUG - [FormatSQL.py:456] - Processing 2 exception handlers
+2025-09-03 00:21:42,814 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: function_calling
+2025-09-03 00:21:42,814 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: function_calling
+2025-09-03 00:21:42,814 - utilities.FormatSQL - DEBUG - [FormatSQL.py:468] - === Main block complete for PostgreSQL ===
+2025-09-03 00:21:42,815 - root - DEBUG - [common.py:105] - Generated 34 lines in main execution block
+2025-09-03 00:21:42,815 - root - DEBUG - [common.py:105] - Main block rendering took 0.015s
+2025-09-03 00:21:42,815 - root - DEBUG - [common.py:105] - Adding footer comments
+2025-09-03 00:21:42,815 - root - DEBUG - [common.py:105] - Final SQL contains 34 lines, 1076 characters
+2025-09-03 00:21:42,815 - root - DEBUG - [common.py:105] - PostgreSQL SQL generation: 34 lines generated in 0.016s
+2025-09-03 00:21:42,815 - root - DEBUG - [common.py:105] - Successfully converted complex structure to PostgreSQL SQL
+2025-09-03 00:21:42,815 - root - DEBUG - [common.py:105] - Converting complex structure to PostgreSQL SQL
+2025-09-03 00:21:42,815 - root - DEBUG - [common.py:105] - Loading function_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-09-03 00:21:42,854 - root - DEBUG - [common.py:105] - Loaded 116 function_mappings mappings from Excel
+2025-09-03 00:21:42,855 - root - DEBUG - [common.py:105] - Loading data_type_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-09-03 00:21:42,903 - root - DEBUG - [common.py:105] - Loaded 42 data_type_mappings mappings from Excel
+2025-09-03 00:21:42,903 - utilities.FormatSQL - DEBUG - [FormatSQL.py:116] - FORMATOracleTriggerAnalyzer initialized successfully
+2025-09-03 00:21:42,903 - utilities.FormatSQL - DEBUG - [FormatSQL.py:274] - SQL generation: Converting JSON analysis to formatted PostgreSQL SQL
+2025-09-03 00:21:42,903 - root - DEBUG - [common.py:105] - Analysis contains 1 variables, 0 constants, 2 exceptions
+2025-09-03 00:21:42,904 - root - DEBUG - [common.py:105] - Adding header comments with timestamp for PostgreSQL
+2025-09-03 00:21:42,904 - root - DEBUG - [common.py:105] - Starting declarations section rendering
+2025-09-03 00:21:42,904 - utilities.FormatSQL - DEBUG - [FormatSQL.py:339] - === Rendering PostgreSQL declarations ===
+2025-09-03 00:21:42,904 - utilities.FormatSQL - DEBUG - [FormatSQL.py:389] - === PostgreSQL declarations complete ===
+2025-09-03 00:21:42,904 - root - DEBUG - [common.py:105] - Generated 0 lines of declarations
+2025-09-03 00:21:42,904 - root - DEBUG - [common.py:105] - Declarations rendering took 0.000s
+2025-09-03 00:21:42,904 - root - DEBUG - [common.py:105] - Starting main execution block rendering
+2025-09-03 00:21:42,904 - utilities.FormatSQL - DEBUG - [FormatSQL.py:408] - === Rendering main block for PostgreSQL ===
+2025-09-03 00:21:42,904 - utilities.FormatSQL - DEBUG - [FormatSQL.py:417] - Rendering 1 variables for PostgreSQL
+2025-09-03 00:21:42,905 - utilities.FormatSQL - DEBUG - [FormatSQL.py:448] - Processing 1 statements in main block
+2025-09-03 00:21:42,905 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: if_else
+2025-09-03 00:21:42,906 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: if_else
+2025-09-03 00:21:42,909 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,909 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,913 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,913 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,914 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,914 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,914 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,915 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,915 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,915 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,915 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,916 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,917 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,918 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,918 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,920 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,920 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,920 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,921 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,921 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,921 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,921 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,922 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,922 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,922 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,923 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,923 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:42,923 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:42,924 - utilities.FormatSQL - DEBUG - [FormatSQL.py:456] - Processing 2 exception handlers
+2025-09-03 00:21:42,924 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: function_calling
+2025-09-03 00:21:42,924 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: function_calling
+2025-09-03 00:21:42,924 - utilities.FormatSQL - DEBUG - [FormatSQL.py:468] - === Main block complete for PostgreSQL ===
+2025-09-03 00:21:42,924 - root - DEBUG - [common.py:105] - Generated 27 lines in main execution block
+2025-09-03 00:21:42,924 - root - DEBUG - [common.py:105] - Main block rendering took 0.020s
+2025-09-03 00:21:42,924 - root - DEBUG - [common.py:105] - Adding footer comments
+2025-09-03 00:21:42,925 - root - DEBUG - [common.py:105] - Final SQL contains 27 lines, 828 characters
+2025-09-03 00:21:42,925 - root - DEBUG - [common.py:105] - PostgreSQL SQL generation: 27 lines generated in 0.021s
+2025-09-03 00:21:42,925 - root - DEBUG - [common.py:105] - Successfully converted complex structure to PostgreSQL SQL
+2025-09-03 00:21:42,925 - root - DEBUG - [common.py:105] - Converting complex structure to PostgreSQL SQL
+2025-09-03 00:21:42,925 - root - DEBUG - [common.py:105] - Loading function_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-09-03 00:21:42,972 - root - DEBUG - [common.py:105] - Loaded 116 function_mappings mappings from Excel
+2025-09-03 00:21:42,972 - root - DEBUG - [common.py:105] - Loading data_type_mappings from Excel file: utilities/oracle_postgresql_mappings.xlsx
+2025-09-03 00:21:43,011 - root - DEBUG - [common.py:105] - Loaded 42 data_type_mappings mappings from Excel
+2025-09-03 00:21:43,011 - utilities.FormatSQL - DEBUG - [FormatSQL.py:116] - FORMATOracleTriggerAnalyzer initialized successfully
+2025-09-03 00:21:43,011 - utilities.FormatSQL - DEBUG - [FormatSQL.py:274] - SQL generation: Converting JSON analysis to formatted PostgreSQL SQL
+2025-09-03 00:21:43,011 - root - DEBUG - [common.py:105] - Analysis contains 1 variables, 0 constants, 2 exceptions
+2025-09-03 00:21:43,011 - root - DEBUG - [common.py:105] - Adding header comments with timestamp for PostgreSQL
+2025-09-03 00:21:43,011 - root - DEBUG - [common.py:105] - Starting declarations section rendering
+2025-09-03 00:21:43,011 - utilities.FormatSQL - DEBUG - [FormatSQL.py:339] - === Rendering PostgreSQL declarations ===
+2025-09-03 00:21:43,011 - utilities.FormatSQL - DEBUG - [FormatSQL.py:389] - === PostgreSQL declarations complete ===
+2025-09-03 00:21:43,011 - root - DEBUG - [common.py:105] - Generated 0 lines of declarations
+2025-09-03 00:21:43,011 - root - DEBUG - [common.py:105] - Declarations rendering took 0.000s
+2025-09-03 00:21:43,012 - root - DEBUG - [common.py:105] - Starting main execution block rendering
+2025-09-03 00:21:43,012 - utilities.FormatSQL - DEBUG - [FormatSQL.py:408] - === Rendering main block for PostgreSQL ===
+2025-09-03 00:21:43,012 - utilities.FormatSQL - DEBUG - [FormatSQL.py:417] - Rendering 1 variables for PostgreSQL
+2025-09-03 00:21:43,012 - utilities.FormatSQL - DEBUG - [FormatSQL.py:448] - Processing 1 statements in main block
+2025-09-03 00:21:43,012 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: if_else
+2025-09-03 00:21:43,012 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: 
+2025-09-03 00:21:43,013 - utilities.FormatSQL - WARNING - [FormatSQL.py:848] - Unknown statement type: unknown
+2025-09-03 00:21:43,013 - utilities.FormatSQL - DEBUG - [FormatSQL.py:456] - Processing 2 exception handlers
+2025-09-03 00:21:43,013 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: function_calling
+2025-09-03 00:21:43,013 - utilities.FormatSQL - DEBUG - [FormatSQL.py:499] - Rendering statement type: function_calling
+2025-09-03 00:21:43,013 - utilities.FormatSQL - DEBUG - [FormatSQL.py:468] - === Main block complete for PostgreSQL ===
+2025-09-03 00:21:43,013 - root - DEBUG - [common.py:105] - Generated 12 lines in main execution block
+2025-09-03 00:21:43,013 - root - DEBUG - [common.py:105] - Main block rendering took 0.002s
+2025-09-03 00:21:43,013 - root - DEBUG - [common.py:105] - Adding footer comments
+2025-09-03 00:21:43,013 - root - DEBUG - [common.py:105] - Final SQL contains 12 lines, 306 characters
+2025-09-03 00:21:43,013 - root - DEBUG - [common.py:105] - PostgreSQL SQL generation: 12 lines generated in 0.002s
+2025-09-03 00:21:43,013 - root - DEBUG - [common.py:105] - Successfully converted complex structure to PostgreSQL SQL
+2025-09-03 00:21:43,014 - root - DEBUG - [common.py:105] - PostgreSQL format conversion completed
+2025-09-03 00:21:43,014 - root - DEBUG - [common.py:105] - Writing PostgreSQL format to: files/format_plsql\zzz_postgresql.json
+2025-09-03 00:21:43,014 - root - DEBUG - [common.py:105] - Successfully wrote PostgreSQL format to files/format_plsql\zzz_postgresql.json
+2025-09-03 00:21:43,014 - root - DEBUG - [common.py:105] - === PL/JSON to PostgreSQL format conversion complete for trigger zzz.json ===
+2025-09-03 00:21:43,015 - root - DEBUG - [common.py:105] - ✓ Created zzz_postgresql.json
+2025-09-03 00:21:43,015 - root - INFO - [common.py:110] - === File processing complete ===
+2025-09-03 00:21:43,015 - root - INFO - [common.py:110] - Successfully processed: 1 files
+2025-09-03 00:21:43,015 - root - INFO - [common.py:110] - === PL/JSON to PostgreSQL format conversion complete ===
+2025-09-03 00:21:43,015 - root - INFO - [common.py:110] - ✓ PostgreSQL format conversion complete! (Duration: 0.28 seconds)
+2025-09-03 00:21:43,016 - root - DEBUG - [common.py:105] - Step 6 completed in 0.28 seconds
+2025-09-03 00:21:43,016 - root - INFO - [common.py:110] - === Batch conversion finished successfully ===
+2025-09-03 00:21:43,016 - root - INFO - [common.py:110] - Total execution time: 0.96 seconds
+2025-09-03 00:21:43,017 - root - INFO - [common.py:110] - Performance breakdown by step:
+2025-09-03 00:21:43,017 - root - INFO - [common.py:110] -   - Step 1 (SQL → JSON):              0.64 seconds (66.6%)
+2025-09-03 00:21:43,017 - root - INFO - [common.py:110] -   - Step 5 (JSON → PL/JSON):          0.03 seconds (3.6%)
+2025-09-03 00:21:43,017 - root - INFO - [common.py:110] -   - Step 6 (PL/JSON → PostgreSQL):    0.28 seconds (29.5%)
+2025-09-03 00:21:43,018 - root - DEBUG - [common.py:105] - Main conversion workflow completed successfully

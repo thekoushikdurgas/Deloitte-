@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Tuple
 import pandas as pd
 from numpy import copy
 from utilities.common import (
-    append_to_excel_sheet,
     logger,
     main_excel_file,
     setup_logging,
@@ -431,7 +430,6 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed variable: %s", parsed_var["name"])
         except Exception as e:
             logger.debug("Failed to process variable declaration '%s': %s", segment, e)
-            print(f"Failed to process variable declaration '{segment}': {e}")
 
     def _process_constant_declaration(self, segment: str) -> None:
         """
@@ -448,7 +446,6 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed constant: %s", parsed_const["name"])
         except Exception as e:
             logger.debug("Failed to process constant declaration '%s': %s", segment, e)
-            print(f"Failed to process constant declaration '{segment}': {e}")
 
     def _process_exception_declaration(self, segment: str) -> None:
         """
@@ -465,7 +462,6 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed exception: %s", parsed_exc["name"])
         except Exception as e:
             logger.debug("Failed to process exception declaration '%s': %s", segment, e)
-            print(f"Failed to process exception declaration '{segment}': {e}")
 
     def _parse_variable(self, line: str) -> Dict[str, Any]:
         """
@@ -792,7 +788,7 @@ class OracleTriggerAnalyzer:
                                         perform_type = i
                                     function_calling_i = i
                                     function_calling_name = name
-                                    # print(f"function_calling_name: {function_calling_name}")
+                                    logger.debug(f"function_calling_name: {function_calling_name}")
                                     break
                     if call_type != -1:
                         function_calling_name = "CALL " + function_calling_name
@@ -1325,7 +1321,7 @@ class OracleTriggerAnalyzer:
         Updates self.main_section_lines with parsed blocks.
         """
         elif_else_then_statements = working_lines
-        print(f"elif_else_then_statements: {elif_else_then_statements}")
+        logger.debug(f"elif_else_then_statements: {elif_else_then_statements}")
         logger.debug(elif_else_then_statements)
         condition = ""
         then_i = 0
@@ -1780,7 +1776,7 @@ class OracleTriggerAnalyzer:
             "function_name": function_name,
             "parameters": parameters,
         }
-        # print(f"function_calling: {result}")
+        logger.debug(f"function_calling: {result}")
 
         return result
 
@@ -2094,11 +2090,13 @@ class OracleTriggerAnalyzer:
             if isinstance(item, dict):
                 # Check for "indent" field which contains rest string content
                 if "indent" in item:
-                    print(item["line"])
+                    logger.debug(item["line"])
+                    item["filename"] = self.file_details["filename"]
+                    item["line"] = item["line"].strip()
                     rest_strings_list.append(item)
 
                 if "type" in item:
-                    # print(f"item: {item}")
+                    logger.debug(f"item: {item}")
                     self.strng_convert_json[item["type"]] += 1
                 # Recursively process all values in the dictionary
                 for value in item.values():
@@ -2111,15 +2109,14 @@ class OracleTriggerAnalyzer:
 
         # Process main_section_lines
         extract_rest_strings_from_item(self.main_section_lines)
-        # print(f'rest_strings_list {rest_strings_list}')	
+        logger.debug(f'rest_strings_list {rest_strings_list}')	
         self.rest_string_list = rest_strings_list
-        # # rest_strings_list to covert like ("filename","line","line_no") and add to available_rest_strings
-        # dataframe_rest_strings = pd.DataFrame(columns=["filename", "line", "line_no"])
-        # for i in rest_strings_list:
-        #     dataframe_rest_strings._append({"filename": self.file_details["filename"], "line": i["line"], "line_no": i["line_no"]},ignore_index=True)
-        # # print(dataframe_rest_strings)
-        
-        # append_to_excel_sheet(dataframe_rest_strings, sheet_name="non_parse")
+        # rest_strings_list to covert like ("filename","line","line_no") and add to available_rest_strings
+        dataframe_rest_strings = pd.read_csv("utilities/rest_list.csv",header=0,index_col=None)
+        rest_strings_dataframe = pd.DataFrame(self.rest_string_list,index=None)
+        dataframe_rest_strings = pd.concat([dataframe_rest_strings, rest_strings_dataframe], ignore_index=True)
+        dataframe_rest_strings.to_csv("utilities/rest_list.csv",mode='w',index=False)
+        logger.debug(f"dataframe_rest_strings: {dataframe_rest_strings}")
 
     def to_json(self):
         """

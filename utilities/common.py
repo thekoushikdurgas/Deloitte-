@@ -370,31 +370,6 @@ def clean_json_files() -> None:
    
     # Final summary
     info(f"JSON cleaning complete: {cleaned_count} files cleaned, {error_count} errors")
-           
-def append_to_excel_sheet(dataframe, sheet_name="non_parse", filename=main_excel_file):
-    """
-    Append a dataframe to an existing Excel sheet no need to create new sheet or overwrite existing sheet or changes in another sheets.
-    Args:
-        dataframe (pd.DataFrame): The dataframe to append
-        sheet_name (str): The name of the sheet to append to
-        filename (str): The name of the Excel file to append to
-    Returns:
-        None
-    Raises:
-        Exception: If there is an error appending to the Excel sheet
-    """
-    try:
-        with pd.ExcelWriter(filename, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-            # Get existing row count
-            workbook = writer.book
-            if sheet_name in workbook.sheetnames:
-                sheet = workbook[sheet_name]
-                start_row = sheet.max_row
-            else:
-                start_row = 0
-            dataframe.to_excel(writer, sheet_name=sheet_name,startrow=start_row,header=(start_row == 0),index=False)
-    except Exception as e:
-        error(f"Error appending to Excel: {e}")
 
 
 
