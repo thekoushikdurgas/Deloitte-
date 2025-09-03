@@ -25,7 +25,7 @@ BEGIN
                 DUAL
             CONNECT BY
                 REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL) IS NOT NULL
-        );
+        )
         SELECT
             REGEXP_SUBSTR(C.COL, '[^[]+', 1)        HOLIDAY_DESC,
             REGEXP_SUBSTR(C.COL, '[^[]+[^]]', 1, 2) COUNTRY_CD BULK COLLECT INTO V_HOLIDAY_DESCS,

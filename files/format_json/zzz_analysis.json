@@ -72,7 +72,7 @@
             "with_line_no": 21,
             "with_indent": 8,
             "with_values": " C",
-            "with_statements": "SELECT TRIM(REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL)) COL FROM DUAL CONNECT BY REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL) IS NOT NULL ",
+            "with_statements": "SELECT TRIM(REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL)) COL FROM DUAL CONNECT BY REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL) IS NOT NULL )",
             "with_end_line_no": 28
           },
           {
@@ -475,14 +475,14 @@
     }
   },
   "metadata": {
-    "parse_timestamp": "2025-09-03T07:39:23.776595",
+    "parse_timestamp": "2025-09-03T08:32:57.437433",
     "parser_version": "1.0",
     "file_details": {
       "filename": "zzz.sql",
       "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\zzz.sql",
-      "filesize": 9116,
+      "filesize": 9115,
       "file_extension": ".sql",
-      "last_modified": 1756865052.7195108,
+      "last_modified": 1756866708.2920284,
       "created_time": 1756173936.5202713,
       "is_file": true,
       "is_readable": true

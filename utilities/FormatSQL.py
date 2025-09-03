@@ -895,7 +895,7 @@ class FormatSQL:
         for bl in body_lines:
             if bl.strip():
                 lines.append(self._indent(bl.strip(), indent_level + 1))
-        lines.append(self._indent(");", indent_level))
+        lines.append(self._indent(")", indent_level))
         return lines
 
     def _render_exception_handler(self, handler: Dict[str, Any], indent_level: int, db_type: str) -> List[str]:

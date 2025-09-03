@@ -651,19 +651,30 @@ class OracleTriggerAnalyzer:
         def parse_with_statements(working_lines: List[Dict[str, Any]]):
             with_statements = []
             i = 0
+            with_params = -1
             while i < len(working_lines):
                 item = working_lines[i]
                 if "line" in item:
                     line_upper = item["line"].strip().upper()
                     if line_upper.startswith("WITH ") or line_upper == "WITH":
                         logger.info(f"with_indent: {item['line_no']}")
-                        for j in range(i + 1, len(working_lines)):
+                        with_start = i
+                        with_params = 0
+                        # Find the complete WITH statement by tracking parentheses
+                        for j in range(i, len(working_lines)):
                             line_info = working_lines[j]
                             if "line" in line_info:
-                                line_upper = line_info["line"].strip().upper()
-                                if line_upper.endswith(";") and line_info["indent"] == item["indent"]:
-                                    logger.info(f"with_i: {item['line_no']} i: {line_info['line_no']}")
-                                    with_statement = self._parse_with_statement(working_lines[i : j+1])
+                                line_content = line_info["line"].strip()
+                                # Count opening and closing parentheses
+                                for char in line_content:
+                                    if char == "(":
+                                        with_params += 1
+                                    elif char == ")":
+                                        with_params -= 1
+                                logger.info(f"with_params: {with_params}")
+                                if line_info["indent"] == item["indent"] and with_params == 0:
+                                    logger.info(f"with_start: {item['line_no']} with_end: {line_info['line_no']}")
+                                    with_statement = self._parse_with_statement(working_lines[with_start : j+1])
                                     with_statements.append(with_statement)
                                     i = j
                                     break
