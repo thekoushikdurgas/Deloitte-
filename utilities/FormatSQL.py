@@ -453,14 +453,15 @@ class FormatSQL:
             statement_lines = self._render_statement_list(statements, indent_level + 1, db_type, "begin_end_statements")
             lines.extend(statement_lines)
         
-        # # Process exception handlers
-        # exception_handlers = node.get("exception_handlers", [])
-        # if exception_handlers:
-        #     logger.debug(f"Processing {len(exception_handlers)} exception handlers")
-        #     lines.append(self._indent("EXCEPTION", indent_level))
-        #     for handler in exception_handlers:
-        #         handler_lines = self._render_exception_handler(handler, indent_level + 1, db_type)
-        #         lines.extend(handler_lines)
+        # Process exception handlers
+        if db_type == "Oracle":
+            exception_handlers = node.get("exception_handlers", [])
+            if exception_handlers:
+                logger.debug(f"Processing {len(exception_handlers)} exception handlers")
+                lines.append(self._indent("EXCEPTION", indent_level))
+                for handler in exception_handlers:
+                    handler_lines = self._render_exception_handler(handler, indent_level + 1, db_type)
+                    lines.extend(handler_lines)
         
         if wrap_begin_end:
             if db_type == "PostgreSQL":

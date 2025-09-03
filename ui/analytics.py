@@ -89,7 +89,7 @@ def analytics_page():
             st.plotly_chart(fig_timeline, width='stretch')
         
         # History table
-        st.dataframe(df_history, use_container_width=True)
+        st.dataframe(df_history, width='stretch')
         
         # Clear history
         if st.button("🗑️ Clear History"):

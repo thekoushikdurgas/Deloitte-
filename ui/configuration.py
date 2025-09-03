@@ -52,7 +52,7 @@ def configuration_page():
                         filtered_df = df
                     
                     # Display the dataframe
-                    st.dataframe(filtered_df, width='stretch', use_container_width=True)
+                    st.dataframe(filtered_df, width='stretch')
                     
                     # Row management buttons section
                     st.markdown("---")
@@ -61,12 +61,8 @@ def configuration_page():
                     with col1:
                         # Add Row button
                         if st.button("➕ Add Row", key=f"add_row_{sheet_name}"):
-                            if ConfigManager.add_empty_row_to_sheet(sheet_name):
-                                st.success("✅ Empty row added!")
-                                SessionManager.add_to_history("Configuration", "Success", f"Added row to {sheet_name}")
-                                st.rerun()
-                            else:
-                                st.error("❌ Failed to add row")
+                            st.session_state[f'adding_row_{sheet_name}'] = True
+                            st.rerun()
                     
                     with col2:
                         # Edit button (existing functionality)
@@ -84,6 +80,69 @@ def configuration_page():
                         # Show row count info
                         st.info(f"📊 Total rows: {len(df)}")
                     
+                    # Show input fields for adding new row
+                    if st.session_state.get(f'adding_row_{sheet_name}', False):
+                        st.markdown("---")
+                        st.markdown("### ➕ Add New Row")
+                        
+                        # Get column structure for each sheet type
+                        columns_config = {
+                            'data_type_mappings': [
+                                {'name': 'Oracle_Type', 'label': 'Oracle Data Type', 'help': 'Enter Oracle data type (e.g., VARCHAR2, NUMBER)'},
+                                {'name': 'PostgreSQL_Type', 'label': 'PostgreSQL Data Type', 'help': 'Enter corresponding PostgreSQL type (e.g., VARCHAR, INTEGER)'}
+                            ],
+                            'function_mappings': [
+                                {'name': 'Oracle_Function', 'label': 'Oracle Function', 'help': 'Enter Oracle function name (e.g., SYSDATE, NVL)'},
+                                {'name': 'PostgreSQL_Function', 'label': 'PostgreSQL Function', 'help': 'Enter corresponding PostgreSQL function (e.g., NOW(), COALESCE)'}
+                            ],
+                            'function_list': [
+                                {'name': 'function_name', 'label': 'Function Name', 'help': 'Enter function name to be tracked'}
+                            ]
+                        }
+                        
+                        # Get the columns for current sheet
+                        sheet_columns = columns_config.get(sheet_name, [])
+                        new_row_data = {}
+                        
+                        # Create input fields for each column
+                        for col in sheet_columns:
+                            new_row_data[col['name']] = st.text_input(
+                                col['label'],
+                                key=f"new_row_{sheet_name}_{col['name']}",
+                                help=col['help']
+                            )
+                        
+                        # Action buttons
+                        col_save, col_cancel = st.columns(2)
+                        
+                        with col_save:
+                            if st.button("💾 Save New Row", key=f"save_new_row_{sheet_name}"):
+                                # Validate that required fields are filled
+                                if all(value.strip() for value in new_row_data.values()):
+                                    # Add the new row to the dataframe and save
+                                    success = ConfigManager.add_row_to_sheet_with_data(sheet_name, new_row_data)
+                                    if success:
+                                        st.success(f"✅ New row added to {sheet_name.replace('_', ' ').title()}")
+                                        # Clear the adding state and input fields
+                                        st.session_state[f'adding_row_{sheet_name}'] = False
+                                        for col in sheet_columns:
+                                            if f"new_row_{sheet_name}_{col['name']}" in st.session_state:
+                                                del st.session_state[f"new_row_{sheet_name}_{col['name']}"]
+                                        st.rerun()
+                                    else:
+                                        st.error("❌ Failed to add new row. Please try again.")
+                                else:
+                                    st.warning("⚠️ Please fill in all fields before saving.")
+                        
+                        with col_cancel:
+                            if st.button("❌ Cancel", key=f"cancel_new_row_{sheet_name}"):
+                                st.session_state[f'adding_row_{sheet_name}'] = False
+                                # Clear input fields
+                                for col in sheet_columns:
+                                    if f"new_row_{sheet_name}_{col['name']}" in st.session_state:
+                                        del st.session_state[f"new_row_{sheet_name}_{col['name']}"]
+                                st.rerun()
+                    
                     # Edit mode
                     if st.session_state.get(f'editing_{sheet_name}', False):
                         st.markdown("---")
@@ -93,7 +152,6 @@ def configuration_page():
                         edited_df = st.data_editor(
                             df, 
                             width='stretch',
-                            use_container_width=True,
                             num_rows="dynamic",
                             key=f"editor_{sheet_name}"
                         )
@@ -123,7 +181,7 @@ def configuration_page():
                         # Display dataframe with row indices for reference
                         df_with_index = df.copy()
                         df_with_index.index.name = "Row Index"
-                        st.dataframe(df_with_index, use_container_width=True)
+                        st.dataframe(df_with_index, width='stretch')
                         
                         # Input for row indices to delete
                         rows_to_delete = st.text_input(

@@ -273,6 +273,32 @@ class ConfigManager:
             return False
     
     @classmethod
+    def add_row_to_sheet_with_data(cls, sheet_name: str, row_data: Dict[str, str]) -> bool:
+        """Add a row with specific data to a sheet."""
+        try:
+            mappings = cls.load_excel_mappings()
+            if sheet_name not in mappings:
+                return False
+            
+            df = mappings[sheet_name]
+            
+            # Validate that all required columns are present in row_data
+            missing_columns = set(df.columns) - set(row_data.keys())
+            if missing_columns:
+                error(f"Missing required columns for {sheet_name}: {missing_columns}")
+                return False
+            
+            # Create new row with provided data
+            new_row = pd.DataFrame([row_data])
+            updated_df = pd.concat([df, new_row], ignore_index=True)
+            
+            return cls.save_excel_sheet(sheet_name, updated_df)
+            
+        except Exception as e:
+            error(f"Error adding row with data to sheet {sheet_name}: {str(e)}")
+            return False
+    
+    @classmethod
     def delete_selected_rows(cls, sheet_name: str, indices_to_delete: list) -> bool:
         """Delete selected rows from a specific sheet."""
         try:
@@ -503,6 +529,16 @@ class SessionManager:
         
         if 'selected_rows_function_list' not in st.session_state:
             st.session_state.selected_rows_function_list = []
+        
+        # Adding row states for each mapping type
+        if 'adding_row_data_type_mappings' not in st.session_state:
+            st.session_state.adding_row_data_type_mappings = False
+        
+        if 'adding_row_function_mappings' not in st.session_state:
+            st.session_state.adding_row_function_mappings = False
+        
+        if 'adding_row_function_list' not in st.session_state:
+            st.session_state.adding_row_function_list = False
     
     @staticmethod
     def add_to_history(step_name: str, status: str, details: str = "") -> None:

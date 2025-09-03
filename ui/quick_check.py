@@ -207,11 +207,13 @@ def _sql_conversions_tab():
 def _comparison_tools_tab():
     """File comparison and analysis tab content."""
     st.subheader("📊 File Comparison & Analysis")
+    st.markdown("This section provides two essential comparison tools for validating your conversion workflow.")
     
-    # File comparison section
+    # === CHECK 1: Oracle SQL vs Formatted Oracle SQL ===
+    st.markdown("### 1️⃣ Oracle SQL Files vs Formatted Oracle SQL Files")
+    
     oracle_files = FileManager.get_files_in_directory(FileManager.DIRECTORIES["oracle"]) if os.path.exists(FileManager.DIRECTORIES["oracle"]) else []
     formatted_files = FileManager.get_files_in_directory(FileManager.DIRECTORIES["format_sql"]) if os.path.exists(FileManager.DIRECTORIES["format_sql"]) else []
-    json_files = FileManager.get_files_in_directory(FileManager.DIRECTORIES["format_json"]) if os.path.exists(FileManager.DIRECTORIES["format_json"]) else []
     
     if oracle_files and formatted_files:
         st.write("**Compare Original vs Formatted Oracle SQL:**")
@@ -236,7 +238,7 @@ def _comparison_tools_tab():
         
         # Display comparison if both files are selected
         if selected_original and 'selected_formatted' in locals() and selected_formatted:
-            if st.button("📊 Compare Files"):
+            if st.button("📊 Compare Oracle SQL Files", key="compare_oracle_sql"):
                 original_path = os.path.join(FileManager.DIRECTORIES["oracle"], selected_original)
                 formatted_path = os.path.join(FileManager.DIRECTORIES["format_sql"], selected_formatted)
                 
@@ -276,52 +278,115 @@ def _comparison_tools_tab():
                         st.metric("Change %", f"{change_percent:.1f}%")
     
     elif oracle_files and not formatted_files:
-        st.info("No formatted SQL files found. Please run the JSON → Formatted Oracle SQL conversion in the SQL Conversions tab.")
+        st.info("ℹ️ No formatted SQL files found. Please run the JSON → Formatted Oracle SQL conversion in the SQL Conversions tab.")
     elif not oracle_files:
-        st.info("No Oracle SQL files found. Please upload files in the File Manager.")
+        st.info("ℹ️ No Oracle SQL files found. Please upload files in the File Manager.")
     
-    # JSON Analysis Verification
-    if json_files:
-        st.markdown("---")
-        st.subheader("🔍 JSON Analysis Verification")
+    # === CHECK 2: PostgreSQL Format JSON vs Uploaded JSON ===
+    st.markdown("---")
+    st.markdown("### 2️⃣ PostgreSQL Format JSON vs Uploaded JSON")
+    
+    # Get PostgreSQL format JSON files
+    postgresql_files = FileManager.get_files_in_directory(FileManager.DIRECTORIES["format_plsql"]) if os.path.exists(FileManager.DIRECTORIES["format_plsql"]) else []
+    postgresql_json_files = [f for f in postgresql_files if f.endswith('.json')]
+    
+    if postgresql_json_files:
+        st.write("**Compare PostgreSQL Format JSON with User Uploaded JSON:**")
         
-        selected_json = st.selectbox("Select JSON file to verify:", json_files)
+        # File selection for PostgreSQL JSON
+        col1, col2 = st.columns(2)
         
-        if selected_json:
-            json_path = os.path.join(FileManager.DIRECTORIES["format_json"], selected_json)
-            
-            if st.button("🔍 Analyze JSON Structure"):
-                try:
-                    content = FileManager.read_file_content(json_path)
-                    if content:
-                        json_data = json.loads(content)
-                        
-                        st.subheader(f"📋 Analysis of {selected_json}")
-                        
-                        # Display JSON structure information
-                        col1, col2 = st.columns(2)
-                        
-                        with col1:
-                            st.write("**JSON Structure:**")
-                            if isinstance(json_data, dict):
-                                st.write("- Type: Dictionary")
-                                st.write(f"- Keys: {len(json_data.keys())}")
-                                st.write(f"- Main keys: {list(json_data.keys())[:5]}...")
-                            elif isinstance(json_data, list):
-                                st.write("- Type: List")
-                                st.write(f"- Items: {len(json_data)}")
-                        
-                        with col2:
-                            st.write("**File Information:**")
-                            st.write(f"- File size: {len(content)} characters")
-                            st.write("- JSON valid: ✅")
-                        
-                        # Show formatted JSON
-                        st.subheader("📄 JSON Preview")
-                        json_str = json.dumps(json_data, indent=2)
-                        st.json(json_str)
+        with col1:
+            selected_postgresql_json = st.selectbox("Select PostgreSQL Format JSON:", postgresql_json_files, key="postgresql_json_comparison")
+        
+        with col2:
+            # File uploader for user JSON
+            uploaded_json_file = st.file_uploader(
+                "Upload JSON file to compare",
+                type=['json'],
+                key="uploaded_json_comparison",
+                help="Upload a JSON file to compare against the PostgreSQL format"
+            )
+        
+        # Display comparison if both files are available
+        if selected_postgresql_json and uploaded_json_file:
+            if st.button("📊 Compare JSON Files", key="compare_json_files"):
+                postgresql_json_path = os.path.join(FileManager.DIRECTORIES["format_plsql"], selected_postgresql_json)
+                postgresql_content = FileManager.read_file_content(postgresql_json_path)
                 
-                except json.JSONDecodeError as e:
-                    st.error(f"❌ Invalid JSON format: {str(e)}")
+                # Read uploaded file content
+                try:
+                    uploaded_content = uploaded_json_file.read().decode('utf-8')
+                    uploaded_json_file.seek(0)  # Reset file pointer
+                    
+                    if postgresql_content and uploaded_content:
+                        st.subheader("📊 JSON Comparison")
+                        
+                        # Parse both JSON files for structural comparison
+                        try:
+                            postgresql_json = json.loads(postgresql_content)
+                            uploaded_json = json.loads(uploaded_content)
+                            
+                            col1, col2 = st.columns(2)
+                            
+                            with col1:
+                                st.write(f"**PostgreSQL Format: {selected_postgresql_json}**")
+                                st.json(postgresql_json)
+                            
+                            with col2:
+                                st.write(f"**Uploaded: {uploaded_json_file.name}**")
+                                st.json(uploaded_json)
+                            
+                            # JSON structure comparison
+                            st.subheader("📈 JSON Structure Comparison")
+                            col1, col2, col3, col4 = st.columns(4)
+                            
+                            with col1:
+                                postgresql_keys = len(postgresql_json.keys()) if isinstance(postgresql_json, dict) else 0
+                                uploaded_keys = len(uploaded_json.keys()) if isinstance(uploaded_json, dict) else 0
+                                st.metric("Keys Count", f"{postgresql_keys} vs {uploaded_keys}")
+                            
+                            with col2:
+                                postgresql_size = len(postgresql_content)
+                                uploaded_size = len(uploaded_content)
+                                st.metric("File Size", f"{postgresql_size} vs {uploaded_size}")
+                            
+                            with col3:
+                                # Check if both have same structure
+                                same_keys = (isinstance(postgresql_json, dict) and isinstance(uploaded_json, dict) and 
+                                           set(postgresql_json.keys()) == set(uploaded_json.keys()))
+                                st.metric("Same Structure", "✅ Yes" if same_keys else "❌ No")
+                            
+                            with col4:
+                                # Check data type compatibility
+                                same_type = type(postgresql_json) == type(uploaded_json)
+                                st.metric("Same Type", "✅ Yes" if same_type else "❌ No")
+                            
+                            # Show key differences if applicable
+                            if isinstance(postgresql_json, dict) and isinstance(uploaded_json, dict):
+                                postgresql_keys_set = set(postgresql_json.keys())
+                                uploaded_keys_set = set(uploaded_json.keys())
+                                
+                                only_in_postgresql = postgresql_keys_set - uploaded_keys_set
+                                only_in_uploaded = uploaded_keys_set - postgresql_keys_set
+                                
+                                if only_in_postgresql or only_in_uploaded:
+                                    st.subheader("🔍 Key Differences")
+                                    
+                                    if only_in_postgresql:
+                                        st.warning(f"Keys only in PostgreSQL format: {', '.join(only_in_postgresql)}")
+                                    
+                                    if only_in_uploaded:
+                                        st.warning(f"Keys only in uploaded file: {', '.join(only_in_uploaded)}")
+                                else:
+                                    st.success("✅ Both JSON files have the same key structure!")
+                        
+                        except json.JSONDecodeError as e:
+                            st.error(f"❌ JSON parsing error: {str(e)}")
+                        except Exception as e:
+                            st.error(f"❌ Error comparing JSON files: {str(e)}")
+                
                 except Exception as e:
-                    st.error(f"❌ Error analyzing JSON: {str(e)}")
+                    st.error(f"❌ Error reading uploaded file: {str(e)}")
+    else:
+        st.info("ℹ️ No PostgreSQL format JSON files found. Please run the conversion workflow to generate PostgreSQL format files.")
