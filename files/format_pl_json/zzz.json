@@ -1,0 +1,1000 @@
+{
+  "on_insert": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "v_holiday_descs",
+          "data_type": "txo_varchar_coll",
+          "default_value": null
+        },
+        {
+          "name": "v_country_codes",
+          "data_type": "txo_varchar_coll",
+          "default_value": null
+        },
+        {
+          "name": "v_chk_is_multivalue",
+          "data_type": "number",
+          "default_value": null
+        },
+        {
+          "name": "v_chk_distinct",
+          "data_type": "number",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": [
+        {
+          "name": "err_ins",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd2",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd3",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd4",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_del",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_level",
+          "type": "EXCEPTION"
+        }
+      ]
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_line_no": 21,
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "indent": 8,
+          "line": "c",
+          "line_no": 26,
+          "filename": "zzz.sql"
+        },
+        {
+          "indent": 8,
+          "line": "AS",
+          "line_no": 27,
+          "filename": "zzz.sql"
+        },
+        {
+          "indent": 8,
+          "line": "(",
+          "line_no": 29,
+          "filename": "zzz.sql"
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT TRIM(regexp_substr(:new.HOLIDAY_NAME, '[^,]+', 1, level)) col FROM dual CONNECT BY regexp_substr(:new.HOLIDAY_NAME, '[^,]+', 1, level) IS NOT NULL);",
+          "statement_line_no": 30,
+          "statement_indent": 12
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT regexp_substr(c.col, '[^[]+', 1) holiday_desc, regexp_substr(c.col, '[^[]+[^]]', 1, 2) country_cd BULK COLLECT INTO v_holiday_descs, v_country_codes FROM c;",
+          "statement_line_no": 40,
+          "statement_indent": 4
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT COUNT(country_cd), count(column_value) - count(distinct column_value) INTO v_chk_is_multivalue ,v_chk_distinct FROM TABLE (v_country_codes) LEFT JOIN countries ON country_cd = column_value;",
+          "statement_line_no": 46,
+          "statement_indent": 4
+        },
+        {
+          "type": "raise_statement",
+          "sql_statement": "RAISE err_upd2;",
+          "statement_line_no": 56,
+          "statement_indent": 12
+        },
+        {
+          "indent": 0,
+          "line": "END",
+          "line_no": 58,
+          "filename": "zzz.sql"
+        },
+        {
+          "type": "raise_statement",
+          "sql_statement": "RAISE err_upd3;",
+          "statement_line_no": 61,
+          "statement_indent": 12
+        },
+        {
+          "indent": 0,
+          "line": "END",
+          "line_no": 62,
+          "filename": "zzz.sql"
+        }
+      ],
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "dup_val_on_index",
+          "when_line_no": 155,
+          "when_indent": 3,
+          "then_line_no": 155,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_ins",
+          "when_line_no": 158,
+          "when_indent": 3,
+          "then_line_no": 158,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20102",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20102, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd",
+          "when_line_no": 161,
+          "when_indent": 3,
+          "then_line_no": 161,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd2",
+          "when_line_no": 164,
+          "when_indent": 3,
+          "then_line_no": 164,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20104",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20104, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd3",
+          "when_line_no": 167,
+          "when_indent": 3,
+          "then_line_no": 167,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20105",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20105, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd4",
+          "when_line_no": 170,
+          "when_indent": 3,
+          "then_line_no": 170,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20106",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20106, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_del",
+          "when_line_no": 173,
+          "when_indent": 3,
+          "then_line_no": 173,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20107",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20107, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_level",
+          "when_line_no": 176,
+          "when_indent": 3,
+          "then_line_no": 176,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20108",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20108, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        }
+      ],
+      "exception_line_no": 153,
+      "end_line_no": 179
+    },
+    "conversion_stats": {
+      "select_statement": 3,
+      "insert_statement": 0,
+      "update_statement": 0,
+      "delete_statement": 0,
+      "raise_statement": 2,
+      "assignment": 0,
+      "for_loop": 0,
+      "if_else": 0,
+      "case_when": 0,
+      "begin_end": 1,
+      "exception_handler": 8,
+      "function_calling": 8,
+      "when_statement": 0,
+      "elif_statement": 0,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 0,
+      "return_statement": 0,
+      "with_statement": 0
+    }
+  },
+  "on_update": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "v_holiday_descs",
+          "data_type": "txo_varchar_coll",
+          "default_value": null
+        },
+        {
+          "name": "v_country_codes",
+          "data_type": "txo_varchar_coll",
+          "default_value": null
+        },
+        {
+          "name": "v_chk_is_multivalue",
+          "data_type": "number",
+          "default_value": null
+        },
+        {
+          "name": "v_chk_distinct",
+          "data_type": "number",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": [
+        {
+          "name": "err_ins",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd2",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd3",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd4",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_del",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_level",
+          "type": "EXCEPTION"
+        }
+      ]
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_line_no": 21,
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "indent": 8,
+          "line": "c",
+          "line_no": 26,
+          "filename": "zzz.sql"
+        },
+        {
+          "indent": 8,
+          "line": "AS",
+          "line_no": 27,
+          "filename": "zzz.sql"
+        },
+        {
+          "indent": 8,
+          "line": "(",
+          "line_no": 29,
+          "filename": "zzz.sql"
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT TRIM(regexp_substr(:new.HOLIDAY_NAME, '[^,]+', 1, level)) col FROM dual CONNECT BY regexp_substr(:new.HOLIDAY_NAME, '[^,]+', 1, level) IS NOT NULL);",
+          "statement_line_no": 30,
+          "statement_indent": 12
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT regexp_substr(c.col, '[^[]+', 1) holiday_desc, regexp_substr(c.col, '[^[]+[^]]', 1, 2) country_cd BULK COLLECT INTO v_holiday_descs, v_country_codes FROM c;",
+          "statement_line_no": 40,
+          "statement_indent": 4
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT COUNT(country_cd), count(column_value) - count(distinct column_value) INTO v_chk_is_multivalue ,v_chk_distinct FROM TABLE (v_country_codes) LEFT JOIN countries ON country_cd = column_value;",
+          "statement_line_no": 46,
+          "statement_indent": 4
+        },
+        {
+          "type": "raise_statement",
+          "sql_statement": "RAISE err_upd2;",
+          "statement_line_no": 56,
+          "statement_indent": 12
+        },
+        {
+          "indent": 0,
+          "line": "END",
+          "line_no": 58,
+          "filename": "zzz.sql"
+        },
+        {
+          "type": "raise_statement",
+          "sql_statement": "RAISE err_upd3;",
+          "statement_line_no": 61,
+          "statement_indent": 12
+        },
+        {
+          "indent": 0,
+          "line": "END",
+          "line_no": 62,
+          "filename": "zzz.sql"
+        }
+      ],
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "dup_val_on_index",
+          "when_line_no": 155,
+          "when_indent": 3,
+          "then_line_no": 155,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_ins",
+          "when_line_no": 158,
+          "when_indent": 3,
+          "then_line_no": 158,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20102",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20102, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd",
+          "when_line_no": 161,
+          "when_indent": 3,
+          "then_line_no": 161,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd2",
+          "when_line_no": 164,
+          "when_indent": 3,
+          "then_line_no": 164,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20104",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20104, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd3",
+          "when_line_no": 167,
+          "when_indent": 3,
+          "then_line_no": 167,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20105",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20105, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd4",
+          "when_line_no": 170,
+          "when_indent": 3,
+          "then_line_no": 170,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20106",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20106, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_del",
+          "when_line_no": 173,
+          "when_indent": 3,
+          "then_line_no": 173,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20107",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20107, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_level",
+          "when_line_no": 176,
+          "when_indent": 3,
+          "then_line_no": 176,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20108",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20108, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        }
+      ],
+      "exception_line_no": 153,
+      "end_line_no": 179
+    },
+    "conversion_stats": {
+      "select_statement": 3,
+      "insert_statement": 0,
+      "update_statement": 0,
+      "delete_statement": 0,
+      "raise_statement": 2,
+      "assignment": 0,
+      "for_loop": 0,
+      "if_else": 0,
+      "case_when": 0,
+      "begin_end": 1,
+      "exception_handler": 8,
+      "function_calling": 8,
+      "when_statement": 0,
+      "elif_statement": 0,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 0,
+      "return_statement": 0,
+      "with_statement": 0
+    }
+  },
+  "on_delete": {
+    "declarations": {
+      "variables": [
+        {
+          "name": "v_holiday_descs",
+          "data_type": "txo_varchar_coll",
+          "default_value": null
+        },
+        {
+          "name": "v_country_codes",
+          "data_type": "txo_varchar_coll",
+          "default_value": null
+        },
+        {
+          "name": "v_chk_is_multivalue",
+          "data_type": "number",
+          "default_value": null
+        },
+        {
+          "name": "v_chk_distinct",
+          "data_type": "number",
+          "default_value": null
+        }
+      ],
+      "constants": [],
+      "exceptions": [
+        {
+          "name": "err_ins",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd2",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd3",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_upd4",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_del",
+          "type": "EXCEPTION"
+        },
+        {
+          "name": "err_level",
+          "type": "EXCEPTION"
+        }
+      ]
+    },
+    "main": {
+      "type": "begin_end",
+      "begin_line_no": 21,
+      "begin_indent": 0,
+      "begin_end_statements": [
+        {
+          "indent": 8,
+          "line": "c",
+          "line_no": 26,
+          "filename": "zzz.sql"
+        },
+        {
+          "indent": 8,
+          "line": "AS",
+          "line_no": 27,
+          "filename": "zzz.sql"
+        },
+        {
+          "indent": 8,
+          "line": "(",
+          "line_no": 29,
+          "filename": "zzz.sql"
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT TRIM(regexp_substr(:new.HOLIDAY_NAME, '[^,]+', 1, level)) col FROM dual CONNECT BY regexp_substr(:new.HOLIDAY_NAME, '[^,]+', 1, level) IS NOT NULL);",
+          "statement_line_no": 30,
+          "statement_indent": 12
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT regexp_substr(c.col, '[^[]+', 1) holiday_desc, regexp_substr(c.col, '[^[]+[^]]', 1, 2) country_cd BULK COLLECT INTO v_holiday_descs, v_country_codes FROM c;",
+          "statement_line_no": 40,
+          "statement_indent": 4
+        },
+        {
+          "type": "select_statement",
+          "sql_statement": "SELECT COUNT(country_cd), count(column_value) - count(distinct column_value) INTO v_chk_is_multivalue ,v_chk_distinct FROM TABLE (v_country_codes) LEFT JOIN countries ON country_cd = column_value;",
+          "statement_line_no": 46,
+          "statement_indent": 4
+        },
+        {
+          "type": "raise_statement",
+          "sql_statement": "RAISE err_upd2;",
+          "statement_line_no": 56,
+          "statement_indent": 12
+        },
+        {
+          "indent": 0,
+          "line": "END",
+          "line_no": 58,
+          "filename": "zzz.sql"
+        },
+        {
+          "type": "raise_statement",
+          "sql_statement": "RAISE err_upd3;",
+          "statement_line_no": 61,
+          "statement_indent": 12
+        },
+        {
+          "indent": 0,
+          "line": "END",
+          "line_no": 62,
+          "filename": "zzz.sql"
+        }
+      ],
+      "exception_handlers": [
+        {
+          "type": "exception_handler",
+          "exception_name": "dup_val_on_index",
+          "when_line_no": 155,
+          "when_indent": 3,
+          "then_line_no": 155,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20101",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20101, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_ins",
+          "when_line_no": 158,
+          "when_indent": 3,
+          "then_line_no": 158,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20102",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20102, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd",
+          "when_line_no": 161,
+          "when_indent": 3,
+          "then_line_no": 161,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20103",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20103, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd2",
+          "when_line_no": 164,
+          "when_indent": 3,
+          "then_line_no": 164,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20104",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20104, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd3",
+          "when_line_no": 167,
+          "when_indent": 3,
+          "then_line_no": 167,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20105",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20105, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_upd4",
+          "when_line_no": 170,
+          "when_indent": 3,
+          "then_line_no": 170,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20106",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20106, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_del",
+          "when_line_no": 173,
+          "when_indent": 3,
+          "then_line_no": 173,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20107",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20107, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        },
+        {
+          "type": "exception_handler",
+          "exception_name": "err_level",
+          "when_line_no": 176,
+          "when_indent": 3,
+          "then_line_no": 176,
+          "exception_statements": [
+            {
+              "type": "function_calling",
+              "function_name": "RAISE_APPLICATION_ERROR",
+              "parameters": {
+                "parameter_type": "positional",
+                "positional_params": [
+                  "-20108",
+                  "'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+                ],
+                "named_params": {},
+                "raw_text": "-20108, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF'"
+              }
+            }
+          ]
+        }
+      ],
+      "exception_line_no": 153,
+      "end_line_no": 179
+    },
+    "conversion_stats": {
+      "select_statement": 3,
+      "insert_statement": 0,
+      "update_statement": 0,
+      "delete_statement": 0,
+      "raise_statement": 2,
+      "assignment": 0,
+      "for_loop": 0,
+      "if_else": 0,
+      "case_when": 0,
+      "begin_end": 1,
+      "exception_handler": 8,
+      "function_calling": 8,
+      "when_statement": 0,
+      "elif_statement": 0,
+      "fetch_statement": 0,
+      "open_statement": 0,
+      "exit_statement": 0,
+      "close_statement": 0,
+      "merge_statement": 0,
+      "null_statement": 0,
+      "return_statement": 0,
+      "with_statement": 0
+    }
+  },
+  "metadata": {
+    "parse_timestamp": "2025-09-03T07:25:02.140294",
+    "parser_version": "1.0",
+    "file_details": {
+      "filename": "zzz.sql",
+      "filepath": "D:\\DELOITTE\\ORACALE_to_json\\files\\oracle\\zzz.sql",
+      "filesize": 7921,
+      "file_extension": ".sql",
+      "last_modified": 1756864265.651217,
+      "created_time": 1756173936.5202713,
+      "is_file": true,
+      "is_readable": true
+    }
+  }
+}

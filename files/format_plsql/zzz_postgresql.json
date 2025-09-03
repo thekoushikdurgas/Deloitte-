@@ -1,0 +1,20 @@
+{
+    "on_insert": [
+        {
+            "type": "sql",
+            "sql": "DO $$ DECLARE v_holiday_descs txo_varchar_coll; v_country_codes txo_varchar_coll; v_chk_is_multivalue numeric; v_chk_distinct numeric; BEGIN -- Unknown statement type: unknown -- Unknown statement type: unknown -- Unknown statement type: unknown SELECT TRIM(SUBSTRING(:new.HOLIDAY_NAME, '[^,]+', 1, nan)) col FROM dual CONNECT BY SUBSTRING(:new.HOLIDAY_NAME, '[^,]+', 1, nan) IS NOT NULL); SELECT SUBSTRING(c.col, '[^[]+', 1) holiday_desc, SUBSTRING(c.col, '[^[]+[^]]', 1, 2) country_cd BULK COLLECT INTO v_holiday_descs, v_country_codes FROM c; SELECT COUNT(country_cd), COUNT(column_value) - COUNT(distinct column_value) INTO v_chk_is_multivalue ,v_chk_distinct FROM TABLE (v_country_codes) LEFT JOIN countries ON country_cd = column_value; RAISE EXCEPTION err_upd2; -- Unknown statement type: unknown RAISE EXCEPTION err_upd3; -- Unknown statement type: unknown END; $$ LANGUAGE plpgsql;"
+        }
+    ],
+    "on_update": [
+        {
+            "type": "sql",
+            "sql": "DO $$ DECLARE v_holiday_descs txo_varchar_coll; v_country_codes txo_varchar_coll; v_chk_is_multivalue numeric; v_chk_distinct numeric; BEGIN -- Unknown statement type: unknown -- Unknown statement type: unknown -- Unknown statement type: unknown SELECT TRIM(SUBSTRING(:new.HOLIDAY_NAME, '[^,]+', 1, nan)) col FROM dual CONNECT BY SUBSTRING(:new.HOLIDAY_NAME, '[^,]+', 1, nan) IS NOT NULL); SELECT SUBSTRING(c.col, '[^[]+', 1) holiday_desc, SUBSTRING(c.col, '[^[]+[^]]', 1, 2) country_cd BULK COLLECT INTO v_holiday_descs, v_country_codes FROM c; SELECT COUNT(country_cd), COUNT(column_value) - COUNT(distinct column_value) INTO v_chk_is_multivalue ,v_chk_distinct FROM TABLE (v_country_codes) LEFT JOIN countries ON country_cd = column_value; RAISE EXCEPTION err_upd2; -- Unknown statement type: unknown RAISE EXCEPTION err_upd3; -- Unknown statement type: unknown END; $$ LANGUAGE plpgsql;"
+        }
+    ],
+    "on_delete": [
+        {
+            "type": "sql",
+            "sql": "DO $$ DECLARE v_holiday_descs txo_varchar_coll; v_country_codes txo_varchar_coll; v_chk_is_multivalue numeric; v_chk_distinct numeric; BEGIN -- Unknown statement type: unknown -- Unknown statement type: unknown -- Unknown statement type: unknown SELECT TRIM(SUBSTRING(:new.HOLIDAY_NAME, '[^,]+', 1, nan)) col FROM dual CONNECT BY SUBSTRING(:new.HOLIDAY_NAME, '[^,]+', 1, nan) IS NOT NULL); SELECT SUBSTRING(c.col, '[^[]+', 1) holiday_desc, SUBSTRING(c.col, '[^[]+[^]]', 1, 2) country_cd BULK COLLECT INTO v_holiday_descs, v_country_codes FROM c; SELECT COUNT(country_cd), COUNT(column_value) - COUNT(distinct column_value) INTO v_chk_is_multivalue ,v_chk_distinct FROM TABLE (v_country_codes) LEFT JOIN countries ON country_cd = column_value; RAISE EXCEPTION err_upd2; -- Unknown statement type: unknown RAISE EXCEPTION err_upd3; -- Unknown statement type: unknown END; $$ LANGUAGE plpgsql;"
+        }
+    ]
+}

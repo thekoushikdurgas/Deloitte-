@@ -103,14 +103,14 @@ def main() -> None:
     Each step is timed and logged for performance monitoring and debugging.
     The function includes comprehensive error handling with detailed logging.
     """
-    debug("Starting main conversion workflow")
+    # debug("Starting main conversion workflow")
 
 
     # Set up logging for the main script
-    info("=== Starting Oracle Trigger Conversion Process ===")
-    _ , log_path = setup_logging()
-    info("Logging to: %s", log_path)
-    debug("Logging system initialized")
+    # info("=== Starting Oracle Trigger Conversion Process ===")
+    # _ , log_path = setup_logging()
+    # info("Logging to: %s", log_path)
+    # debug("Logging system initialized")
     read_oracle_triggers_to_json()
 
 

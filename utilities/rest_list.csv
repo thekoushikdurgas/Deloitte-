@@ -1,7 +1,1 @@
 filename,line,line_no,indent
-zzz.sql,HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>INSERTING not supported!');,14,8
-zzz.sql,MDM_UTIL_IRTT.MAINTAIN_IRTT_ROLES ();,191,12
-zzz.sql,HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');,195,12
-zzz.sql,HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>INSERTING not supported!');,14,8
-zzz.sql,MDM_UTIL_IRTT.MAINTAIN_IRTT_ROLES ();,191,12
-zzz.sql,HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');,195,12

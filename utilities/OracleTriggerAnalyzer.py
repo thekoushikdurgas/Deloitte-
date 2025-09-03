@@ -430,6 +430,7 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed variable: %s", parsed_var["name"])
         except Exception as e:
             logger.debug("Failed to process variable declaration '%s': %s", segment, e)
+            print(f"Failed to process variable declaration {segment}: {e}")
 
     def _process_constant_declaration(self, segment: str) -> None:
         """
@@ -446,6 +447,7 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed constant: %s", parsed_const["name"])
         except Exception as e:
             logger.debug("Failed to process constant declaration '%s': %s", segment, e)
+            print(f"Failed to process constant declaration {segment}: {e}")
 
     def _process_exception_declaration(self, segment: str) -> None:
         """
@@ -462,6 +464,7 @@ class OracleTriggerAnalyzer:
                 logger.debug("Processed exception: %s", parsed_exc["name"])
         except Exception as e:
             logger.debug("Failed to process exception declaration '%s': %s", segment, e)
+            print(f"Failed to process exception declaration {segment}: {e}")
 
     def _parse_variable(self, line: str) -> Dict[str, Any]:
         """
@@ -652,14 +655,14 @@ class OracleTriggerAnalyzer:
                 item = working_lines[i]
                 if "line" in item:
                     line_upper = item["line"].strip().upper()
-                    if line_upper.startswith("WITH "):
-                        logger.debug(f"with_indent: {item['line_no']}")
+                    if line_upper.startswith("WITH ") or line_upper == "WITH":
+                        logger.info(f"with_indent: {item['line_no']}")
                         for j in range(i + 1, len(working_lines)):
                             line_info = working_lines[j]
                             if "line" in line_info:
                                 line_upper = line_info["line"].strip().upper()
-                                if line_upper.endswith(")") and line_info["indent"] == item["indent"]:
-                                    logger.debug(f"with_i: {item['line_no']} i: {line_info['line_no']}")
+                                if line_upper.endswith(";") and line_info["indent"] == item["indent"]:
+                                    logger.info(f"with_i: {item['line_no']} i: {line_info['line_no']}")
                                     with_statement = self._parse_with_statement(working_lines[i : j+1])
                                     with_statements.append(with_statement)
                                     i = j
@@ -722,22 +725,22 @@ class OracleTriggerAnalyzer:
         }
         as_i = -1
         if working_lines[0]["line"].strip().upper().endswith("("):
-            with_statement['with_values'] = working_lines[0]["line"].strip()[3:-4]
+            with_statement['with_values'] = working_lines[0]["line"].strip()[4:-5]
             as_i = 0
         else:
-            with_statement['with_values'] = working_lines[0]["line"].strip()[3:]
+            with_statement['with_values'] = working_lines[0]["line"].strip()[4:]
             for j in range(1, len(working_lines)):
                 line_info = working_lines[j]
                 line_upper = line_info["line"].strip().upper()
                 logger.debug(f"line_info : {line_info}")
                 if line_upper.endswith("("):
-                    with_statement['with_values'] += " " + line_info["line"].strip()[:-4]
+                    with_statement['with_values'] += " " + line_info["line"].strip()[:-5]
                     as_i = j
                     break
                 with_statement['with_values'] += " " + line_info["line"].strip()
         with_statement['with_statements'] = self.combine_lines(working_lines[as_i+1:])
-        if with_statement['with_statements'].strip().upper().endswith(")"):
-            with_statement['with_statements'] = with_statement['with_statements'][:-1]
+        if with_statement['with_statements'].strip().upper().endswith(");"):
+            with_statement['with_statements'] = with_statement['with_statements'][:-2]
         return with_statement
     
     def _parse_function_calling_statements(self):

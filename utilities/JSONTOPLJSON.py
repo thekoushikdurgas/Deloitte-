@@ -320,6 +320,7 @@ class JSONTOPLJSON:
             "merge_statement": 0,
             "null_statement": 0,
             "return_statement": 0,
+            "with_statement": 0,
         }
 
         def extract_rest_strings_from_item(statement):

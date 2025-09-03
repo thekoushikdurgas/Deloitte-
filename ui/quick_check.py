@@ -252,11 +252,11 @@ def _comparison_tools_tab():
                     
                     with col1:
                         st.write(f"**Original: {selected_original}**")
-                        st.code(original_content, language="sql", line_numbers=True)
+                        st.code(original_content, language="sql", line_numbers=True, wrap_lines=True, height=400)
                     
                     with col2:
                         st.write(f"**Formatted: {selected_formatted}**")
-                        st.code(formatted_content, language="sql", line_numbers=True)
+                        st.code(formatted_content, language="sql", line_numbers=True, wrap_lines=True, height=400)
                     
                     # Basic statistics comparison
                     st.subheader("📈 Comparison Statistics")

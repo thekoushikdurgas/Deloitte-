@@ -1,209 +1,221 @@
-CREATE OR REPLACE EDITIONABLE TRIGGER "MDMAPPL"."MDM_V_IRTT_EVENTS_KEYC_MTN_IOF" INSTEAD OF
-    INSERT OR DELETE OR UPDATE ON MDMAPPL.MDM_V_IRTT_EVENTS_KEY_CONT_MTN REFERENCING NEW AS NEW OLD AS OLD
+CREATE OR REPLACE EDITIONABLE TRIGGER "MDMAPPL"."MDM_V_PUBLIC_HOLIDAYS_MTN_IOF" INSTEAD OF
+    INSERT OR DELETE OR UPDATE ON MDMAPPL.MDM_V_PUBLIC_HOLIDAYS_MTN REFERENCING NEW AS NEW OLD AS OLD
 DECLARE
-    ERR_EVENT_ID_REQUIRED EXCEPTION;
-    ERR_DATE_FROM_AFTER_DATE_UNTIL EXCEPTION;
-    ERR_DATE_RANGE_OVERLAP EXCEPTION;
-    ERR_DO_NOT_MODIFY_PAST_DATA EXCEPTION;
-    V_KEY_CONTACTS_LIST            IRTT_MULTIROW_REC_C;
-    L_ERROR_COUNTER                PLS_INTEGER;
+    ERR_INS EXCEPTION;
+    ERR_UPD EXCEPTION;
+    ERR_UPD2 EXCEPTION;
+    ERR_UPD3 EXCEPTION;
+    ERR_UPD4 EXCEPTION;
+    ERR_DEL EXCEPTION;
+    ERR_LEVEL EXCEPTION;
+    V_HOLIDAY_DESCS     TXO_VARCHAR_COLL;
+    V_COUNTRY_CODES     TXO_VARCHAR_COLL;
+    V_CHK_IS_MULTIVALUE NUMBER;
+    V_CHK_DISTINCT      NUMBER;
 BEGIN
-    IF (INSERTING) THEN
  
-        -- Not supported!
-        HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>INSERTING not supported!');
-    ELSIF (UPDATING) THEN
- 
-        -- Check that event exists.
-        IF :NEW.EVENT_ID IS NULL THEN
-            RAISE ERR_EVENT_ID_REQUIRED;
-        END IF;
- 
-
-        --
-        -- Extract key acounts from XML row set.
-        SELECT
-            IRTT_MULTIROW_REC_T( UPPER(XT.USERID),
-            TO_DATE(XT.VALID_FROM,
-            MDM_UTIL_IRTT.CO_DD_MM_YYYY),
-            TO_DATE(XT.VALID_TO,
-            MDM_UTIL_IRTT.CO_DD_MM_YYYY)) BULK COLLECT INTO V_KEY_CONTACTS_LIST
-        FROM
-            XMLTABLE ('/rows/row' PASSING XMLTYPE (:NEW.KEY_CONTACTS_LIST) COLUMNS
- --rowno      VARCHAR2(4)  PATH 'empno',
-            USERID VARCHAR2 (20) PATH 'field[1]',
-            VALID_FROM VARCHAR2 (20) PATH 'field[2]',
-            VALID_TO VARCHAR2 (20) PATH 'field[3]' ) XT;
- 
-        --
-        -- Check if user is not a Roche employee any more then valid_until must be defined!
-        L_ERROR_COUNTER := 0;
-        FOR R1 IN (
+    -- v_user_level := txo_security.get_user_level(txo_library.g_auth_mode);
+    --
+    IF (INSERTING
+    OR UPDATING) THEN
+        WITH C AS (
             SELECT
-                B.VALUE_CD AS USER_ID,
-                B.DATE_FROM AS VALID_FROM,
-                B.DATE_UNTIL AS VALID_UNTIL,
-                E.USERID,
-                E.TERMINATIONDAY
+                TRIM(REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL)) COL
             FROM
-                TABLE(V_KEY_CONTACTS_LIST) B
-                LEFT OUTER JOIN V_ROCHE_EMPLOYEES_ALL E
-                ON E.USERID = B. VALUE_CD
-        ) LOOP
+                DUAL
+            CONNECT BY
+                REGEXP_SUBSTR(:NEW.HOLIDAY_NAME, '[^,]+', 1, LEVEL) IS NOT NULL
+        );
+        SELECT
+            REGEXP_SUBSTR(C.COL, '[^[]+', 1)        HOLIDAY_DESC,
+            REGEXP_SUBSTR(C.COL, '[^[]+[^]]', 1, 2) COUNTRY_CD BULK COLLECT INTO V_HOLIDAY_DESCS,
+            V_COUNTRY_CODES
+        FROM
+            C;
  
-            -- mdm_util_web.return_feedback_div (p_status => 'WARNING', p_message => 'r1.user_id:'||r1.user_id||', r1.userid:'||r1.userid||', r1.valid_from:'||r1.valid_from||', r1.valid_until:'||r1.valid_until);
-            -- Is a valid Roche employee.
-            IF (R1.USERID IS NULL) THEN
-                L_ERROR_COUNTER := L_ERROR_COUNTER + 1;
-                MDM_UTIL_WEB.RETURN_FEEDBACK_DIV (
-                    P_STATUS => 'ERROR',
-                    P_MESSAGE => 'Key contact '
-                                 ||R1.USER_ID
-                                 ||' is not a valid Roche employee.'
-                );
-            END IF;
- 
-
-            -- Roche employee terminated for this user?
-            IF (R1.TERMINATIONDAY IS NOT NULL
-            AND R1.VALID_UNTIL IS NULL) THEN
-                L_ERROR_COUNTER := L_ERROR_COUNTER + 1;
-                MDM_UTIL_WEB.RETURN_FEEDBACK_DIV (
-                    P_STATUS => 'ERROR',
-                    P_MESSAGE => 'Key contact '
-                                 ||R1.USER_ID
-                                 ||' was termintated '
-                                 ||R1.TERMINATIONDAY
-                                 ||' as Roche employee. The "<b>Valid Until</b>" date is required.'
-                );
-            END IF;
-        END LOOP;
- 
-
         --
-        IF (L_ERROR_COUNTER > 0) THEN
-            RAISE_APPLICATION_ERROR (-20000, 'Correct your input, please.');
+        --do some checks
+        SELECT
+            COUNT(COUNTRY_CD),
+            COUNT(COLUMN_VALUE) - COUNT(DISTINCT COLUMN_VALUE) INTO V_CHK_IS_MULTIVALUE
+ --if value is >= 1 then multivalue was sent, otherwise not !
+,
+            V_CHK_DISTINCT
+        FROM
+            TABLE (V_COUNTRY_CODES)
+            LEFT JOIN COUNTRIES
+            ON COUNTRY_CD = COLUMN_VALUE         ;
+        IF V_CHK_IS_MULTIVALUE >= 1 AND V_CHK_IS_MULTIVALUE != V_HOLIDAY_DESCS.COUNT THEN
+            RAISE ERR_UPD2;
+ 
+            --Not all descriptions have country codes
+        END IF;
+
+        IF V_CHK_DISTINCT > 0 THEN
+            RAISE ERR_UPD3;
+        END IF;
+
+        IF V_CHK_IS_MULTIVALUE <= 1 THEN
+            BEGIN
+                MERGE INTO CFG.CFG_IRTT_HOLIDAYS A USING (
+                    SELECT
+                        HOLIDAY_DATE,
+                        HOLIDAY_DESC,
+                        GRANTED,
+                        COUNTRY_CD,
+                        HOLIDAY_REMARKS,
+                        VALID_IND
+                    FROM
+                        (
+                            SELECT
+                                :NEW.HOLIDAY_DATE    HOLIDAY_DATE,
+                                :NEW.HOLIDAY_NAME    HOLIDAY_DESC,
+                                :NEW.GRANTED         GRANTED,
+                                :NEW.VALID_FOR_CH    CH,
+                                :NEW.VALID_FOR_USA   USA,
+                                :NEW.VALID_FOR_UK    UK,
+                                :NEW.VALID_FOR_FR    FR,
+                                :NEW.VALID_FOR_DE    DE,
+                                :NEW.VALID_FOR_JP    JP,
+                                :NEW.HOLIDAY_REMARKS HOLIDAY_REMARKS
+                            FROM
+                                DUAL
+                        )  UNPIVOT (VALID_IND FOR COUNTRY_CD IN (CH AS 'CH',
+                        USA AS 'US',
+                        UK AS 'GB',
+                        FR AS 'FR',
+                        DE AS 'DE',
+                        JP AS 'JP'))
+                ) B ON (A.HOLIDAY_DATE = B.HOLIDAY_DATE
+                AND A.COUNTRY_CD = B.COUNTRY_CD) WHEN MATCHED THEN UPDATE SET A.GRANTED = B.GRANTED, A.VALID_IND = B.VALID_IND, A.HOLIDAY_DESC = B.HOLIDAY_DESC, A.HOLIDAY_REMARKS = B.HOLIDAY_REMARKS WHEN NOT MATCHED THEN INSERT(HOLIDAY_DATE, HOLIDAY_DESC, GRANTED, COUNTRY_CD, HOLIDAY_REMARKS, VALID_IND) VALUES(B.HOLIDAY_DATE, B.HOLIDAY_DESC, B.GRANTED, B.COUNTRY_CD, B.HOLIDAY_REMARKS, B.VALID_IND);
+            EXCEPTION
+                WHEN OTHERS THEN
+                    IF SQLCODE = -1407 AND INSTR(SQLERRM, '"CFG_IRTT_HOLIDAYS"."HOLIDAY_DESC"') > 0 THEN
+                        RAISE ERR_INS;
+                    ELSE
+                        RAISE;
+                    END IF;
+            END;
+        ELSE
+            BEGIN
+                MERGE INTO CFG.CFG_IRTT_HOLIDAYS A USING ( WITH HN AS (
+                    SELECT
+                        A.COLUMN_VALUE HOLIDAY_DESC,
+                        B.COLUMN_VALUE COUNTRY_CODE
+                    FROM
+                        (
+                            SELECT
+                                COLUMN_VALUE,
+                                ROWNUM       RN
+                            FROM
+                                TABLE(V_HOLIDAY_DESCS)
+                        ) A
+                        JOIN (
+                            SELECT
+                                COLUMN_VALUE,
+                                ROWNUM       RN
+                            FROM
+                                TABLE(V_COUNTRY_CODES)
+                        ) B
+                        ON A.RN = B.RN
+                )
+                    SELECT
+                        HOLIDAY_DATE,
+                        DECODE(VALID_IND, 'N', 'N/A', HOLIDAY_DESC) HOLIDAY_DESC,
+                        GRANTED,
+                        COUNTRY_CD,
+                        HOLIDAY_REMARKS,
+                        VALID_IND
+                    FROM
+                        (
+                            SELECT
+                                :NEW.HOLIDAY_DATE    HOLIDAY_DATE,
+                                :NEW.GRANTED         GRANTED,
+                                :NEW.VALID_FOR_CH    CH,
+                                :NEW.VALID_FOR_USA   USA,
+                                :NEW.VALID_FOR_UK    UK,
+                                :NEW.VALID_FOR_FR    FR,
+                                :NEW.VALID_FOR_DE    DE,
+                                :NEW.VALID_FOR_JP    JP,
+                                :NEW.HOLIDAY_REMARKS HOLIDAY_REMARKS
+                            FROM
+                                DUAL
+                        )  UNPIVOT (VALID_IND FOR COUNTRY_CD IN (CH AS 'CH',
+                        USA AS 'US',
+                        UK AS 'GB',
+                        FR AS 'FR',
+                        DE AS 'DE',
+                        JP AS 'JP'))
+                        LEFT JOIN HN
+                        ON HN.COUNTRY_CODE = COUNTRY_CD
+                ) B ON (A.HOLIDAY_DATE = B.HOLIDAY_DATE
+                AND A.COUNTRY_CD = B.COUNTRY_CD) WHEN MATCHED THEN UPDATE SET A.GRANTED = B.GRANTED, A.VALID_IND = B.VALID_IND, A.HOLIDAY_DESC = B.HOLIDAY_DESC, A.HOLIDAY_REMARKS = B.HOLIDAY_REMARKS WHEN NOT MATCHED THEN INSERT(HOLIDAY_DATE, HOLIDAY_DESC, GRANTED, COUNTRY_CD, HOLIDAY_REMARKS, VALID_IND) VALUES(B.HOLIDAY_DATE, B.HOLIDAY_DESC, B.GRANTED, B.COUNTRY_CD, B.HOLIDAY_REMARKS, B.VALID_IND);
+            EXCEPTION
+                WHEN OTHERS THEN
+                    IF SQLCODE = -1407 AND INSTR(SQLERRM, '"CFG_IRTT_HOLIDAYS"."HOLIDAY_DESC"') > 0 THEN
+                        RAISE ERR_UPD4;
+                    ELSE
+                        RAISE;
+                    END IF;
+            END;
         END IF;
  
 
         --
-        -- raise error if date_from > date_until
-        SELECT
-            COUNT(1) INTO L_ERROR_COUNTER
-        FROM
-            TABLE(V_KEY_CONTACTS_LIST) XT
-        WHERE
-            XT.DATE_FROM > NVL(XT.DATE_UNTIL, XT.DATE_FROM);
+        -- Handle changes to GRANTED.
+        IF (:NEW.GRANTED != :OLD.GRANTED) THEN
  
-        --
-        IF L_ERROR_COUNTER > 0 THEN
-            RAISE ERR_DATE_FROM_AFTER_DATE_UNTIL;
-        END IF;
- 
-
-        --
-        -- check records do not overlap
-        SELECT
-            COUNT(CHK) INTO L_ERROR_COUNTER
-        FROM
-            (
-                SELECT
-                    XT.DATE_FROM,
-                    XT.DATE_UNTIL,
-                    CASE
-                        WHEN XT.DATE_FROM <= LAG(NVL(XT.DATE_UNTIL, XT.DATE_FROM + 1)) OVER (ORDER BY XT.DATE_FROM)
-                        THEN
-                            1
-                    END CHK
-                FROM
-                    TABLE(V_KEY_CONTACTS_LIST) XT
+            -- Recreate plant events.
+            MDMAPPL.MDM_UTIL_IRTT.REGENERATE_EVENT_DATES_FOR_MONTH(
+                P_YEAR => EXTRACT(YEAR FROM :NEW.HOLIDAY_DATE),
+                P_MONTH => EXTRACT(MONTH FROM :NEW.HOLIDAY_DATE),
+                P_START_EVENT_DATE => :NEW.HOLIDAY_DATE
             );
- 
-        --
-        IF L_ERROR_COUNTER > 0 THEN
-            RAISE ERR_DATE_RANGE_OVERLAP;
         END IF;
- 
-
-        --
-        -- don't allow modification of records from the past.
-        SELECT
-            COUNT(1) INTO L_ERROR_COUNTER
-        FROM
-            CFG.CFG_IRTT_EVENT_CONTACTS C
-            LEFT JOIN TABLE(V_KEY_CONTACTS_LIST) XT
-            ON C.USERID = XT.VALUE_CD
-            AND C.VALID_FROM = XT.DATE_FROM
-        WHERE
-            C.EVENT_ID = :NEW.EVENT_ID
-            AND C.VALID_FROM < TRUNC(SYSDATE)
-            AND XT.DATE_FROM IS NULL;
- 
-        --
-        IF L_ERROR_COUNTER > 0 THEN
-            RAISE ERR_DO_NOT_MODIFY_PAST_DATA;
-        END IF;
- 
-
-        --
-        DELETE FROM CFG.CFG_IRTT_EVENT_CONTACTS A
-        WHERE
-            A.EVENT_ID = :NEW.EVENT_ID
-            AND NOT EXISTS (
-                SELECT
-                    1
-                FROM
-                    TABLE(V_KEY_CONTACTS_LIST) XT
-                WHERE
-                    A.USERID = XT.VALUE_CD
-                    AND A.VALID_FROM = XT.DATE_FROM
-            );
- 
-        --
-        MERGE INTO CFG.CFG_IRTT_EVENT_CONTACTS A USING (
-            SELECT
-                XT.VALUE_CD USERID,
-                XT.DATE_FROM VALID_FROM,
-                XT.DATE_UNTIL VALID_TO
-            FROM
-                TABLE(V_KEY_CONTACTS_LIST) XT
-            WHERE
-                XT.VALUE_CD IS NOT NULL
-        ) B ON (A.EVENT_ID = :NEW.EVENT_ID
-        AND A.USERID = B.USERID
-        AND A.VALID_FROM = B.VALID_FROM) WHEN MATCHED THEN
-            UPDATE
-            SET
-                A.VALID_TO = B.VALID_TO WHEN NOT MATCHED THEN INSERT(
-                    EVENT_ID,
-                    USERID,
-                    VALID_FROM,
-                    VALID_TO
-                ) VALUES(
-                    :NEW.EVENT_ID,
-                    B.USERID,
-                    B.VALID_FROM,
-                    B.VALID_TO
-                );
- 
-            --
-            -- Maintain role for IRTT key contacts.
-            MDM_UTIL_IRTT.MAINTAIN_IRTT_ROLES ();
     ELSIF (DELETING) THEN
- 
-            -- Not supported!
-            HTP.P ('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');
+        IF :OLD.HOLIDAY_DATE IS NULL THEN
+            RAISE ERR_DEL;
+        END IF;
+        DELETE FROM CFG.CFG_IRTT_HOLIDAYS A
+        WHERE
+            A.HOLIDAY_DATE = :OLD.HOLIDAY_DATE;
     END IF;
 EXCEPTION
-    WHEN ERR_EVENT_ID_REQUIRED THEN
-        RAISE_APPLICATION_ERROR (-20101, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN');
-    WHEN ERR_DATE_FROM_AFTER_DATE_UNTIL THEN
-        RAISE_APPLICATION_ERROR (-20103, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN');
-    WHEN ERR_DATE_RANGE_OVERLAP THEN
-        RAISE_APPLICATION_ERROR (-20105, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN');
-    WHEN ERR_DO_NOT_MODIFY_PAST_DATA THEN
-        RAISE_APPLICATION_ERROR (-20108, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN');
+ 
+    --WHEN err_ins
+    WHEN DUP_VAL_ON_INDEX THEN
+ 
+        --public holiday already exists
+        RAISE_APPLICATION_ERROR (-20101, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF');
+    WHEN ERR_INS THEN
+ 
+        -- Holiday name cannot be left empty.
+        RAISE_APPLICATION_ERROR (-20102, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF');
+    WHEN ERR_UPD THEN
+ 
+        -- Please don't change Holiday Date,
+        RAISE_APPLICATION_ERROR (-20103, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF');
+    WHEN ERR_UPD2 THEN
+ 
+        -- Not all descriptions have country codes.
+        RAISE_APPLICATION_ERROR (-20104, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF');
+    WHEN ERR_UPD3 THEN
+ 
+        -- Country code entered too many times in Holiday name.
+        RAISE_APPLICATION_ERROR (-20105, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF');
+    WHEN ERR_UPD4 THEN
+ 
+        -- Holiday name cannot be left empty for one country code.
+        RAISE_APPLICATION_ERROR (-20106, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF');
+    WHEN ERR_DEL THEN
+ 
+        -- Cannot delete public holiday from the past.
+        RAISE_APPLICATION_ERROR (-20107, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF');
+    WHEN ERR_LEVEL THEN
+ 
+        -- Error level.
+        RAISE_APPLICATION_ERROR (-20108, 'MDM_V_PUBLIC_HOLIDAYS_MTN_IOF');
 END;
 /
 
-ALTER TRIGGER "MDMAPPL"."MDM_V_IRTT_EVENTS_KEYC_MTN_IOF" ENABLE;
+ALTER TRIGGER "MDMAPPL"."MDM_V_PUBLIC_HOLIDAYS_MTN_IOF" ENABLE;
