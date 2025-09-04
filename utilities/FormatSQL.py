@@ -78,28 +78,25 @@ class FormatSQL:
         self.analysis = analysis
         self.indent_unit = "  "  # 2 spaces for indentation
         self.json_convert_sql: Dict = {
+            "assignment": 0,
+            "for_loop": 0,
+            "if_else": 0,
+            "case_when": 0,
+            "begin_end": 0,
+            "exception_handler": 0,
+            "function_calling": 0,
+            "when_statement": 0,
+            "elif_statement": 0,
             "select_statement": 0,
             "insert_statement": 0,
             "update_statement": 0,
             "delete_statement": 0,
             "raise_statement": 0,
-            "assignment": 0,
-            "for_loop": 0,
-            "if_else": 0,
-            "case_when": 0,
-            "begin_end": 1,
-            "exception_handler": 0,
-            "function_calling": 0,
-            "when_statement": 0,
-            "elif_statement": 0,
-            "fetch_statement": 0,
-            "open_statement": 0,
-            "exit_statement": 0,
-            "close_statement": 0,
             "merge_statement": 0,
             "null_statement": 0,
             "return_statement": 0,
             "with_statement": 0,
+            "bulk_statement": 0,
         }
         
         # Load mappings from Excel file
@@ -522,6 +519,8 @@ class FormatSQL:
                 elif statement_type == "delete_statement":
                     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
                 elif statement_type == "merge_statement":
+                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
+                elif statement_type == "bulk_statement":
                     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
                 elif statement_type == "assignment":
                     statement_lines = self._render_assignment(statement, indent_level, db_type)

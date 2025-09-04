@@ -273,30 +273,103 @@ class ConfigManager:
             return False
     
     @classmethod
-    def add_row_to_sheet_with_data(cls, sheet_name: str, row_data: Dict[str, str]) -> bool:
-        """Add a row with specific data to a sheet."""
+    def check_for_duplicates(cls, sheet_name: str, row_data: Dict[str, str]) -> Tuple[bool, str]:
+        """
+        Check if the provided row data already exists in the sheet.
+        
+        Args:
+            sheet_name (str): Name of the sheet to check
+            row_data (Dict[str, str]): Data to check for duplicates
+            
+        Returns:
+            Tuple[bool, str]: (is_duplicate, duplicate_info)
+                - is_duplicate: True if duplicate found, False otherwise
+                - duplicate_info: Description of what was duplicated
+        """
         try:
             mappings = cls.load_excel_mappings()
             if sheet_name not in mappings:
-                return False
+                return False, "Sheet not found"
+            
+            df = mappings[sheet_name]
+            
+            # Check for duplicates based on the sheet type
+            if sheet_name == 'data_type_mappings':
+                # For data type mappings, check Oracle_Type column
+                oracle_type = row_data.get('Oracle_Type', '').strip()
+                if oracle_type:
+                    existing_oracle_types = df['Oracle_Type'].astype(str).str.strip()
+                    if oracle_type in existing_oracle_types.values:
+                        return True, f"Oracle data type '{oracle_type}' already exists"
+            
+            elif sheet_name == 'function_mappings':
+                # For function mappings, check Oracle_Function column
+                oracle_function = row_data.get('Oracle_Function', '').strip()
+                if oracle_function:
+                    existing_oracle_functions = df['Oracle_Function'].astype(str).str.strip()
+                    if oracle_function in existing_oracle_functions.values:
+                        return True, f"Oracle function '{oracle_function}' already exists"
+            
+            elif sheet_name == 'function_list':
+                # For function list, check function_name column
+                function_name = row_data.get('function_name', '').strip()
+                if function_name:
+                    existing_function_names = df['function_name'].astype(str).str.strip()
+                    if function_name in existing_function_names.values:
+                        return True, f"Function name '{function_name}' already exists"
+            
+            return False, "No duplicates found"
+            
+        except Exception as e:
+            error(f"Error checking for duplicates in sheet {sheet_name}: {str(e)}")
+            return True, f"Error checking duplicates: {str(e)}"
+    
+    @classmethod
+    def add_row_to_sheet_with_data(cls, sheet_name: str, row_data: Dict[str, str]) -> Tuple[bool, str]:
+        """
+        Add a row with specific data to a sheet.
+        
+        Args:
+            sheet_name (str): Name of the sheet to add to
+            row_data (Dict[str, str]): Data for the new row
+            
+        Returns:
+            Tuple[bool, str]: (success, message)
+                - success: True if row was added successfully, False otherwise
+                - message: Success or error message
+        """
+        try:
+            mappings = cls.load_excel_mappings()
+            if sheet_name not in mappings:
+                return False, f"Sheet '{sheet_name}' not found"
             
             df = mappings[sheet_name]
             
             # Validate that all required columns are present in row_data
             missing_columns = set(df.columns) - set(row_data.keys())
             if missing_columns:
-                error(f"Missing required columns for {sheet_name}: {missing_columns}")
-                return False
+                error_msg = f"Missing required columns for {sheet_name}: {missing_columns}"
+                error(error_msg)
+                return False, error_msg
+            
+            # Check for duplicates before adding
+            is_duplicate, duplicate_info = cls.check_for_duplicates(sheet_name, row_data)
+            if is_duplicate:
+                return False, f"Duplicate entry: {duplicate_info}"
             
             # Create new row with provided data
             new_row = pd.DataFrame([row_data])
             updated_df = pd.concat([df, new_row], ignore_index=True)
             
-            return cls.save_excel_sheet(sheet_name, updated_df)
+            if cls.save_excel_sheet(sheet_name, updated_df):
+                return True, f"Successfully added new row to {sheet_name.replace('_', ' ').title()}"
+            else:
+                return False, "Failed to save the updated sheet"
             
         except Exception as e:
-            error(f"Error adding row with data to sheet {sheet_name}: {str(e)}")
-            return False
+            error_msg = f"Error adding row with data to sheet {sheet_name}: {str(e)}"
+            error(error_msg)
+            return False, error_msg
     
     @classmethod
     def delete_selected_rows(cls, sheet_name: str, indices_to_delete: list) -> bool:

@@ -1,1 +1,87 @@
-filename,line,line_no
+filename,line,line_no,indent
+zzz.sql,ELSIF (UPDATING) THEN,17,4.0
+zzz.sql,ELSIF (DELETING) THEN,102,8.0
+zzz.sql,END IF;,104,8.0
+zzz.sql,EXCEPTION,105,4.0
+zzz.sql,WHEN ERR_UPD THEN,106,8.0
+zzz.sql,WHEN ERR_UPD2 THEN,108,8.0
+zzz.sql,WHEN ERR_UPD3 THEN,110,8.0
+zzz.sql,WHEN ERR_DEL THEN,112,8.0
+zzz.sql,END;,114,4.0
+zzz.sql,/,115,0.0
+zzz.sql,ELSIF (UPDATING) THEN,17,4.0
+zzz.sql,ELSIF (DELETING) THEN,102,8.0
+zzz.sql,END IF;,104,8.0
+zzz.sql,EXCEPTION,105,4.0
+zzz.sql,WHEN ERR_UPD THEN,106,8.0
+zzz.sql,WHEN ERR_UPD2 THEN,108,8.0
+zzz.sql,WHEN ERR_UPD3 THEN,110,8.0
+zzz.sql,WHEN ERR_DEL THEN,112,8.0
+zzz.sql,END;,114,4.0
+zzz.sql,/,115,0.0
+zzz.sql,ELSIF (UPDATING) THEN,17,4.0
+zzz.sql,ELSIF (DELETING) THEN,102,8.0
+zzz.sql,END IF;,104,8.0
+zzz.sql,EXCEPTION,105,4.0
+zzz.sql,WHEN ERR_UPD THEN,106,8.0
+zzz.sql,WHEN ERR_UPD2 THEN,108,8.0
+zzz.sql,WHEN ERR_UPD3 THEN,110,8.0
+zzz.sql,WHEN ERR_DEL THEN,112,8.0
+zzz.sql,END;,114,4.0
+zzz.sql,/,115,0.0
+zzz.sql,IF (INSERTING) THEN,15,4.0
+zzz.sql,ELSIF (UPDATING) THEN,17,4.0
+zzz.sql,IF :NEW.EVENT_ID IS NULL THEN,18,8.0
+zzz.sql,END IF;,20,8.0
+zzz.sql,IF V_CNT_CHK1 > 0 THEN,39,8.0
+zzz.sql,END IF;,41,8.0
+zzz.sql,IF V_CNT_CHK2 > 0 THEN,60,8.0
+zzz.sql,END IF;,62,8.0
+zzz.sql,ELSIF (DELETING) THEN,102,8.0
+zzz.sql,END IF;,104,8.0
+zzz.sql,EXCEPTION,105,4.0
+zzz.sql,WHEN ERR_UPD THEN,106,8.0
+zzz.sql,WHEN ERR_UPD2 THEN,108,8.0
+zzz.sql,WHEN ERR_UPD3 THEN,110,8.0
+zzz.sql,WHEN ERR_DEL THEN,112,8.0
+zzz.sql,END;,114,4.0
+zzz.sql,/,115,0.0
+zzz.sql,ELSIF (UPDATING) THEN,17,4.0
+zzz.sql,ELSIF (DELETING) THEN,102,8.0
+zzz.sql,END IF;,104,8.0
+zzz.sql,EXCEPTION,105,4.0
+zzz.sql,WHEN ERR_UPD THEN,106,8.0
+zzz.sql,WHEN ERR_UPD2 THEN,108,8.0
+zzz.sql,WHEN ERR_UPD3 THEN,110,8.0
+zzz.sql,WHEN ERR_DEL THEN,112,8.0
+zzz.sql,END;,114,4.0
+zzz.sql,/,115,0.0
+zzz.sql,MDM_UTIL_WEB.RETURN_FEEDBACK_DIV (,54,16.0
+zzz.sql,"P_STATUS => 'ERROR',",55,20.0
+zzz.sql,P_MESSAGE => 'Key contact ',56,20.0
+zzz.sql,||R1.USER_ID,57,33.0
+zzz.sql,||' is not a valid Roche employee.',58,33.0
+zzz.sql,);,59,16.0
+zzz.sql,MDM_UTIL_WEB.RETURN_FEEDBACK_DIV (,67,16.0
+zzz.sql,"P_STATUS => 'ERROR',",68,20.0
+zzz.sql,P_MESSAGE => 'Key contact ',69,20.0
+zzz.sql,||R1.USER_ID,70,33.0
+zzz.sql,||' was termintated ',71,33.0
+zzz.sql,||R1.TERMINATIONDAY,72,33.0
+zzz.sql,"||' as Roche employee. The ""<b>Valid Until</b>"" date is required.'",73,33.0
+zzz.sql,);,74,16.0
+zzz.sql,END LOOP;,76,8.0
+zzz.sql,MDM_UTIL_WEB.RETURN_FEEDBACK_DIV (,54,16.0
+zzz.sql,"P_STATUS => 'ERROR',",55,20.0
+zzz.sql,P_MESSAGE => 'Key contact ',56,20.0
+zzz.sql,||R1.USER_ID,57,33.0
+zzz.sql,||' is not a valid Roche employee.',58,33.0
+zzz.sql,);,59,16.0
+zzz.sql,MDM_UTIL_WEB.RETURN_FEEDBACK_DIV (,67,16.0
+zzz.sql,"P_STATUS => 'ERROR',",68,20.0
+zzz.sql,P_MESSAGE => 'Key contact ',69,20.0
+zzz.sql,||R1.USER_ID,70,33.0
+zzz.sql,||' was termintated ',71,33.0
+zzz.sql,||R1.TERMINATIONDAY,72,33.0
+zzz.sql,"||' as Roche employee. The ""<b>Valid Until</b>"" date is required.'",73,33.0
+zzz.sql,);,74,16.0

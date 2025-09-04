@@ -299,11 +299,6 @@ class JSONTOPLJSON:
             List[str]: List of all rest string content found
         """
         strng_convert_json: Dict = {
-            "select_statement": 0,
-            "insert_statement": 0,
-            "update_statement": 0,
-            "delete_statement": 0,
-            "raise_statement": 0,
             "assignment": 0,
             "for_loop": 0,
             "if_else": 0,
@@ -313,14 +308,16 @@ class JSONTOPLJSON:
             "function_calling": 0,
             "when_statement": 0,
             "elif_statement": 0,
-            "fetch_statement": 0,
-            "open_statement": 0,
-            "exit_statement": 0,
-            "close_statement": 0,
+            "select_statement": 0,
+            "insert_statement": 0,
+            "update_statement": 0,
+            "delete_statement": 0,
+            "raise_statement": 0,
             "merge_statement": 0,
             "null_statement": 0,
             "return_statement": 0,
             "with_statement": 0,
+            "bulk_statement": 0,
         }
 
         def extract_rest_strings_from_item(statement):

@@ -120,9 +120,9 @@ def configuration_page():
                                 # Validate that required fields are filled
                                 if all(value.strip() for value in new_row_data.values()):
                                     # Add the new row to the dataframe and save
-                                    success = ConfigManager.add_row_to_sheet_with_data(sheet_name, new_row_data)
+                                    success, message = ConfigManager.add_row_to_sheet_with_data(sheet_name, new_row_data)
                                     if success:
-                                        st.success(f"✅ New row added to {sheet_name.replace('_', ' ').title()}")
+                                        st.success(f"✅ {message}")
                                         # Clear the adding state and input fields
                                         st.session_state[f'adding_row_{sheet_name}'] = False
                                         for col in sheet_columns:
@@ -130,7 +130,11 @@ def configuration_page():
                                                 del st.session_state[f"new_row_{sheet_name}_{col['name']}"]
                                         st.rerun()
                                     else:
-                                        st.error("❌ Failed to add new row. Please try again.")
+                                        # Check if it's a duplicate error
+                                        if "Duplicate entry" in message:
+                                            st.error(f"❌ {message}")
+                                        else:
+                                            st.error(f"❌ {message}")
                                 else:
                                     st.warning("⚠️ Please fill in all fields before saving.")
                         
