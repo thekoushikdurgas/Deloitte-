@@ -102,13 +102,15 @@ class FormatSQL:
         # Load mappings from Excel file
         self.func_mapping = self.load_mapping("function_mappings")
         self.type_mapping = self.load_mapping("data_type_mappings")
+        self.exception_mapping = self.load_mapping("exception_mappings")
+        self.schema_mappings = self.load_mapping("schema_mappings")
         
         # Validate analysis structure
         if not isinstance(analysis, dict):
             raise ValueError("Analysis must be a dictionary")
         
-        if "declarations" not in analysis or "main" not in analysis:
-            raise ValueError("Analysis must contain 'declarations' and 'main' sections")
+        # if "declarations" not in analysis or "main" not in analysis:
+        #     raise ValueError("Analysis must contain 'declarations' and 'main' sections")
             
         logger.debug("FORMATOracleTriggerAnalyzer initialized successfully")
 
@@ -244,6 +246,27 @@ class FormatSQL:
                 "PROGRAM_ERROR": "EXCEPTION WHEN PROGRAM_ERROR THEN",
                 "OTHERS": "EXCEPTION WHEN OTHERS THEN"
             }
+        elif sheet_name == "schema_mappings":
+            return {
+                "HR": "hr_schema",
+                "SCOTT": "scott_schema", 
+                "SYS": "public",
+                "SYSTEM": "public",
+                "PUBLIC": "public",
+                "APEX_040000": "public",
+                "APEX_PUBLIC_USER": "public",
+                "FLOWS_FILES": "public",
+                "MDSYS": "public",
+                "OLAPSYS": "public",
+                "ORACLE_OCM": "public",
+                "ORDDATA": "public",
+                "ORDPLUGINS": "public",
+                "ORDSYS": "public",
+                "OUTLN": "public",
+                "SI_INFORMTN_SCHEMA": "public",
+                "WMSYS": "public",
+                "XDB": "public"
+            }
         else:
             warning(f"Unknown mapping type: {sheet_name}")
             return {}
@@ -269,9 +292,7 @@ class FormatSQL:
         """
         start_time = time.time()
         logger.debug(f"SQL generation: Converting JSON analysis to formatted {db_type} SQL")
-        debug(f"Analysis contains {len(self.analysis.get('declarations', {}).get('variables', []))} variables, "
-              f"{len(self.analysis.get('declarations', {}).get('constants', []))} constants, "
-              f"{len(self.analysis.get('declarations', {}).get('exceptions', []))} exceptions")
+        debug(f"Analysis contains {len(self.analysis.get('declarations', {}).get('variables', []))} variables,{len(self.analysis.get('declarations', {}).get('constants', []))} constants,{len(self.analysis.get('declarations', {}).get('exceptions', []))} exceptions")
         
         lines: List[str] = []
         
@@ -282,9 +303,12 @@ class FormatSQL:
         # lines.append("")
         
         # Step 2: Render declarations
-        debug("Starting declarations section rendering")
+        logger.debug("Starting declarations section rendering")
         declaration_start = time.time()
-        decl_lines = self._render_declarations(self.analysis["declarations"], db_type)
+        if "declarations" in self.analysis:
+            decl_lines = self._render_declarations(self.analysis.get("declarations", {}), db_type)
+        else:
+            decl_lines = []
         debug(f"Generated {len(decl_lines)} lines of declarations")
         lines.extend(decl_lines)
         debug(f"Declarations rendering took {time.time() - declaration_start:.3f}s")
@@ -292,7 +316,10 @@ class FormatSQL:
         # Step 3: Render main execution block
         debug("Starting main execution block rendering")
         main_start = time.time()
-        main_lines = self._render_main_block(self.analysis["main"], 0, wrap_begin_end=True, db_type=db_type)
+        if "main" in self.analysis:
+            main_lines = self._render_main_block(self.analysis.get("main", {}), 0, wrap_begin_end=True, db_type=db_type)
+        else:
+            main_lines = []
         debug(f"Generated {len(main_lines)} lines in main execution block")
         lines.extend(main_lines)
         debug(f"Main block rendering took {time.time() - main_start:.3f}s")
@@ -312,8 +339,10 @@ class FormatSQL:
         elif db_type == "Oracle":
             result = "\n".join(lines)
         debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
-        if self.analysis['conversion_stats'] is None:
-            logger.debug(f"sql_convert_count: {self.analysis['conversion_stats']}")
+        # if "conversion_stats" in self.analysis:
+        #     logger.debug(f"sql_convert_count: {self.analysis['conversion_stats']}")
+        # else:
+        #     logger.debug(f"sql_convert_count: {self.json_convert_sql}")
         final_sql = {
             "sql": result,
             "json_convert_sql": self.json_convert_sql
@@ -336,6 +365,8 @@ class FormatSQL:
         Returns:
             List[str]: List of formatted declaration lines
         """
+        if decl == {}:
+            return []
         logger.debug(f"=== Rendering {db_type} declarations ===")
         lines: List[str] = []
         
@@ -372,13 +403,14 @@ class FormatSQL:
                         lines.append(f"   {name} CONSTANT {data_type} := {value};")
             
             # Exceptions - Oracle exception declarations
-            exceptions = decl.get("exceptions", []) or []
-            if exceptions:
-                logger.debug(f"Rendering {len(exceptions)} exceptions")
-                for exc in exceptions:
-                    name = exc.get("name", "")
-                    if name:
-                        lines.append(f"   {name} EXCEPTION;")
+            if db_type == "Oracle":
+                exceptions = decl.get("exceptions", []) or []
+                if exceptions:
+                    logger.debug(f"Rendering {len(exceptions)} exceptions")
+                    for exc in exceptions:
+                        name = exc.get("name", "")
+                        if name:
+                            lines.append(f"   {name} EXCEPTION;")
                         
         elif db_type == "PostgreSQL":
             # PostgreSQL uses DO $$ DECLARE...BEGIN...END $$; structure
@@ -405,6 +437,8 @@ class FormatSQL:
         Returns:
             List[str]: List of formatted main block lines
         """
+        if node == {}:
+            return []
         logger.debug(f"=== Rendering main block for {db_type} ===")
         lines: List[str] = []
         
@@ -422,22 +456,51 @@ class FormatSQL:
                     
                     if name and data_type:
                         # Apply type mapping for PostgreSQL (case-insensitive)
-                        mapped_type = data_type
+                        mapped_type = data_type.upper()
                         for oracle_type, postgres_type in self.type_mapping.items():
-                            if oracle_type.upper() == data_type.upper():
+                            if oracle_type.upper() == mapped_type:
+                                # logger.info(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
                                 mapped_type = postgres_type
+                                break
+                            elif mapped_type.find(oracle_type.upper()) != -1:
+                                # logger.info(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
+                                mapped_type = mapped_type.replace(oracle_type.upper(), postgres_type)
                                 break
                         
                         # PostgreSQL variable declaration syntax
                         if default_value is not None and str(default_value).upper() != "NULL":
-                            # Handle string values properly
-                            if isinstance(default_value, str):
-                                default_str = f"'{default_value}'"
-                            else:
-                                default_str = str(default_value)
-                            lines.append(f"   {name} {mapped_type} := {default_str};")
+                            # # Handle string values properly
+                            # if isinstance(default_value, str) :
+                            #     default_str = f"'{default_value}'"
+                            # else:
+                            #     default_str = str(default_value)
+                            lines.append(f"   {name} {mapped_type} := {default_value};")
                         else:
                             lines.append(f"   {name} {mapped_type};")
+            # Add constant declarations for PostgreSQL
+            constants = self.analysis.get("declarations", {}).get("constants", []) or []
+            if constants:
+                logger.debug(f"Rendering {len(constants)} constants for PostgreSQL")
+                for const in constants:
+                    name = const.get("name", "")
+                    data_type = const.get("data_type", "")
+                    value = const.get("value")
+
+                    if name and data_type and value is not None:
+                        # Apply type mapping for PostgreSQL (case-insensitive)
+                        mapped_type = data_type.upper()
+                        for oracle_type, postgres_type in self.type_mapping.items():
+                            if oracle_type.upper() == mapped_type:
+                                # logger.info(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
+                                mapped_type = postgres_type
+                                break
+                            if mapped_type.find(oracle_type.upper()) != -1:
+                                # logger.info(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
+                                mapped_type = mapped_type.replace(oracle_type.upper(), postgres_type)
+                                break
+
+                        # PostgreSQL constant declaration syntax
+                        lines.append(f"   {name} CONSTANT {mapped_type} := {value};")
             lines.append("BEGIN")
         elif wrap_begin_end:
             lines.append(self._indent("BEGIN", indent_level))
@@ -451,7 +514,7 @@ class FormatSQL:
             lines.extend(statement_lines)
         
         # Process exception handlers
-        if db_type == "Oracle":
+        if db_type == "Oracle" or (db_type == "PostgreSQL" and not wrap_begin_end):
             exception_handlers = node.get("exception_handlers", [])
             if exception_handlers:
                 logger.debug(f"Processing {len(exception_handlers)} exception handlers")
@@ -714,9 +777,44 @@ class FormatSQL:
         if sql_statement:
             if db_type == "PostgreSQL":
                 sql_statement = self._apply_function_mappings(sql_statement)
+                sql_statement = self._apply_schema_mappings(sql_statement)
             return [self._indent(f"{sql_statement}", indent_level)]
         return []
-
+    def _apply_schema_mappings(self, text: str) -> str:
+        """
+        Apply schema mappings to the specified text.
+        
+        This method handles schema prefixes in table names and other schema references.
+        For example: V_MATERIALS -> HR.EMPLOYEES , so find EMPLOYEES and replace it with HR.EMPLOYEES
+        
+        Args:
+            text (str): Text containing schema references
+            
+        Returns:
+            str: Text with schema mappings applied
+        """
+        if not text:
+            return text
+        
+        # Ensure text is a string
+        if not isinstance(text, str):
+            text = str(text)
+            
+        result = text
+        
+        # Apply schema mappings for table names (e.g., V_MATERIALS -> HR.EMPLOYEES)
+        for oracle_schema, postgres_schema in self.schema_mappings.items():
+            try:
+                # Match the PostgreSQL schema name (which represents the table name) and replace with Oracle schema
+                # This reverses the mapping: postgres_schema (table name) -> oracle_schema.table_name
+                pattern = re.compile(r'\b' + re.escape(str(postgres_schema)) + r'\b', re.IGNORECASE)
+                result = pattern.sub(str(oracle_schema) + '.' + str(postgres_schema), result)
+            except Exception as e:
+                # Log the error and continue with next mapping
+                debug(f"Error applying schema mapping {postgres_schema} -> {oracle_schema}.{postgres_schema}: {str(e)}")
+                continue
+        
+        return result
     def _render_assignment(self, node: Dict[str, Any], indent_level: int, db_type: str) -> List[str]:
         """
         Render variable assignment statements for the specified database type.
@@ -755,14 +853,20 @@ class FormatSQL:
         Returns:
             List[str]: List of formatted RAISE statement lines
         """
-        sql_statement = node.get("sql_statement", "")
-        if sql_statement:
+        exception_name = node.get("exception_name", "")
+        if exception_name:
             if db_type == "PostgreSQL":
-                sql_statement = self._apply_function_mappings(sql_statement)
-                return [self._indent(f"{sql_statement.replace('RAISE', 'RAISE EXCEPTION')}", indent_level)]
+                exception_name = self._apply_exception_mappings(exception_name)
+                return [self._indent(f"RAISE EXCEPTION '{exception_name}';", indent_level)]
             else:
-                return [self._indent(f"{sql_statement}", indent_level)]
+                return [self._indent(f"RAISE {exception_name};", indent_level)]
         return []
+
+    def _apply_exception_mappings(self, text: str) -> str:
+        """
+        Apply exception mappings to the specified text.
+        """
+        return self.exception_mapping.get(text.upper(), text)
 
     def _render_function_call(self, node: Dict[str, Any], indent_level: int, db_type: str) -> List[str]:
         """

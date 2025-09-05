@@ -954,7 +954,7 @@ def convert_pl_json_to_postgresql_format(
         debug("Converting to PostgreSQL format...")
         try:
             # Create the expected PostgreSQL format structure
-            postgresql_format = {"on_insert": [], "on_update": [], "on_delete": []}
+            postgresql_format = {}
 
             # Convert the PL/JSON structure to PostgreSQL format
             # The PL/JSON files have on_insert, on_update, on_delete arrays with complex objects
@@ -968,7 +968,7 @@ def convert_pl_json_to_postgresql_format(
                 # statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
                 # for stmt in statements:
                 #     if stmt:
-                postgresql_format["on_insert"].append({"type": "sql", "sql": sql_content})
+                postgresql_format["on_insert"] = {"type": "sql", "sql": sql_content}
 
             # Handle on_update
             if "on_update" in pl_json_data and pl_json_data["on_update"]:
@@ -976,7 +976,7 @@ def convert_pl_json_to_postgresql_format(
                 # statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
                 # for stmt in statements:
                 #     if stmt:
-                postgresql_format["on_update"].append({"type": "sql", "sql": sql_content.replace("\n", " ").replace("\n", " ").replace("    ", " ")})
+                postgresql_format["on_update"] = {"type": "sql", "sql": sql_content}
 
             # Handle on_delete
             if "on_delete" in pl_json_data and pl_json_data["on_delete"]:
@@ -984,7 +984,7 @@ def convert_pl_json_to_postgresql_format(
                 # statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
                 # for stmt in statements:
                 #     if stmt:
-                postgresql_format["on_delete"].append({"type": "sql", "sql": sql_content.replace("\n", " ").replace("\n", " ").replace("    ", " ")})
+                postgresql_format["on_delete"] = {"type": "sql", "sql": sql_content}
 
             debug("PostgreSQL format conversion completed")
 
@@ -1064,29 +1064,26 @@ def convert_postgresql_format_to_sql(
 
 
         # Add on_insert SQL
-        if "on_insert" in postgresql_data and postgresql_data["on_insert"]:
+        if "on_insert" in postgresql_data:
             sql_lines.append("-- ON INSERT")
-            for item in postgresql_data["on_insert"]:
-                if item.get("type") == "sql":
-                    sql_lines.append(item["sql"])
+            if postgresql_data["on_insert"].get("type") == "sql":
+                sql_lines.append(postgresql_data["on_insert"]["sql"])
             sql_lines.append("")
 
 
         # Add on_update SQL
-        if "on_update" in postgresql_data and postgresql_data["on_update"]:
+        if "on_update" in postgresql_data:
             sql_lines.append("-- ON UPDATE")
-            for item in postgresql_data["on_update"]:
-                if item.get("type") == "sql":
-                    sql_lines.append(item["sql"])
+            if postgresql_data["on_update"].get("type") == "sql":
+                sql_lines.append(postgresql_data["on_update"]["sql"])
             sql_lines.append("")
 
 
         # Add on_delete SQL
-        if "on_delete" in postgresql_data and postgresql_data["on_delete"]:
+        if "on_delete" in postgresql_data:
             sql_lines.append("-- ON DELETE")
-            for item in postgresql_data["on_delete"]:
-                if item.get("type") == "sql":
-                    sql_lines.append(item["sql"])
+            if postgresql_data["on_delete"].get("type") == "sql":
+                sql_lines.append(postgresql_data["on_delete"]["sql"])
             sql_lines.append("")
 
 

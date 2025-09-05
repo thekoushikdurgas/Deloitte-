@@ -1,34 +1,31 @@
 import json
 from typing import Any, Dict, List, Tuple
 
+from utilities.FormatSQL import FormatSQL
 from utilities.common import (
     logger,
     setup_logging,
-    debug,
-    info,
-    warning,
-    error,
-    critical,
-    alert,
 )
 import copy
 
 class JSONTOPLJSON:
     def __init__(self, json_data):
         """__init__ function."""
-        self.json_data = json_data
+        if isinstance(json_data, str):
+            self.json_data = json.loads(json_data)
+        else:
+            self.json_data = json_data
         self.sql_content = {
-            "declarations": {},
-            "on_insert": [],
-            "on_update": [],
-            "on_delete": [],
+            "on_insert": 0,
+            "on_update": 0,
+            "on_delete": 0,
         }
         # Create deep copies to avoid modifying the same object
         self.after_parse_on_insert: List[Dict[str, Any]] = []
         self.after_parse_on_update: List[Dict[str, Any]] = []
         self.after_parse_on_delete: List[Dict[str, Any]] = []
         self.declarations: Dict[str, Any] = {}
-        self.to_sql()
+        # self.to_sql()
 
     def modify_condition(self, condition):
         """
@@ -46,15 +43,15 @@ class JSONTOPLJSON:
         Returns:
             str: Modified condition suitable for PostgreSQL or 'TRUE' if empty
         """
-        debug(f"Starting condition modification: '{condition}'")
+        logger.debug(f"Starting condition modification: '{condition}'")
         
         # Handle empty or None condition
         if not condition:
-            debug("Empty condition provided, returning 'TRUE'")
+            logger.debug("Empty condition provided, returning 'TRUE'")
             return "TRUE"
         
         condition = condition.strip()
-        debug(f"Stripped condition: '{condition}'")
+        logger.debug(f"Stripped condition: '{condition}'")
         
         # Step 1: Define keywords and patterns to remove
         # Keywords to remove (case-insensitive)
@@ -79,14 +76,14 @@ class JSONTOPLJSON:
             before_sub = modified_condition
             modified_condition = pattern.sub("", modified_condition)
             if before_sub != modified_condition:
-                debug(f"Removed keyword '{keyword}': '{before_sub}' → '{modified_condition}'")
+                logger.debug(f"Removed keyword '{keyword}': '{before_sub}' → '{modified_condition}'")
         
         # Step 3: Remove PostgreSQL TG_OP patterns (case-insensitive)
         for pattern in tg_op_patterns:
             before_sub = modified_condition
             modified_condition = re.sub(pattern, "", modified_condition, flags=re.IGNORECASE)
             if before_sub != modified_condition:
-                debug(f"Removed TG_OP pattern '{pattern}': '{before_sub}' → '{modified_condition}'")
+                logger.debug(f"Removed TG_OP pattern '{pattern}': '{before_sub}' → '{modified_condition}'")
         
         # Step 4: Clean up syntax issues resulting from removals
         
@@ -94,14 +91,14 @@ class JSONTOPLJSON:
         before_sub = modified_condition
         modified_condition = re.sub(r'\s+', ' ', modified_condition)
         if before_sub != modified_condition:
-            debug(f"Normalized spaces: '{before_sub}' → '{modified_condition}'")
+            logger.debug(f"Normalized spaces: '{before_sub}' → '{modified_condition}'")
             
         # Fix double operators
         before_sub = modified_condition
         modified_condition = re.sub(r'\s*AND\s*AND\s*', ' AND ', modified_condition, flags=re.IGNORECASE)
         modified_condition = re.sub(r'\s*OR\s*OR\s*', ' OR ', modified_condition, flags=re.IGNORECASE)
         if before_sub != modified_condition:
-            debug(f"Fixed double operators: '{before_sub}' → '{modified_condition}'")
+            logger.debug(f"Fixed double operators: '{before_sub}' → '{modified_condition}'")
         
         # Remove leading and trailing operators
         before_sub = modified_condition
@@ -110,7 +107,7 @@ class JSONTOPLJSON:
         modified_condition = re.sub(r'\s*AND\s*$', '', modified_condition, flags=re.IGNORECASE)
         modified_condition = re.sub(r'\s*OR\s*$', '', modified_condition, flags=re.IGNORECASE)
         if before_sub != modified_condition:
-            debug(f"Removed leading/trailing operators: '{before_sub}' → '{modified_condition}'")
+            logger.debug(f"Removed leading/trailing operators: '{before_sub}' → '{modified_condition}'")
         
         # Clean up parentheses
         before_sub = modified_condition
@@ -118,17 +115,17 @@ class JSONTOPLJSON:
         modified_condition = re.sub(r'^\s*\)\s*$', '', modified_condition)  # Single closing parenthesis
         modified_condition = re.sub(r'^\s*\(\s*\)\s*$', '', modified_condition)  # Empty parentheses
         if before_sub != modified_condition:
-            debug(f"Cleaned up parentheses: '{before_sub}' → '{modified_condition}'")
+            logger.debug(f"Cleaned up parentheses: '{before_sub}' → '{modified_condition}'")
         
         # Strip whitespace
         modified_condition = modified_condition.strip()
         
         # If condition is empty after processing, return TRUE
         if not modified_condition:
-            debug("Condition is empty after processing, returning 'TRUE'")
+            logger.debug("Condition is empty after processing, returning 'TRUE'")
             return "TRUE"
         
-        debug(f"Final modified condition: '{modified_condition}'")
+        logger.debug(f"Final modified condition: '{modified_condition}'")
         return modified_condition
 
     def process_condition(self, condition, condition_type):
@@ -150,17 +147,17 @@ class JSONTOPLJSON:
         """
         # Skip empty conditions
         if not condition:
-            debug(f"Empty condition provided for {condition_type}, returning False")
+            logger.debug(f"Empty condition provided for {condition_type}, returning False")
             return False
             
         # Clean up condition for analysis
         condition = condition.strip()
-        debug(f"Processing condition for {condition_type}: '{condition}'")
+        logger.debug(f"Processing condition for {condition_type}: '{condition}'")
         
         # Remove surrounding parentheses if present for cleaner analysis
         if condition.startswith("(") and condition.endswith(")"):
             condition = condition[1:-1]
-            debug(f"Removed outer parentheses: '{condition}'")
+            logger.debug(f"Removed outer parentheses: '{condition}'")
         
         # Check for operation-specific keywords in the condition
         condition_dict = {
@@ -168,12 +165,14 @@ class JSONTOPLJSON:
             "on_update": condition.find("UPDATING") != -1,
             "on_delete": condition.find("DELETING") != -1,
         }
-        
+        for key, value in condition_dict.items():
+            if value:
+                self.sql_content[key] += 1
         # Log which operation keywords were found in this condition
-        debug("Operation keywords found in condition:")
-        debug(f"  - INSERT keywords: {condition_dict['on_insert']}")
-        debug(f"  - UPDATE keywords: {condition_dict['on_update']}")
-        debug(f"  - DELETE keywords: {condition_dict['on_delete']}")
+        logger.debug("Operation keywords found in condition:")
+        logger.debug(f"  - INSERT keywords: {condition_dict['on_insert']}")
+        logger.debug(f"  - UPDATE keywords: {condition_dict['on_update']}")
+        logger.debug(f"  - DELETE keywords: {condition_dict['on_delete']}")
         
         # Decision logic:
         # 1. If condition mentions current operation type, remove it (return False)
@@ -183,17 +182,17 @@ class JSONTOPLJSON:
         # Case 1: Condition mentions current operation - remove from current operation's code
         logger.debug(f"condition_dict: {condition_dict} {condition_type} {condition}")
         if condition_dict[condition_type]:
-            debug(f"REMOVE: Condition contains {condition_type} keywords")
+            logger.debug(f"REMOVE: Condition contains {condition_type} keywords")
             return False
             
         # Case 2: Condition doesn't mention any specific operation - keep for all operations
         elif not any(condition_dict.values()):
-            debug("KEEP: Condition doesn't contain any operation keywords")
+            logger.debug("KEEP: Condition doesn't contain any operation keywords")
             return False
             
         # Case 3: Condition mentions other operations but not this one - keep for this operation
         else:
-            debug(f"KEEP: Condition mentions other operations but not {condition_type}")
+            logger.debug(f"KEEP: Condition mentions other operations but not {condition_type}")
             return True
 
     def _process_on_json(self, statements, json_path="", condition_type:str = "on_insert"):
@@ -250,7 +249,7 @@ class JSONTOPLJSON:
                             main_case_condition = self.process_condition( statement["condition"], condition_type)
                             if main_case_condition:
                                 # If condition should be removed for this operation, return None
-                                debug(f"case_when main condition removal: {json_path}.case_when.condition")
+                                logger.debug(f"case_when main condition removal: {json_path}.case_when.condition")
                                 return None
                             else:
                                 # Modify the condition for PostgreSQL compatibility
@@ -264,7 +263,7 @@ class JSONTOPLJSON:
                                     when_condition_result = self.process_condition(clause["condition"], condition_type)
                                     if when_condition_result:
                                         # If condition should be removed, skip this when clause
-                                        debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
+                                        logger.debug(f"when_clause condition removal: {json_path}.when_clauses.{clause_index}.condition")
                                         continue
                                     else:
                                         # Modify the when condition for PostgreSQL compatibility
@@ -338,7 +337,52 @@ class JSONTOPLJSON:
         # Process main_section_lines
         extract_rest_strings_from_item(sql_json)
 
-        return strng_convert_json
+    #     return strng_convert_json
+
+    def _find_declarations(self, declarations, sql_json):
+        """
+        find declarations from sql_json and add if present.
+        
+        Args:
+            declarations (dict): The current declarations dictionary to populate
+            sql_json (dict): The source JSON data not containing declarations only main section
+            
+        Returns:
+            dict: Updated declarations dictionary with parsed declarations if present
+        """
+        logger.debug("=== Starting _parse_declarations ===")
+        logger.debug(f"sql_json: {declarations}")
+        # Check if sql_json has declarations
+        if sql_json == {} or declarations == {}:
+            logger.debug("No declarations found in sql_json - skipping")
+            return declarations
+            
+        parsed_declarations = {
+            "variables": [],
+            "constants": [],
+            "exceptions": [],
+        }
+
+        
+        analyzer = FormatSQL({"main": sql_json})
+        sql_content: str = analyzer.to_sql("PostgreSQL")
+        logger.debug(f"sql_content: {sql_content}")
+        # Check each type of declaration and add if present
+        declaration_types = parsed_declarations.keys()
+        
+        for decl_type in declaration_types:
+            if decl_type in declarations:
+                for decl in declarations[decl_type]:
+                    if decl["name"] in sql_content["sql"]:
+                        parsed_declarations[decl_type].append(decl)
+                logger.debug(f"Found {len(declarations[decl_type])} {decl_type} - adding to declarations")
+            else:
+                logger.debug(f"No {decl_type} found in source declarations")
+        
+        logger.debug(f"Final declarations structure: {len(parsed_declarations.get('variables', []))} variables,{len(parsed_declarations.get('constants', []))} constants,{len(parsed_declarations.get('exceptions', []))} exceptions")
+        
+        logger.debug("=== _parse_declarations complete ===")
+        return parsed_declarations
 
     def to_sql(self):
         """
@@ -354,63 +398,64 @@ class JSONTOPLJSON:
         Returns:
             str: JSON string containing the operation-specific trigger code
         """
-        debug("=== Starting to_sql() conversion process ===")
+        logger.debug("=== Starting to_sql() conversion process ===")
         
         # Step 1: Create deep copies of the JSON data for each operation type to process independently
-        debug("Creating deep copies of JSON data for each operation type")
+        logger.debug("Creating deep copies of JSON data for each operation type")
         self.after_parse_on_insert = copy.deepcopy(self.json_data.get("main", []))
         self.after_parse_on_update = copy.deepcopy(self.json_data.get("main", []))
         self.after_parse_on_delete = copy.deepcopy(self.json_data.get("main", []))
         self.declarations = copy.deepcopy(self.json_data.get("declarations", {}))
         
         # Log the structure we're working with
-        debug("JSON data structure:")
-        debug(f"  - Main blocks: {len(self.json_data.get('main', []))} items")
-        debug(f"  - Declarations: {len(self.declarations.get('variables', []))} variables, "
-              f"{len(self.declarations.get('constants', []))} constants, "
-              f"{len(self.declarations.get('exceptions', []))} exceptions")
+        logger.debug("JSON data structure:")
+        logger.debug(f"  - Main blocks: {len(self.json_data.get('main', []))} items")
+        logger.debug(f"  - Declarations: {len(self.declarations.get('variables', []))} variables, {len(self.declarations.get('constants', []))} constants, {len(self.declarations.get('exceptions', []))} exceptions")
 
         # Step 2: Process each operation type to filter relevant code
-        debug("=== Processing INSERT operations ===")
+        logger.debug("=== Processing INSERT operations ===")
         # self.parse_pl_json_on_insert()
         # logger.debug(f"after_parse_on_insert: {self.after_parse_on_insert["begin_end_statements"]}")
         self.after_parse_on_insert["begin_end_statements"] = self._process_on_json(self.after_parse_on_insert["begin_end_statements"], "main.begin_end_statements", "on_insert")
         
-        debug("=== Processing UPDATE operations ===")
+        logger.debug("=== Processing UPDATE operations ===")
         # self.parse_pl_json_on_update()
         self.after_parse_on_update["begin_end_statements"] = self._process_on_json(self.after_parse_on_update["begin_end_statements"], "main.begin_end_statements", "on_update")
         
-        debug("=== Processing DELETE operations ===")
+        logger.debug("=== Processing DELETE operations ===")
         # self.parse_pl_json_on_delete()
         self.after_parse_on_delete["begin_end_statements"] = self._process_on_json(self.after_parse_on_delete["begin_end_statements"], "main.begin_end_statements", "on_delete")
-
+        
+        # logger.info(f"sql_content: {self.sql_content}")
         # Step 3: Combine into final structure
-        debug("Building final converted structure")
-        converted = {
-            "on_insert": {
-                "declarations": self.declarations,
+        logger.debug("Building final converted structure")
+        converted = {}
+        if self.sql_content["on_insert"] > 0:
+            converted["on_insert"] = {
+                "declarations": self._find_declarations(self.declarations, self.after_parse_on_insert),
                 "main": self.after_parse_on_insert,
-                "conversion_stats": self.rest_strings(self.after_parse_on_insert),
-            },
-            "on_update": {
-                "declarations": self.declarations,
+                # "conversion_stats": self.rest_strings(self.after_parse_on_insert),
+            }
+        if self.sql_content["on_update"] > 0:
+            converted["on_update"] = {
+                "declarations": self._find_declarations(self.declarations, self.after_parse_on_update),
                 "main": self.after_parse_on_update,
-                "conversion_stats": self.rest_strings(self.after_parse_on_update),
-            },
-            "on_delete": {
-                "declarations": self.declarations,
+                # "conversion_stats": self.rest_strings(self.after_parse_on_update),
+            }
+        if self.sql_content["on_delete"] > 0:
+            converted["on_delete"] = {
+                "declarations": self._find_declarations(self.declarations, self.after_parse_on_delete),
                 "main": self.after_parse_on_delete,
-                "conversion_stats": self.rest_strings(self.after_parse_on_delete),
-            },
-            "metadata" : self.json_data['metadata']
-        }
+                # "conversion_stats": self.rest_strings(self.after_parse_on_delete),
+            }
+        converted["metadata"] = self.json_data['metadata']
 
         # Step 4: Convert to JSON string
-        debug("Converting to JSON string")
-        self.sql_content = json.dumps(converted, ensure_ascii=False, indent=2)
+        logger.debug("Converting to JSON string")
+        sql_content = json.dumps(converted, ensure_ascii=False, indent=2)
         
         # Log the result size
-        debug(f"Generated JSON string with {len(self.sql_content)} characters")
-        debug("=== to_sql() conversion complete ===")
+        logger.debug(f"Generated JSON string with {len(sql_content)} characters")
+        logger.debug("=== to_sql() conversion complete ===")
         
-        return self.sql_content
+        return sql_content

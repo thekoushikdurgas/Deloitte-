@@ -11,7 +11,6 @@ from utilities.common import (
     main_excel_file,
     setup_logging,
     debug,
-    info,
     warning,
     error,
     critical,
@@ -88,6 +87,7 @@ class OracleTriggerAnalyzer:
         self.sql_comments: List[str] = []
         self.structured_lines: List[Dict[str, Any]] = []
         self.rest_string_list: List = []
+        self.found_exception_names: List[str] = []  # Track found exception names
         self.strng_convert_json: Dict = {
             "assignment": 0,
             "for_loop": 0,
@@ -409,6 +409,9 @@ class OracleTriggerAnalyzer:
         # Process main section if main section exists
         if begin_start != len(self.structured_lines):
             self._process_main_section()
+        
+        # Save found exception names to Excel after parsing is complete
+        self.save_exception_names_to_excel()
 
 
     def _parse_declarations(self) -> None:
@@ -742,7 +745,15 @@ class OracleTriggerAnalyzer:
         self._parse_function_calling_statements()
         self._parse_sql_statements()
         self.rest_strings()
-        
+        self._add_exception_handlers()
+    def _add_exception_handlers(self):
+        """
+        Add exception handlers to the main section of SQL.
+        Extracts the structure and processes inner blocks recursively.
+        Updates self.main_section_lines with parsed blocks.
+        """
+
+
     def _parse_with_statements(self):
         """
         Parse with statements from the main section of SQL.
@@ -758,7 +769,7 @@ class OracleTriggerAnalyzer:
                 if "line" in item:
                     line_upper = item["line"].strip().upper()
                     if line_upper.startswith("WITH ") or line_upper == "WITH":
-                        logger.info(f"with_indent: {item['line_no']}")
+                        logger.debug(f"with_indent: {item['line_no']}")
                         with_start = i
                         with_params = 0
                         # Find the complete WITH statement by tracking parentheses
@@ -772,9 +783,9 @@ class OracleTriggerAnalyzer:
                                         with_params += 1
                                     elif char == ")":
                                         with_params -= 1
-                                logger.info(f"with_params: {with_params}")
+                                logger.debug(f"with_params: {with_params}")
                                 if line_info["indent"] == item["indent"] and with_params == 0:
-                                    logger.info(f"with_start: {item['line_no']} with_end: {line_info['line_no']}")
+                                    logger.debug(f"with_start: {item['line_no']} with_end: {line_info['line_no']}")
                                     with_statement = self._parse_with_statement(working_lines[with_start : j+1])
                                     with_statements.append(with_statement)
                                     i = j
@@ -1124,12 +1135,26 @@ class OracleTriggerAnalyzer:
         Extracts the structure and processes inner blocks recursively.
         Updates self.main_section_lines with parsed blocks.
         """
-        sql_statement = {
-            "type": stmt_type,
-            "sql_statement": self.combine_lines(working_lines),
-            "statement_line_no": working_lines[0]["line_no"],
-            "statement_indent": working_lines[0]["indent"],
-        }
+        if stmt_type == "raise_statement":
+            line = self.combine_lines(working_lines)
+            exception_name = line.replace("RAISE", "")[:-1].strip()
+            sql_statement = {
+                "type": stmt_type,
+                "exception_name": exception_name,
+                "statement_line_no": working_lines[0]["line_no"],
+                "statement_indent": working_lines[0]["indent"],
+            }
+            # Collect exception names for saving to Excel
+            if exception_name and exception_name not in self.found_exception_names:
+                self.found_exception_names.append(exception_name)
+                logger.debug(f"Found exception name: {exception_name}") 
+        else:
+            sql_statement = {
+                "type": stmt_type,
+                "sql_statement": self.combine_lines(working_lines),
+                "statement_line_no": working_lines[0]["line_no"],
+                "statement_indent": working_lines[0]["indent"],
+            }
         return sql_statement
 
 
@@ -1146,7 +1171,7 @@ class OracleTriggerAnalyzer:
             "type": "assignment",
             "variable_name": line.split(":=")[0].strip(),
             "assignment_operator": ":=",
-            "expression": line.split(":=")[1].strip(),
+            "expression": line.split(":=")[1][:-1].strip(),
             "assignment_line_no": working_lines[0]["line_no"],
             "assignment_indent": working_lines[0]["indent"],
         }
@@ -1270,7 +1295,7 @@ class OracleTriggerAnalyzer:
         else:
             in_position = working_lines[in_i]["line"].strip().upper().find("IN")
             for_loop_statement["for_expression"] = working_lines[in_i]["line"].strip()[in_position+2:].strip()
-            # logger.info(f"for_loop_statement for_expression: {for_loop_statement["for_expression"]} in_position: {in_position}")
+            logger.debug(f"for_loop_statement for_expression: {for_loop_statement["for_expression"]} in_position: {in_position}")
             for k in range(in_i+1, len(working_lines)):
                 line_info = working_lines[k]
                 line_upper = line_info["line"].strip().upper()
@@ -1278,7 +1303,7 @@ class OracleTriggerAnalyzer:
                     loop_position = line_upper.find("LOOP")
                     for_loop_statement["for_expression"] += " " + line_info["line"].strip()[:loop_position].strip()
                     loop_i = k
-                    # logger.info(f"for_loop_statement for_expression: {for_loop_statement["for_expression"]} in_position: {in_position} loop_position: {loop_position}")
+                    logger.debug(f"for_loop_statement for_expression: {for_loop_statement["for_expression"]} in_position: {in_position} loop_position: {loop_position}")
                     break
                 for_loop_statement["for_expression"] += " " + line_info["line"].strip()
         for_loop_statement['for_statements'] = working_lines[loop_i+1:-1]
@@ -1316,7 +1341,9 @@ class OracleTriggerAnalyzer:
                                     if_else_statement["then_statements"] = parse_if_else(if_else_statement["then_statements"])
                                     for elif_clause in if_else_statement["if_elses"]:
                                         elif_clause["then_statements"] = parse_if_else(elif_clause["then_statements"])
+                                    logger.debug(f"if_else_statement else_statements: {if_else_statement['else_statements']}")
                                     if_else_statement["else_statements"] = parse_if_else(if_else_statement["else_statements"])
+                                    logger.debug(f"if_else_statement else_statements: {if_else_statement['else_statements']}")
                                     if_else_statements.append(if_else_statement)
                                     i = j
                                     break
@@ -1430,7 +1457,8 @@ class OracleTriggerAnalyzer:
                                 logger.debug(working_lines[elif_i],working_lines[j - 1])
                                 if_else_statements['if_elses'].append(self._parse_elif_else_then_statements(working_lines[elif_i:j]))
                                 logger.debug(working_lines[j + 1],working_lines[-1])
-                                if_else_statements['else_statements'].append(working_lines[j + 1 :])
+                                if_else_statements['else_statements'].extend(working_lines[j + 1 :-1])
+                                logger.debug(f"else_statements: {if_else_statements['else_statements']}")
                                 i = len(working_lines)
                                 break
                             elif line_upper.startswith("END IF;") and line_info["indent"] == elif_line_indent:
@@ -1444,14 +1472,16 @@ class OracleTriggerAnalyzer:
                     if elif_i == -1:
                         if_else_statements['then_statements'].extend(working_lines[then_i+1:i])
                     # logger.debug(f"else_statements: {working_lines[i+1]["line_no"]}, {working_lines[-1]["line_no"]}")
-                    if_else_statements['else_statements'].append(working_lines[i + 1 :])
+                    if_else_statements['else_statements'].extend(working_lines[i + 1 :-1])
+                    logger.debug(f"if_else_statement else_statements: {if_else_statements['else_statements']}")
                     i = len(working_lines)
             i += 1
         if else_i == -1 and elif_i == -1:
             logger.debug(f"else_i: {else_i} elif_i: {elif_i} then_statements: { working_lines[then_i+1:-1]}")
             # if then_i+1 == len(working_lines):
             if_else_statements['then_statements'].extend(working_lines[then_i+1:-1])
-        logger.debug(f"if_else_statements: {if_else_statements}")
+            # logger.debug(f"if_else_statement else_statements: {if_else_statements['else_statements']}")
+        logger.debug(f"if_else_statements : {if_else_statements}")
         return if_else_statements
 
 
@@ -2346,6 +2376,7 @@ class OracleTriggerAnalyzer:
             + len(self.exceptions),
             "comment_count": len(self.sql_comments),
             "sql_convert_count": self.strng_convert_json,
+            # "found_exception_names": self.found_exception_names,
         }
 
 
@@ -2438,6 +2469,81 @@ class OracleTriggerAnalyzer:
     #     # Create analyzer instance with file details
     #     return cls(sql_content, file_details)
 
+
+    def save_exception_names_to_excel(self) -> bool:
+        """
+        Save found exception names to the Excel file's exception_mappings sheet.
+        
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        if not self.found_exception_names:
+            logger.debug("No exception names found to save")
+            return True
+        
+        try:
+            # Import here to avoid circular imports
+            from utilities.streamlit_utils import ConfigManager
+            
+            # Load existing exception mappings
+            mappings = ConfigManager.load_excel_mappings()
+            exception_df = mappings.get('exception_mappings', pd.DataFrame())
+            
+            # If no existing dataframe, create one with proper columns
+            if exception_df.empty:
+                exception_df = pd.DataFrame(columns=['Oracle_Exception', 'PostgreSQL_Message'])
+            
+            # Add new exception names that don't already exist
+            new_exceptions = []
+            existing_exceptions = set(exception_df['Oracle_Exception'].astype(str).str.strip().tolist())
+            for exception_name in self.found_exception_names:
+                exception_name_upper = exception_name.upper()
+                if exception_name_upper not in existing_exceptions:
+                    new_exceptions.append({
+                        'Oracle_Exception': exception_name_upper,
+                        'PostgreSQL_Message': f'-- TODO: Map Oracle exception "{exception_name}" to PostgreSQL equivalent'
+                    })
+                    logger.debug(f"Adding new exception mapping: {exception_name}")
+            
+            if new_exceptions:
+                # Add new rows to the dataframe
+                new_df = pd.DataFrame(new_exceptions)
+                updated_df = pd.concat([exception_df, new_df], ignore_index=True)
+                
+                # Save back to Excel
+                if ConfigManager.save_excel_sheet('exception_mappings', updated_df):
+                    logger.info(f"Successfully saved {len(new_exceptions)} new exception mappings")
+                    return True
+                else:
+                    logger.error("Failed to save exception mappings to Excel")
+                    return False
+            else:
+                logger.debug("All exception names already exist in mappings")
+                return True
+                
+        except Exception as e:
+            logger.error(f"Error saving exception names to Excel: {str(e)}")
+            return False
+    
+    @classmethod
+    def save_exception_names_from_file(cls, filepath: str) -> bool:
+        """
+        Parse a SQL file and save any found exception names to Excel.
+        
+        This is a convenience method for manually processing a single file.
+        
+        Args:
+            filepath (str): Path to the SQL file to process
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            analyzer = cls(filepath)
+            return analyzer.save_exception_names_to_excel()
+        except Exception as e:
+            logger.error(f"Error processing file {filepath}: {str(e)}")
+            return False
 
     def format_values(self, values: str):
         """

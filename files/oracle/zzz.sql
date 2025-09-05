@@ -1,205 +1,311 @@
-CREATE OR REPLACE EDITIONABLE TRIGGER "MDMAPPL"."MDM_V_IRTT_EVENTS_KEYC_MTN_IOF" INSTEAD OF
-    INSERT OR DELETE OR UPDATE ON MDMAPPL.MDM_V_IRTT_EVENTS_KEY_CONT_MTN REFERENCING NEW AS NEW OLD AS OLD
+CREATE OR REPLACE EDITIONABLE TRIGGER "MDMAPPL"."MDM_V_MARKET_AUTHS_ALL_IOF" 
+ INSTEAD OF 
+ INSERT OR UPDATE
+ ON MDMAPPL.MDM_V_MARKET_AUTHS_ALL_MTN
+ REFERENCING OLD AS OLD NEW AS NEW
+ FOR EACH ROW 
 DECLARE
-    ERR_EVENT_ID_REQUIRED EXCEPTION;
-    ERR_DATE_FROM_AFTER_DATE_UNTIL EXCEPTION;
-    ERR_DATE_RANGE_OVERLAP EXCEPTION;
-    ERR_DO_NOT_MODIFY_PAST_DATA EXCEPTION;
-    V_KEY_CONTACTS_LIST            IRTT_MULTIROW_REC_C;
-    L_ERROR_COUNTER                PLS_INTEGER;
+    e_insert_coa        EXCEPTION;
+    e_update_coa        EXCEPTION;
+    e_delete_coa        EXCEPTION;
+    e_matl              EXCEPTION;
+    e_matl_class        EXCEPTION;
+    e_matl_no           EXCEPTION;
+    e_audit_comment     EXCEPTION;
+    e_defined_user      EXCEPTION;
+    e_changes_user      EXCEPTION;
+    e_already_deleted   EXCEPTION;
+    v_count             INTEGER := 0;
+    v_matl_count        INTEGER := 0;
+    v_record_count      INTEGER := 0;
+    p_class             v_materials.class_cd%TYPE;
+    p_approval_user     VARCHAR2 (30);
+    p_approval_date     DATE;
+    v_market_auth_no    coa.coa_market_auths.market_auth_no%TYPE;
+    v_trigger_name      VARCHAR2 (30) := 'COA_V_MARKET_AUTHS_IOF';
 BEGIN
-    IF (INSERTING) THEN
- 
-        -- Not supported!
-        HTP.P('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>INSERTING not supported!');
-    ELSIF (UPDATING) THEN
- 
-        -- Check that event exists.
-        IF :NEW.EVENT_ID IS NULL THEN
-            RAISE ERR_EVENT_ID_REQUIRED;
+    v_market_auth_no := TRIM (REPLACE ( :new.market_auth_no, CHR (9), ''));
+
+
+    /*
+    Exception 1bis: e_already_deleted
+    first make sure, that this record has not already been deleted
+    The exception e_delete_coa is otherwise raised.
+    */
+    IF :old.delete_flag = 'Y'
+    THEN
+        SELECT COUNT (mau_id)
+          INTO v_record_count
+          FROM coa_market_auths_his a
+         WHERE a.action = 'D' AND a.mau_id = :old.mau_id;
+
+
+        IF v_record_count > 0
+        THEN
+            RAISE e_already_deleted;
         END IF;
- 
-
-        --
-        -- Extract key acounts from XML row set.
-        SELECT
-            IRTT_MULTIROW_REC_T( UPPER(XT.USERID), TO_DATE(XT.VALID_FROM, MDM_UTIL_IRTT.CO_DD_MM_YYYY), TO_DATE(XT.VALID_TO, MDM_UTIL_IRTT.CO_DD_MM_YYYY)) BULK COLLECT INTO V_KEY_CONTACTS_LIST
-        FROM
-            XMLTABLE('/rows/row' PASSING XMLTYPE(:NEW.KEY_CONTACTS_LIST) COLUMNS
- --rowno      VARCHAR2(4)  PATH 'empno',
-            USERID VARCHAR2(20) PATH 'field[1]',
-            VALID_FROM VARCHAR2(20) PATH 'field[2]',
-            VALID_TO VARCHAR2(20) PATH 'field[3]' ) XT;
- 
-        --
-        -- Check if user is not a Roche employee any more then valid_until must be defined!
-        L_ERROR_COUNTER:= 0;
-        FOR R1 IN (
-            SELECT
-                B.VALUE_CD       AS USER_ID,
-                B.DATE_FROM      AS VALID_FROM,
-                B.DATE_UNTIL     AS VALID_UNTIL,
-                E.USERID,
-                E.TERMINATIONDAY
-            FROM
-                TABLE(V_KEY_CONTACTS_LIST) B
-                LEFT OUTER JOIN V_ROCHE_EMPLOYEES_ALL E
-                ON E.USERID = B.                     VALUE_CD
-        ) LOOP
- 
-            -- mdm_util_web.return_feedback_div (p_status => 'WARNING', p_message => 'r1.user_id:'||r1.user_id||', r1.userid:'||r1.userid||', r1.valid_from:'||r1.valid_from||', r1.valid_until:'||r1.valid_until);
-            -- Is a valid Roche employee.
-            IF (R1.USERID IS NULL) THEN
-                L_ERROR_COUNTER:= L_ERROR_COUNTER + 1;
-                MDM_UTIL_WEB.RETURN_FEEDBACK_DIV (
-                    P_STATUS => 'ERROR',
-                    P_MESSAGE => 'Key contact '
-                                 ||R1.USER_ID
-                                 ||' is not a valid Roche employee.'
-                );
-            END IF;
- 
-
-            -- Roche employee terminated for this user?
-            IF (R1.TERMINATIONDAY IS NOT NULL
-            AND R1.VALID_UNTIL IS NULL) THEN
-                L_ERROR_COUNTER:= L_ERROR_COUNTER + 1;
-                MDM_UTIL_WEB.RETURN_FEEDBACK_DIV (
-                    P_STATUS => 'ERROR',
-                    P_MESSAGE => 'Key contact '
-                                 ||R1.USER_ID
-                                 ||' was termintated '
-                                 ||R1.TERMINATIONDAY
-                                 ||' as Roche employee. The "<b>Valid Until</b>" date is required.'
-                );
-            END IF;
-        END LOOP;
- 
-
-        --
-        IF (L_ERROR_COUNTER > 0) THEN
-            RAISE_APPLICATION_ERROR(-20000, 'Correct your input, please.');
-        END IF;
- 
-
-        --
-        -- raise error if date_from > date_until
-        SELECT
-            COUNT(1) INTO L_ERROR_COUNTER
-        FROM
-            TABLE(V_KEY_CONTACTS_LIST) XT
-        WHERE
-            XT.DATE_FROM > NVL(XT.DATE_UNTIL, XT.DATE_FROM);
- 
-        --
-        IF L_ERROR_COUNTER > 0 THEN
-            RAISE ERR_DATE_FROM_AFTER_DATE_UNTIL;
-        END IF;
- 
-
-        --
-        -- check records do not overlap
-        SELECT
-            COUNT(CHK) INTO L_ERROR_COUNTER
-        FROM
-            (
-                SELECT
-                    XT.DATE_FROM,
-                    XT.DATE_UNTIL,
-                    CASE
-                        WHEN XT.DATE_FROM <= LAG(NVL(XT.DATE_UNTIL, XT.DATE_FROM + 1)) OVER (ORDER BY XT.DATE_FROM)
-                        THEN
-                            1
-                    END           CHK
-                FROM
-                    TABLE(V_KEY_CONTACTS_LIST) XT
-            );
- 
-        --
-        IF L_ERROR_COUNTER > 0 THEN
-            RAISE ERR_DATE_RANGE_OVERLAP;
-        END IF;
- 
-
-        --
-        -- don't allow modification of records from the past.
-        SELECT
-            COUNT(1) INTO L_ERROR_COUNTER
-        FROM
-            CFG.CFG_IRTT_EVENT_CONTACTS C
-            LEFT JOIN TABLE(V_KEY_CONTACTS_LIST) XT
-            ON C.USERID = XT.VALUE_CD
-            AND C.VALID_FROM = XT.DATE_FROM
-        WHERE
-            C.EVENT_ID = :NEW.EVENT_ID
-            AND C.VALID_FROM < TRUNC(SYSDATE)
-            AND XT.DATE_FROM IS NULL;
- 
-        --
-        IF L_ERROR_COUNTER > 0 THEN
-            RAISE ERR_DO_NOT_MODIFY_PAST_DATA;
-        END IF;
- 
-
-        --
-        DELETE FROM CFG.CFG_IRTT_EVENT_CONTACTS A
-        WHERE
-            A.EVENT_ID = :NEW.EVENT_ID
-            AND NOT EXISTS (
-                SELECT
-                    1
-                FROM
-                    TABLE(V_KEY_CONTACTS_LIST) XT
-                WHERE
-                    A.USERID = XT.VALUE_CD
-                    AND A.VALID_FROM = XT.DATE_FROM
-            );
- 
-        --
-        MERGE INTO CFG.CFG_IRTT_EVENT_CONTACTS A USING (
-            SELECT
-                XT.VALUE_CD   USERID,
-                XT.DATE_FROM  VALID_FROM,
-                XT.DATE_UNTIL VALID_TO
-            FROM
-                TABLE(V_KEY_CONTACTS_LIST) XT
-            WHERE
-                XT.VALUE_CD IS NOT NULL
-        ) B ON (A.EVENT_ID = :NEW.EVENT_ID
-        AND A.USERID = B.USERID
-        AND A.VALID_FROM = B.VALID_FROM) WHEN MATCHED THEN
-            UPDATE
-            SET
-                A.VALID_TO = B.VALID_TO WHEN NOT MATCHED THEN INSERT(
-                    EVENT_ID,
-                    USERID,
-                    VALID_FROM,
-                    VALID_TO
-                ) VALUES(
-                    :NEW.EVENT_ID,
-                    B.USERID,
-                    B.VALID_FROM,
-                    B.VALID_TO
-                );
- 
-            --
-            -- Maintain role for IRTT key contacts.
-            MDM_UTIL_IRTT.MAINTAIN_IRTT_ROLES();
-    ELSIF (DELETING) THEN
- 
-            -- Not supported!
-            HTP.P('MDM_V_IRTT_EVENTS_KEYC_MTN_IOF>DELETING not supported!');
     END IF;
+
+
+    /*
+    Exception 1: e_delete_coa
+    To check the audit_comment has been modified by the user when the the delete flag is set to yes.
+    The exception e_delete_coa is otherwise raised.
+    */
+    IF :new.delete_flag = 'Y'
+    THEN
+        IF ( :new.audit_comment = :old.audit_comment)
+        THEN
+            RAISE e_delete_coa;
+        END IF;
+    END IF;
+
+
+    /*
+    Exception 2: e_matl_class
+    To check the material class has been entered by the user as FIN meaningt Finished Class.
+    The exception e_matl_class is otherwise raised.
+    */
+    BEGIN
+        SELECT class_cd
+          INTO p_class
+          FROM v_materials
+         WHERE matl_no = :new.matl_no;
+
+
+        IF p_class NOT IN ('FIN')
+        THEN
+            RAISE e_matl_class;
+        END IF;
+    EXCEPTION
+        WHEN NO_DATA_FOUND
+        THEN
+            RAISE e_matl;
+    END;
+
+
+    /*
+   Exception 3: e_matl_no
+   To check the GENISYS material number is a valid material.
+   The exception e_matl_no is otherwise raised.
+   */
+    SELECT COUNT (*)
+      INTO v_matl_count
+      FROM v_materials
+     WHERE matl_no = :new.matl_no                -- changed as defined in CR 244
+                                 -- AND matl_open_ind = 'Y'
+    ;
+
+
+    IF v_matl_count = 0
+    THEN
+        RAISE e_matl_no;
+    END IF;
+
+
+    /*
+    Update Statement:
+    */
+    IF (UPDATING)
+    THEN
+        /*
+       Exception 4: e_update_coa
+       Its important on update that the material number and the country code do not change for a specific Marketing Auhorization No.
+       The exception e_update_coa is otherwise raised.
+       */
+
+
+        IF ( :old.matl_no <> :new.matl_no OR :new.country_id <> :old.country_id)
+        THEN
+            RAISE e_update_coa;
+        END IF;
+
+
+        /*
+        Exception 5: e_audit_comment
+        To check the audit_comment has been modified by the user when the approval flag  is set to yes.
+        The exception e_audit_comment is otherwise raised.
+        */
+        IF :new.defined_ind = :old.defined_ind
+        THEN
+            IF :new.audit_comment IS NULL
+            THEN
+                RAISE e_audit_comment;
+            END IF;
+        END IF;
+
+
+        /*
+        Exception 6: e_defined_user
+        To check the update user is differnt from the insert user when twhen the approval flag  is set to yes.
+        The exception e_defined_user is otherwise raised.
+        */
+        IF     ( :new.defined_ind = 'Y' AND :old.defined_ind = 'N')
+           AND (coa_security.get_userid = NVL ( :old.upd_user, :old.ins_user))
+        THEN
+            RAISE e_defined_user;
+        END IF;
+
+
+        /*
+        Exception 7: e_changes_user
+        To check that no changes have been made to the following parameters, when the approval flag is set to yes;
+
+
+        material no
+        marketing authorization number
+        audit comment
+        valid indicator
+
+
+        The exception e_changes_user is otherwise raised.
+        */
+        IF     ( :new.defined_ind = 'Y' AND :old.defined_ind = 'N')
+           AND (   :old.matl_no <> :new.matl_no
+                OR :old.market_auth_no <> v_market_auth_no
+                OR :old.audit_comment <> :new.audit_comment
+                OR :old.valid_ind <> :new.valid_ind)
+        THEN
+            RAISE e_changes_user;
+        END IF;
+
+
+        /*
+        Update statement for approval flag and approval date and user.
+        */
+        IF     ( :old.defined_ind = 'N' AND :new.defined_ind = 'Y')
+           AND (coa_security.get_userid <> NVL ( :old.upd_user, :old.ins_user))
+           AND (   :old.matl_no = :new.matl_no
+                OR :old.market_auth_no = v_market_auth_no
+                OR :old.audit_comment = :new.audit_comment
+                OR :old.valid_ind = :new.valid_ind)
+        THEN
+            p_approval_user := coa_security.get_userid;
+            p_approval_date := SYSDATE;
+
+
+            UPDATE coa_market_auths
+               SET defined_ind = 'Y'
+                  ,def_date = SYSDATE -- CR 2124 - BUG GENERIC as value in COA_MARKET_AUTHS_HIS.DEF_USER
+                  ,def_user = coa_util.get_changing_user -- mdmappl.mdm_security.get_userid -- coa_security.get_userid
+             WHERE mau_id = :new.mau_id;
+        ELSE
+            /*
+            Update statement for the following parameters;
+
+
+            material number
+            audit comments
+            valid indicator.
+            defined indicator := 'N'
+            update number
+
+
+            */
+            UPDATE coa_market_auths
+               SET country_id = :new.country_id
+                  ,matl_no = :new.matl_no
+                  ,market_auth_no = v_market_auth_no
+                  ,audit_comment = :new.audit_comment
+                  ,defined_ind = 'N'
+                  ,                                 ---DECODE (:NEW.delete_flag,
+                   ---            'N', 'N',
+                   ---         :NEW.defined_ind),
+                   valid_ind = :new.valid_ind
+                  ,upd_no = NVL (upd_no, 0) + 1
+                  ,def_date = NULL
+                  ,def_user = NULL
+             WHERE mau_id = :new.mau_id;
+
+
+            /*
+            Delete statement.
+            */
+            IF :new.delete_flag = 'Y'
+            THEN
+                DELETE FROM coa_market_auths
+                 WHERE country_id = :new.country_id AND matl_no = :new.matl_no;
+            END IF;
+        END IF;
+    END IF;
+
+
+    /* Insert statement. */
+    IF (INSERTING)
+    THEN
+        v_matl_count := 0;
+
+
+        SELECT COUNT (*)
+          INTO v_matl_count
+          FROM coa_market_auths
+         WHERE matl_no = :new.matl_no AND country_id = :new.country_id;
+
+
+        /*
+        Exception 8: e_insert_coa
+        To check that teh material number and country id doesn't already exist.
+        The exception e_insert_coa is otherwise raised.
+        */
+        IF v_matl_count = 1
+        THEN
+            RAISE e_insert_coa;
+        END IF;
+
+
+        INSERT INTO coa_market_auths (mau_id
+                                     ,country_id
+                                     ,matl_no
+                                     ,market_auth_no
+                                     ,audit_comment
+                                     ,defined_ind
+                                     ,valid_ind)
+        VALUES ( :new.mau_id
+               , :new.country_id
+               , :new.matl_no
+               ,v_market_auth_no
+               , :new.audit_comment
+               ,'N'
+               , :new.valid_ind);
+    END IF;
+/* Exception statements with list of user friendly comments describing the error for the user. These comments are
+embedded in HTML tags and are displayed in red and bold.*/
 EXCEPTION
-        WHEN ERR_EVENT_ID_REQUIRED THEN
-            RAISE_APPLICATION_ERROR(-20101, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN');
-        WHEN ERR_DATE_FROM_AFTER_DATE_UNTIL THEN
-            RAISE_APPLICATION_ERROR(-20103, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN');
-        WHEN ERR_DATE_RANGE_OVERLAP THEN
-            RAISE_APPLICATION_ERROR(-20105, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN');
-        WHEN ERR_DO_NOT_MODIFY_PAST_DATA THEN
-            RAISE_APPLICATION_ERROR(-20108, 'MDM_V_IRTT_EVENTS_KEY_CONT_MTN');
+    WHEN e_insert_coa
+    THEN
+        raise_application_error (-20101, v_trigger_name);
+    WHEN e_update_coa
+    THEN
+        raise_application_error (-20102, v_trigger_name);
+    WHEN e_matl_class
+    THEN
+        raise_application_error (-20103, v_trigger_name);
+    WHEN e_changes_user
+    THEN
+        raise_application_error (-20104, v_trigger_name);
+    WHEN e_matl_no
+    THEN
+        raise_application_error (-20105, v_trigger_name);
+    WHEN e_audit_comment
+    THEN
+        raise_application_error (-20106, v_trigger_name);
+    WHEN e_defined_user
+    THEN
+        raise_application_error (-20107, v_trigger_name);
+    WHEN e_delete_coa
+    THEN
+        raise_application_error (-20108, v_trigger_name);
+    WHEN e_matl
+    THEN
+        raise_application_error (-20109, v_trigger_name);
+    WHEN e_already_deleted
+    THEN
+        raise_application_error (
+            -20400
+           ,'This record has already been deleted and cannot be changed anymore');
 END;
 /
+ALTER TRIGGER "MDMAPPL"."MDM_V_MARKET_AUTHS_ALL_IOF" ENABLE;
 
-ALTER TRIGGER "MDMAPPL"."MDM_V_IRTT_EVENTS_KEYC_MTN_IOF" ENABLE;
+
+

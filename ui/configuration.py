@@ -7,8 +7,12 @@ and system settings.
 
 import streamlit as st
 import os
+import time
 from utilities.common import setup_logging
 from utilities.streamlit_utils import ConfigManager, UIHelpers, FileManager, SessionManager
+
+# Constants
+CANCEL_BUTTON_TEXT = "❌ Cancel"
 
 
 def configuration_page():
@@ -97,6 +101,14 @@ def configuration_page():
                             ],
                             'function_list': [
                                 {'name': 'function_name', 'label': 'Function Name', 'help': 'Enter function name to be tracked'}
+                            ],
+                            'exception_mappings': [
+                                {'name': 'Oracle_Exception', 'label': 'Oracle Exception', 'help': 'Enter Oracle exception name (e.g., NO_DATA_FOUND, TOO_MANY_ROWS)'},
+                                {'name': 'PostgreSQL_Message', 'label': 'PostgreSQL Message', 'help': 'Enter corresponding PostgreSQL exception handling (e.g., EXCEPTION WHEN NO_DATA_FOUND THEN)'}
+                            ],
+                            'schema_mappings': [
+                                {'name': 'Oracle_Schema', 'label': 'Oracle Schema', 'help': 'Enter Oracle schema name (e.g., HR, SCOTT, SYS)'},
+                                {'name': 'PostgreSQL_Schema', 'label': 'PostgreSQL Schema', 'help': 'Enter corresponding PostgreSQL schema name (e.g., public, hr_schema)'}
                             ]
                         }
                         
@@ -139,7 +151,7 @@ def configuration_page():
                                     st.warning("⚠️ Please fill in all fields before saving.")
                         
                         with col_cancel:
-                            if st.button("❌ Cancel", key=f"cancel_new_row_{sheet_name}"):
+                            if st.button(CANCEL_BUTTON_TEXT, key=f"cancel_new_row_{sheet_name}"):
                                 st.session_state[f'adding_row_{sheet_name}'] = False
                                 # Clear input fields
                                 for col in sheet_columns:
@@ -172,7 +184,7 @@ def configuration_page():
                                     st.error(f"❌ Failed to save {display_title}")
                         
                         with col2:
-                            if st.button("❌ Cancel", key=f"cancel_{sheet_name}"):
+                            if st.button(CANCEL_BUTTON_TEXT, key=f"cancel_{sheet_name}"):
                                 st.session_state[f'editing_{sheet_name}'] = False
                                 st.rerun()
                     
@@ -281,3 +293,245 @@ def configuration_page():
                 FileManager.ensure_directories()
                 st.success("All directories created!")
                 st.rerun()
+        
+        # Output folder and log management
+        with st.expander("📋 Output Folder & Log Management", expanded=True):
+            st.subheader("📋 Log Files Management")
+            
+            output_dir = FileManager.DIRECTORIES.get("output", "output")
+            
+            if os.path.exists(output_dir):
+                # Get all log files
+                log_files = [f for f in os.listdir(output_dir) if f.endswith('.log')]
+                log_files.sort(reverse=True)  # Sort by newest first
+                
+                if log_files:
+                    st.success(f"✅ Found {len(log_files)} log files in output directory")
+                    
+                    # Search bar for log files
+                    search_term = st.text_input(
+                        "🔍 Search in log files:",
+                        value=st.session_state.get("log_search_term", ""),
+                        key="log_search_term",
+                        placeholder="Search by filename, date, or content..."
+                    )
+                    
+                    # Filter log files based on search term
+                    if search_term:
+                        filtered_logs = [f for f in log_files if search_term.lower() in f.lower()]
+                        if len(filtered_logs) == 0:
+                            st.info(f"No log files found matching '{search_term}'")
+                            filtered_logs = log_files  # Show all if no results
+                        else:
+                            st.info(f"Found {len(filtered_logs)} of {len(log_files)} log files matching '{search_term}'")
+                    else:
+                        filtered_logs = log_files
+                    
+                    # Log file management controls
+                    col1, col2, col3 = st.columns([1, 1, 2])
+                    
+                    with col1:
+                        if st.button("🗑️ Delete All Logs", key="delete_all_logs"):
+                            st.session_state['confirm_delete_all_logs'] = True
+                            st.rerun()
+                    
+                    with col2:
+                        if st.button("📥 Download All Logs", key="download_all_logs"):
+                            # Create a zip file with all logs
+                            import zipfile
+                            import io
+                            
+                            zip_buffer = io.BytesIO()
+                            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                                for log_file in log_files:
+                                    log_path = os.path.join(output_dir, log_file)
+                                    zip_file.write(log_path, log_file)
+                            
+                            zip_buffer.seek(0)
+                            st.download_button(
+                                label="⬇️ Download All Logs",
+                                data=zip_buffer.getvalue(),
+                                file_name=f"all_logs_{time.strftime('%Y%m%d_%H%M%S')}.zip",
+                                mime="application/zip"
+                            )
+                    
+                    with col3:
+                        st.info(f"📊 Total log files: {len(log_files)}")
+                    
+                    # Confirmation dialog for deleting all logs
+                    if st.session_state.get('confirm_delete_all_logs', False):
+                        st.warning("⚠️ Are you sure you want to delete ALL log files? This action cannot be undone!")
+                        col_yes, col_no = st.columns(2)
+                        
+                        with col_yes:
+                            if st.button("✅ Yes, Delete All", key="confirm_delete_all_yes"):
+                                deleted_count = 0
+                                for log_file in log_files:
+                                    try:
+                                        os.remove(os.path.join(output_dir, log_file))
+                                        deleted_count += 1
+                                    except Exception as e:
+                                        st.error(f"Failed to delete {log_file}: {str(e)}")
+                                
+                                if deleted_count > 0:
+                                    st.success(f"✅ Deleted {deleted_count} log files")
+                                    SessionManager.add_to_history("Log Management", "Success", f"Deleted {deleted_count} log files")
+                                
+                                st.session_state['confirm_delete_all_logs'] = False
+                                st.rerun()
+                        
+                        with col_no:
+                            if st.button(CANCEL_BUTTON_TEXT, key="cancel_delete_all"):
+                                st.session_state['confirm_delete_all_logs'] = False
+                                st.rerun()
+                    
+                    # Display log files with management options
+                    st.markdown("---")
+                    st.subheader("📄 Log Files")
+                    
+                    for i, log_file in enumerate(filtered_logs):
+                        log_path = os.path.join(output_dir, log_file)
+                        
+                        # Get file stats
+                        try:
+                            file_size = os.path.getsize(log_path)
+                            file_mtime = os.path.getmtime(log_path)
+                            file_date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(file_mtime))
+                            file_size_mb = round(file_size / (1024 * 1024), 2)
+                        except (OSError, IOError):
+                            file_size_mb = 0
+                            file_date = "Unknown"
+                        
+                        with st.expander(f"📄 {log_file} ({file_size_mb} MB, {file_date})", expanded=False):
+                            # Log file actions
+                            col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+                            
+                            with col1:
+                                if st.button("👁️ View", key=f"view_{log_file}"):
+                                    st.session_state[f'viewing_log_{log_file}'] = True
+                                    st.rerun()
+                            
+                            with col2:
+                                if st.button("📥 Download", key=f"download_{log_file}"):
+                                    with open(log_path, "rb") as f:
+                                        st.download_button(
+                                            label="⬇️ Download Log",
+                                            data=f.read(),
+                                            file_name=log_file,
+                                            mime="text/plain",
+                                            key=f"download_btn_{log_file}"
+                                        )
+                            
+                            with col3:
+                                if st.button("🗑️ Delete", key=f"delete_{log_file}"):
+                                    st.session_state[f'confirm_delete_{log_file}'] = True
+                                    st.rerun()
+                            
+                            with col4:
+                                if st.button("🔍 Search Content", key=f"search_content_{log_file}"):
+                                    st.session_state[f'searching_content_{log_file}'] = True
+                                    st.rerun()
+                            
+                            # View log content
+                            if st.session_state.get(f'viewing_log_{log_file}', False):
+                                st.markdown("---")
+                                st.subheader(f"📄 Content of {log_file}")
+                                
+                                try:
+                                    with open(log_path, 'r', encoding='utf-8') as f:
+                                        content = f.read()
+                                    
+                                    # Show first 1000 characters with option to show more
+                                    if len(content) > 1000:
+                                        st.text_area("Log Content (first 1000 characters):", content[:1000], height=200,)
+                                        if st.button("Show Full Content", key=f"show_full_{log_file}"):
+                                            st.text_area("Full Log Content:", content, height=400,)
+                                    else:
+                                        st.text_area("Log Content:", content, height=200,)
+                                    
+                                    if st.button("❌ Close View", key=f"close_view_{log_file}"):
+                                        st.session_state[f'viewing_log_{log_file}'] = False
+                                        st.rerun()
+                                        
+                                except Exception as e:
+                                    st.error(f"Error reading log file: {str(e)}")
+                            
+                            # Search content in log
+                            if st.session_state.get(f'searching_content_{log_file}', False):
+                                st.markdown("---")
+                                st.subheader(f"🔍 Search in {log_file}")
+                                
+                                search_content = st.text_input(
+                                    "Enter search term:",
+                                    key=f"content_search_{log_file}",
+                                    placeholder="Search for specific text in the log..."
+                                )
+                                
+                                if search_content:
+                                    try:
+                                        with open(log_path, 'r', encoding='utf-8') as f:
+                                            lines = f.readlines()
+                                        
+                                        matching_lines = []
+                                        for line_num, line in enumerate(lines, 1):
+                                            if search_content.lower() in line.lower():
+                                                matching_lines.append((line_num, line.strip()))
+                                        
+                                        if matching_lines:
+                                            st.success(f"Found {len(matching_lines)} matching lines:")
+                                            for line_num, line in matching_lines[:20]:  # Show first 20 matches
+                                                st.code(f"Line {line_num}: {line}")
+                                            
+                                            if len(matching_lines) > 20:
+                                                st.info(f"... and {len(matching_lines) - 20} more matches")
+                                        else:
+                                            st.info("No matching lines found")
+                                            
+                                    except Exception as e:
+                                        st.error(f"Error searching in log file: {str(e)}")
+                                
+                                if st.button("❌ Close Search", key=f"close_search_{log_file}"):
+                                    st.session_state[f'searching_content_{log_file}'] = False
+                                    st.rerun()
+                            
+                            # Confirmation dialog for deleting individual log
+                            if st.session_state.get(f'confirm_delete_{log_file}', False):
+                                st.warning(f"⚠️ Are you sure you want to delete '{log_file}'?")
+                                col_yes, col_no = st.columns(2)
+                                
+                                with col_yes:
+                                    if st.button("✅ Yes, Delete", key=f"confirm_delete_yes_{log_file}"):
+                                        try:
+                                            os.remove(log_path)
+                                            st.success(f"✅ Deleted {log_file}")
+                                            SessionManager.add_to_history("Log Management", "Success", f"Deleted log file: {log_file}")
+                                            st.session_state[f'confirm_delete_{log_file}'] = False
+                                            st.rerun()
+                                        except Exception as e:
+                                            st.error(f"Failed to delete {log_file}: {str(e)}")
+                                
+                                with col_no:
+                                    if st.button(CANCEL_BUTTON_TEXT, key=f"cancel_delete_{log_file}"):
+                                        st.session_state[f'confirm_delete_{log_file}'] = False
+                                        st.rerun()
+                
+                else:
+                    st.info("📭 No log files found in output directory")
+                    
+                    # Show option to create sample log or open output directory
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        if st.button("📁 Open Output Directory"):
+                            st.info(f"Output directory: {os.path.abspath(output_dir)}")
+                    
+                    with col2:
+                        if st.button("🔄 Refresh"):
+                            st.rerun()
+            
+            else:
+                st.warning("⚠️ Output directory does not exist")
+                if st.button("Create Output Directory"):
+                    FileManager.ensure_directories()
+                    st.success("Output directory created!")
+                    st.rerun()

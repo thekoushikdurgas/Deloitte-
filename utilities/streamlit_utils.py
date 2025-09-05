@@ -211,7 +211,7 @@ class ConfigManager:
             return mappings
         
         try:
-            sheets = ['data_type_mappings', 'function_mappings', 'function_list']
+            sheets = ['data_type_mappings', 'function_mappings', 'function_list', 'exception_mappings', 'schema_mappings']
             
             for sheet_name in sheets:
                 try:
@@ -317,6 +317,22 @@ class ConfigManager:
                     existing_function_names = df['function_name'].astype(str).str.strip()
                     if function_name in existing_function_names.values:
                         return True, f"Function name '{function_name}' already exists"
+            
+            elif sheet_name == 'exception_mappings':
+                # For exception mappings, check Oracle_Exception column
+                oracle_exception = row_data.get('Oracle_Exception', '').strip()
+                if oracle_exception:
+                    existing_oracle_exceptions = df['Oracle_Exception'].astype(str).str.strip()
+                    if oracle_exception in existing_oracle_exceptions.values:
+                        return True, f"Oracle exception '{oracle_exception}' already exists"
+            
+            elif sheet_name == 'schema_mappings':
+                # For schema mappings, check Oracle_Schema column
+                oracle_schema = row_data.get('Oracle_Schema', '').strip()
+                if oracle_schema:
+                    existing_oracle_schemas = df['Oracle_Schema'].astype(str).str.strip()
+                    if oracle_schema in existing_oracle_schemas.values:
+                        return True, f"Oracle schema '{oracle_schema}' already exists"
             
             return False, "No duplicates found"
             
@@ -593,6 +609,12 @@ class SessionManager:
         if 'search_function_list' not in st.session_state:
             st.session_state.search_function_list = ""
         
+        if 'search_exception_mappings' not in st.session_state:
+            st.session_state.search_exception_mappings = ""
+        
+        if 'search_schema_mappings' not in st.session_state:
+            st.session_state.search_schema_mappings = ""
+        
         # Row selection states for deletion
         if 'selected_rows_data_type_mappings' not in st.session_state:
             st.session_state.selected_rows_data_type_mappings = []
@@ -603,6 +625,12 @@ class SessionManager:
         if 'selected_rows_function_list' not in st.session_state:
             st.session_state.selected_rows_function_list = []
         
+        if 'selected_rows_exception_mappings' not in st.session_state:
+            st.session_state.selected_rows_exception_mappings = []
+        
+        if 'selected_rows_schema_mappings' not in st.session_state:
+            st.session_state.selected_rows_schema_mappings = []
+        
         # Adding row states for each mapping type
         if 'adding_row_data_type_mappings' not in st.session_state:
             st.session_state.adding_row_data_type_mappings = False
@@ -612,6 +640,12 @@ class SessionManager:
         
         if 'adding_row_function_list' not in st.session_state:
             st.session_state.adding_row_function_list = False
+        
+        if 'adding_row_exception_mappings' not in st.session_state:
+            st.session_state.adding_row_exception_mappings = False
+        
+        if 'adding_row_schema_mappings' not in st.session_state:
+            st.session_state.adding_row_schema_mappings = False
     
     @staticmethod
     def add_to_history(step_name: str, status: str, details: str = "") -> None:
