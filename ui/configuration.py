@@ -109,6 +109,10 @@ def configuration_page():
                             'schema_mappings': [
                                 {'name': 'Oracle_Schema', 'label': 'Oracle Schema', 'help': 'Enter Oracle schema name (e.g., HR, SCOTT, SYS) - duplicates allowed'},
                                 {'name': 'PostgreSQL_Schema', 'label': 'PostgreSQL Schema', 'help': 'Enter corresponding PostgreSQL schema name (e.g., public, hr_schema) - must be unique'}
+                            ],
+                            'statement_mappings': [
+                                {'name': 'statement', 'label': 'Statement', 'help': 'Enter statement type (e.g., SELECT, INSERT, UPDATE, DELETE, RAISE)'},
+                                {'name': 'statement_type', 'label': 'Statement Type', 'help': 'Enter corresponding statement type (e.g., select_statement, insert_statement, update_statement)'}
                             ]
                         }
                         

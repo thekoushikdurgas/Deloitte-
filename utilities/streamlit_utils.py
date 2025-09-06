@@ -211,7 +211,7 @@ class ConfigManager:
             return mappings
         
         try:
-            sheets = ['data_type_mappings', 'function_mappings', 'function_list', 'exception_mappings', 'schema_mappings']
+            sheets = ['data_type_mappings', 'function_mappings', 'function_list', 'exception_mappings', 'schema_mappings', 'statement_mappings']
             
             for sheet_name in sheets:
                 try:
@@ -334,6 +334,14 @@ class ConfigManager:
                     existing_postgresql_schemas = df['PostgreSQL_Schema'].astype(str).str.strip()
                     if postgresql_schema in existing_postgresql_schemas.values:
                         return True, f"PostgreSQL schema '{postgresql_schema}' already exists (must be unique)"
+            
+            elif sheet_name == 'statement_mappings':
+                # For statement mappings, check statement column for uniqueness
+                statement = row_data.get('statement', '').strip()
+                if statement:
+                    existing_statements = df['statement'].astype(str).str.strip()
+                    if statement in existing_statements.values:
+                        return True, f"Statement '{statement}' already exists"
             
             return False, "No duplicates found"
             

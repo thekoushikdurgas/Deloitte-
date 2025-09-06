@@ -88,27 +88,8 @@ class OracleTriggerAnalyzer:
         self.structured_lines: List[Dict[str, Any]] = []
         self.rest_string_list: List = []
         self.found_exception_names: List[str] = []  # Track found exception names
-        self.strng_convert_json: Dict = {
-            "assignment": 0,
-            "for_loop": 0,
-            "if_else": 0,
-            "case_when": 0,
-            "begin_end": 0,
-            "exception_handler": 0,
-            "function_calling": 0,
-            "when_statement": 0,
-            "elif_statement": 0,
-            "select_statement": 0,
-            "insert_statement": 0,
-            "update_statement": 0,
-            "delete_statement": 0,
-            "raise_statement": 0,
-            "merge_statement": 0,
-            "null_statement": 0,
-            "return_statement": 0,
-            "with_statement": 0,
-            "bulk_statement": 0,
-        }
+        # Initialize strng_convert_json dynamically based on statement mappings
+        self.strng_convert_json: Dict = self._initialize_conversion_stats()
 
 
         logger.debug(f"structured lines conversion {len(self.structured_lines)} lines processed",)
@@ -185,6 +166,95 @@ class OracleTriggerAnalyzer:
         function_name = function_list["function_name"].tolist()
         return function_name
 
+    def load_statement_mappings(self):
+        """
+        Load statement mappings from the excel file (utilities/oracle_postgresql_mappings.xlsx) in sheet "statement_mappings".
+        Returns a dictionary mapping Oracle statement types to their corresponding statement types.
+        """
+        try:
+            # Import here to avoid circular imports
+            from utilities.streamlit_utils import ConfigManager
+            
+            mappings = ConfigManager.load_excel_mappings()
+            statement_df = mappings.get('statement_mappings', pd.DataFrame())
+            
+            if statement_df.empty:
+                # Return default mappings if sheet doesn't exist or is empty
+                return {
+                    "SELECT": "select_statement",
+                    "INSERT": "insert_statement", 
+                    "UPDATE": "update_statement",
+                    "DELETE": "delete_statement",
+                    "RAISE": "raise_statement",
+                    "NULL": "null_statement",
+                    "RETURN": "return_statement",
+                    "MERGE": "merge_statement",
+                    "BULK": "bulk_statement",
+                }
+            
+            # Convert DataFrame to dictionary
+            stmt_type_map = {}
+            for _, row in statement_df.iterrows():
+                oracle_stmt = row.get('statement', '').strip()
+                statement_type = row.get('statement_type', '').strip()
+                if oracle_stmt and statement_type:
+                    stmt_type_map[oracle_stmt.upper().strip()] = statement_type.lower().strip()
+            
+            logger.debug(f"Loaded {len(stmt_type_map)} statement mappings from Excel")
+            return stmt_type_map
+            
+        except Exception as e:
+            logger.error(f"Error loading statement mappings: {str(e)}")
+            # Return default mappings on error
+            return {
+                "SELECT": "select_statement",
+                "INSERT": "insert_statement",
+                "UPDATE": "update_statement", 
+                "DELETE": "delete_statement",
+                "RAISE": "raise_statement",
+                "NULL": "null_statement",
+                "RETURN": "return_statement",
+                "MERGE": "merge_statement",
+                "BULK": "bulk_statement",
+            }
+
+    def _initialize_conversion_stats(self):
+        """
+        Initialize conversion statistics dictionary dynamically based on statement mappings.
+        """
+        # Base statistics that are always present
+        base_stats = {
+            "assignment": 0,
+            "for_loop": 0,
+            "if_else": 0,
+            "case_when": 0,
+            "begin_end": 0,
+            "exception_handler": 0,
+            "function_calling": 0,
+            "when_statement": 0,
+            "elif_statement": 0,
+            "with_statement": 0,
+        }
+        
+        # Load statement mappings and add them to stats
+        try:
+            stmt_mappings = self.load_statement_mappings()
+            for statement_type in stmt_mappings.values():
+                if statement_type not in base_stats:
+                    base_stats[statement_type] = 0
+        except Exception as e:
+            logger.debug(f"Could not load statement mappings for stats initialization: {str(e)}")
+            # Add default statement types if loading fails
+            default_statements = [
+                "select_statement", "insert_statement", "update_statement", 
+                "delete_statement", "raise_statement", "null_statement", 
+                "return_statement", "merge_statement", "bulk_statement"
+            ]
+            for stmt_type in default_statements:
+                if stmt_type not in base_stats:
+                    base_stats[stmt_type] = 0
+        
+        return base_stats
 
     def _strip_block_comments(self):
         """
@@ -746,6 +816,7 @@ class OracleTriggerAnalyzer:
         self._parse_sql_statements()
         self.rest_strings()
         self._add_exception_handlers()
+        
     def _add_exception_handlers(self):
         """
         Add exception handlers to the main section of SQL.
@@ -1013,17 +1084,8 @@ class OracleTriggerAnalyzer:
             }
         """
         def parse_sql_statements(working_lines: List[Dict[str, Any]]):
-            STMT_TYPE_MAP = {
-                "SELECT": "select_statement",
-                "INSERT": "insert_statement",
-                "UPDATE": "update_statement",
-                "DELETE": "delete_statement",
-                "RAISE": "raise_statement",
-                "NULL": "null_statement",
-                "RETURN": "return_statement",
-                "MERGE": "merge_statement",
-                "BULK": "bulk_statement",
-            }
+            # Load statement mappings from Excel
+            STMT_TYPE_MAP = self.load_statement_mappings()
             sql_statements = []
             i = 0
             stmt_i = -1
