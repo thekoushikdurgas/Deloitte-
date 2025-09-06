@@ -413,37 +413,6 @@ class FormatSQL:
                             lines.append(f"   {name} EXCEPTION;")
                         
         elif db_type == "PostgreSQL":
-            # PostgreSQL uses DO $$ DECLARE...BEGIN...END $$; structure
-            # Note: Variable declarations will be handled in the main block
-            # This section is kept empty for PostgreSQL as declarations are handled differently
-            pass
-        
-        logger.debug(f"=== {db_type} declarations complete ===")
-        return lines
-
-    # -----------------------------
-    # Main Block Rendering Methods
-    # -----------------------------
-    def _render_main_block(self, node: Dict[str, Any], indent_level: int, wrap_begin_end: bool = False, db_type: str = "Oracle") -> List[str]:
-        """
-        Render the main execution block with proper database-specific structure.
-        
-        Args:
-            node (Dict[str, Any]): Main block node
-            indent_level (int): Current indentation level
-            wrap_begin_end (bool): Whether to wrap in BEGIN-END
-            db_type (str): Database type ("Oracle" or "PostgreSQL")
-            
-        Returns:
-            List[str]: List of formatted main block lines
-        """
-        if node == {}:
-            return []
-        logger.debug(f"=== Rendering main block for {db_type} ===")
-        lines: List[str] = []
-        
-        # Handle PostgreSQL structure
-        if db_type == "PostgreSQL" and wrap_begin_end:
             lines.append("DECLARE")
             # Add variable declarations for PostgreSQL
             variables = self.analysis.get("declarations", {}).get("variables", []) or []
@@ -501,9 +470,36 @@ class FormatSQL:
 
                         # PostgreSQL constant declaration syntax
                         lines.append(f"   {name} CONSTANT {mapped_type} := {value};")
-            lines.append("BEGIN")
-        elif wrap_begin_end:
-            lines.append(self._indent("BEGIN", indent_level))
+        
+        logger.debug(f"=== {db_type} declarations complete ===")
+        return lines
+
+    # -----------------------------
+    # Main Block Rendering Methods
+    # -----------------------------
+    def _render_main_block(self, node: Dict[str, Any], indent_level: int, wrap_begin_end: bool = False, db_type: str = "Oracle") -> List[str]:
+        """
+        Render the main execution block with proper database-specific structure.
+        
+        Args:
+            node (Dict[str, Any]): Main block node
+            indent_level (int): Current indentation level
+            wrap_begin_end (bool): Whether to wrap in BEGIN-END
+            db_type (str): Database type ("Oracle" or "PostgreSQL")
+            
+        Returns:
+            List[str]: List of formatted main block lines
+        """
+        if node == {}:
+            return []
+        logger.debug(f"=== Rendering main block for {db_type} ===")
+        lines: List[str] = []
+        
+        # Handle PostgreSQL structure
+        # if db_type == "PostgreSQL":
+        #     lines.append("BEGIN")
+        # if wrap_begin_end:
+        lines.append(self._indent("BEGIN", indent_level))
         
         # Process begin_end_statements
         statements = node.get("begin_end_statements", [])
@@ -626,14 +622,17 @@ class FormatSQL:
             List[str]: List of formatted IF-ELSE lines
         """
         lines: List[str] = []
-        
+        continue_check = False
         # Main IF condition
         condition = node.get("condition", "")
         if db_type == "PostgreSQL":
             # Apply function mappings for PostgreSQL
             condition = self._apply_function_mappings(condition)
+        if condition.upper() == "TRUE":
+            continue_check = True
+        if not continue_check:
+            lines.append(self._indent(f"IF {condition} THEN", indent_level))
         
-        lines.append(self._indent(f"IF {condition} THEN", indent_level))
         
         # THEN statements
         then_statements = node.get("then_statements", [])
@@ -641,30 +640,30 @@ class FormatSQL:
             then_lines = self._render_statement_list(then_statements, indent_level + 1, db_type, "then_statements")
             lines.extend(then_lines)
         
-        # ELSIF statements
-        if_elses = node.get("if_elses", [])
-        for elif_stmt in if_elses:
-            elif_condition = elif_stmt.get("condition", "")
-            if elif_condition:
-                self.json_convert_sql['elif_statement'] += 1
-            if db_type == "PostgreSQL":
-                elif_condition = self._apply_function_mappings(elif_condition)
-            
-            lines.append(self._indent(f"ELSIF {elif_condition} THEN", indent_level))
-            
-            elif_then_statements = elif_stmt.get("then_statements", [])
-            if elif_then_statements:
-                elif_lines = self._render_statement_list(elif_then_statements, indent_level + 1, db_type, "if_elses")
-                lines.extend(elif_lines)
         
-        # ELSE statements
-        else_statements = node.get("else_statements", [])
-        if else_statements:
-            lines.append(self._indent("ELSE", indent_level))
-            else_lines = self._render_statement_list(else_statements, indent_level + 1, db_type, "else_statements")
-            lines.extend(else_lines)
-        
-        lines.append(self._indent("END IF;", indent_level))
+        if not continue_check:
+            # ELSIF statements
+            if_elses = node.get("if_elses", [])
+            for elif_stmt in if_elses:
+                elif_condition = elif_stmt.get("condition", "")
+                if elif_condition:
+                    self.json_convert_sql['elif_statement'] += 1
+                if db_type == "PostgreSQL":
+                    elif_condition = self._apply_function_mappings(elif_condition)
+                
+                lines.append(self._indent(f"ELSIF {elif_condition} THEN", indent_level))
+                
+                elif_then_statements = elif_stmt.get("then_statements", [])
+                if elif_then_statements:
+                    elif_lines = self._render_statement_list(elif_then_statements, indent_level + 1, db_type, "if_elses")
+                    lines.extend(elif_lines)
+            # ELSE statements
+            else_statements = node.get("else_statements", [])
+            if else_statements:
+                lines.append(self._indent("ELSE", indent_level))
+                else_lines = self._render_statement_list(else_statements, indent_level + 1, db_type, "else_statements")
+                lines.extend(else_lines)
+            lines.append(self._indent("END IF;", indent_level))
         return lines
 
     def _render_case_when(self, node: Dict[str, Any], indent_level: int, db_type: str) -> List[str]:
@@ -1058,7 +1057,7 @@ class FormatSQL:
                 # Log the error and continue with next mapping
                 debug(f"Error applying function mapping {oracle_func} -> {postgres_func}: {str(e)}")
                 continue
-        
+        result = result.replace(":new.", ":new_")
         return result
 
     # -----------------------------

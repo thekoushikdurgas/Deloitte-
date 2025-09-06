@@ -107,8 +107,8 @@ def configuration_page():
                                 {'name': 'PostgreSQL_Message', 'label': 'PostgreSQL Message', 'help': 'Enter corresponding PostgreSQL exception handling (e.g., EXCEPTION WHEN NO_DATA_FOUND THEN)'}
                             ],
                             'schema_mappings': [
-                                {'name': 'Oracle_Schema', 'label': 'Oracle Schema', 'help': 'Enter Oracle schema name (e.g., HR, SCOTT, SYS)'},
-                                {'name': 'PostgreSQL_Schema', 'label': 'PostgreSQL Schema', 'help': 'Enter corresponding PostgreSQL schema name (e.g., public, hr_schema)'}
+                                {'name': 'Oracle_Schema', 'label': 'Oracle Schema', 'help': 'Enter Oracle schema name (e.g., HR, SCOTT, SYS) - duplicates allowed'},
+                                {'name': 'PostgreSQL_Schema', 'label': 'PostgreSQL Schema', 'help': 'Enter corresponding PostgreSQL schema name (e.g., public, hr_schema) - must be unique'}
                             ]
                         }
                         

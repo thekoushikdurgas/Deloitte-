@@ -366,7 +366,7 @@ class JSONTOPLJSON:
         
         analyzer = FormatSQL({"main": sql_json})
         sql_content: str = analyzer.to_sql("PostgreSQL")
-        logger.debug(f"sql_content: {sql_content}")
+        # logger.info(f"sql_content: {sql_content}")
         # Check each type of declaration and add if present
         declaration_types = parsed_declarations.keys()
         
@@ -374,6 +374,7 @@ class JSONTOPLJSON:
             if decl_type in declarations:
                 for decl in declarations[decl_type]:
                     if decl["name"] in sql_content["sql"]:
+                        # logger.info(f"Found {decl['name']} in sql_content")
                         parsed_declarations[decl_type].append(decl)
                 logger.debug(f"Found {len(declarations[decl_type])} {decl_type} - adding to declarations")
             else:

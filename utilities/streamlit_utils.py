@@ -327,12 +327,13 @@ class ConfigManager:
                         return True, f"Oracle exception '{oracle_exception}' already exists"
             
             elif sheet_name == 'schema_mappings':
-                # For schema mappings, check Oracle_Schema column
-                oracle_schema = row_data.get('Oracle_Schema', '').strip()
-                if oracle_schema:
-                    existing_oracle_schemas = df['Oracle_Schema'].astype(str).str.strip()
-                    if oracle_schema in existing_oracle_schemas.values:
-                        return True, f"Oracle schema '{oracle_schema}' already exists"
+                # For schema mappings, check PostgreSQL_Schema column for uniqueness
+                # Oracle_Schema can have duplicates, but PostgreSQL_Schema must be unique
+                postgresql_schema = row_data.get('PostgreSQL_Schema', '').strip()
+                if postgresql_schema:
+                    existing_postgresql_schemas = df['PostgreSQL_Schema'].astype(str).str.strip()
+                    if postgresql_schema in existing_postgresql_schemas.values:
+                        return True, f"PostgreSQL schema '{postgresql_schema}' already exists (must be unique)"
             
             return False, "No duplicates found"
             

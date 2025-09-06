@@ -14,6 +14,7 @@ from main import (
     convert_postgresql_format_files_to_sql
 )
 from utilities.streamlit_utils import FileManager, SessionManager
+from utilities.json_comparison_analyzer import JSONComparisonAnalyzer
 
 
 def quick_check_page():
@@ -320,66 +321,308 @@ def _comparison_tools_tab():
                     uploaded_json_file.seek(0)  # Reset file pointer
                     
                     if postgresql_content and uploaded_content:
-                        st.subheader("📊 JSON Comparison")
-                        
-                        # Parse both JSON files for structural comparison
+                        # Parse both JSON files
                         try:
                             postgresql_json = json.loads(postgresql_content)
                             uploaded_json = json.loads(uploaded_content)
                             
-                            col1, col2 = st.columns(2)
+                            # Initialize the comparison analyzer
+                            analyzer = JSONComparisonAnalyzer()
                             
+                            # Perform deep comparison
+                            comparison_result = analyzer.compare_json_files(postgresql_json, uploaded_json)
+                            formatted_result = analyzer.format_comparison_for_streamlit(comparison_result)
+                            
+                            # Display compatibility score prominently
+                            st.subheader("🎯 Compatibility Analysis")
+                            
+                            score = comparison_result.compatibility_score
+                            if score >= 80:
+                                score_color = "🟢"
+                                score_status = "Excellent"
+                            elif score >= 60:
+                                score_color = "🟡"
+                                score_status = "Good"
+                            elif score >= 40:
+                                score_color = "🟠"
+                                score_status = "Needs Improvement"
+                            else:
+                                score_color = "🔴"
+                                score_status = "Poor"
+                            
+                            col1, col2, col3 = st.columns(3)
                             with col1:
-                                st.write(f"**PostgreSQL Format: {selected_postgresql_json}**")
-                                st.json(postgresql_json)
-                            
+                                st.metric("Compatibility Score", f"{score:.1f}%", delta=f"{score_status}")
                             with col2:
-                                st.write(f"**Uploaded: {uploaded_json_file.name}**")
-                                st.json(uploaded_json)
-                            
-                            # JSON structure comparison
-                            st.subheader("📈 JSON Structure Comparison")
-                            col1, col2, col3, col4 = st.columns(4)
-                            
-                            with col1:
-                                postgresql_keys = len(postgresql_json.keys()) if isinstance(postgresql_json, dict) else 0
-                                uploaded_keys = len(uploaded_json.keys()) if isinstance(uploaded_json, dict) else 0
-                                st.metric("Keys Count", f"{postgresql_keys} vs {uploaded_keys}")
-                            
-                            with col2:
-                                postgresql_size = len(postgresql_content)
-                                uploaded_size = len(uploaded_content)
-                                st.metric("File Size", f"{postgresql_size} vs {uploaded_size}")
-                            
+                                st.metric("Structure Issues", len(comparison_result.structure_differences))
                             with col3:
-                                # Check if both have same structure
-                                same_keys = (isinstance(postgresql_json, dict) and isinstance(uploaded_json, dict) and 
-                                           set(postgresql_json.keys()) == set(uploaded_json.keys()))
-                                st.metric("Same Structure", "✅ Yes" if same_keys else "❌ No")
+                                st.metric("Missing Elements", len(comparison_result.missing_in_postgresql))
                             
-                            with col4:
-                                # Check data type compatibility
-                                same_type = type(postgresql_json) == type(uploaded_json)
-                                st.metric("Same Type", "✅ Yes" if same_type else "❌ No")
+                            # Create tabs for different comparison aspects
+                            tabs = st.tabs([
+                                "📊 Side-by-Side View", 
+                                "🔍 Line-by-Line Diff", 
+                                # "🏗️ Structure Analysis", 
+                                "📝 Content Analysis",
+                                "💡 Suggestions"
+                            ])
                             
-                            # Show key differences if applicable
-                            if isinstance(postgresql_json, dict) and isinstance(uploaded_json, dict):
-                                postgresql_keys_set = set(postgresql_json.keys())
-                                uploaded_keys_set = set(uploaded_json.keys())
+                            with tabs[0]:
+                                # Side-by-side JSON view
+                                st.subheader("📊 JSON Side-by-Side Comparison")
+                                col1, col2 = st.columns(2)
                                 
-                                only_in_postgresql = postgresql_keys_set - uploaded_keys_set
-                                only_in_uploaded = uploaded_keys_set - postgresql_keys_set
+                                with col1:
+                                    st.write(f"**PostgreSQL Format: {selected_postgresql_json}**")
+                                    st.json(postgresql_json)
                                 
-                                if only_in_postgresql or only_in_uploaded:
-                                    st.subheader("🔍 Key Differences")
+                                with col2:
+                                    st.write(f"**Uploaded: {uploaded_json_file.name}**")
+                                    st.json(uploaded_json)
+                            
+                            with tabs[1]:
+                                # Enhanced line-by-line diff with color coding and semicolon-based parsing
+                                st.subheader("🔍 Enhanced Line-by-Line Difference Analysis")
+                                st.markdown("**Semicolon-to-Semicolon SQL Statement Comparison with Color Coding**")
+                                
+                                if comparison_result.line_by_line_diff:
+                                    # Create a container for the diff display
+                                    diff_container = st.container()
                                     
-                                    if only_in_postgresql:
-                                        st.warning(f"Keys only in PostgreSQL format: {', '.join(only_in_postgresql)}")
+                                    with diff_container:
+                                        for line_diff in comparison_result.line_by_line_diff[:100]:  # Increased limit for better analysis
+                                            status = line_diff['status']
+                                            content = line_diff['content']
+                                            diff_type = line_diff['difference_type']
+                                            suggestion = line_diff.get('suggestion')
+                                            key = line_diff.get('key', '')
+                                            statement_type = line_diff.get('statement_type', '')
+                                        
+                                            # Get styling information
+                                            status_icon = formatted_result['status_colors'].get(status, '⚪')
+                                            type_icon = formatted_result['difference_type_icons'].get(diff_type, '📄')
+                                            status_style = formatted_result['status_styles'].get(status, {})
+                                            
+                                            # Create styled display based on status
+                                            if status == 'header':
+                                                # Section header with blue styling
+                                                st.markdown(f"""
+                                                <div style="
+                                                    background-color: {status_style.get('background', '#cce7ff')};
+                                                    color: {status_style.get('color', '#004085')};
+                                                    padding: 10px;
+                                                    border: {status_style.get('border', '2px solid #80bdff')};
+                                                    border-radius: 5px;
+                                                    margin: 10px 0;
+                                                    font-weight: bold;
+                                                    text-align: center;
+                                                ">
+                                                    {status_icon} {content}
+                                                </div>
+                                                """, unsafe_allow_html=True)
+                                                
+                                            elif status == 'subheader':
+                                                # Subsection header with purple styling
+                                                st.markdown(f"""
+                                                <div style="
+                                                    background-color: {status_style.get('background', '#e2e3e5')};
+                                                    color: {status_style.get('color', '#383d41')};
+                                                    padding: 8px;
+                                                    border: {status_style.get('border', '1px solid #d6d8db')};
+                                                    border-radius: 3px;
+                                                    margin: 5px 0;
+                                                ">
+                                                    {status_icon} {content}
+                                                </div>
+                                                """, unsafe_allow_html=True)
+                                                
+                                            elif status == 'detailed_diff':
+                                                # Detailed diff with monospace styling
+                                                st.markdown(f"""
+                                                <div style="
+                                                    background-color: {status_style.get('background', '#f8f9fa')};
+                                                    color: {status_style.get('color', '#495057')};
+                                                    padding: 10px;
+                                                    border: {status_style.get('border', '1px solid #dee2e6')};
+                                                    border-radius: 3px;
+                                                    margin: 5px 0;
+                                                    font-family: monospace;
+                                                    white-space: pre-wrap;
+                                                    overflow-x: auto;
+                                                ">
+                                                    {content}
+                                                </div>
+                                                """, unsafe_allow_html=True)
+                                                
+                                            elif status == 'same':
+                                                # Identical statements with green styling
+                                                st.markdown(f"""
+                                                <div style="
+                                                    background-color: {status_style.get('background', '#d4edda')};
+                                                    color: {status_style.get('color', '#28a745')};
+                                                    padding: 8px;
+                                                    border: {status_style.get('border', '1px solid #c3e6cb')};
+                                                    border-radius: 3px;
+                                                    margin: 3px 0;
+                                                ">
+                                                    {status_icon} {content}
+                                                </div>
+                                                """, unsafe_allow_html=True)
+                                                
+                                            elif status == 'missing_postgresql':
+                                                # Missing in PostgreSQL with red styling
+                                                st.markdown(f"""
+                                                <div style="
+                                                    background-color: {status_style.get('background', '#f8d7da')};
+                                                    color: {status_style.get('color', '#721c24')};
+                                                    padding: 8px;
+                                                    border: {status_style.get('border', '1px solid #f5c6cb')};
+                                                    border-radius: 3px;
+                                                    margin: 3px 0;
+                                                ">
+                                                    {status_icon} {type_icon} <strong>Missing in PostgreSQL:</strong> {content}
+                                                </div>
+                                                """, unsafe_allow_html=True)
+                                                if suggestion:
+                                                    st.info(f"💡 **Suggestion:** {suggestion}")
+                                                    
+                                            elif status == 'missing_uploaded':
+                                                # Only in PostgreSQL with yellow styling
+                                                st.markdown(f"""
+                                                <div style="
+                                                    background-color: {status_style.get('background', '#fff3cd')};
+                                                    color: {status_style.get('color', '#856404')};
+                                                    padding: 8px;
+                                                    border: {status_style.get('border', '1px solid #ffeaa7')};
+                                                    border-radius: 3px;
+                                                    margin: 3px 0;
+                                                ">
+                                                    {status_icon} {type_icon} <strong>Only in PostgreSQL:</strong> {content}
+                                                </div>
+                                                """, unsafe_allow_html=True)
+                                                if suggestion:
+                                                    st.info(f"💡 **Suggestion:** {suggestion}")
+                                                    
+                                            elif status == 'different':
+                                                # Different content with yellow styling
+                                                st.markdown(f"""
+                                                <div style="
+                                                    background-color: {status_style.get('background', '#fff3cd')};
+                                                    color: {status_style.get('color', '#856404')};
+                                                    padding: 8px;
+                                                    border: {status_style.get('border', '1px solid #ffeaa7')};
+                                                    border-radius: 3px;
+                                                    margin: 3px 0;
+                                                ">
+                                                    {status_icon} {type_icon} <strong>Different Content:</strong> {content}
+                                                </div>
+                                                """, unsafe_allow_html=True)
+                                            if suggestion:
+                                                st.info(f"💡 **Suggestion:** {suggestion}")
+                                            
+                                            # Add expandable section for statement details if available
+                                            if statement_type and key:
+                                                with st.expander(f"📋 View {statement_type} Details for {key}", expanded=False):
+                                                    st.code(content, language="sql")
                                     
-                                    if only_in_uploaded:
-                                        st.warning(f"Keys only in uploaded file: {', '.join(only_in_uploaded)}")
+                                    # Add summary statistics
+                                    st.markdown("---")
+                                    st.subheader("📊 Diff Summary")
+                                    
+                                    # Count different types of differences
+                                    status_counts = {}
+                                    for line_diff in comparison_result.line_by_line_diff:
+                                        status = line_diff['status']
+                                        status_counts[status] = status_counts.get(status, 0) + 1
+                                    
+                                    col1, col2, col3, col4 = st.columns(4)
+                                    
+                                    with col1:
+                                        st.metric("Identical", status_counts.get('same', 0), help="Statements that are exactly the same")
+                                    with col2:
+                                        st.metric("Different", status_counts.get('different', 0), help="Statements with content differences")
+                                    with col3:
+                                        st.metric("Missing in PG", status_counts.get('missing_postgresql', 0), help="Statements only in uploaded file")
+                                    with col4:
+                                        st.metric("Only in PG", status_counts.get('missing_uploaded', 0), help="Statements only in PostgreSQL file")
+                                        
                                 else:
-                                    st.success("✅ Both JSON files have the same key structure!")
+                                    st.info("No line-by-line differences to display.")
+                            
+                            # with tabs[2]:
+                            #     # Structure analysis
+                            #     st.subheader("🏗️ Structure Analysis")
+                                
+                            #     if comparison_result.structure_differences:
+                            #         st.write("**Structural Differences Found:**")
+                            #         for diff in comparison_result.structure_differences:
+                            #             st.warning(f"🏗️ {diff}")
+                            #     else:
+                            #         st.success("✅ No structural differences found!")
+                                
+                            #     # Quick stats
+                            #     col1, col2, col3, col4 = st.columns(4)
+                                
+                            #     with col1:
+                            #         postgresql_keys = len(postgresql_json.keys()) if isinstance(postgresql_json, dict) else 0
+                            #         uploaded_keys = len(uploaded_json.keys()) if isinstance(uploaded_json, dict) else 0
+                            #         st.metric("Keys Count", f"{postgresql_keys} vs {uploaded_keys}")
+                                
+                            #     with col2:
+                            #         postgresql_size = len(postgresql_content)
+                            #         uploaded_size = len(uploaded_content)
+                            #         st.metric("File Size", f"{postgresql_size} vs {uploaded_size}")
+                                
+                            #     with col3:
+                            #         same_keys = (isinstance(postgresql_json, dict) and isinstance(uploaded_json, dict) and 
+                            #                    set(postgresql_json.keys()) == set(uploaded_json.keys()))
+                            #         st.metric("Same Structure", "✅ Yes" if same_keys else "❌ No")
+                                
+                            #     with col4:
+                            #         same_type = type(postgresql_json) == type(uploaded_json)
+                            #         st.metric("Same Type", "✅ Yes" if same_type else "❌ No")
+                            
+                            with tabs[2]:
+                                # Content analysis
+                                st.subheader("📝 Content Analysis")
+                                
+                                if comparison_result.content_differences:
+                                    st.write("**Content Differences Found:**")
+                                    for diff in comparison_result.content_differences:
+                                        st.warning(f"📝 {diff}")
+                                else:
+                                    st.success("✅ No content differences found!")
+                                
+                                if comparison_result.missing_in_postgresql:
+                                    st.write("**Missing in PostgreSQL JSON:**")
+                                    for missing in comparison_result.missing_in_postgresql:
+                                        st.error(f"🔴 {missing}")
+                            
+                            with tabs[3]:
+                                # Suggestions
+                                st.subheader("💡 Improvement Suggestions")
+                                
+                                if comparison_result.suggestions:
+                                    st.write("**Recommendations to improve PostgreSQL JSON:**")
+                                    for i, suggestion in enumerate(comparison_result.suggestions, 1):
+                                        st.info(f"💡 **{i}.** {suggestion}")
+                                else:
+                                    st.success("✅ No specific suggestions - files are well aligned!")
+                                
+                                # Action items based on analysis
+                                st.subheader("🎯 Action Items")
+                                
+                                todo_count = len([s for s in comparison_result.suggestions if 'TODO' in s])
+                                missing_count = len(comparison_result.missing_in_postgresql)
+                                
+                                if todo_count > 0:
+                                    st.warning(f"📋 Complete {todo_count} TODO mappings for exception handling")
+                                
+                                if missing_count > 0:
+                                    st.error(f"➕ Add {missing_count} missing elements to PostgreSQL JSON")
+                                
+                                if score < 70:
+                                    st.warning("⚠️ Consider reviewing the conversion process to improve compatibility")
                         
                         except json.JSONDecodeError as e:
                             st.error(f"❌ JSON parsing error: {str(e)}")
