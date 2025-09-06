@@ -1990,22 +1990,24 @@ class OracleTriggerAnalyzer:
         combined_line = combined_line.rstrip(";").strip()
 
 
-        # # Extract the function name
-        # if not combined_line.upper().startswith(function_name.upper()):
-        #     return combined_line
-
-
         # Find the opening parenthesis after function name
         open_paren_pos = combined_line.find("(")
-        if open_paren_pos == -1:
-            return combined_line
 
 
         # Extract the parameters part (everything between parentheses)
         params_start = open_paren_pos + 1
         params_end = self._find_matching_closing_paren(combined_line, open_paren_pos)
-        if params_end == -1:
-            return combined_line
+        if params_end == -1 and open_paren_pos == -1:
+            return {
+            "type": "function_calling",
+            "function_name": combined_line,
+            "parameters": {
+                "parameter_type": "no_parameters",
+                "positional_params": [],
+                "named_params": {},
+                "raw_text": ""
+            },
+        }
 
 
         params_text = combined_line[params_start:params_end].strip()

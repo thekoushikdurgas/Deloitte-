@@ -25,6 +25,7 @@ class JSONTOPLJSON:
         self.after_parse_on_update: List[Dict[str, Any]] = []
         self.after_parse_on_delete: List[Dict[str, Any]] = []
         self.declarations: Dict[str, Any] = {}
+        
         # self.to_sql()
 
     def modify_condition(self, condition):
@@ -337,8 +338,6 @@ class JSONTOPLJSON:
         # Process main_section_lines
         extract_rest_strings_from_item(sql_json)
 
-    #     return strng_convert_json
-
     def _find_declarations(self, declarations, sql_json):
         """
         find declarations from sql_json and add if present.
@@ -415,8 +414,6 @@ class JSONTOPLJSON:
 
         # Step 2: Process each operation type to filter relevant code
         logger.debug("=== Processing INSERT operations ===")
-        # self.parse_pl_json_on_insert()
-        # logger.debug(f"after_parse_on_insert: {self.after_parse_on_insert["begin_end_statements"]}")
         self.after_parse_on_insert["begin_end_statements"] = self._process_on_json(self.after_parse_on_insert["begin_end_statements"], "main.begin_end_statements", "on_insert")
         
         logger.debug("=== Processing UPDATE operations ===")

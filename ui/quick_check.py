@@ -549,39 +549,6 @@ def _comparison_tools_tab():
                                 else:
                                     st.info("No line-by-line differences to display.")
                             
-                            # with tabs[2]:
-                            #     # Structure analysis
-                            #     st.subheader("🏗️ Structure Analysis")
-                                
-                            #     if comparison_result.structure_differences:
-                            #         st.write("**Structural Differences Found:**")
-                            #         for diff in comparison_result.structure_differences:
-                            #             st.warning(f"🏗️ {diff}")
-                            #     else:
-                            #         st.success("✅ No structural differences found!")
-                                
-                            #     # Quick stats
-                            #     col1, col2, col3, col4 = st.columns(4)
-                                
-                            #     with col1:
-                            #         postgresql_keys = len(postgresql_json.keys()) if isinstance(postgresql_json, dict) else 0
-                            #         uploaded_keys = len(uploaded_json.keys()) if isinstance(uploaded_json, dict) else 0
-                            #         st.metric("Keys Count", f"{postgresql_keys} vs {uploaded_keys}")
-                                
-                            #     with col2:
-                            #         postgresql_size = len(postgresql_content)
-                            #         uploaded_size = len(uploaded_content)
-                            #         st.metric("File Size", f"{postgresql_size} vs {uploaded_size}")
-                                
-                            #     with col3:
-                            #         same_keys = (isinstance(postgresql_json, dict) and isinstance(uploaded_json, dict) and 
-                            #                    set(postgresql_json.keys()) == set(uploaded_json.keys()))
-                            #         st.metric("Same Structure", "✅ Yes" if same_keys else "❌ No")
-                                
-                            #     with col4:
-                            #         same_type = type(postgresql_json) == type(uploaded_json)
-                            #         st.metric("Same Type", "✅ Yes" if same_type else "❌ No")
-                            
                             with tabs[2]:
                                 # Content analysis
                                 st.subheader("📝 Content Analysis")

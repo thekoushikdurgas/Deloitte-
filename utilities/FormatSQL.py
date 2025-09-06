@@ -12,12 +12,6 @@ from utilities.common import (
     logger,
     main_excel_file,
     setup_logging,
-    debug,
-    info,
-    warning,
-    error,
-    critical,
-    alert,
 )
 
 # Configure logging
@@ -76,8 +70,26 @@ class FormatSQL:
             analysis (Dict[str, Any]): The JSON analysis data
         """
         self.analysis = analysis
-        self.indent_unit = "  "  # 2 spaces for indentation
-        self.json_convert_sql: Dict = {
+        self.indent_unit = "  "  # 2 spaces for indentation        
+        # Load mappings from Excel file
+        self.func_mapping = self.load_mapping("function_mappings")
+        self.type_mapping = self.load_mapping("data_type_mappings")
+        self.exception_mapping = self.load_mapping("exception_mappings")
+        self.schema_mappings = self.load_mapping("schema_mappings")
+        self.json_convert_sql: Dict = self._initialize_conversion_stats()
+        
+        # Validate analysis structure
+        if not isinstance(analysis, dict):
+            raise ValueError("Analysis must be a dictionary")
+            
+        logger.debug("FORMATOracleTriggerAnalyzer initialized successfully")
+
+    def _initialize_conversion_stats(self):
+        """
+        Initialize conversion statistics dictionary dynamically based on statement mappings.
+        """
+        # Base statistics that are always present
+        base_stats = {
             "assignment": 0,
             "for_loop": 0,
             "if_else": 0,
@@ -87,33 +99,28 @@ class FormatSQL:
             "function_calling": 0,
             "when_statement": 0,
             "elif_statement": 0,
-            "select_statement": 0,
-            "insert_statement": 0,
-            "update_statement": 0,
-            "delete_statement": 0,
-            "raise_statement": 0,
-            "merge_statement": 0,
-            "null_statement": 0,
-            "return_statement": 0,
             "with_statement": 0,
-            "bulk_statement": 0,
         }
         
-        # Load mappings from Excel file
-        self.func_mapping = self.load_mapping("function_mappings")
-        self.type_mapping = self.load_mapping("data_type_mappings")
-        self.exception_mapping = self.load_mapping("exception_mappings")
-        self.schema_mappings = self.load_mapping("schema_mappings")
+        # Load statement mappings and add them to stats
+        try:
+            stmt_mappings = self.load_statement_mappings()
+            for statement_type in stmt_mappings.values():
+                if statement_type not in base_stats:
+                    base_stats[statement_type] = 0
+        except Exception as e:
+            logger.debug(f"Could not load statement mappings for stats initialization: {str(e)}")
+            # Add default statement types if loading fails
+            default_statements = [
+                "select_statement", "insert_statement", "update_statement", 
+                "delete_statement", "raise_statement", "null_statement", 
+                "return_statement", "merge_statement", "bulk_statement"
+            ]
+            for stmt_type in default_statements:
+                if stmt_type not in base_stats:
+                    base_stats[stmt_type] = 0
         
-        # Validate analysis structure
-        if not isinstance(analysis, dict):
-            raise ValueError("Analysis must be a dictionary")
-        
-        # if "declarations" not in analysis or "main" not in analysis:
-        #     raise ValueError("Analysis must contain 'declarations' and 'main' sections")
-            
-        logger.debug("FORMATOracleTriggerAnalyzer initialized successfully")
-
+        return base_stats
     def load_mapping(self, sheet_name: str) -> Dict[str, str]:
         """
         Load mappings from Excel file for type, function, and exception conversions.
@@ -133,7 +140,7 @@ class FormatSQL:
         
         try:
             if os.path.exists(mapping_file):
-                debug(f"Loading {sheet_name} from Excel file: {mapping_file}")
+                logger.debug(f"Loading {sheet_name} from Excel file: {mapping_file}")
                 df = pd.read_excel(mapping_file, sheet_name=sheet_name)
                 
                 # Convert DataFrame to dictionary
@@ -147,15 +154,15 @@ class FormatSQL:
                     # Remove any None or NaN values
                     mapping_dict = {k: v for k, v in mapping_dict.items() if k is not None and v is not None and str(k).strip() and str(v).strip()}
                     
-                    debug(f"Loaded {len(mapping_dict)} {sheet_name} mappings from Excel")
+                    logger.debug(f"Loaded {len(mapping_dict)} {sheet_name} mappings from Excel")
                     return mapping_dict
                 else:
-                    warning(f"Excel sheet {sheet_name} has insufficient columns, using defaults")
+                 logger.warning(f"Excel sheet {sheet_name} has insufficient columns, using defaults")
             else:
-                warning(f"Excel mapping file not found: {mapping_file}, using defaults")
+             logger.warning(f"Excel mapping file not found: {mapping_file}, using defaults")
                 
         except Exception as e:
-            error(f"Error loading {sheet_name} from Excel: {str(e)}, using defaults")
+         logger.error(f"Error loading {sheet_name} from Excel: {str(e)}, using defaults")
         
         # Return default mappings if Excel loading fails
         return self._get_default_mappings(sheet_name)
@@ -268,7 +275,7 @@ class FormatSQL:
                 "XDB": "public"
             }
         else:
-            warning(f"Unknown mapping type: {sheet_name}")
+            logger.warning(f"Unknown mapping type: {sheet_name}")
             return {}
 
     def to_sql(self, db_type: str = "Oracle") -> Dict:
@@ -292,15 +299,12 @@ class FormatSQL:
         """
         start_time = time.time()
         logger.debug(f"SQL generation: Converting JSON analysis to formatted {db_type} SQL")
-        debug(f"Analysis contains {len(self.analysis.get('declarations', {}).get('variables', []))} variables,{len(self.analysis.get('declarations', {}).get('constants', []))} constants,{len(self.analysis.get('declarations', {}).get('exceptions', []))} exceptions")
+        logger.debug(f"Analysis contains {len(self.analysis.get('declarations', {}).get('variables', []))} variables,{len(self.analysis.get('declarations', {}).get('constants', []))} constants,{len(self.analysis.get('declarations', {}).get('exceptions', []))} exceptions")
         
         lines: List[str] = []
         
         # Step 1: Add header comment
-        debug(f"Adding header comments with timestamp for {db_type}")
-        # lines.append(f"-- Generated from JSON analysis for {db_type}")
-        # lines.append(f"-- Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        # lines.append("")
+        logger.debug(f"Adding header comments with timestamp for {db_type}")
         
         # Step 2: Render declarations
         logger.debug("Starting declarations section rendering")
@@ -309,46 +313,34 @@ class FormatSQL:
             decl_lines = self._render_declarations(self.analysis.get("declarations", {}), db_type)
         else:
             decl_lines = []
-        debug(f"Generated {len(decl_lines)} lines of declarations")
+        logger.debug(f"Generated {len(decl_lines)} lines of declarations")
         lines.extend(decl_lines)
-        debug(f"Declarations rendering took {time.time() - declaration_start:.3f}s")
+        logger.debug(f"Declarations rendering took {time.time() - declaration_start:.3f}s")
         
         # Step 3: Render main execution block
-        debug("Starting main execution block rendering")
+        logger.debug("Starting main execution block rendering")
         main_start = time.time()
         if "main" in self.analysis:
             main_lines = self._render_main_block(self.analysis.get("main", {}), 0, wrap_begin_end=True, db_type=db_type)
         else:
             main_lines = []
-        debug(f"Generated {len(main_lines)} lines in main execution block")
+        logger.debug(f"Generated {len(main_lines)} lines in main execution block")
         lines.extend(main_lines)
-        debug(f"Main block rendering took {time.time() - main_start:.3f}s")
+        logger.debug(f"Main block rendering took {time.time() - main_start:.3f}s")
         
         # Step 4: Add footer
-        debug("Adding footer comments")
-        # lines.append("")
-        # lines.append(f"-- End of generated {db_type} SQL")
-        
-        # Combine all lines into the final SQL string
-        # result = "\n".join([line.strip() for line in lines])
-            # ["DO $$", "DECLARE", *lines, "$$ LANGUAGE plpgsql;"])
-            # lines.append("DO $$")
-            #     lines.append("$$ LANGUAGE plpgsql;")
+        logger.debug("Adding footer comments")
         if db_type == "PostgreSQL":
             result = "DO $$ " + " ".join([line.strip() for line in lines]) + " $$ LANGUAGE plpgsql;"
         elif db_type == "Oracle":
             result = "\n".join(lines)
-        debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
-        # if "conversion_stats" in self.analysis:
-        #     logger.debug(f"sql_convert_count: {self.analysis['conversion_stats']}")
-        # else:
-        #     logger.debug(f"sql_convert_count: {self.json_convert_sql}")
+        logger.debug(f"Final SQL contains {len(lines)} lines, {len(result)} characters")
         final_sql = {
             "sql": result,
             "json_convert_sql": self.json_convert_sql
         }
         duration = time.time() - start_time
-        debug(f"{db_type} SQL generation: {len(lines)} lines generated in {duration:.3f}s")
+        logger.debug(f"{db_type} SQL generation: {len(lines)} lines generated in {duration:.3f}s")
         return final_sql
 
     # -----------------------------
@@ -428,11 +420,11 @@ class FormatSQL:
                         mapped_type = data_type.upper()
                         for oracle_type, postgres_type in self.type_mapping.items():
                             if oracle_type.upper() == mapped_type:
-                                # logger.info(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
+                                logger.debug(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
                                 mapped_type = postgres_type
                                 break
                             elif mapped_type.find(oracle_type.upper()) != -1:
-                                # logger.info(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
+                                logger.debug(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
                                 mapped_type = mapped_type.replace(oracle_type.upper(), postgres_type)
                                 break
                         
@@ -460,11 +452,11 @@ class FormatSQL:
                         mapped_type = data_type.upper()
                         for oracle_type, postgres_type in self.type_mapping.items():
                             if oracle_type.upper() == mapped_type:
-                                # logger.info(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
+                                logger.debug(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
                                 mapped_type = postgres_type
                                 break
                             if mapped_type.find(oracle_type.upper()) != -1:
-                                # logger.info(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
+                                logger.debug(f"Replacing {oracle_type} with {postgres_type} in {data_type}")
                                 mapped_type = mapped_type.replace(oracle_type.upper(), postgres_type)
                                 break
 
@@ -569,18 +561,18 @@ class FormatSQL:
                     statement_lines = self._render_for_loop(statement, indent_level, db_type)
                 elif statement_type == "begin_end":
                     statement_lines = self._render_begin_end_block(statement, indent_level, db_type)
-                elif statement_type == "select_statement":
-                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
-                elif statement_type == "insert_statement":
-                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
-                elif statement_type == "update_statement":
-                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
-                elif statement_type == "delete_statement":
-                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
-                elif statement_type == "merge_statement":
-                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
-                elif statement_type == "bulk_statement":
-                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
+                # elif statement_type == "select_statement":
+                #     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
+                # elif statement_type == "insert_statement":
+                #     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
+                # elif statement_type == "update_statement":
+                #     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
+                # elif statement_type == "delete_statement":
+                #     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
+                # elif statement_type == "merge_statement":
+                #     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
+                # elif statement_type == "bulk_statement":
+                #     statement_lines = self._render_sql_statement(statement, indent_level, db_type)
                 elif statement_type == "assignment":
                     statement_lines = self._render_assignment(statement, indent_level, db_type)
                 elif statement_type == "raise_statement":
@@ -592,8 +584,9 @@ class FormatSQL:
                 elif statement_type == "null_statement":
                     statement_lines = self._render_null_statement(statement, indent_level, db_type)
                 elif statement_type == "return_statement":
-                    logger.debug(statement)
                     statement_lines = self._render_return_statement(statement, indent_level, db_type)
+                elif statement_type.endswith("_statement"):
+                    statement_lines = self._render_sql_statement(statement, indent_level, db_type)
                 else:
                     # Fallback for unknown statement types
                     logger.debug(statement)
@@ -810,7 +803,7 @@ class FormatSQL:
                 result = pattern.sub(str(oracle_schema) + '.' + str(postgres_schema), result)
             except Exception as e:
                 # Log the error and continue with next mapping
-                debug(f"Error applying schema mapping {postgres_schema} -> {oracle_schema}.{postgres_schema}: {str(e)}")
+                logger.debug(f"Error applying schema mapping {postgres_schema} -> {oracle_schema}.{postgres_schema}: {str(e)}")
                 continue
         
         return result
@@ -890,7 +883,7 @@ class FormatSQL:
             
             # Handle parameters
             param_text = ""
-            if parameters:
+            if parameters["positional_params"] != 'no_parameters':
                 param_type = parameters.get("parameter_type", "positional")
                 if param_type == "positional":
                     pos_params = parameters.get("positional_params", [])
@@ -900,7 +893,9 @@ class FormatSQL:
                     param_pairs = [f"{k} => {v}" for k, v in named_params.items()]
                     param_text = ", ".join(param_pairs)
             
-            if param_text:
+            if parameters["positional_params"] != 'no_parameters':
+                return [self._indent(f"{function_name};", indent_level)]
+            elif param_text:
                 return [self._indent(f"{function_name}({param_text});", indent_level)]
             else:
                 return [self._indent(f"{function_name}();", indent_level)]
@@ -1055,7 +1050,7 @@ class FormatSQL:
                 result = pattern.sub(str(postgres_func), result)
             except Exception as e:
                 # Log the error and continue with next mapping
-                debug(f"Error applying function mapping {oracle_func} -> {postgres_func}: {str(e)}")
+                logger.debug(f"Error applying function mapping {oracle_func} -> {postgres_func}: {str(e)}")
                 continue
         result = result.replace(":new.", ":new_")
         return result
@@ -1095,7 +1090,7 @@ class FormatSQL:
         
         # For very deep nesting, log a warning (could indicate over-complex code)
         if level > 5:
-            debug(f"Deep nesting detected (level {level}): '{text[:30]}...'")
+            logger.debug(f"Deep nesting detected (level {level}): '{text[:30]}...'")
             
         return indented_text
 

@@ -83,7 +83,7 @@ class FileManager:
             with open(file_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
             
-            info(f"Saved uploaded file: {uploaded_file.name}")
+            debug(f"Saved uploaded file: {uploaded_file.name}")
             return True
             
         except Exception as e:
@@ -246,7 +246,7 @@ class ConfigManager:
                 for name, df in sheet_dict.items():
                     df.to_excel(writer, sheet_name=name, index=False)
             
-            info(f"Saved Excel sheet: {sheet_name}")
+            debug(f"Saved Excel sheet: {sheet_name}")
             return True
             
         except Exception as e:
@@ -446,7 +446,7 @@ class ConfigManager:
         """Save the rest list CSV file."""
         try:
             dataframe.to_csv(cls.REST_LIST_PATH, index=False)
-            info("Saved rest list CSV")
+            debug("Saved rest list CSV")
             return True
         except Exception as e:
             error(f"Error saving rest list: {str(e)}")

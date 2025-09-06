@@ -495,8 +495,6 @@ class JSONComparisonAnalyzer:
         # Content penalty
         for key in postgresql_keys & uploaded_keys:
             postgresql_content = self._extract_sql_content(postgresql_json[key])
-            
-            # TODO penalty
             todo_count = len(re.findall(r'-- TODO:', postgresql_content))
             total_score -= min(25, todo_count * 5)
             
